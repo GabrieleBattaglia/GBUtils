@@ -1,0 +1,61 @@
+Collegamento simbolico per un singolo file
+Se hai bisogno di utilizzare `GBUtils.py` direttamente e non l'intera directory, puoi creare un collegamento simbolico (symlink) per il singolo file.
+Passaggi per creare un symlink per `GBUtils.py` in Windows
+1. Apri il Prompt dei comandi come amministratore:
+• Premi `Win + X` e seleziona "Prompt dei comandi (Amministratore)" o "Windows PowerShell (Amministratore)".
+2. Naviga nella directory del progetto `Easyfish`:
+cmd
+Copia codice
+cd e:\git\easyfish
+3. Crea un symlink per `GBUtils.py`:
+• Utilizza il comando `mklink` per creare un collegamento simbolico. Assicurati che `libs` sia una directory valida all'interno del tuo progetto `Easyfish`.
+mklink GBUtils.py e:\git\GBUtils\GBUtils.py
+Esempio completo
+Supponiamo di avere la seguente struttura di directory:
+makefile
+e:\
+ ├── git\
+ │    ├── Easyfish\
+ │    │    └── Easyfish.py
+ │    └── GBUtils\
+ │         └── GBUtils.py
+E vuoi utilizzare `GBUtils.py` all'interno di `Easyfish`.
+1. Vai nella directory del progetto `Easyfish`:
+cd e:\git\easyfish
+2. Crea una directory `libs` se non esiste già:
+mkdir libs
+3. Crea un symlink per `GBUtils.py` nella directory `libs`:
+mklink libs\GBUtils.py e:\git\GBUtils\GBUtils.py
+Utilizzo in Python
+Ora puoi importare `GBUtils` nel tuo script Python `Easyfish.py` come se fosse nella directory `libs`.
+Esempio di `Easyfish.py`:
+python
+Copia codice
+import sys
+sys.path.append('libs')  # Aggiunge 'libs' al percorso dei moduli
+
+import GBUtils
+
+# Ora puoi usare GBUtils come se fosse parte del progetto Easyfish
+GBUtils.some_function()
+Considerazioni
+• Path relativo: Il symlink `libs\GBUtils.py` punta al file originale `e:\git\GBUtils\GBUtils.py`, permettendo a tutti i progetti di accedere a una singola copia del file.
+• Coerenza: Assicurati che il percorso del symlink sia coerente tra tutti i progetti per evitare confusione.
+Creare symlink per una directory intera
+Se preferisci avere l'intera directory `GBUtils` accessibile, puoi creare un symlink per la directory stessa.
+1. Vai nella directory del progetto `Easyfish`:
+cd e:\git\easyfish
+2. Crea un symlink per la directory `GBUtils`:
+mklink /D libs\GBUtils e:\git\GBUtils
+3. Utilizzo in Python:
+• Puoi ora importare i moduli da `GBUtils` come se fossero parte del progetto `Easyfish`.
+Esempio di `Easyfish.py` con directory:
+import sys
+sys.path.append('libs/GBUtils')  # Aggiunge 'libs/GBUtils' al percorso dei moduli
+
+import GBUtils
+
+# Ora puoi usare GBUtils come se fosse parte del progetto Easyfish
+GBUtils.some_function()
+Conclusione
+Utilizzando i collegamenti simbolici, puoi mantenere una singola copia di `GBUtils.py` e utilizzarla in diversi progetti senza duplicazioni. I symlink possono essere creati sia per singoli file che per intere directory, a seconda delle tue esigenze.
