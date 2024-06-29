@@ -14,7 +14,7 @@ Lista utilità contenute in questo pacchetto
 	sonify2 a serie of data, V4.0, march 19th, 2024
 	sonify V2.5, april 27th, 2023
 	manuale 1.0.1 di domenica 5 maggio 2024
-	menu 1.1.1 del 22 maggio 2024
+	menu 1.1.2 del 22 maggio 2024
 '''
 
 def percent(base=50.0, confronto=100.0, successo=False):
