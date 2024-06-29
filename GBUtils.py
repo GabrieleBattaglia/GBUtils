@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V10 di giovedì 27 giugno 2024
+	V11 di sabato 29 giugno 2024
 
 Lista utilità contenute in questo pacchetto
 	percent V1.0 thu 28, september 2023
@@ -15,6 +15,8 @@ Lista utilità contenute in questo pacchetto
 	sonify V2.5, april 27th, 2023
 	manuale 1.0.1 di domenica 5 maggio 2024
 	menu 1.1.2 del 22 maggio 2024
+	Scadenza 1.0 del 15/12/2021
+	Vecchiume 1.0 del 15/12/2018
 '''
 
 def percent(base=50.0, confronto=100.0, successo=False):
@@ -371,3 +373,58 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, keyslist=False):
 		if show: Mostra(ksl)
 		if keyslist: p=Listaprompt(ksl)
 	return
+
+def Scandenza(y=2100, m=1, g=1, h=0, i=0):
+	'''
+	V 1.0 del 15/12/2021
+	Riceve anno, mese, giorno, ora e minuto e calcola la differenza con l'ADESSO. Quindi la ritorna
+	'''
+	from datetime import datetime
+	from dateutil import relativedelta
+	APP=datetime(y,m,g,h,i)
+	NOW = datetime.today()
+	ETA=relativedelta.relativedelta(APP, NOW)
+	if ETA.years > 0:
+		if ETA.years == 1: f = str(ETA.years)+" anno, "
+		else: f = str(ETA.years)+" anni, "
+	else: f = ""
+	if ETA.months > 0:
+		if ETA.months == 1: f += str(ETA.months)+" mese, "
+		else: f += str(ETA.months)+" mesi, "
+	if ETA.days > 0:
+		if ETA.days == 1: f += str(ETA.days)+" giorno, "
+		else: f += str(ETA.days)+" giorni, "
+	if ETA.hours > 0:
+		if ETA.hours == 1: f += str(ETA.hours)+" ora e "
+		else: f += str(ETA.hours)+" ore e "
+	if ETA.minutes > 0:
+		if ETA.minutes == 1: f += str(ETA.minutes)+" minuto."
+		else: f += str(ETA.minutes)+" minuti"
+	return(f)
+def Vecchiume(y=1974, m=9, g=13, h=22, i=10):
+	'''
+	Utility che calcola la differenza fra una data e l'ADESSO.
+	V1.0 del 15/12 2018 Di Gabriele Battaglia
+	Riceve anno, mese, giorno, ora e minuto e calcola la differenza con l'ADESSO. Quindi la ritorna'''
+	from datetime import datetime
+	from dateutil import relativedelta
+	APP=datetime(y,m,g,h,i)
+	NOW = datetime.today()
+	ETA=relativedelta.relativedelta(NOW,APP)
+	if ETA.years > 0:
+		if ETA.years == 1: f = str(ETA.years)+" anno, "
+		else: f = str(ETA.years)+" anni, "
+	else: f = ""
+	if ETA.months > 0:
+		if ETA.months == 1: f += str(ETA.months)+" mese, "
+		else: f += str(ETA.months)+" mesi, "
+	if ETA.days > 0:
+		if ETA.days == 1: f += str(ETA.days)+" giorno, "
+		else: f += str(ETA.days)+" giorni, "
+	if ETA.hours > 0:
+		if ETA.hours == 1: f += str(ETA.hours)+" ora e "
+		else: f += str(ETA.hours)+" ore e "
+	if ETA.minutes > 0:
+		if ETA.minutes == 1: f += str(ETA.minutes)+" minuto."
+		else: f += str(ETA.minutes)+" minuti"
+	return(f)
