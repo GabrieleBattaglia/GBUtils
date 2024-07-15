@@ -1,9 +1,9 @@
 '''
-	GB UTILS, di Gabriele Battaglia (IZ4APU)
+	GB UTILS di Gabriele Battaglia (IZ4APU)
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V11 di sabato 29 giugno 2024
+	V12 di mercoledì 3 luglio 2024
 
 Lista utilità contenute in questo pacchetto
 	percent V1.0 thu 28, september 2023
@@ -14,7 +14,7 @@ Lista utilità contenute in questo pacchetto
 	sonify2 a serie of data, V4.0, march 19th, 2024
 	sonify V2.5, april 27th, 2023
 	manuale 1.0.1 di domenica 5 maggio 2024
-	menu 1.1.2 del 22 maggio 2024
+	menu 1.2.0 del 3 luglio 2024
 	Scadenza 1.0 del 15/12/2021
 	Vecchiume 1.0 del 15/12/2018
 '''
@@ -321,57 +321,86 @@ def manuale(nf):
 		print("Attenzione, file della guida, mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
 
-def menu(d={}, p="> ", ntf="Scelta non valida", show=False, keyslist=False):
+def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False):
 	'''
-	V 1.1.2 del 22 maggio 2024
+	V 1.2.0 del 3 luglio 2024
 	riceve
 		dict d: il menù da mostrare d{'chiave':'spiegazione'}
 		str p: prompt per richiesta comandi
 		str ntf: da mostrare in caso di comando non presente in d
-		bool show: se vero, mostra menù e ritorna
+		bool show: se vero, mostra menù alla chiamata
+		bool show_only: se vero mostra menù e ritorna None
 		bool keyslist: se vero genera prompt con sequenza di chiavi e ignora p
 	ritorna
 		str stringa: scelta effettuata
 	'''
-	from GBUtils import key
+	import msvcrt
+	def key(prompt):
+		print(prompt, end='', flush=True)
+		ch = msvcrt.getch().decode('utf-8')
+		return ch
 	def Mostra(l):
-		count=0; item=len(l)
+		count = 0
+		item = len(l)
 		print('\n')
 		for j in l:
 			print(f"- ({j}) -- {d[j]};")
-			count+=1
-			if count%10 == 0:
-				key(prompt=f"---------- [{int(count/10)}]---({count-9}/{count})...{item}----------")
-		return
+			count += 1
+			if count % 10 == 0:
+				print(f"---------- [{int(count/10)}]---({count-9}/{count})...{item}--------AnyKey-or-ESC--")
+				ch = msvcrt.getch()
+				if ch == b'\x1b':  return False
+		return True
 	def Listaprompt(l):
-		p='\n['
+		p = '\n['
 		for k in l:
-			p+=k+"."
-		p+="]>"
+			p += k + "."
+		p += "]>"
 		return p
+	if show_only:
+		Mostra(d)
+		return None
 	if show:
 		Mostra(d)
-		return
-	ksd=list(map(str, d.keys()))
-	stringa=''
-	if len(d)<2:
-		print('Not enought voices in menu')
+	ksd = list(map(str, d.keys()))
+	stringa = ''
+	if len(d) < 2:
+		print('Not enough voices in menu')
 		return ''
-	if keyslist: p=Listaprompt(ksd)
+	if keyslist:
+		p = Listaprompt(ksd)
 	while True:
-		s=key(prompt=f"{p} {stringa}")
-		if stringa in ksd and s=='\r': return stringa
-		stringa+=s
-		ksl=[]
-		for j in ksd:
-			if j.startswith(stringa): ksl.append(j)
-		if len(ksl)==1: return ksl[0]
-		elif len(ksl)==0:
-			print("\n"+ntf)
-			Mostra(ksd)
-			stringa=stringa[:-1]
-		if show: Mostra(ksl)
-		if keyslist: p=Listaprompt(ksl)
+		s = key(prompt=f"{p} {stringa}")
+		if s == '\r':
+			if stringa == '':
+				return None
+			elif stringa in ksd:
+				return stringa
+			elif len([k for k in ksd if k.startswith(stringa)]) == 1:
+				return [k for k in ksd if k.startswith(stringa)][0]
+			else:
+				print("\nContinua a digitare")
+		elif s == '\x08':  # backspace
+			stringa = stringa[:-1]
+			if stringa == '':
+				return None
+			ksl = [j for j in ksd if j.startswith(stringa)]
+			Mostra(ksl)
+		else:
+			stringa += s
+			ksl = [j for j in ksd if j.startswith(stringa)]
+			if len(ksl) == 1:
+				return ksl[0]
+			elif len(ksl) == 0:
+				print("\n" + ntf)
+				stringa = stringa[:-1]
+				ksl = [j for j in ksd if j.startswith(stringa)]
+				if not Mostra(ksl):
+					return None
+			else:
+				Mostra(ksl)
+			if keyslist:
+				p = Listaprompt(ksl)
 	return
 
 def Scandenza(y=2100, m=1, g=1, h=0, i=0):
