@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V12 di mercoledì 3 luglio 2024
+	V13 di mercoledì 17 luglio 2024
 
 Lista utilità contenute in questo pacchetto
 	percent V1.0 thu 28, september 2023
@@ -14,7 +14,7 @@ Lista utilità contenute in questo pacchetto
 	sonify2 a serie of data, V4.0, march 19th, 2024
 	sonify V2.5, april 27th, 2023
 	manuale 1.0.1 di domenica 5 maggio 2024
-	menu 1.2.0 del 3 luglio 2024
+	menu V1.2.1 del 17 luglio 2024
 	Scadenza 1.0 del 15/12/2021
 	Vecchiume 1.0 del 15/12/2018
 '''
@@ -323,7 +323,7 @@ def manuale(nf):
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False):
 	'''
-	V 1.2.0 del 3 luglio 2024
+	V1.2.1 del 17 luglio 2024
 	riceve
 		dict d: il menù da mostrare d{'chiave':'spiegazione'}
 		str p: prompt per richiesta comandi
@@ -342,12 +342,12 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 	def Mostra(l):
 		count = 0
 		item = len(l)
-		print('\n')
+		print("\n")
 		for j in l:
-			print(f"- ({j}) -- {d[j]};")
+			print(f"- '{j}' -- {d[j]};")
 			count += 1
-			if count % 10 == 0:
-				print(f"---------- [{int(count/10)}]---({count-9}/{count})...{item}--------AnyKey-or-ESC--")
+			if count % 20 == 0:
+				print(f"---------- [{int(count/20)}]---({count-19}/{count})...{item}--------AnyKey-or-ESC--")
 				ch = msvcrt.getch()
 				if ch == b'\x1b':  return False
 		return True
