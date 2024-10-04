@@ -1,23 +1,177 @@
 '''
-	GB UTILS di Gabriele Battaglia (IZ4APU)
+	GBUtils di Gabriele Battaglia (IZ4APU)
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V13 di mercoledì 17 luglio 2024
+	V14 di venerdì 4 ottobre 2024
 
 Lista utilità contenute in questo pacchetto
-	percent V1.0 thu 28, september 2023
 	base62 3.0 di martedì 15 novembre 2022
 	dgt 1.9 di lunedì 17 aprile 2023
-	key 4.6
 	gridapu 1.2 from IU1FIG
-	sonify2 a serie of data, V4.0, march 19th, 2024
-	sonify V2.5, april 27th, 2023
+	key 4.6
 	manuale 1.0.1 di domenica 5 maggio 2024
+	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
 	menu V1.2.1 del 17 luglio 2024
+	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
+	sonify V2.5, april 27th, 2023
+	sonify2 a serie of data, V4.0, march 19th, 2024
 	Vecchiume 1.0 del 15/12/2018
 '''
+
+class Mazzo:
+	'''
+	V4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
+	Classe che rappresenta un mazzo di carte italiano o francese, con funzionalità per mescolare, pescare e manipolare le carte.
+	'''
+	def __init__(self, tipo=True, num_mazzi=1):
+		'''
+		Inizializza un mazzo di carte.
+		Parametri:
+		- tipo (bool): True per mazzo francese, False per mazzo italiano.
+		- num_mazzi (int): Numero di mazzi da includere.
+		'''
+		self.tipo = tipo
+		self.num_mazzi = num_mazzi
+		self.carte = []
+		self.scarti = []
+		self.scarti_permanenti = []
+		self.pescate = []
+		self.CostruisciMazzo()
+	def CostruisciMazzo(self):
+		'''
+		Costruisce il mazzo di carte in base al tipo e al numero di mazzi.
+		'''
+		semi_francesi = ["Cuori", "Quadri", "Fiori", "Picche"]
+		semi_italiani = ["Bastoni", "Spade", "Coppe", "Denari"]
+		valori_francesi = [("Asso", 1)] + [(str(i), i) for i in range(2, 11)] + [("Jack", 11), ("Regina", 12), ("Re", 13)]
+		valori_italiani = [("Asso", 1)] + [(str(i), i) for i in range(2, 8)] + [("Fante", 8), ("Cavallo", 9), ("Re", 10)]
+		valori_descrizione = {1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '0', 11: 'J', 12: 'Q', 13: 'K'}
+		semi_descrizione = {1: 'C', 2: 'Q', 3: 'F', 4: 'P', 5: 'B', 6: 'S', 7: 'C', 8: 'D'}
+		num_carte_per_mazzo = 52 if self.tipo else 40
+		self.carte = []
+		for n in range(self.num_mazzi):
+			if self.tipo:
+				offset = n * num_carte_per_mazzo
+				id_carta = offset + 1
+				for seme in semi_francesi:
+					for nome_valore, valore in valori_francesi:
+						carta_data = [f"{nome_valore} di {seme}", valore, semi_francesi.index(seme) + 1, True, False, False]
+						carta_data.append(valori_descrizione[valore] + semi_descrizione[semi_francesi.index(seme) + 1])
+						self.carte.append((id_carta, carta_data))
+						id_carta += 1
+			else:
+				offset = n * num_carte_per_mazzo
+				id_carta = offset + 1
+				for seme in semi_italiani:
+					for nome_valore, valore in valori_italiani:
+						carta_data = [f"{nome_valore} di {seme}", valore, semi_italiani.index(seme) + 1, True, False, False]
+						carta_data.append(valori_descrizione[valore] + semi_descrizione[semi_italiani.index(seme) + 1])
+						self.carte.append((id_carta, carta_data))
+						id_carta += 1
+	def MescolaMazzo(self, millisecondi):
+		'''
+		Mescola il mazzo per un periodo specificato.
+		Parametri:
+		- millisecondi (int): Durata del mescolamento in millisecondi.
+		'''
+		import random
+		import time
+		start_time = time.time()
+		end_time = start_time + (millisecondi / 1000.0)
+		while time.time() < end_time:
+			random.shuffle(self.carte)
+	def Pesca(self, quante=1):
+		'''
+		Pesca un numero specifico di carte dalla cima del mazzo.
+		Parametri:
+		- quante (int): Numero di carte da pescare.
+		Ritorna:
+		- Mazzo: Un nuovo oggetto Mazzo contenente le carte pescate.
+		'''
+		if quante < 0:
+			raise ValueError("Il numero di carte da pescare deve essere non negativo.")
+		mazzo_pescato = Mazzo(self.tipo)
+		mazzo_pescato.carte = []
+		for _ in range(quante):
+			if not self.carte:
+				break
+			carta = self.carte.pop(0)
+			carta[1][3] = False  # Non più nel mazzo principale
+			carta[1][4] = True   # Pescata
+			mazzo_pescato.carte.append(carta)
+			self.pescate.append(carta)
+		return mazzo_pescato
+	def Rimescola(self):
+		'''
+		Rimette le carte scartate nel mazzo e mescola. Non reintegra le carte eliminate definitivamente.
+		'''
+		if not self.scarti:
+			print("Non ci sono scarti da reintegrare nel mazzo.")
+		else:
+			print(f"Uniti {len(self.scarti)} scarti nel mazzo.")
+			self.carte.extend(self.scarti)
+			self.scarti = []
+			for _, carta in self.carte:
+				carta[3] = True  # Torna nel mazzo principale
+				carta[5] = False  # Non più scartata
+			self.MescolaMazzo(1000)
+			print(f"{len(self.carte)} carte nel mazzo")
+	def RimuoviSemi(self, semi_da_rimuovere):
+		'''
+		Rimuove dal mazzo tutte le carte con i semi specificati e le sposta negli scarti.
+		Parametri:
+		- semi_da_rimuovere (list): Lista di interi che rappresentano i semi da rimuovere (es. [1, 2]).
+		'''
+		carte_da_rimuovere = []
+		for carta in self.carte:
+			if carta[1][2] in semi_da_rimuovere:
+				carta[1][3] = False  # Non nel mazzo principale
+				carta[1][5] = True   # Scartata
+				self.scarti.append(carta)
+				carte_da_rimuovere.append(carta)
+		for carta in carte_da_rimuovere:
+			self.carte.remove(carta)
+	def RimuoviValori(self, valori_da_rimuovere):
+		'''
+		Rimuove dal mazzo tutte le carte con i valori specificati e le sposta negli scarti permanenti.
+		Parametri:
+		- valori_da_rimuovere (list): Lista di interi che rappresentano i valori da rimuovere (es. [2, 3, 4, 5]).
+		'''
+		carte_da_rimuovere = []
+		for carta in self.carte:
+			if carta[1][1] in valori_da_rimuovere:
+				carta[1][3] = False  # Non nel mazzo principale
+				carta[1][5] = True   # Scartata
+				self.scarti_permanenti.append(carta)  # Scarti permanenti
+				carte_da_rimuovere.append(carta)
+		for carta in carte_da_rimuovere:
+			self.carte.remove(carta)
+	def JollySi(self):
+		'''
+		Aggiunge i jolly al mazzo per ogni mazzo presente.
+		'''
+		if self.tipo:
+			num_jolly_aggiunti = 0
+			for n in range(self.num_mazzi):
+				id_jolly1 = len(self.carte) + 1
+				id_jolly2 = len(self.carte) + 2
+				carta_jolly1 = ["Jolly", None, 0, True, False, False]
+				carta_jolly2 = ["Jolly", None, 0, True, False, False]
+				self.carte.append((id_jolly1, carta_jolly1))
+				self.carte.append((id_jolly2, carta_jolly2))
+				num_jolly_aggiunti += 2
+		else:
+			print("Questo tipo di mazzo non supporta i jolly.")
+	def JollyNo(self):
+		'''
+		Rimuove tutti i jolly dal mazzo.
+		'''
+		carte_da_rimuovere = [carta for carta in self.carte if carta[1][0] == "Jolly"]
+		for carta in carte_da_rimuovere:
+			self.carte.remove(carta)
+		print(f"Jolly rimossi dal mazzo. Totale jolly rimossi: {len(carte_da_rimuovere)}")
 
 def percent(base=50.0, confronto=100.0, successo=False):
 	'''V1.0 thu 28, september 2023
@@ -318,7 +472,7 @@ def manuale(nf):
 				tasto = dgt("\nPremi invio per proseguire o 'e' per uscire dalla guida. Pagina "+str(int(cr/15)))
 				if tasto.lower() == "e": break
 	except IOError:
-		print("Attenzione, file della guida, mancante.\n\tRichiedere il file all'autore dell'App.")
+		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False):
