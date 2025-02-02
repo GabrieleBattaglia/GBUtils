@@ -3,9 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V15 di martedì 29 ottobre 2024
-
+	V16 di domenica 02 febbraio 2025
 Lista utilità contenute in questo pacchetto
+	Acusticator 1.0 di domenica 2 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
 	dgt 1.9 di lunedì 17 aprile 2023
 	gridapu 1.2 from IU1FIG
@@ -343,7 +343,98 @@ def sonify(data_list, duration, ptm=False, vol=0.5):
 	sd.play(audio, samplerate=sample_rate)
 	sd.wait()
 	return
-	
+def Acusticator(score, kind=1, fs=44100):
+	"""
+	Versione 1.0 di domenica 2 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito.
+	Parametri:
+	 - score: lista di valori in multipli di 4, in cui ogni gruppo rappresenta:
+	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un valore in Hz oppure "p" per pausa.
+	     * dur (float): durata in secondi.
+	     * pan (float): panning stereo da -1 (sinistra) a 1 (destra).
+	     * vol (float): volume da 0 a 1.
+	 - kind (int): tipo di onda (1=sinusoide, 2=quadra, 3=triangolare, 4=dente di sega).
+	 - fs (int): frequenza di campionamento (default 44100 Hz).
+	Se la lunghezza di score non è un multiplo di 4 viene sollevato un errore.
+	La riproduzione avviene in background, restituendo subito il controllo al chiamante.
+	"""
+	import numpy as np
+	import sounddevice as sd
+	from scipy import signal
+	import threading
+	import re
+	def note_to_freq(note):
+		"""
+		Converte il parametro 'nota' in una frequenza in Hz.
+		 - Se 'note' è numerico, lo considera già in Hz.
+		 - Se 'note' è la stringa "p", ritorna None per indicare una pausa.
+		 - Se 'note' è una stringa come "c4" o "c#4", calcola la frequenza basandosi sul numero MIDI.
+		"""
+		if isinstance(note, (int, float)):
+			return float(note)
+		if isinstance(note, str):
+			if note.lower() == 'p':
+				return None
+			match = re.match(r"^([a-g])([#b]?)(\d)$", note.lower())
+			if not match:
+				raise ValueError("Formato nota non valido: " + note)
+			note_letter, accidental, octave = match.groups()
+			octave = int(octave)
+			note_base = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
+			semitone = note_base[note_letter]
+			if accidental == '#':
+				semitone += 1
+			elif accidental == 'b':
+				semitone -= 1
+			midi_num = 12 + semitone + 12 * octave
+			freq = 440 * 2 ** ((midi_num - 69) / 12)
+			return freq
+		else:
+			raise TypeError("Tipo nota non riconosciuto")
+	if len(score) % 4 != 0:
+		raise ValueError("La lista score non è un multiplo di 4")
+	segments = []
+	fade_duration = 0.002  # Durata del fade-in e fade-out in secondi
+	for i in range(0, len(score), 4):
+		note_param = score[i]
+		dur = float(score[i+1])
+		pan = float(score[i+2])
+		vol = float(score[i+3])
+		n_samples = int(fs * dur)
+		t = np.linspace(0, dur, n_samples, endpoint=False)
+		fade_samples = int(fs * fade_duration)
+		envelope = np.ones(n_samples)
+		if fade_samples > 0:
+			envelope[:fade_samples] = np.linspace(0, 1, fade_samples)
+			envelope[-fade_samples:] = np.linspace(1, 0, fade_samples)
+		left_gain = np.sqrt((1 - pan) / 2)
+		right_gain = np.sqrt((1 + pan) / 2)
+		freq = note_to_freq(note_param)
+		if freq is None:
+			wave = np.zeros(n_samples)
+		else:
+			if kind == 1:
+				wave = np.sin(2 * np.pi * freq * t)
+			elif kind == 2:
+				wave = signal.square(2 * np.pi * freq * t)
+			elif kind == 3:
+				wave = signal.sawtooth(2 * np.pi * freq * t, width=0.5)
+			elif kind == 4:
+				wave = signal.sawtooth(2 * np.pi * freq * t, width=1.0)
+			else:
+				raise ValueError("Tipo di onda non riconosciuto")
+			wave *= envelope
+		stereo = np.zeros((n_samples, 2))
+		stereo[:, 0] = wave * vol * left_gain
+		stereo[:, 1] = wave * vol * right_gain
+		segments.append(stereo)
+	full_signal = np.concatenate(segments, axis=0)
+	def play_sound():
+		sd.play(full_signal, fs)
+		sd.wait()
+	thread = threading.Thread(target=play_sound, daemon=True)
+	thread.start()
+	return
 def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
 	'''Versione 1.9 di lunedì 17 aprile 2023
 	Potenzia la funzione input implementando controlli di sicurezza.
