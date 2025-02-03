@@ -3,9 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V16 di domenica 02 febbraio 2025
+	V18 di domenica 02 febbraio 2025
 Lista utilità contenute in questo pacchetto
-	Acusticator 1.0 di domenica 2 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	Acusticator 1.2 di lunedì 3 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
 	dgt 1.9 di lunedì 17 aprile 2023
 	gridapu 1.2 from IU1FIG
@@ -18,7 +18,6 @@ Lista utilità contenute in questo pacchetto
 	sonify V5.0, october 29th, 2024
 	Vecchiume 1.0 del 15/12/2018
 '''
-
 class Mazzo:
 	'''
 	V4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
@@ -171,7 +170,6 @@ class Mazzo:
 		for carta in carte_da_rimuovere:
 			self.carte.remove(carta)
 		print(f"Jolly rimossi dal mazzo. Totale jolly rimossi: {len(carte_da_rimuovere)}")
-
 def percent(base=50.0, confronto=100.0, successo=False):
 	'''V1.0 thu 28, september 2023
 	Rx base e confronto e calcola la percentuale di base rispetto a confronto
@@ -190,7 +188,6 @@ def percent(base=50.0, confronto=100.0, successo=False):
 		x=uniform(0,100)
 		if x<=perc: return perc, True
 		else: return perc, False
-
 def base62(n):
 	'''
 	Converte un intero in base 10 ad una stringa in base 62.
@@ -213,7 +210,6 @@ def base62(n):
 		out.append(r)
 	out.reverse()
 	return segno + ''.join(symbols[l] for l in out)
-
 def key(prompt="", attesa=99999):
 	'''V4.6 29/11/2022.
 	Attende per il numero di secondi specificati
@@ -231,7 +227,6 @@ def key(prompt="", attesa=99999):
 			a = msvcrt.getwch()
 			return a
 	return ''
-
 def gridapu(x=0.0, y=0.0, num=10):
 	'''GRIDAPU V1.2 - Author unknown, and kindly find on the net by IU1FIG Diego Rispoli.
 	Translated from Java by IZ4APU Gabriele Battaglia.
@@ -279,7 +274,6 @@ def gridapu(x=0.0, y=0.0, num=10):
 	if num >= 10:
 		qthloc += L[yn[8]] + L[yn[9]]
 	return qthloc
-
 def sonify(data_list, duration, ptm=False, vol=0.5):
 	'''
 	sonify V5.0, oct 29th, 2024
@@ -345,8 +339,8 @@ def sonify(data_list, duration, ptm=False, vol=0.5):
 	return
 def Acusticator(score, kind=1, fs=44100):
 	"""
-	Versione 1.0 di domenica 2 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito.
+
 	Parametri:
 	 - score: lista di valori in multipli di 4, in cui ogni gruppo rappresenta:
 	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un valore in Hz oppure "p" per pausa.
@@ -355,6 +349,7 @@ def Acusticator(score, kind=1, fs=44100):
 	     * vol (float): volume da 0 a 1.
 	 - kind (int): tipo di onda (1=sinusoide, 2=quadra, 3=triangolare, 4=dente di sega).
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
+
 	Se la lunghezza di score non è un multiplo di 4 viene sollevato un errore.
 	La riproduzione avviene in background, restituendo subito il controllo al chiamante.
 	"""
@@ -363,6 +358,7 @@ def Acusticator(score, kind=1, fs=44100):
 	from scipy import signal
 	import threading
 	import re
+
 	def note_to_freq(note):
 		"""
 		Converte il parametro 'nota' in una frequenza in Hz.
@@ -391,10 +387,13 @@ def Acusticator(score, kind=1, fs=44100):
 			return freq
 		else:
 			raise TypeError("Tipo nota non riconosciuto")
+
 	if len(score) % 4 != 0:
 		raise ValueError("La lista score non è un multiplo di 4")
+
 	segments = []
-	fade_duration = 0.002  # Durata del fade-in e fade-out in secondi
+	fade_duration = 0.002  # Durata del fade-in (fade-out eliminato)
+
 	for i in range(0, len(score), 4):
 		note_param = score[i]
 		dur = float(score[i+1])
@@ -406,7 +405,6 @@ def Acusticator(score, kind=1, fs=44100):
 		envelope = np.ones(n_samples)
 		if fade_samples > 0:
 			envelope[:fade_samples] = np.linspace(0, 1, fade_samples)
-			envelope[-fade_samples:] = np.linspace(1, 0, fade_samples)
 		left_gain = np.sqrt((1 - pan) / 2)
 		right_gain = np.sqrt((1 + pan) / 2)
 		freq = note_to_freq(note_param)
@@ -428,13 +426,21 @@ def Acusticator(score, kind=1, fs=44100):
 		stereo[:, 0] = wave * vol * left_gain
 		stereo[:, 1] = wave * vol * right_gain
 		segments.append(stereo)
+
+	# Aggiungo sempre una pausa di 200 ms in coda alla sequenza
+	pause_duration = 0.2  # 200 millisecondi
+	n_pause_samples = int(fs * pause_duration)
+	silent_segment = np.zeros((n_pause_samples, 2))
+	segments.append(silent_segment)
+
 	full_signal = np.concatenate(segments, axis=0)
+
 	def play_sound():
 		sd.play(full_signal, fs)
 		sd.wait()
-	thread = threading.Thread(target=play_sound, daemon=True)
+
+	thread = threading.Thread(target=play_sound)
 	thread.start()
-	return
 def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
 	'''Versione 1.9 di lunedì 17 aprile 2023
 	Potenzia la funzione input implementando controlli di sicurezza.
@@ -499,7 +505,6 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 				print(f"Accettato {p}")
 				return p
 			else: return p
-
 def manuale(nf):
 	'''
 	Versione 1.0.1 di domenica 5 maggio 2024
@@ -520,7 +525,6 @@ def manuale(nf):
 	except IOError:
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
-
 def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False):
 	'''
 	V1.2.1 del 17 luglio 2024
@@ -602,7 +606,6 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 			if keyslist:
 				p = Listaprompt(ksl)
 	return
-
 def Scandenza(y=2100, m=1, g=1, h=0, i=0):
 	'''
 	V 1.0 del 15/12/2021
