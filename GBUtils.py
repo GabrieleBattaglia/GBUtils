@@ -3,9 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V18 di domenica 02 febbraio 2025
+	V20 di martedì 04 febbraio 2025
 Lista utilità contenute in questo pacchetto
-	Acusticator 1.2 di lunedì 3 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	Acusticator 2.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
 	dgt 1.9 di lunedì 17 aprile 2023
 	gridapu 1.2 from IU1FIG
@@ -339,8 +339,9 @@ def sonify(data_list, duration, ptm=False, vol=0.5):
 	return
 def Acusticator(score, kind=1, fs=44100):
 	"""
-	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito.
-
+	V2.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
+	utilizzando simpleaudio per la riproduzione.
 	Parametri:
 	 - score: lista di valori in multipli di 4, in cui ogni gruppo rappresenta:
 	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un valore in Hz oppure "p" per pausa.
@@ -349,16 +350,14 @@ def Acusticator(score, kind=1, fs=44100):
 	     * vol (float): volume da 0 a 1.
 	 - kind (int): tipo di onda (1=sinusoide, 2=quadra, 3=triangolare, 4=dente di sega).
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
-
 	Se la lunghezza di score non è un multiplo di 4 viene sollevato un errore.
 	La riproduzione avviene in background, restituendo subito il controllo al chiamante.
 	"""
 	import numpy as np
-	import sounddevice as sd
+	import simpleaudio as sa
 	from scipy import signal
 	import threading
 	import re
-
 	def note_to_freq(note):
 		"""
 		Converte il parametro 'nota' in una frequenza in Hz.
@@ -387,13 +386,10 @@ def Acusticator(score, kind=1, fs=44100):
 			return freq
 		else:
 			raise TypeError("Tipo nota non riconosciuto")
-
 	if len(score) % 4 != 0:
 		raise ValueError("La lista score non è un multiplo di 4")
-
 	segments = []
-	fade_duration = 0.002  # Durata del fade-in (fade-out eliminato)
-
+	fade_duration = 0.002  # Durata del fade-in e del fade-out in secondi
 	for i in range(0, len(score), 4):
 		note_param = score[i]
 		dur = float(score[i+1])
@@ -405,6 +401,7 @@ def Acusticator(score, kind=1, fs=44100):
 		envelope = np.ones(n_samples)
 		if fade_samples > 0:
 			envelope[:fade_samples] = np.linspace(0, 1, fade_samples)
+			envelope[-fade_samples:] = np.linspace(1, 0, fade_samples)
 		left_gain = np.sqrt((1 - pan) / 2)
 		right_gain = np.sqrt((1 + pan) / 2)
 		freq = note_to_freq(note_param)
@@ -426,20 +423,13 @@ def Acusticator(score, kind=1, fs=44100):
 		stereo[:, 0] = wave * vol * left_gain
 		stereo[:, 1] = wave * vol * right_gain
 		segments.append(stereo)
-
-	# Aggiungo sempre una pausa di 200 ms in coda alla sequenza
-	pause_duration = 0.2  # 200 millisecondi
-	n_pause_samples = int(fs * pause_duration)
-	silent_segment = np.zeros((n_pause_samples, 2))
-	segments.append(silent_segment)
-
 	full_signal = np.concatenate(segments, axis=0)
-
-	def play_sound():
-		sd.play(full_signal, fs)
-		sd.wait()
-
-	thread = threading.Thread(target=play_sound)
+	# Conversione in PCM int16 (simpleaudio accetta un buffer di byte in questo formato)
+	audio_data = np.int16(full_signal * 32767)
+	def play_audio():
+		play_obj = sa.play_buffer(audio_data.tobytes(), num_channels=2, bytes_per_sample=2, sample_rate=fs)
+		play_obj.wait_done()
+	thread = threading.Thread(target=play_audio)
 	thread.start()
 def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
 	'''Versione 1.9 di lunedì 17 aprile 2023
