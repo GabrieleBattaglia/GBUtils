@@ -3,9 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V20 di martedì 04 febbraio 2025
+	V21 di martedì 04 febbraio 2025
 Lista utilità contenute in questo pacchetto
-	Acusticator 2.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	Acusticator 3.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
 	dgt 1.9 di lunedì 17 aprile 2023
 	gridapu 1.2 from IU1FIG
@@ -337,11 +337,12 @@ def sonify(data_list, duration, ptm=False, vol=0.5):
 	sd.play(audio, samplerate=sample_rate)
 	sd.wait()
 	return
-def Acusticator(score, kind=1, fs=44100):
+def Acusticator(score, kind=1, adsr=[0.2, 0.0, 100.0, 0.2], fs=44100, sync=False):
 	"""
-	V2.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	V3.1 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
-	utilizzando simpleaudio per la riproduzione.
+	utilizzando simpleaudio per la riproduzione e applicando un envelope ADSR definito in termini
+	di percentuali della durata della nota.
 	Parametri:
 	 - score: lista di valori in multipli di 4, in cui ogni gruppo rappresenta:
 	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un valore in Hz oppure "p" per pausa.
@@ -349,6 +350,14 @@ def Acusticator(score, kind=1, fs=44100):
 	     * pan (float): panning stereo da -1 (sinistra) a 1 (destra).
 	     * vol (float): volume da 0 a 1.
 	 - kind (int): tipo di onda (1=sinusoide, 2=quadra, 3=triangolare, 4=dente di sega).
+	 - adsr: lista di quattro valori [a, d, s, r] in percentuali (0 a 100) dove:
+	         • a = percentuale della durata della nota destinata all'attacco (rampa da 0 a 1),
+	         • d = percentuale destinata al decadimento (rampa da 1 al livello di sustain),
+	         • s = livello di sustain (valore percentuale, che verrà scalato in un numero frazionario da 0 a 1),
+	         • r = percentuale destinata al rilascio (rampa da sustain a 0).
+	         La fase di sustain occupa il tempo rimanente, cioè: 100 - (a + d + r) in percentuale della durata totale.
+	         È richiesto che a + d + r ≤ 100.
+	         Il valore di default è [1.0, 0.0, 100.0, 1.0].
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
 	Se la lunghezza di score non è un multiplo di 4 viene sollevato un errore.
 	La riproduzione avviene in background, restituendo subito il controllo al chiamante.
@@ -358,13 +367,15 @@ def Acusticator(score, kind=1, fs=44100):
 	from scipy import signal
 	import threading
 	import re
+	# Converte i valori ADSR da percentuali (0-100) a frazioni
+	a_pct, d_pct, s_pct, r_pct = adsr
+	a_frac = a_pct / 100.0
+	d_frac = d_pct / 100.0
+	s_level = s_pct / 100.0
+	r_frac = r_pct / 100.0
+	if a_pct + d_pct + r_pct > 100:
+		raise ValueError("La somma delle percentuali per attacco, decadimento e rilascio deve essere <= 100")
 	def note_to_freq(note):
-		"""
-		Converte il parametro 'nota' in una frequenza in Hz.
-		 - Se 'note' è numerico, lo considera già in Hz.
-		 - Se 'note' è la stringa "p", ritorna None per indicare una pausa.
-		 - Se 'note' è una stringa come "c4" o "c#4", calcola la frequenza basandosi sul numero MIDI.
-		"""
 		if isinstance(note, (int, float)):
 			return float(note)
 		if isinstance(note, str):
@@ -389,7 +400,6 @@ def Acusticator(score, kind=1, fs=44100):
 	if len(score) % 4 != 0:
 		raise ValueError("La lista score non è un multiplo di 4")
 	segments = []
-	fade_duration = 0.002  # Durata del fade-in e del fade-out in secondi
 	for i in range(0, len(score), 4):
 		note_param = score[i]
 		dur = float(score[i+1])
@@ -397,11 +407,27 @@ def Acusticator(score, kind=1, fs=44100):
 		vol = float(score[i+3])
 		n_samples = int(fs * dur)
 		t = np.linspace(0, dur, n_samples, endpoint=False)
-		fade_samples = int(fs * fade_duration)
-		envelope = np.ones(n_samples)
-		if fade_samples > 0:
-			envelope[:fade_samples] = np.linspace(0, 1, fade_samples)
-			envelope[-fade_samples:] = np.linspace(1, 0, fade_samples)
+		# Calcola i campioni per ciascuna fase in base alle frazioni
+		attack_samples = int(n_samples * a_frac)
+		decay_samples = int(n_samples * d_frac)
+		release_samples = int(n_samples * r_frac)
+		sustain_samples = n_samples - (attack_samples + decay_samples + release_samples)
+		if sustain_samples < 0:
+			sustain_samples = 0
+		# Costruisce l'envelope ADSR:
+		# Attack: ramp da 0 a 1
+		attack_env = np.linspace(0, 1, attack_samples, endpoint=False) if attack_samples > 0 else np.array([])
+		# Decay: ramp da 1 al livello di sustain (s_level)
+		decay_env = np.linspace(1, s_level, decay_samples, endpoint=False) if decay_samples > 0 else np.array([])
+		# Sustain: livello costante pari a s_level
+		sustain_env = np.full(sustain_samples, s_level) if sustain_samples > 0 else np.array([])
+		# Release: ramp da s_level a 0
+		release_env = np.linspace(s_level, 0, release_samples, endpoint=True) if release_samples > 0 else np.array([])
+		envelope = np.concatenate([attack_env, decay_env, sustain_env, release_env])
+		if envelope.shape[0] < n_samples:
+			envelope = np.pad(envelope, (0, n_samples - envelope.shape[0]), mode='edge')
+		elif envelope.shape[0] > n_samples:
+			envelope = envelope[:n_samples]
 		left_gain = np.sqrt((1 - pan) / 2)
 		right_gain = np.sqrt((1 + pan) / 2)
 		freq = note_to_freq(note_param)
@@ -418,19 +444,22 @@ def Acusticator(score, kind=1, fs=44100):
 				wave = signal.sawtooth(2 * np.pi * freq * t, width=1.0)
 			else:
 				raise ValueError("Tipo di onda non riconosciuto")
+			# Applica l'envelope ADSR
 			wave *= envelope
 		stereo = np.zeros((n_samples, 2))
 		stereo[:, 0] = wave * vol * left_gain
 		stereo[:, 1] = wave * vol * right_gain
 		segments.append(stereo)
 	full_signal = np.concatenate(segments, axis=0)
-	# Conversione in PCM int16 (simpleaudio accetta un buffer di byte in questo formato)
 	audio_data = np.int16(full_signal * 32767)
 	def play_audio():
 		play_obj = sa.play_buffer(audio_data.tobytes(), num_channels=2, bytes_per_sample=2, sample_rate=fs)
 		play_obj.wait_done()
+	import threading
 	thread = threading.Thread(target=play_audio)
 	thread.start()
+	if sync: thread.join()
+	return
 def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
 	'''Versione 1.9 di lunedì 17 aprile 2023
 	Potenzia la funzione input implementando controlli di sicurezza.
