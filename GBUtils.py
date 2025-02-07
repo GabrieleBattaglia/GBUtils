@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V22 di mercoledì 05 febbraio 2025
+	V23 di venerdì 7 febbraio 2025.
 Lista utilità contenute in questo pacchetto
 	Acusticator 3.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
@@ -16,7 +16,7 @@ Lista utilità contenute in questo pacchetto
 	menu V1.2.1 del 17 luglio 2024
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
-	sonify V5.0, october 29th, 2024
+	sonify V6.0 - 7 febbraio 2025 - Gabriele Battaglia e ChatGPT O1
 	Vecchiume 1.0 del 15/12/2018
 '''
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, sync=False, wave=1):
@@ -368,68 +368,79 @@ def gridapu(x=0.0, y=0.0, num=10):
 	if num >= 10:
 		qthloc += L[yn[8]] + L[yn[9]]
 	return qthloc
-def sonify(data_list, duration, ptm=False, vol=0.5):
-	'''
-	sonify V5.0, oct 29th, 2024
-	It sonify a serie of data float
-	RX a float list in between 5 and 500k values
-	   duration in ms
-				bool portamento, if it's true a glissando will be applied in between value transition
-	It returns nothing but audio
-	'''
-	import random
+def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
+	"""
+	sonify V6.0 - 5 febbraio 2025 - Gabriele Battaglia eChatGPT O1
+	Sonifies a list of float data.
+	Parameters:
+	  data_list: List of float (5 <= len <= 500000)
+	  duration: Total duration in seconds (e.g., 2.58)
+	  ptm: If True, applies glissando (continuous portamento)
+	  vol: Volume factor (0.1 <= vol <= 1.0)
+	  file: If True, saves the audio to chessreg.wav
+	Returns immediately (non-blocking playback).
+	"""
 	import numpy as np
-	import sounddevice as sd
-	if len(data_list) < 5 or len(data_list) > 500000:
-		print("Sonify4: data serie length out of range")
+	import simpleaudio as sa
+	import wave
+	n = len(data_list)
+	if n < 5 or n > 500000:
+		print("sonify: data_list length out of range")
 		return
 	try:
-		data_list = [float(value) for value in data_list]
+		data_list = [float(v) for v in data_list]
 	except ValueError:
-		return  # Non produce alcun output se la conversione fallisce
-	if not (0.1 <= vol <= 1.0):
-		vol = max(0.1, min(vol, 1.0))
+		return
+	vol = max(0.1, min(vol, 1.0))
 	data_min = min(data_list)
 	data_max = max(data_list)
-	data_mean = sum(data_list) / len(data_list)
-	freq_min = 65.41   # C2
-	freq_max = 4186.01 # C8
+	freq_min = 65.41
+	freq_max = 4186.01
 	if data_max - data_min == 0:
-		frequencies = [(freq_min + freq_max) / 2] * len(data_list)
+		frequencies = [(freq_min+freq_max)/2]*n
 	else:
-		frequencies = [freq_min + (value - data_min) * (freq_max - freq_min) / (data_max - data_min) for value in data_list]
-	total_duration_sec = duration / 1000.0
+		frequencies = [freq_min+(v-data_min)*(freq_max-freq_min)/(data_max-data_min) for v in data_list]
 	sample_rate = 44100
-	total_samples = int(total_duration_sec * sample_rate)
-	t = np.arange(total_samples) / sample_rate
+	total_samples = int(duration*sample_rate)
+	if total_samples <= 0:
+		return
+	t = np.linspace(0, duration, total_samples, endpoint=False)
+	# >>> CORREZIONE QUI: endpoint=True per avere l'ultimo punto a "duration"
 	if ptm:
-		segment_times = np.linspace(0, total_duration_sec, len(frequencies), endpoint=False)
+		segment_times = np.linspace(0, duration, n, endpoint=True)
 		freq_array = np.interp(t, segment_times, frequencies, left=frequencies[0], right=frequencies[-1])
 	else:
-		segment_samples = total_samples // len(frequencies)
-		freq_array = np.zeros(total_samples)
+		freq_array = np.zeros(total_samples, dtype=np.float64)
+		segment_duration = duration/n
 		for i, freq in enumerate(frequencies):
-			start = i * segment_samples
-			end = start + segment_samples
-			if i == len(frequencies) - 1:
-				end = total_samples
-			freq_array[start:end] = freq
-	phase = 2 * np.pi * np.cumsum(freq_array / sample_rate)
-	audio_signal = np.sin(phase)
-	audio_signal *= vol
-	fade_samples = int(0.7 * sample_rate)  # 150 ms in numero di campioni
-	if fade_samples * 2 > total_samples:
-		fade_samples = total_samples // 2  # Assicura che il fade non sia più lungo del segnale
+			start_t = i*segment_duration
+			end_t = (i+1)*segment_duration
+			start_s = int(round(start_t*sample_rate))
+			end_s = int(round(end_t*sample_rate))
+			if i == n-1:
+				end_s = total_samples
+			freq_array[start_s:end_s] = freq
+	phase = 2.0*np.pi*np.cumsum(freq_array/sample_rate)
+	audio_signal = np.sin(phase)*vol
+	fade_duration_sec = 0.002
+	fade_samples = int(round(fade_duration_sec*sample_rate))
+	fade_samples = min(fade_samples, total_samples//2)
 	fade_in = np.linspace(0, 1, fade_samples)
 	fade_out = np.linspace(1, 0, fade_samples)
 	audio_signal[:fade_samples] *= fade_in
 	audio_signal[-fade_samples:] *= fade_out
 	pan = np.linspace(-1.0, 1.0, total_samples)
-	left = audio_signal * ((1 - pan) / 2)
-	right = audio_signal * ((1 + pan) / 2)
-	audio = np.column_stack((left, right))
-	sd.play(audio, samplerate=sample_rate)
-	sd.wait()
+	left = audio_signal*((1.0-pan)/2.0)
+	right = audio_signal*((1.0+pan)/2.0)
+	audio_stereo = np.column_stack((left, right))
+	audio_stereo_int16 = (audio_stereo*32767).astype(np.int16)
+	play_obj = sa.play_buffer(audio_stereo_int16, 2, 2, sample_rate)
+	if file:
+		with wave.open('chessreg.wav', 'wb') as wf:
+			wf.setnchannels(2)
+			wf.setsampwidth(2)
+			wf.setframerate(sample_rate)
+			wf.writeframes(audio_stereo_int16.tobytes())
 	return
 def Acusticator(score, kind=1, adsr=[0.2, 0.0, 100.0, 0.2], fs=44100, sync=False):
 	"""
