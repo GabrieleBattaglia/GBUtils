@@ -3,11 +3,11 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V23 di venerdì 7 febbraio 2025.
+	V24 di venerdì 7 febbraio 2025.
 Lista utilità contenute in questo pacchetto
 	Acusticator 3.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator 6.0 di mercoledì 5 febbraio 2025
+	CWzator 6.5 di venerdì 7 febbraio 2025
 	dgt 1.9 di lunedì 17 aprile 2023
 	gridapu 1.2 from IU1FIG
 	key 4.6
@@ -16,12 +16,12 @@ Lista utilità contenute in questo pacchetto
 	menu V1.2.1 del 17 luglio 2024
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
-	sonify V6.0 - 7 febbraio 2025 - Gabriele Battaglia e ChatGPT O1
+	sonify V6.0.1 del 7 febbraio 2025 - Gabriele Battaglia e ChatGPT O1
 	Vecchiume 1.0 del 15/12/2018
 '''
-def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, sync=False, wave=1):
+def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
 	"""
-	V6.0	di mercoledì 5 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
+	V6.5	di venerdì 7 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
 	Generates and plays Morse code audio from the given text message.
 	Parameters:
 		msg (str): Text message to convert to Morse code.
@@ -33,19 +33,20 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, s
 		fs (int): Sampling frequency in Hz (default 44100).
 		ms (int): Duration in milliseconds for fade-in and fade-out (anti-click ramps); the tone’s effective duration is reduced by 2*ms (default 1).
 		vol (float): Volume multiplier (range 0.0 [silence] to 1.0 [maximum], default 0.5).
-		sync (bool): If True, the function blocks until audio playback is finished; otherwise, it returns immediately (default False).
-		wave (int): Waveform type for the tone:
+		wv (int): Waveform type for the tone:
 		          1 = Sine (default),
 		          2 = Square,
 		          3 = Triangle,
 		          4 = Sawtooth.
+		sync (bool): If True, the function blocks until audio playback is finished; otherwise, it returns immediately (default False).
+		file (bool): If True, saves the audio to a file named "morse[datetime].wav" (default False).
 	Returns:
 		An object representing the playback (from simpleaudio), or None if parameters are invalid.
 	"""
 	import numpy as np
 	import simpleaudio as sa
 	if not isinstance(msg, str) or msg == "" or pitch < 130 or pitch > 2000 or wpm < 5 or wpm > 100 or \
-	   l < 1 or l > 100 or s < 1 or s > 100 or p < 1 or p > 100 or vol < 0 or vol > 1 or wave not in [1,2,3,4]:
+	   l < 1 or l > 100 or s < 1 or s > 100 or p < 1 or p > 100 or vol < 0 or vol > 1 or wv not in [1,2,3,4]:
 		print("Not valid CW parameters")
 		return None
 	T = 1.2 / float(wpm)
@@ -57,14 +58,14 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, s
 	def generate_tone(duration):
 		N = int(fs * duration)
 		t = np.linspace(0, duration, N, False)
-		if wave == 1:  # Sine wave
+		if wv == 1:  # Sine wave
 			signal = np.sin(2 * np.pi * pitch * t)
-		elif wave == 2:  # Square wave
+		elif wv == 2:  # Square wave
 			signal = np.sign(np.sin(2 * np.pi * pitch * t))
-		elif wave == 3:  # Triangle wave
+		elif wv == 3:  # Triangle wave
 			# Triangle wave: 2 * abs(2*(t*freq - floor(t*freq + 0.5))) - 1
 			signal = 2 * np.abs(2 * (pitch * t - np.floor(pitch * t + 0.5))) - 1
-		elif wave == 4:  # Sawtooth wave
+		elif wv == 4:  # Sawtooth wave
 			# Sawtooth wave: 2*(t*freq - floor(0.5 + t*freq))
 			signal = 2 * (pitch * t - np.floor(0.5 + pitch * t))
 		fade_samples = int(fs * ms / 1000)
@@ -75,7 +76,6 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, s
 		return (signal * (2**15 - 1) * vol).astype(np.int16)
 	def generate_silence(duration):
 		return np.zeros(int(fs * duration), dtype=np.int16)
-	# Morse code mapping defined at module level (could be imported externally)
 	morse_map = { "a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
 			"g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..",
 			"m":"--", "n":"-.", "o":"---", "p":".--.", "q":"--.-", "r":".-.",
@@ -109,6 +109,15 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, s
 			segments.append(generate_silence(word_gap))
 	audio = np.concatenate(segments) if segments else np.array([], dtype=np.int16)
 	play_obj = sa.play_buffer(audio, 1, 2, fs)
+	if file:
+		from datetime import datetime
+		import	wave
+		filename = "cwapu Morse recorded at " + datetime.now().strftime("%Y%m%d%H%M%S") + ".wav"
+		with wave.open(filename, 'wb') as wf:
+			wf.setnchannels(1)
+			wf.setsampwidth(2)
+			wf.setframerate(44100)
+			wf.writeframes(audio.tobytes())
 	if sync:
 		play_obj.wait_done()
 	return play_obj
@@ -370,14 +379,14 @@ def gridapu(x=0.0, y=0.0, num=10):
 	return qthloc
 def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	"""
-	sonify V6.0 - 5 febbraio 2025 - Gabriele Battaglia eChatGPT O1
+	sonify V6.0.1 - 5 febbraio 2025 - Gabriele Battaglia eChatGPT O1
 	Sonifies a list of float data.
 	Parameters:
 	  data_list: List of float (5 <= len <= 500000)
 	  duration: Total duration in seconds (e.g., 2.58)
 	  ptm: If True, applies glissando (continuous portamento)
 	  vol: Volume factor (0.1 <= vol <= 1.0)
-	  file: If True, saves the audio to chessreg.wav
+	  file: If True, saves the audio to sonification[datetime].wav
 	Returns immediately (non-blocking playback).
 	"""
 	import numpy as np
@@ -405,7 +414,6 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	if total_samples <= 0:
 		return
 	t = np.linspace(0, duration, total_samples, endpoint=False)
-	# >>> CORREZIONE QUI: endpoint=True per avere l'ultimo punto a "duration"
 	if ptm:
 		segment_times = np.linspace(0, duration, n, endpoint=True)
 		freq_array = np.interp(t, segment_times, frequencies, left=frequencies[0], right=frequencies[-1])
@@ -436,7 +444,9 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	audio_stereo_int16 = (audio_stereo*32767).astype(np.int16)
 	play_obj = sa.play_buffer(audio_stereo_int16, 2, 2, sample_rate)
 	if file:
-		with wave.open('chessreg.wav', 'wb') as wf:
+		from	datetime import datetime
+		filename = "sonification" + datetime.now().strftime("%Y%m%d%H%M%S") + ".wav"
+		with wave.open(filename, 'wb') as wf:
 			wf.setnchannels(2)
 			wf.setsampwidth(2)
 			wf.setframerate(sample_rate)
