@@ -3,11 +3,11 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V24 di venerdì 7 febbraio 2025.
+	V25 di sabato 8 febbraio 2025.
 Lista utilità contenute in questo pacchetto
 	Acusticator 3.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator 6.5 di venerdì 7 febbraio 2025
+	CWzator V6.6	di sabato 8 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
 	dgt 1.9 di lunedì 17 aprile 2023
 	gridapu 1.2 from IU1FIG
 	key 4.6
@@ -21,7 +21,7 @@ Lista utilità contenute in questo pacchetto
 '''
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
 	"""
-	V6.5	di venerdì 7 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
+	V6.6	di sabato 8 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
 	Generates and plays Morse code audio from the given text message.
 	Parameters:
 		msg (str): Text message to convert to Morse code.
@@ -42,6 +42,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		file (bool): If True, saves the audio to a file named "morse[datetime].wav" (default False).
 	Returns:
 		An object representing the playback (from simpleaudio), or None if parameters are invalid.
+		rwpm (float): Effective words per minute rate based on the actual Morse code timing. If the standard timing is used, it equals wpm.
 	"""
 	import numpy as np
 	import simpleaudio as sa
@@ -108,6 +109,31 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		if w_idx < len(words)-1:
 			segments.append(generate_silence(word_gap))
 	audio = np.concatenate(segments) if segments else np.array([], dtype=np.int16)
+	if (l, s, p) == (30, 50, 50):
+		rwpm = wpm
+	else:
+		dots = 0
+		dashes = 0
+		intra_gaps = 0
+		letter_gaps = 0
+		word_gaps = 0
+		words_list = msg.lower().split()
+		for w in words_list:
+			letters = [ch for ch in w if ch in morse_map]
+			for letter in letters:
+				code = morse_map[letter]
+				dots += code.count('.')
+				dashes += code.count('-')
+				if len(code) > 1:
+					intra_gaps += (len(code) - 1)
+			if len(letters) > 1:
+				letter_gaps += (len(letters) - 1)
+		if len(words_list) > 1:
+			word_gaps = len(words_list) - 1
+		standard_total = dots + 3 * dashes + intra_gaps + 3 * letter_gaps + 7 * word_gaps
+		actual_total = (dots * (p / 50.0)) + (3 * dashes * (l / 30.0)) + (intra_gaps * (s / 50.0)) + (3 * letter_gaps * (s / 50.0)) + (7 * word_gaps * (s / 50.0))
+		ratio = actual_total / standard_total if standard_total != 0 else 1
+		rwpm = wpm / ratio
 	play_obj = sa.play_buffer(audio, 1, 2, fs)
 	if file:
 		from datetime import datetime
@@ -120,7 +146,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			wf.writeframes(audio.tobytes())
 	if sync:
 		play_obj.wait_done()
-	return play_obj
+	return play_obj, rwpm
 class Mazzo:
 	'''
 	V4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
