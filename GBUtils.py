@@ -3,9 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V25 di sabato 8 febbraio 2025.
+	V26 di sabato 8 febbraio 2025.
 Lista utilità contenute in questo pacchetto
-	Acusticator 3.0 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V6.6	di sabato 8 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
 	dgt 1.9 di lunedì 17 aprile 2023
@@ -480,7 +480,7 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	return
 def Acusticator(score, kind=1, adsr=[0.2, 0.0, 100.0, 0.2], fs=44100, sync=False):
 	"""
-	V3.1 di martedì 4 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando simpleaudio per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -494,11 +494,11 @@ def Acusticator(score, kind=1, adsr=[0.2, 0.0, 100.0, 0.2], fs=44100, sync=False
 	 - adsr: lista di quattro valori [a, d, s, r] in percentuali (0 a 100) dove:
 	         • a = percentuale della durata della nota destinata all'attacco (rampa da 0 a 1),
 	         • d = percentuale destinata al decadimento (rampa da 1 al livello di sustain),
-	         • s = livello di sustain (valore percentuale, che verrà scalato in un numero frazionario da 0 a 1),
+	         • s = livello di sustain (valore percentuale volume, che verrà scalato in un numero frazionario da 0 a 1),
 	         • r = percentuale destinata al rilascio (rampa da sustain a 0).
 	         La fase di sustain occupa il tempo rimanente, cioè: 100 - (a + d + r) in percentuale della durata totale.
 	         È richiesto che a + d + r ≤ 100.
-	         Il valore di default è [1.0, 0.0, 100.0, 1.0].
+	         Il valore di default è [.2, 0.0, 100.0, .2].
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
 	Se la lunghezza di score non è un multiplo di 4 viene sollevato un errore.
 	La riproduzione avviene in background, restituendo subito il controllo al chiamante.
