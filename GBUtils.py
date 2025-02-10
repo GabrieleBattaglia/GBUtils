@@ -3,11 +3,11 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V26 di sabato 8 febbraio 2025.
+	V27 di lunedì 10 febbraio 2025.
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator V6.6	di sabato 8 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
+	CWzator VV6.6.1	di lunedì 10 febbraio 2025 - Kevin Schmidt (W9CF), Gabriele Battaglia (IZ4APU) e	ChatGPT o3-mini-high
 	dgt 1.9 di lunedì 17 aprile 2023
 	gridapu 1.2 from IU1FIG
 	key 4.6
@@ -21,7 +21,9 @@ Lista utilità contenute in questo pacchetto
 '''
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
 	"""
-	V6.6	di sabato 8 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
+	V6.6.1	di lunedì 10 febbraio 2025 - Gabriele Battaglia e	ChatGPT o3-mini-high
+		da un'idea originale di Kevin Schmidt W9CF
+	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Generates and plays Morse code audio from the given text message.
 	Parameters:
 		msg (str): Text message to convert to Morse code.
