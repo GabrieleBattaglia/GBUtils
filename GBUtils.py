@@ -3,14 +3,14 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V27 di lunedì 10 febbraio 2025.
+	V28 di lunedì 10 febbraio 2025.
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator VV6.6.1	di lunedì 10 febbraio 2025 - Kevin Schmidt (W9CF), Gabriele Battaglia (IZ4APU) e	ChatGPT o3-mini-high
 	dgt 1.9 di lunedì 17 aprile 2023
 	gridapu 1.2 from IU1FIG
-	key 4.6
+	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
 	menu V1.2.1 del 17 luglio 2024
@@ -342,22 +342,35 @@ def base62(n):
 	out.reverse()
 	return segno + ''.join(symbols[l] for l in out)
 def key(prompt="", attesa=99999):
-	'''V4.6 29/11/2022.
+	'''V5.0 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	Attende per il numero di secondi specificati
 	se tempo e' scaduto, o si preme un tasto, esce.
 	prompt e' il messaggio da mostrare.
 	Restituisce il tasto premuto.
 	'''
-	import msvcrt, time, sys
-	if prompt != "":
-		print (prompt, end="")
-		sys.stdout.flush()
-	t = time.time(); a = ""
-	while (time.time() - t <= attesa):
-		if msvcrt.kbhit():
-			a = msvcrt.getwch()
-			return a
-	return ''
+	import sys, time, os
+	if prompt:
+		print(prompt, end="", flush=True)
+	start_time = time.time()
+	if os.name == 'nt':
+		import msvcrt
+		while time.time() - start_time <= attesa:
+			if msvcrt.kbhit():
+				return msvcrt.getwch()
+		return ''
+	else:
+		import select, tty, termios
+		fd = sys.stdin.fileno()
+		old_settings = termios.tcgetattr(fd)
+		try:
+			tty.setcbreak(fd)
+			while time.time() - start_time <= attesa:
+				rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+				if rlist:
+					return sys.stdin.read(1)
+			return ''
+		finally:
+			termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 def gridapu(x=0.0, y=0.0, num=10):
 	'''GRIDAPU V1.2 - Author unknown, and kindly find on the net by IU1FIG Diego Rispoli.
 	Translated from Java by IZ4APU Gabriele Battaglia.
