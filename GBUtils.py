@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 '''
 	GBUtils di Gabriele Battaglia (IZ4APU)
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V29 di giovedì 13febbraio 2025.
+	V30 di giovedì 13febbraio 2025.
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
