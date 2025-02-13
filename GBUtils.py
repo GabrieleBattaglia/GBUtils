@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V28 di lunedì 10 febbraio 2025.
+	V29 di giovedì 13febbraio 2025.
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
-	menu V1.2.1 del 17 luglio 2024
+	menu V2.0.0 del 13 febbraio 2025 by	Gabriele Battaglia	e ChatGPT o3-mini-high
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
 	sonify V6.0.1 del 7 febbraio 2025 - Gabriele Battaglia e ChatGPT O1
@@ -702,7 +702,7 @@ def manuale(nf):
 	return
 def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False):
 	'''
-	V1.2.1 del 17 luglio 2024
+	V2.0.0 del 13 febbraio 2025
 	riceve
 		dict d: il menù da mostrare d{'chiave':'spiegazione'}
 		str p: prompt per richiesta comandi
@@ -713,11 +713,27 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 	ritorna
 		str stringa: scelta effettuata
 	'''
-	import msvcrt
+	import sys, time, os
+	if os.name != 'nt':
+		import select, tty, termios
 	def key(prompt):
 		print(prompt, end='', flush=True)
-		ch = msvcrt.getch().decode('utf-8')
-		return ch
+		if os.name == 'nt':
+			import msvcrt
+			ch = msvcrt.getwch()
+			return ch
+		else:
+			fd = sys.stdin.fileno()
+			old_settings = termios.tcgetattr(fd)
+			try:
+				tty.setcbreak(fd)
+				while True:
+					r, _, _ = select.select([sys.stdin], [], [], 0.1)
+					if r:
+						ch = sys.stdin.read(1)
+						return ch
+			finally:
+				termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 	def Mostra(l):
 		count = 0
 		item = len(l)
@@ -727,15 +743,16 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 			count += 1
 			if count % 20 == 0:
 				print(f"---------- [{int(count/20)}]---({count-19}/{count})...{item}--------AnyKey-or-ESC--")
-				ch = msvcrt.getch()
-				if ch == b'\x1b':  return False
+				ch = key("")
+				if ch == '\x1b':
+					return False
 		return True
 	def Listaprompt(l):
-		p = '\n['
+		prompt_str = '\n['
 		for k in l:
-			p += k + "."
-		p += "]>"
-		return p
+			prompt_str += k + "."
+		prompt_str += "]>"
+		return prompt_str
 	if show_only:
 		Mostra(d)
 		return None
@@ -750,7 +767,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 		p = Listaprompt(ksd)
 	while True:
 		s = key(prompt=f"{p} {stringa}")
-		if s == '\r':
+		if s == '\r' or s == '\n':
 			if stringa == '':
 				return None
 			elif stringa in ksd:
@@ -759,7 +776,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 				return [k for k in ksd if k.startswith(stringa)][0]
 			else:
 				print("\nContinua a digitare")
-		elif s == '\x08':  # backspace
+		elif s == '\x08' or ord(s) == 127:
 			stringa = stringa[:-1]
 			if stringa == '':
 				return None
