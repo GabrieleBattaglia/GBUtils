@@ -4,7 +4,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V30 di giovedì 13febbraio 2025.
+	V31 di giovedì 13febbraio 2025.
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
@@ -14,7 +14,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
-	menu V2.0.0 del 13 febbraio 2025 by	Gabriele Battaglia	e ChatGPT o3-mini-high
+	menu V2.0.1 del 14 febbraio 2025
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
 	sonify V6.0.1 del 7 febbraio 2025 - Gabriele Battaglia e ChatGPT O1
@@ -703,9 +703,10 @@ def manuale(nf):
 	return
 def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False):
 	'''
-	V2.0.0 del 13 febbraio 2025
+	V2.0.1 del 14 febbraio 2025
 	riceve
 		dict d: il menù da mostrare d{'chiave':'spiegazione'}
+			se len(d)=1, ritorna la chiave
 		str p: prompt per richiesta comandi
 		str ntf: da mostrare in caso di comando non presente in d
 		bool show: se vero, mostra menù alla chiamata
@@ -761,9 +762,11 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 		Mostra(d)
 	ksd = list(map(str, d.keys()))
 	stringa = ''
-	if len(d) < 2:
-		print('Not enough voices in menu')
+	if len(d) == 0:
+		print('Nothing to choose')
 		return ''
+	elif len(d) == 1:
+		return ksd[0]
 	if keyslist:
 		p = Listaprompt(ksd)
 	while True:
