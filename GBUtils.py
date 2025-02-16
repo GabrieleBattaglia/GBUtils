@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 '''
 	GBUtils di Gabriele Battaglia (IZ4APU)
 	Data concepimento: lunedì 3 febbraio 2020.
