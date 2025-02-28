@@ -3,12 +3,12 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V31 di giovedì 13febbraio 2025.
+	V32 di lunedì 24 febbraio 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator VV6.6.1	di lunedì 10 febbraio 2025 - Kevin Schmidt (W9CF), Gabriele Battaglia (IZ4APU) e	ChatGPT o3-mini-high
-	dgt 1.9 di lunedì 17 aprile 2023
+	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	gridapu 1.2 from IU1FIG
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
@@ -617,7 +617,7 @@ def Acusticator(score, kind=1, adsr=[0.2, 0.0, 100.0, 0.2], fs=44100, sync=False
 	if sync: thread.join()
 	return
 def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
-	'''Versione 1.9 di lunedì 17 aprile 2023
+	'''Versione 1.10 di lunedì 24 febbraio 2025
 	Potenzia la funzione input implementando controlli di sicurezza.
 	Riceve il prompt, il tipo e
 	  imin e imax minimo e massimo per i valori interi;
@@ -645,11 +645,11 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 					else: return p
 				elif p < imin:
 					print(f"Corretto con {imin-p}, accettato: {imin}")
-					return imin
+					return int(imin)
 				elif p > imax:
 					print(f"Corretto con {imax-p}, accettato: {imax}")
-					return imax
-				else: return p
+					return int(imax)
+				else: return int(p)
 			except ValueError:
 				print("Si prega di inserire un valore numerico intero.")
 		if kind == "f":
@@ -660,10 +660,10 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 					else: return p
 				elif p < fmin:
 					print(f"Corretto con {fmin-p:10.3}, accettato: {fmin}")
-					return fmin
+					return float(fmin)
 				elif p > fmax:
 					print(f"Corretto con {fmax-p:10.3}, accettato: {fmax}")
-					return fmax
+					return float(fmax)
 				else: return p
 			except ValueError:
 				print("Si prega di inserire un valore numerico decimale.")
