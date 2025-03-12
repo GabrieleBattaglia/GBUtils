@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V32 di lunedì 24 febbraio 2025
+	V33 di martedì 11 marzo 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
-	menu V2.0.1 del 14 febbraio 2025
+	menu V3.0 – martedì 11 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
 	sonify V6.0.1 del 7 febbraio 2025 - Gabriele Battaglia e ChatGPT O1
@@ -700,107 +700,145 @@ def manuale(nf):
 	except IOError:
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
-def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False):
-	'''
-	V2.0.1 del 14 febbraio 2025
-	riceve
-		dict d: il menù da mostrare d{'chiave':'spiegazione'}
-			se len(d)=1, ritorna la chiave
-		str p: prompt per richiesta comandi
-		str ntf: da mostrare in caso di comando non presente in d
-		bool show: se vero, mostra menù alla chiamata
-		bool show_only: se vero mostra menù e ritorna None
-		bool keyslist: se vero genera prompt con sequenza di chiavi e ignora p
-	ritorna
-		str stringa: scelta effettuata
-	'''
+def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False, full_keyslist=True, pager=20):
+	"""V3.0 – martedì 11 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
+	Parametri:
+		d: dizionario con coppie chiave:descrizione
+		p: prompt di default se keyslist è False
+		ntf: messaggio in caso di filtro vuoto
+		show: se True, mostra il menu iniziale
+		show_only: se True, mostra il menu e termina
+		keyslist: se True, il prompt è generato dalle chiavi filtrate
+		full_keyslist: se True (solo se keyslist True), mostra le chiavi complete (con iniziali maiuscole),
+			altrimenti mostra solo l'abbreviazione necessaria (tutto in maiuscolo)
+		pager: numero di elementi da mostrare per pagina nel pager
+	Restituisce:
+		la chiave scelta oppure None se annullato
+	"""
 	import sys, time, os
-	if os.name != 'nt':
+	if os.name!='nt':
 		import select, tty, termios
-	def key(prompt):
+	def key(prompt=""):
 		print(prompt, end='', flush=True)
-		if os.name == 'nt':
+		if os.name=='nt':
 			import msvcrt
-			ch = msvcrt.getwch()
+			ch=msvcrt.getwch()
 			return ch
 		else:
-			fd = sys.stdin.fileno()
-			old_settings = termios.tcgetattr(fd)
+			fd=sys.stdin.fileno()
+			old_settings=termios.tcgetattr(fd)
 			try:
 				tty.setcbreak(fd)
 				while True:
-					r, _, _ = select.select([sys.stdin], [], [], 0.1)
+					r,_,_=select.select([sys.stdin],[],[],0.1)
 					if r:
-						ch = sys.stdin.read(1)
+						ch=sys.stdin.read(1)
 						return ch
 			finally:
 				termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-	def Mostra(l):
-		count = 0
-		item = len(l)
+	def Mostra(l, pager):
+		count=0
+		total=len(l)
 		print("\n")
 		for j in l:
 			print(f"- '{j}' -- {d[j]};")
-			count += 1
-			if count % 20 == 0:
-				print(f"---------- [{int(count/20)}]---({count-19}/{count})...{item}--------AnyKey-or-ESC--")
-				ch = key("")
-				if ch == '\x1b':
+			count+=1
+			if count%pager==0 and count<total:
+				print(f"---------- [Page {int(count/pager)}]---({count-pager+1}/{count})...{total}--------AnyKey-or-ESC--")
+				ch=key("")
+				if ch=='\x1b':
 					return False
+		print(f"---------- [End]---({count}/{total})----------")
 		return True
-	def Listaprompt(l):
-		prompt_str = '\n['
-		for k in l:
-			prompt_str += k + "."
-		prompt_str += "]>"
-		return prompt_str
+	def minimal_keys(keys):
+		res={}
+		for key_item in keys:
+			abbr=""
+			for i in range(1, len(key_item)+1):
+				pref=key_item[:i]
+				unique=True
+				for other in keys:
+					if other==key_item:
+						continue
+					if other.lower().startswith(pref.lower()):
+						unique=False
+						break
+				if unique:
+					abbr=pref.upper()
+					break
+			if abbr=="":
+				abbr=key_item.upper()
+			res[key_item]=abbr
+		return res
+	def Listaprompt(keys_list, full):
+		if full:
+			formatted=[k.capitalize() for k in keys_list]
+		else:
+			abbrev=minimal_keys(keys_list)
+			formatted=[abbrev[k] for k in keys_list]
+		return "\n(" + ", ".join(formatted) + ")>"
+	def valid_match(key_item, sub):
+		kl=key_item.lower()
+		sl=sub.lower()
+		if sl=="":
+			return True
+		if kl==sl:
+			return True
+		if sl not in kl:
+			return False
+		# Escludi se l'unico match è in posizione finale (match esclusivamente sull'ultima lettera o sequenza finale)
+		if kl.endswith(sl) and kl.find(sl)==(len(kl)-len(sl)) and kl.count(sl)==1:
+			return False
+		return True
+	orig_keys=list(d.keys())
+	current_input=""
+	if len(d)==0:
+		print("Nothing to choose")
+		return ""
+	elif len(d)==1:
+		return orig_keys[0]
 	if show_only:
-		Mostra(d)
+		Mostra(orig_keys, pager)
 		return None
 	if show:
-		Mostra(d)
-	ksd = list(map(str, d.keys()))
-	stringa = ''
-	if len(d) == 0:
-		print('Nothing to choose')
-		return ''
-	elif len(d) == 1:
-		return ksd[0]
-	if keyslist:
-		p = Listaprompt(ksd)
+		Mostra(orig_keys, pager)
 	while True:
-		s = key(prompt=f"{p} {stringa}")
-		if s == '\r' or s == '\n':
-			if stringa == '':
+		filtered=[k for k in orig_keys if valid_match(k, current_input)]
+		if not filtered:
+			print("\n"+ntf)
+			current_input=""
+			filtered=orig_keys[:]
+		if keyslist:
+			prompt_str=Listaprompt(filtered, full_keyslist)
+		else:
+			prompt_str=p
+		user_char=key(prompt=" "+prompt_str+current_input)
+		if user_char in ['\r','\n']:
+			if current_input=="":
 				return None
-			elif stringa in ksd:
-				return stringa
-			elif len([k for k in ksd if k.startswith(stringa)]) == 1:
-				return [k for k in ksd if k.startswith(stringa)][0]
+			for k in orig_keys:
+				if k.lower()==current_input.lower():
+					return k
+			if len(filtered)==1:
+				return filtered[0]
 			else:
 				print("\nContinua a digitare")
-		elif s == '\x08' or ord(s) == 127:
-			stringa = stringa[:-1]
-			if stringa == '':
+		elif user_char=='\x1b':
+			return None
+		elif user_char=='?':
+			if not Mostra(filtered, pager):
 				return None
-			ksl = [j for j in ksd if j.startswith(stringa)]
-			Mostra(ksl)
+		elif user_char=='\x08' or ord(user_char)==127:
+			if current_input:
+				current_input=current_input[:-1]
 		else:
-			stringa += s
-			ksl = [j for j in ksd if j.startswith(stringa)]
-			if len(ksl) == 1:
-				return ksl[0]
-			elif len(ksl) == 0:
-				print("\n" + ntf)
-				stringa = stringa[:-1]
-				ksl = [j for j in ksd if j.startswith(stringa)]
-				if not Mostra(ksl):
-					return None
-			else:
-				Mostra(ksl)
-			if keyslist:
-				p = Listaprompt(ksl)
-	return
+			current_input+=user_char
+			filtered=[k for k in orig_keys if valid_match(k, current_input)]
+			if len(filtered)==0:
+				print("\n"+ntf)
+				current_input=""
+			elif len(filtered)==1:
+				return filtered[0]
 def Scandenza(y=2100, m=1, g=1, h=0, i=0):
 	'''
 	V 1.0 del 15/12/2021
