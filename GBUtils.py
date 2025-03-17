@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V33 di martedì 11 marzo 2025
+	V34 di lunedì 17 marzo 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
-	menu V3.0 – martedì 11 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
+	V3.7 – lunedì 17 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
 	sonify V6.0.1 del 7 febbraio 2025 - Gabriele Battaglia e ChatGPT O1
@@ -700,8 +700,8 @@ def manuale(nf):
 	except IOError:
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
-def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False, full_keyslist=True, pager=20):
-	"""V3.0 – martedì 11 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
+def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False, full_keyslist=True, pager=20, show_on_filter=True):
+	"""V3.7 – lunedì 17 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
 	Parametri:
 		d: dizionario con coppie chiave:descrizione
 		p: prompt di default se keyslist è False
@@ -712,6 +712,9 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 		full_keyslist: se True (solo se keyslist True), mostra le chiavi complete (con iniziali maiuscole),
 			altrimenti mostra solo l'abbreviazione necessaria (tutto in maiuscolo)
 		pager: numero di elementi da mostrare per pagina nel pager
+			esc nel pager termina subito la paginazione
+		show_on_filter: se True, visualizza la lista delle coppie candidate ad ogni aggiornamento del filtro
+		?	nel prompt mostra il pager
 	Restituisce:
 		la chiave scelta oppure None se annullato
 	"""
@@ -744,7 +747,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 			print(f"- '{j}' -- {d[j]};")
 			count+=1
 			if count%pager==0 and count<total:
-				print(f"---------- [Page {int(count/pager)}]---({count-pager+1}/{count})...{total}--------AnyKey-or-ESC--")
+				print(f"--- [PG: {int(count/pager)}] --- ({count-pager+1}/{count})...{total}---",end="")
 				ch=key("")
 				if ch=='\x1b':
 					return False
@@ -752,23 +755,29 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 		return True
 	def minimal_keys(keys):
 		res={}
+		keys_lower = {key: key.lower() for key in keys}
 		for key_item in keys:
-			abbr=""
-			for i in range(1, len(key_item)+1):
-				pref=key_item[:i]
-				unique=True
-				for other in keys:
-					if other==key_item:
-						continue
-					if other.lower().startswith(pref.lower()):
-						unique=False
+			key_str = key_item.lower()
+			n = len(key_str)
+			found_abbr = None
+			for L in range(1, n+1):
+				for i in range(n - L + 1):
+					candidate = key_str[i:i+L]
+					unique = True
+					for other in keys:
+						if other==key_item:
+							continue
+						if candidate in keys_lower[other]:
+							unique = False
+							break
+					if unique:
+						found_abbr = candidate.upper()
 						break
-				if unique:
-					abbr=pref.upper()
+				if found_abbr is not None:
 					break
-			if abbr=="":
-				abbr=key_item.upper()
-			res[key_item]=abbr
+			if found_abbr is None:
+				found_abbr = key_item.upper()
+			res[key_item]=found_abbr
 		return res
 	def Listaprompt(keys_list, full):
 		if full:
@@ -786,12 +795,12 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 			return True
 		if sl not in kl:
 			return False
-		# Escludi se l'unico match è in posizione finale (match esclusivamente sull'ultima lettera o sequenza finale)
 		if kl.endswith(sl) and kl.find(sl)==(len(kl)-len(sl)) and kl.count(sl)==1:
 			return False
 		return True
 	orig_keys=list(d.keys())
 	current_input=""
+	last_displayed=None
 	if len(d)==0:
 		print("Nothing to choose")
 		return ""
@@ -802,12 +811,20 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 		return None
 	if show:
 		Mostra(orig_keys, pager)
+		last_displayed = orig_keys[:]
 	while True:
 		filtered=[k for k in orig_keys if valid_match(k, current_input)]
 		if not filtered:
 			print("\n"+ntf)
 			current_input=""
 			filtered=orig_keys[:]
+		if len(filtered)==1:
+			return filtered[0]
+		if show_on_filter and filtered!=last_displayed:
+			if not Mostra(filtered, pager):
+				last_displayed = filtered[:]
+				continue
+			last_displayed = filtered[:]
 		if keyslist:
 			prompt_str=Listaprompt(filtered, full_keyslist)
 		else:
@@ -827,18 +844,21 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 			return None
 		elif user_char=='?':
 			if not Mostra(filtered, pager):
-				return None
+				last_displayed = filtered[:]
+				continue
+			last_displayed = filtered[:]
 		elif user_char=='\x08' or ord(user_char)==127:
 			if current_input:
 				current_input=current_input[:-1]
 		else:
 			current_input+=user_char
 			filtered=[k for k in orig_keys if valid_match(k, current_input)]
+			if len(filtered)==1:
+				return filtered[0]
 			if len(filtered)==0:
 				print("\n"+ntf)
 				current_input=""
-			elif len(filtered)==1:
-				return filtered[0]
+	return None
 def Scandenza(y=2100, m=1, g=1, h=0, i=0):
 	'''
 	V 1.0 del 15/12/2021
