@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V34 di lunedì 17 marzo 2025
+	V35 di lunedì 17 marzo 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V3.2 di domenica 9 febbraio 2025. Gabriele Battaglia e ChatGPT o3-mini-high
 	base62 3.0 di martedì 15 novembre 2022
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
-	V3.7 – lunedì 17 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
+	menu V3.8 – mercoledì 19 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
 	sonify V6.0.1 del 7 febbraio 2025 - Gabriele Battaglia e ChatGPT O1
@@ -701,7 +701,7 @@ def manuale(nf):
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
 def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False, full_keyslist=True, pager=20, show_on_filter=True):
-	"""V3.7 – lunedì 17 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
+	"""V3.8 – mercoledì 19 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
 	Parametri:
 		d: dizionario con coppie chiave:descrizione
 		p: prompt di default se keyslist è False
@@ -744,7 +744,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, key
 		total=len(l)
 		print("\n")
 		for j in l:
-			print(f"- '{j}' -- {d[j]};")
+			print(f"- ({j}) -- {d[j]};")
 			count+=1
 			if count%pager==0 and count<total:
 				print(f"--- [PG: {int(count/pager)}] --- ({count-pager+1}/{count})...{total}---",end="")
