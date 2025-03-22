@@ -6,6 +6,8 @@ t = {
 	"Tempo": "Il tempo è un'illusione che sfida la logica.",
 	"Spirito": "Lo spirito umano è un universo di possibilità.",
 	"Onda": "Come un'onda, le emozioni vanno e vengono.",
+	"archivio": "Voce di prova per testare il menu.",
+	"archivio2025": "Altra Voce di prova per testare il menu.",
 	"Arcobaleno": "L'arcobaleno è la promessa di speranza dopo la tempesta.",
 	"Viaggio": "Ogni viaggio inizia con un passo incerto.",
 	"Sogno": "I sogni sono le chiavi che aprono le porte dell'immaginazione.",
