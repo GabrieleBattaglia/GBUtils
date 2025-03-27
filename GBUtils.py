@@ -3,9 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V37 di lunedì 17 marzo 2025
+	V40 di giovedì 27 marzo 2025
 Lista utilità contenute in questo pacchetto
-	Acusticator V4.0 di domenica 23 marzo 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V7.0	di domenica 23 marzo 2025 - Kevin Schmidt (W9CF), Gabriele Battaglia (IZ4APU) e	ChatGPT o3-mini-high
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
@@ -21,15 +21,14 @@ Lista utilità contenute in questo pacchetto
 '''
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
 	"""
-	V7.0	di domenica 23 marzo 2025 - Kevin Schmidt (W9CF), Gabriele Battaglia (IZ4APU) e	ChatGPT o3-mini-high
+	V8.0	di lunedì 24 marzo 2025 - Kevin Schmidt (W9CF), Gabriele Battaglia (IZ4APU), Claude 3.5  e	ChatGPT o3-mini-high
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
-	Generates and plays Morse code audio from the given text message.
 	Parameters:
 		msg (str): Messaggio di testo da convertire in Morse.
 		wpm (int): Velocità in parole al minuto (range 5-100).
 		pitch (int): Frequenza in Hz per il tono (range 130-2000).
-		l (int): Peso per la durata del trattino (default 30).
+		l (int): Peso per la durata della linea (default 30).
 		s (int): Peso per la durata degli spazi tra simboli/lettere (default 50).
 		p (int): Peso per la durata del punto (default 50).
 		fs (int): Frequenza di campionamento (default 44100 Hz).
@@ -49,30 +48,29 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	import sounddevice as sd
 	import wave
 	from datetime import datetime
-
-	# Validazione dei parametri
+	import threading
+	import re
+	BLOCK_SIZE = 256  # Dimensione ottimale buffer
 	if not isinstance(msg, str) or msg == "" or pitch < 130 or pitch > 2000 or wpm < 5 or wpm > 100 or \
-				l < 1 or l > 100 or s < 1 or s > 100 or p < 1 or p > 100 or vol < 0 or vol > 1 or wv not in [1,2,3,4]:
-		print("Not valid CW parameters")
+		l < 1 or l > 100 or s < 1 or s > 100 or p < 1 or p > 100 or vol < 0 or vol > 1 or wv not in [1,2,3,4]:
+		print("Parametri CW non validi")
 		return None
-
 	T = 1.2 / float(wpm)
-	dot_duration   = T * (p/50.0)
-	dash_duration  = 3 * T * (l/30.0)
-	intra_gap      = T * (s/50.0)
-	letter_gap     = 3 * T * (s/50.0)
-	word_gap       = 7 * T * (s/50.0)
-
+	dot_duration = T * (p/50.0)
+	dash_duration = 3 * T * (l/30.0)
+	intra_gap = T * (s/50.0)
+	letter_gap = 3 * T * (s/50.0)
+	word_gap = 7 * T * (s/50.0)
 	def generate_tone(duration):
 		N = int(fs * duration)
 		t = np.linspace(0, duration, N, False)
-		if wv == 1:  # Sine wave
+		if wv == 1:  # Sine
 			signal = np.sin(2 * np.pi * pitch * t)
-		elif wv == 2:  # Square wave
+		elif wv == 2:  # Square
 			signal = np.sign(np.sin(2 * np.pi * pitch * t))
-		elif wv == 3:  # Triangle wave
+		elif wv == 3:  # Triangle
 			signal = 2 * np.abs(2 * (pitch * t - np.floor(pitch * t + 0.5))) - 1
-		elif wv == 4:  # Sawtooth wave
+		else:  # Sawtooth
 			signal = 2 * (pitch * t - np.floor(0.5 + pitch * t))
 		fade_samples = int(fs * ms / 1000)
 		if fade_samples * 2 < N:
@@ -80,11 +78,8 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			signal[:fade_samples] *= ramp
 			signal[-fade_samples:] *= ramp[::-1]
 		return (signal * (2**15 - 1) * vol).astype(np.int16)
-
 	def generate_silence(duration):
 		return np.zeros(int(fs * duration), dtype=np.int16)
-
-	# Mappa Morse
 	morse_map = {
 		"a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
 		"g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..",
@@ -100,7 +95,6 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		"ò":"---.", "à":".--.-", "ù":"..--", "è":"..-..",
 		"é":"..-..", "ì":".---."
 	}
-
 	segments = []
 	words = msg.lower().split()
 	for w_idx, word in enumerate(words):
@@ -119,8 +113,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		if w_idx < len(words)-1:
 			segments.append(generate_silence(word_gap))
 	audio = np.concatenate(segments) if segments else np.array([], dtype=np.int16)
-
-	# Calcolo del rwpm (parole al minuto effettive)
+	# Calcolo rwpm
 	if (l, s, p) == (30, 50, 50):
 		rwpm = wpm
 	else:
@@ -140,33 +133,55 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			word_gaps = len(words_list) - 1
 		standard_total = dots + 3 * dashes + intra_gaps + 3 * letter_gaps + 7 * word_gaps
 		actual_total = (dots * (p / 50.0)) + (3 * dashes * (l / 30.0)) + \
-								(intra_gaps * (s / 50.0)) + (3 * letter_gaps * (s / 50.0)) + \
-								(7 * word_gaps * (s / 50.0))
+		              (intra_gaps * (s / 50.0)) + (3 * letter_gaps * (s / 50.0)) + \
+		              (7 * word_gaps * (s / 50.0))
 		ratio = actual_total / standard_total if standard_total != 0 else 1
 		rwpm = wpm / ratio
-
-	# Riproduzione con sounddevice
-	sd.play(audio, fs)
-
-	# Creazione di un handle per simulare l'oggetto di riproduzione
 	class PlaybackHandle:
+		def __init__(self, audio_data, sample_rate):
+			self.audio_data = audio_data
+			self.sample_rate = sample_rate
+			self.stream = None
+			self.is_playing = False
+		def play(self):
+			self.is_playing = True
+			try:
+				with sd.OutputStream(
+					samplerate=self.sample_rate,
+					channels=1,
+					dtype=np.int16,
+					blocksize=BLOCK_SIZE,
+					latency='low'
+				) as stream:
+					self.stream = stream
+					for i in range(0, len(self.audio_data), BLOCK_SIZE):
+						if not self.is_playing:
+							break
+						block = self.audio_data[i:min(i + BLOCK_SIZE, len(self.audio_data))]
+						stream.write(block)
+			except Exception as e:
+				print(f"Errore riproduzione: {e}")
+			finally:
+				self.is_playing = False
 		def wait_done(self):
-			sd.wait()
+			if self.is_playing:
+				sd.wait()
 		def stop(self):
-			sd.stop()
-
-	play_obj = PlaybackHandle()
-
+			self.is_playing = False
+			if self.stream:
+				self.stream.stop()
+	play_obj = PlaybackHandle(audio, fs)
+	playback_thread = threading.Thread(target=play_obj.play)
+	playback_thread.start()
 	if file:
-		filename = "cwapu Morse recorded at " + datetime.now().strftime("%Y%m%d%H%M%S") + ".wav"
+		filename = f"cwapu Morse recorded at {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"
 		with wave.open(filename, 'wb') as wf:
 			wf.setnchannels(1)
 			wf.setsampwidth(2)
 			wf.setframerate(fs)
 			wf.writeframes(audio.tobytes())
-
 	if sync:
-		play_obj.wait_done()
+		playback_thread.join()
 	return play_obj, rwpm
 class Mazzo:
 	'''
@@ -504,9 +519,9 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 			wf.setframerate(sample_rate)
 			wf.writeframes(audio_stereo_int16.tobytes())
 	return
-def Acusticator(score, kind=1, adsr=[0.2,0.0,100.0,0.2], fs=44100, sync=False):
+def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 	"""
-	V4.0 di domenica 23 marzo 2025. Gabriele Battaglia e ChatGPT o3-mini-high
+	V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -524,96 +539,112 @@ def Acusticator(score, kind=1, adsr=[0.2,0.0,100.0,0.2], fs=44100, sync=False):
 	         • r = percentuale destinata al rilascio (rampa da sustain a 0).
 	         La fase di sustain occupa il tempo rimanente, cioè: 100 - (a + d + r) in percentuale della durata totale.
 	         È richiesto che a + d + r ≤ 100.
-	         Il valore di default è [.2, 0.0, 100.0, .2].
+	         Il valore di default è [.005, 0.0, 100.0, .005].
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
-	La riproduzione avviene in background, restituendo subito il controllo al chiamante.
+	Se sync è False la riproduzione avviene in background, restituendo subito il controllo al chiamante.
 	"""
 	import numpy as np
 	import sounddevice as sd
-	from scipy import signal
 	import threading
-	import re
-	a_pct,d_pct,s_pct,r_pct=adsr
-	a_frac=a_pct/100.0
-	d_frac=d_pct/100.0
-	s_level=s_pct/100.0
-	r_frac=r_pct/100.0
-	if a_pct+d_pct+r_pct>100:
-		raise ValueError("La somma delle percentuali per attacco, decadimento e rilascio deve essere <= 100")
+	from scipy import signal
+	import re, sys
 	def note_to_freq(note):
-		if isinstance(note,(int,float)):
-			return float(note)
-		if isinstance(note,str):
-			if note.lower()=='p':
-				return None
-			match=re.match(r"^([a-g])([#b]?)(\d)$",note.lower())
-			if not match:
-				raise ValueError("Formato nota non valido: "+note)
-			note_letter,accidental,octave=match.groups()
-			octave=int(octave)
-			note_base={'c':0,'d':2,'e':4,'f':5,'g':7,'a':9,'b':11}
-			semitone=note_base[note_letter]
-			if accidental=='#':
-				semitone+=1
-			elif accidental=='b':
-				semitone-=1
-			midi_num=12+semitone+12*octave
-			freq=440*2**((midi_num-69)/12)
+		if isinstance(note, (int, float)): return float(note)
+		if isinstance(note, str):
+			note_lower = note.lower()
+			if note_lower == 'p': return None
+			match = re.match(r"^([a-g])([#b]?)(\d)$", note_lower)
+			if not match: raise ValueError(f"Formato nota non valido: '{note}'.")
+			note_letter, accidental, octave_str = match.groups()
+			try: octave = int(octave_str)
+			except ValueError: raise ValueError(f"Numero ottava non valido: '{octave_str}'")
+			note_base = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
+			semitone = note_base[note_letter]
+			if accidental == '#': semitone += 1
+			elif accidental == 'b': semitone -= 1
+			midi_num = 12 + semitone + 12 * octave
+			freq = 440.0 * (2.0 ** ((midi_num - 69) / 12.0))
 			return freq
-		else:
-			raise TypeError("Tipo nota non riconosciuto")
-	if len(score)%4!=0:
-		raise ValueError("La lista score non è un multiplo di 4")
-	segments=[]
-	for i in range(0,len(score),4):
-		note_param=score[i]
-		dur=float(score[i+1])
-		pan=float(score[i+2])
-		vol=float(score[i+3])
-		n_samples=int(fs*dur)
-		t=np.linspace(0,dur,n_samples,endpoint=False)
-		attack_samples=int(n_samples*a_frac)
-		decay_samples=int(n_samples*d_frac)
-		release_samples=int(n_samples*r_frac)
-		sustain_samples=n_samples-(attack_samples+decay_samples+release_samples)
-		if sustain_samples<0:
-			sustain_samples=0
-		attack_env=np.linspace(0,1,attack_samples,endpoint=False) if attack_samples>0 else np.array([])
-		decay_env=np.linspace(1,s_level,decay_samples,endpoint=False) if decay_samples>0 else np.array([])
-		sustain_env=np.full(sustain_samples,s_level) if sustain_samples>0 else np.array([])
-		release_env=np.linspace(s_level,0,release_samples,endpoint=True) if release_samples>0 else np.array([])
-		envelope=np.concatenate([attack_env,decay_env,sustain_env,release_env])
-		if envelope.shape[0]<n_samples:
-			envelope=np.pad(envelope,(0,n_samples-envelope.shape[0]),mode='edge')
-		elif envelope.shape[0]>n_samples:
-			envelope=envelope[:n_samples]
-		left_gain=np.sqrt((1-pan)/2)
-		right_gain=np.sqrt((1+pan)/2)
-		freq=note_to_freq(note_param)
-		if freq is None:
-			wave=np.zeros(n_samples)
-		else:
-			if kind==1:
-				wave=np.sin(2*np.pi*freq*t)
-			elif kind==2:
-				wave=signal.square(2*np.pi*freq*t)
-			elif kind==3:
-				wave=signal.sawtooth(2*np.pi*freq*t,width=0.5)
-			elif kind==4:
-				wave=signal.sawtooth(2*np.pi*freq*t,width=1.0)
-			else:
-				raise ValueError("Tipo di onda non riconosciuto")
-			wave*=envelope
-		stereo=np.zeros((n_samples,2))
-		stereo[:,0]=wave*vol*left_gain
-		stereo[:,1]=wave*vol*right_gain
-		segments.append(stereo)
-	full_signal=np.concatenate(segments,axis=0)
-	audio_data=np.int16(full_signal*32767)
+		else: raise TypeError(f"Tipo nota non riconosciuto: {type(note)}.")
+	BLOCK_SIZE = 256 # Per il loop di scrittura in play_audio
+	SAFETY_BUFFER_SECONDS = 0.001 # Buffer di silenzio alla fine (in play_audio)
+	if len(adsr) != 4: raise ValueError("ADSR deve contenere 4 valori")
+	a_pct, d_pct, s_level_pct, r_pct = adsr
+	if not all(0 <= val <= 100 for val in adsr): raise ValueError("Valori ADSR devono essere tra 0 e 100.")
+	if a_pct + d_pct + r_pct > 100.001: raise ValueError(f"Somma A%({a_pct})+D%({d_pct})+R%({r_pct}) > 100 non permessa.")
+	attack_frac = a_pct / 100.0
+	decay_frac = d_pct / 100.0
+	sustain_level = s_level_pct / 100.0
+	release_frac = r_pct / 100.0
+	segments = []
+	for i in range(0, len(score), 4):
+		try:
+			note_param, dur, pan, vol = score[i:i+4]
+			dur, pan, vol = float(dur), float(pan), float(vol)
+		except (IndexError, ValueError) as e:
+			print(f"Acusticator Warn: Parametri {i} errati. Ignoro. {e}", file=sys.stderr)
+			continue
+		if dur <= 0: continue # Ignora durata non positiva
+		freq = note_to_freq(note_param)
+		total_note_samples = int(round(dur * fs))
+		if total_note_samples == 0: continue # Ignora durata troppo breve
+		if freq is None: # Pausa
+			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
+		else: # Nota
+			t = np.linspace(0, dur, total_note_samples, endpoint=False)
+			if kind == 2: wave = signal.square(2 * np.pi * freq * t)
+			elif kind == 3: wave = signal.sawtooth(2 * np.pi * freq * t, 0.5)
+			elif kind == 4: wave = signal.sawtooth(2 * np.pi * freq * t)
+			else: wave = np.sin(2 * np.pi * freq * t)
+			wave = wave.astype(np.float32)
+			attack_samples = int(round(attack_frac * total_note_samples))
+			decay_samples = int(round(decay_frac * total_note_samples))
+			release_samples = int(round(release_frac * total_note_samples))
+			sustain_samples = total_note_samples - attack_samples - decay_samples - release_samples
+			delta_samples = total_note_samples - (attack_samples + decay_samples + sustain_samples + release_samples)
+			sustain_samples = max(0, sustain_samples + delta_samples)
+			envelope = np.zeros(total_note_samples, dtype=np.float32); current_pos = 0
+			if attack_samples > 0: envelope[current_pos : current_pos + attack_samples] = np.linspace(0., 1., attack_samples, dtype=np.float32); current_pos += attack_samples
+			if decay_samples > 0: envelope[current_pos : current_pos + decay_samples] = np.linspace(1., sustain_level, decay_samples, dtype=np.float32); current_pos += decay_samples
+			if sustain_samples > 0: envelope[current_pos : current_pos + sustain_samples] = sustain_level; current_pos += sustain_samples
+			# --- Blocco Release Corretto ---
+			if release_samples > 0:
+				end_pos = min(current_pos + release_samples, total_note_samples)
+				samples_in_this_segment = max(0, end_pos - current_pos)
+				# Applica linspace solo se samples_in_this_segment è effettivamente > 0
+				if samples_in_this_segment > 0:
+					envelope[current_pos : end_pos] = np.linspace(sustain_level, 0., samples_in_this_segment, dtype=np.float32)
+					current_pos = end_pos
+			# --- Fine Blocco Release Corretto ---
+			if current_pos < total_note_samples: envelope[current_pos:] = 0.0
+			wave *= envelope * vol
+			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
+			pan_clipped = np.clip(pan, -1.0, 1.0); pan_angle = pan_clipped * (np.pi / 4.0)
+			left_gain = np.cos(pan_angle + np.pi / 4.0); right_gain = np.sin(pan_angle + np.pi / 4.0)
+			stereo_segment[:, 0] = wave * left_gain
+			stereo_segment[:, 1] = wave * right_gain
+		segments.append(stereo_segment)
+	if not segments: return
+	full_signal_float = np.concatenate(segments, axis=0)
+	full_signal_float = np.clip(full_signal_float, -1.0, 1.0)
+	audio_data_int16 = (full_signal_float * 32767.0).astype(np.int16)
 	def play_audio():
-		sd.play(audio_data,fs)
-		sd.wait()
-	thread=threading.Thread(target=play_audio)
+		try:
+			with sd.OutputStream(samplerate=fs, channels=2, dtype=np.int16,
+								 blocksize=BLOCK_SIZE, latency='low') as stream:
+				for i in range(0, len(audio_data_int16), BLOCK_SIZE):
+					block = audio_data_int16[i:min(i + BLOCK_SIZE, len(audio_data_int16))]
+					stream.write(block)
+				silence_samples = int(fs * SAFETY_BUFFER_SECONDS)
+				if silence_samples > 0:
+					silence = np.zeros((silence_samples, 2), dtype=np.int16)
+					stream.write(silence)
+				stream.stop()
+		except sd.PortAudioError as pae:
+			print(f"Acusticator Playback PortAudioError: {pae}", file=sys.stderr)
+		except Exception as e:
+			print(f"Acusticator Playback Error: {e}", file=sys.stderr)
+	thread = threading.Thread(target=play_audio)
 	thread.start()
 	if sync:
 		thread.join()
