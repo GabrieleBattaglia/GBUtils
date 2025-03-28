@@ -3,11 +3,11 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V40 di giovedì 27 marzo 2025
+	V41 di giovedì 27 marzo 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator V7.0	di domenica 23 marzo 2025 - Kevin Schmidt (W9CF), Gabriele Battaglia (IZ4APU) e	ChatGPT o3-mini-high
+	CWzator V8.1 di giovedì 27 marzo 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	gridapu 1.2 from IU1FIG
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
@@ -21,7 +21,7 @@ Lista utilità contenute in questo pacchetto
 '''
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
 	"""
-	V8.0	di lunedì 24 marzo 2025 - Kevin Schmidt (W9CF), Gabriele Battaglia (IZ4APU), Claude 3.5  e	ChatGPT o3-mini-high
+	V8.1 di giovedì 27 marzo 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -32,17 +32,13 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		s (int): Peso per la durata degli spazi tra simboli/lettere (default 50).
 		p (int): Peso per la durata del punto (default 50).
 		fs (int): Frequenza di campionamento (default 44100 Hz).
-		ms (int): Durata in millisecondi per i fade-in/out (default 1).
+		ms (int): Durata in millisecondi per i fade-in/out sui toni (default 1).
 		vol (float): Volume (range 0.0 a 1.0, default 0.5).
-		wv (int): Tipo d’onda:
-						1 = Sine (default),
-						2 = Square,
-						3 = Triangle,
-						4 = Sawtooth.
+		wv (int): Tipo d’onda (scipy.signal): 1=Sine(default), 2=Square, 3=Triangle, 4=Sawtooth.
 		sync (bool): Se True, la funzione aspetta la fine della riproduzione; altrimenti ritorna subito.
 		file (bool): Se True, salva l’audio in un file WAV.
 	Returns:
-		Un oggetto di riproduzione (PlaybackHandle) e rwpm, il valore effettivo delle parole al minuto.
+		Un oggetto PlaybackHandle e rwpm (velocità effettiva wpm), o (None, None) in caso di errore.
 	"""
 	import numpy as np
 	import sounddevice as sd
@@ -50,36 +46,60 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	from datetime import datetime
 	import threading
 	import re
-	BLOCK_SIZE = 256  # Dimensione ottimale buffer
-	if not isinstance(msg, str) or msg == "" or pitch < 130 or pitch > 2000 or wpm < 5 or wpm > 100 or \
-		l < 1 or l > 100 or s < 1 or s > 100 or p < 1 or p > 100 or vol < 0 or vol > 1 or wv not in [1,2,3,4]:
-		print("Parametri CW non validi")
-		return None
+	import sys
+	from scipy import signal # Importato per le forme d'onda
+	BLOCK_SIZE = 256
+	# --- Validazione Parametri Migliorata ---
+	if not isinstance(msg, str) or msg == "": print("CWzator Error: msg deve essere una stringa non vuota.", file=sys.stderr); return None, None
+	if not (isinstance(wpm, int) and 5 <= wpm <= 100): print(f"CWzator Error: wpm ({wpm}) non valido [5-100].", file=sys.stderr); return None, None
+	if not (isinstance(pitch, int) and 130 <= pitch <= 2000): print(f"CWzator Error: pitch ({pitch}) non valido [130-2000].", file=sys.stderr); return None, None
+	if not (isinstance(l, int) and 1 <= l <= 100): print(f"CWzator Error: l ({l}) non valido [1-100].", file=sys.stderr); return None, None
+	if not (isinstance(s, int) and 1 <= s <= 100): print(f"CWzator Error: s ({s}) non valido [1-100].", file=sys.stderr); return None, None
+	if not (isinstance(p, int) and 1 <= p <= 100): print(f"CWzator Error: p ({p}) non valido [1-100].", file=sys.stderr); return None, None
+	if not (isinstance(fs, int) and fs > 0): print(f"CWzator Error: fs ({fs}) non valido [>0].", file=sys.stderr); return None, None
+	if not (isinstance(ms, (int, float)) and ms >= 0): print(f"CWzator Error: ms ({ms}) non valido [>=0].", file=sys.stderr); return None, None
+	if not (isinstance(vol, (int, float)) and 0.0 <= vol <= 1.0): print(f"CWzator Error: vol ({vol}) non valido [0.0-1.0].", file=sys.stderr); return None, None
+	if not (isinstance(wv, int) and wv in [1, 2, 3, 4]): print(f"CWzator Error: wv ({wv}) non valido [1-4].", file=sys.stderr); return None, None
+	# --- Calcolo Durate (con arrotondamento campioni implicito dopo) ---
 	T = 1.2 / float(wpm)
-	dot_duration = T * (p/50.0)
-	dash_duration = 3 * T * (l/30.0)
-	intra_gap = T * (s/50.0)
-	letter_gap = 3 * T * (s/50.0)
-	word_gap = 7 * T * (s/50.0)
+	dot_duration = T * (p / 50.0)
+	dash_duration = 3.0 * T * (l / 30.0) # Usato 3.0 per float
+	intra_gap = T * (s / 50.0)
+	letter_gap = 3.0 * T * (s / 50.0)
+	word_gap = 7.0 * T * (s / 50.0)
+	# --- Funzioni Generazione Segmenti (con forme d'onda scipy e arrotondamento) ---
 	def generate_tone(duration):
-		N = int(fs * duration)
-		t = np.linspace(0, duration, N, False)
+		# Arrotonda qui per il numero di campioni
+		N = int(round(fs * duration))
+		if N <= 0: return np.array([], dtype=np.int16) # Ritorna array vuoto se durata troppo breve
+		# Usa float64 per tempo e fase per precisione
+		t = np.linspace(0, duration, N, endpoint=False, dtype=np.float64)
+		# Forme d'onda via scipy.signal (output in [-1, 1])
 		if wv == 1:  # Sine
-			signal = np.sin(2 * np.pi * pitch * t)
+			signal_float = np.sin(2 * np.pi * pitch * t)
 		elif wv == 2:  # Square
-			signal = np.sign(np.sin(2 * np.pi * pitch * t))
-		elif wv == 3:  # Triangle
-			signal = 2 * np.abs(2 * (pitch * t - np.floor(pitch * t + 0.5))) - 1
-		else:  # Sawtooth
-			signal = 2 * (pitch * t - np.floor(0.5 + pitch * t))
-		fade_samples = int(fs * ms / 1000)
-		if fade_samples * 2 < N:
-			ramp = np.linspace(0, 1, fade_samples)
-			signal[:fade_samples] *= ramp
-			signal[-fade_samples:] *= ramp[::-1]
-		return (signal * (2**15 - 1) * vol).astype(np.int16)
+			signal_float = signal.square(2 * np.pi * pitch * t)
+		elif wv == 3:  # Triangle (width=0.5)
+			signal_float = signal.sawtooth(2 * np.pi * pitch * t, width=0.5)
+		else:  # Sawtooth (width=1)
+			signal_float = signal.sawtooth(2 * np.pi * pitch * t, width=1)
+		signal_float = signal_float.astype(np.float32) # Converti a float32 per audio
+		# Applica Fade In/Out
+		fade_samples = int(round(fs * ms / 1000.0)) # Arrotonda campioni fade
+		# Condizione robusta per sovrapposizione fade
+		if fade_samples > 0 and fade_samples <= N // 2:
+			ramp = np.linspace(0, 1, fade_samples, dtype=np.float32)
+			signal_float[:fade_samples] *= ramp
+			signal_float[-fade_samples:] *= ramp[::-1] # Usa slicing negativo per l'ultimo pezzo
+		# Applica volume e converti a int16
+		# Clipping prima della conversione int16
+		signal_float = np.clip(signal_float * vol, -1.0, 1.0)
+		return (signal_float * 32767.0).astype(np.int16)
 	def generate_silence(duration):
-		return np.zeros(int(fs * duration), dtype=np.int16)
+		# Arrotonda qui per il numero di campioni
+		N = int(round(fs * duration))
+		return np.zeros(N, dtype=np.int16) if N > 0 else np.array([], dtype=np.int16)
+	# --- Mappa Morse (invariata) ---
 	morse_map = {
 		"a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
 		"g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..",
@@ -93,95 +113,175 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		"%":".-...", ":":"---...", "=":"-...-", '"':".-..-.", "'":".----.",
 		"!":"-.-.--", "$":"...-..-", " ":"", "_":"",
 		"ò":"---.", "à":".--.-", "ù":"..--", "è":"..-..",
-		"é":"..-..", "ì":".---."
-	}
+		"é":"..-..", "ì":".---."}
+	# --- Assemblaggio Sequenza (invariato) ---
 	segments = []
 	words = msg.lower().split()
 	for w_idx, word in enumerate(words):
-		letters = [ch for ch in word if ch in morse_map]
-		for l_idx, letter in enumerate(letters):
-			code = morse_map[letter]
+		# Usa una stringa per accumulare le lettere valide invece di una lista
+		valid_letters = "".join(ch for ch in word if ch in morse_map)
+		for l_idx, letter in enumerate(valid_letters):
+			code = morse_map.get(letter) # Usa .get() per sicurezza? No, già filtrato.
+			if not code: continue # Salta se per qualche motivo non c'è codice (non dovrebbe succedere)
 			for s_idx, symbol in enumerate(code):
 				if symbol == '.':
 					segments.append(generate_tone(dot_duration))
 				elif symbol == '-':
 					segments.append(generate_tone(dash_duration))
-				if s_idx < len(code)-1:
+				# Aggiungi gap intra-simbolo solo se non è l'ultimo simbolo
+				if s_idx < len(code) - 1:
 					segments.append(generate_silence(intra_gap))
-			if l_idx < len(letters)-1:
+			# Aggiungi gap tra lettere solo se non è l'ultima lettera
+			if l_idx < len(valid_letters) - 1:
 				segments.append(generate_silence(letter_gap))
-		if w_idx < len(words)-1:
-			segments.append(generate_silence(word_gap))
+		# Aggiungi gap tra parole solo se non è l'ultima parola
+		if w_idx < len(words) - 1:
+			# Controlla se la parola precedente non era solo spazi o caratteri ignorati
+			if valid_letters or any(ch in morse_map for ch in words[w_idx+1]):
+				segments.append(generate_silence(word_gap))
+	# --- Concatenazione e Aggiunta Silenzio Finale ---
 	audio = np.concatenate(segments) if segments else np.array([], dtype=np.int16)
-	# Calcolo rwpm
-	if (l, s, p) == (30, 50, 50):
-		rwpm = wpm
-	else:
+	if audio.size > 0: # Aggiungi solo se c'è audio
+		silence_samples_end = int(round(fs * 0.005)) # Es. 5ms di silenzio finale
+		if silence_samples_end > 0:
+			final_silence = np.zeros(silence_samples_end, dtype=np.int16)
+			audio = np.concatenate((audio, final_silence))
+	# --- Calcolo rwpm (con gestione divisione per zero robusta) ---
+	rwpm = wpm # Default se pesi standard o nessun elemento contato
+	if (l, s, p) != (30, 50, 50):
 		dots = dashes = intra_gaps = letter_gaps = word_gaps = 0
 		words_list = msg.lower().split()
-		for w in words_list:
-			letters = [ch for ch in w if ch in morse_map]
-			for letter in letters:
-				code = morse_map[letter]
-				dots += code.count('.')
-				dashes += code.count('-')
-				if len(code) > 1:
-					intra_gaps += (len(code) - 1)
-			if len(letters) > 1:
-				letter_gaps += (len(letters) - 1)
-		if len(words_list) > 1:
-			word_gaps = len(words_list) - 1
-		standard_total = dots + 3 * dashes + intra_gaps + 3 * letter_gaps + 7 * word_gaps
-		actual_total = (dots * (p / 50.0)) + (3 * dashes * (l / 30.0)) + \
-		              (intra_gaps * (s / 50.0)) + (3 * letter_gaps * (s / 50.0)) + \
-		              (7 * word_gaps * (s / 50.0))
-		ratio = actual_total / standard_total if standard_total != 0 else 1
-		rwpm = wpm / ratio
+		processed_letters_count = 0 # Contatore per gestire gaps
+		for w_idx, w in enumerate(words_list):
+			current_word_letters = 0
+			code_lengths_in_word = []
+			for letter in w:
+				if letter in morse_map:
+					code = morse_map[letter]
+					if code: # Ignora spazi o caratteri mappati a stringa vuota
+						dots += code.count('.')
+						dashes += code.count('-')
+						code_len = len(code)
+						if code_len > 1:
+							intra_gaps += (code_len - 1)
+						code_lengths_in_word.append(code_len)
+						current_word_letters += 1
+			if current_word_letters > 1:
+				letter_gaps += (current_word_letters - 1)
+			processed_letters_count += current_word_letters
+			# Aggiungi word gap solo se la parola conteneva elementi e non è l'ultima
+			if current_word_letters > 0 and w_idx < len(words_list) - 1:
+				# E controlla anche se la parola successiva contiene elementi
+				if any(ch in morse_map and morse_map[ch] for ch in words_list[w_idx+1]):
+					word_gaps += 1
+		# Calcola durate totali (in unità di dot)
+		# Durata standard: 1 (dot) + 1 (gap) = 2, 3 (dash) + 1 (gap) = 4
+		# Gap tra lettere = 3, Gap tra parole = 7
+		# L'unità base è la durata del dot standard (T * p/50 dove p=50)
+		standard_total_units = dots + 3*dashes + intra_gaps + 3*letter_gaps + 7*word_gaps
+		# Durata attuale con pesi
+		actual_dot_units = p / 50.0
+		actual_dash_units = 3.0 * (l / 30.0)
+		actual_intra_gap_units = s / 50.0
+		actual_letter_gap_units = 3.0 * (s / 50.0)
+		actual_word_gap_units = 7.0 * (s / 50.0)
+		actual_total_units = (dots * actual_dot_units) + \
+							 (dashes * actual_dash_units) + \
+							 (intra_gaps * actual_intra_gap_units) + \
+							 (letter_gaps * actual_letter_gap_units) + \
+							 (word_gaps * actual_word_gap_units)
+		# Calcola rapporto e rwpm solo se ci sono state durate
+		if standard_total_units > 0 and actual_total_units > 0:
+			ratio = actual_total_units / standard_total_units
+			rwpm = wpm / ratio
+		elif standard_total_units == 0 and actual_total_units == 0:
+			rwpm = wpm # Messaggio vuoto, rwpm è uguale a wpm nominale
+		else:
+			# Caso anomalo (es. solo spazi?), imposta rwpm a wpm o 0?
+			# Manteniamo wpm per ora, ma potrebbe essere indice di errore input.
+			rwpm = wpm
+			print("CWzator Warning: Calcolo rwpm anomalo, possibile input solo con spazi?", file=sys.stderr)
+	# --- Classe PlaybackHandle (invariata ma ora riceve audio con silenzio finale) ---
 	class PlaybackHandle:
 		def __init__(self, audio_data, sample_rate):
 			self.audio_data = audio_data
 			self.sample_rate = sample_rate
 			self.stream = None
-			self.is_playing = False
-		def play(self):
-			self.is_playing = True
+			self.is_playing = threading.Event() # Usa Event per thread-safety
+			self._thread = None # Riferimento al thread
+		def _playback_target(self):
+			"""Target function per il thread di riproduzione."""
+			self.is_playing.set() # Segnala inizio riproduzione
+			stream = None # Inizializza per blocco finally
 			try:
 				with sd.OutputStream(
-					samplerate=self.sample_rate,
-					channels=1,
-					dtype=np.int16,
-					blocksize=BLOCK_SIZE,
-					latency='low'
+					samplerate=self.sample_rate, channels=1, dtype=np.int16,
+					blocksize=BLOCK_SIZE, latency='low'
 				) as stream:
+					# Salva riferimento allo stream *dopo* che è stato creato con successo
 					self.stream = stream
+					# Scrittura a blocchi, controllando il flag ad ogni blocco
 					for i in range(0, len(self.audio_data), BLOCK_SIZE):
-						if not self.is_playing:
+						if not self.is_playing.is_set(): # Controlla l'evento
+							# print("Debug: Stop richiesto durante la riproduzione.")
+							stream.stop() # Prova a fermare lo stream corrente
 							break
 						block = self.audio_data[i:min(i + BLOCK_SIZE, len(self.audio_data))]
 						stream.write(block)
+					# Se il loop finisce normalmente, attendi che lo stream finisca l'output bufferizzato
+					if self.is_playing.is_set():
+						# print("Debug: Loop terminato, attendo stream.close() implicito.")
+						pass # 'with' gestisce la chiusura e l'attesa implicita
+			except sd.PortAudioError as pae:
+				print(f"CWzator Playback PortAudioError: {pae}", file=sys.stderr)
 			except Exception as e:
-				print(f"Errore riproduzione: {e}")
+				print(f"CWzator Playback Error: {e}", file=sys.stderr)
 			finally:
-				self.is_playing = False
+				# print("Debug: Uscita blocco try/finally _playback_target.")
+				self.is_playing.clear() # Segnala fine riproduzione o errore
+				self.stream = None # Rilascia riferimento allo stream
+		def play(self):
+			"""Avvia la riproduzione in un thread separato."""
+			if not self.is_playing.is_set() and self.audio_data.size > 0:
+				# Crea e avvia il thread solo se non sta già suonando e c'è audio
+				self._thread = threading.Thread(target=self._playback_target)
+				self._thread.daemon = False # Assicura non-daemon
+				self._thread.start()
+			# else: print("Debug: Play chiamato ma già in esecuzione o audio vuoto.")
 		def wait_done(self):
-			if self.is_playing:
-				sd.wait()
+			"""Attende la fine della riproduzione corrente."""
+			# Attende che l'evento is_playing sia clear O che il thread termini
+			if self._thread is not None and self._thread.is_alive():
+				# print("Debug: wait_done chiamato, joining thread...")
+				self._thread.join()
+			# print("Debug: wait_done terminato.")
 		def stop(self):
-			self.is_playing = False
-			if self.stream:
-				self.stream.stop()
+			"""Richiede l'interruzione della riproduzione."""
+			# print("Debug: stop richiesto.")
+			self.is_playing.clear() # Segnala al loop di playback di fermarsi
+			# Nota: l'interruzione effettiva dipende da quanto velocemente il loop
+			# controlla l'evento e da quanto tempo impiega stream.stop().
+			# Non chiudiamo lo stream qui, il blocco 'with' lo farà.
+	# --- Creazione Oggetto e Avvio Playback (Logica Originale) ---
 	play_obj = PlaybackHandle(audio, fs)
-	playback_thread = threading.Thread(target=play_obj.play)
-	playback_thread.start()
+	# Avvia la riproduzione nel thread interno all'oggetto
+	play_obj.play() # Il metodo play ora gestisce l'avvio del thread
+	# --- Salvataggio File (invariato) ---
 	if file:
 		filename = f"cwapu Morse recorded at {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"
-		with wave.open(filename, 'wb') as wf:
-			wf.setnchannels(1)
-			wf.setsampwidth(2)
-			wf.setframerate(fs)
-			wf.writeframes(audio.tobytes())
+		try:
+			with wave.open(filename, 'wb') as wf:
+				wf.setnchannels(1) # Mono
+				wf.setsampwidth(2) # 16-bit
+				wf.setframerate(fs)
+				wf.writeframes(audio.tobytes())
+			# print(f"CWzator: Audio salvato in {filename}")
+		except Exception as e:
+			print(f"CWzator Error durante salvataggio file: {e}", file=sys.stderr)
+	# --- Gestione Sync (usa wait_done dell'oggetto) ---
 	if sync:
-		playback_thread.join()
+		play_obj.wait_done() # Usa il metodo dell'oggetto per attendere
+	# --- Ritorno Oggetto e rwpm ---
 	return play_obj, rwpm
 class Mazzo:
 	'''
