@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V41 di giovedì 27 marzo 2025
+	V42 di giovedì 27 marzo 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
-	menu V3.8 – mercoledì 19 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
+	menu V3.11 – sabato 29 marzo 2025 - Gabriele Battaglia & Gemini 2.5
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
 	sonify V7.0 - 23 marzo 2025 - Gabriele Battaglia eChatGPT O1
@@ -833,164 +833,235 @@ def manuale(nf):
 	except IOError:
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
-def menu(d={}, p="> ", ntf="Scelta non valida", show=False, show_only=False, keyslist=False, full_keyslist=True, pager=20, show_on_filter=True):
-	"""V3.8 – mercoledì 19 marzo 2025 - Gabriele Battaglia e ChatGPT o3-mini-high
+def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, full_keyslist=False, pager=20, show_on_filter=True):
+	"""V3.11 – sabato 29 marzo 2025 - Gabriele Battaglia & Gemini 2.5
 	Parametri:
 		d: dizionario con coppie chiave:descrizione
 		p: prompt di default se keyslist è False
-		ntf: messaggio in caso di filtro vuoto
-		show: se True, mostra il menu iniziale
-		show_only: se True, mostra il menu e termina
+		ntf: messaggio in caso di filtro vuoto o input ambiguo
+		show: se True, mostra il menu iniziale completo prima del prompt
+		show_only: se True, mostra il menu completo e termina
 		keyslist: se True, il prompt è generato dalle chiavi filtrate
 		full_keyslist: se True (solo se keyslist True), mostra le chiavi complete (con iniziali maiuscole),
 			altrimenti mostra solo l'abbreviazione necessaria (tutto in maiuscolo)
 		pager: numero di elementi da mostrare per pagina nel pager
 			esc nel pager termina subito la paginazione
 		show_on_filter: se True, visualizza la lista delle coppie candidate ad ogni aggiornamento del filtro
-		?	nel prompt mostra il pager
+						(solo dopo che l'utente ha iniziato a digitare, se show=False)
+		?   nel prompt mostra il pager con le opzioni filtrate correnti
 	Restituisce:
-		la chiave scelta oppure None se annullato
+		la chiave scelta oppure None se annullato (ESC o Invio su input vuoto)
 	"""
-	import sys, time, os
-	if os.name!='nt':
-		import select, tty, termios
+	import sys, time, os # Import principali interni
 	def key(prompt=""):
+		"""Legge un singolo carattere dalla console senza bisogno di Invio."""
 		print(prompt, end='', flush=True)
-		if os.name=='nt':
-			import msvcrt
-			ch=msvcrt.getwch()
-			return ch
+		if os.name == 'nt':
+			import msvcrt # Import specifico per Windows
+			ch = msvcrt.getwch()
+			# Gestione caratteri speciali Windows (come nel codice precedente)
+			if ch == '\x08': return ch # Backspace
+			if ch == '\r': return ch   # Enter
+			if ch == '\x1b': return ch # ESC
+			if ch == '?': return ch    # Carattere speciale ?
+			if ord(ch) == 127: return '\x08' # Gestisce DEL come Backspace
+			if ch in ('\x00', '\xe0'): # Tasti speciali (Frecce, Canc, etc.)
+				msvcrt.getwch() # Leggi e ignora il secondo byte
+				return '\x00' # Restituisce un codice nullo per ignorarli
+			return ch # Carattere normale
 		else:
-			fd=sys.stdin.fileno()
-			old_settings=termios.tcgetattr(fd)
+			# Import specifici per Unix-like
+			import select, tty, termios
+			fd = sys.stdin.fileno()
+			old_settings = termios.tcgetattr(fd)
 			try:
-				tty.setcbreak(fd)
-				while True:
-					r,_,_=select.select([sys.stdin],[],[],0.1)
+				tty.setcbreak(fd) # Imposta la modalità cbreak
+				# Gestione caratteri speciali Unix (come nel codice precedente)
+				ch = sys.stdin.read(1)
+				if ch == '\x1b': # ESC o sequenza speciale
+					r, _, _ = select.select([sys.stdin], [], [], 0.05)
 					if r:
-						ch=sys.stdin.read(1)
-						return ch
+						extra = sys.stdin.read(2) # Leggi resto sequenza (es. freccia)
+						return '\x00' # Ignora sequenze non gestite
+					else:
+						return '\x1b' # Solo ESC
+				elif ord(ch) == 127: # Backspace (DEL)
+					return '\x08'
+				elif ch in ['\n', '\r']: # Invio
+					return '\r' # Normalizza a \r
+				else:
+					return ch # Altro carattere
 			finally:
-				termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+				termios.tcsetattr(fd, termios.TCSADRAIN, old_settings) # Ripristina
 	def Mostra(l, pager):
-		count=0
-		total=len(l)
-		print("\n")
+		"""Visualizza una lista di elementi usando un pager."""
+		count = 0
+		total = len(l)
+		if total == 0:
+			print("\n" + ntf)
+			return True
+		print("\n--- Opzioni Disponibili ---")
 		for j in l:
-			print(f"- ({j}) -- {d[j]};")
-			count+=1
-			if count%pager==0 and count<total:
-				print(f"--- [PG: {int(count/pager)}] --- ({count-pager+1}/{count})...{total}---",end="")
-				ch=key("")
-				if ch=='\x1b':
+			desc = d.get(j, "N/A")
+			print(f"- ({j}) -- {desc};")
+			count += 1
+			if pager > 0 and count % pager == 0 and count < total:
+				prompt_pager = f"--- [Pag: {int(count/pager)}] ({count-pager+1}-{count} di {total}) Premi Invio per continuare, ESC per uscire ---"
+				ch_pager = key(prompt_pager) # Usa la funzione key interna
+				print()
+				if ch_pager == '\x1b': # ESC
+					print("--- Paginazione Interrotta ---")
 					return False
-		print(f"---------- [End]---({count}/{total})----------")
+		print(f"---------- [Fine Lista] ({count}/{total}) ----------")
 		return True
 	def minimal_keys(keys):
-		res={}
+		"""Calcola le abbreviazioni minime univoche."""
+		res = {}
 		keys_lower = {key: key.lower() for key in keys}
 		for key_item in keys:
 			key_str = key_item.lower()
 			n = len(key_str)
 			found_abbr = None
-			for L in range(1, n+1):
-				for i in range(n - L + 1):
-					candidate = key_str[i:i+L]
-					unique = True
-					for other in keys:
-						if other==key_item:
+			for length in range(1, n + 1):
+				for i in range(n - length + 1):
+					candidate = key_str[i:i + length]
+					is_unique = True
+					for other_key in keys:
+						if other_key == key_item:
 							continue
-						if candidate in keys_lower[other]:
-							unique = False
+						if candidate in keys_lower[other_key]:
+							is_unique = False
 							break
-					if unique:
+					if is_unique:
 						found_abbr = candidate.upper()
 						break
 				if found_abbr is not None:
 					break
 			if found_abbr is None:
 				found_abbr = key_item.upper()
-			res[key_item]=found_abbr
+			res[key_item] = found_abbr
 		return res
 	def Listaprompt(keys_list, full):
+		"""Genera la stringa del prompt basata sulle chiavi filtrate."""
+		if not keys_list:
+			return ">"
 		if full:
-			formatted=[k.capitalize() for k in keys_list]
+			formatted = [k.capitalize() for k in keys_list]
 		else:
-			abbrev=minimal_keys(keys_list)
-			formatted=[abbrev[k] for k in keys_list]
+			abbrev = minimal_keys(keys_list) # Usa la funzione minimal_keys interna
+			formatted = [abbrev[k] for k in keys_list]
 		return "\n(" + ", ".join(formatted) + ")>"
 	def valid_match(key_item, sub):
-		kl=key_item.lower()
-		sl=sub.lower()
-		if sl=="":
+		"""Controlla se 'sub' è una sottostringa valida di 'key_item'."""
+		kl = key_item.lower()
+		sl = sub.lower()
+		if sl == "":
 			return True
-		if kl==sl:
-			return True
-		if sl not in kl:
-			return False
-		if kl.endswith(sl) and kl.find(sl)==(len(kl)-len(sl)) and kl.count(sl)==1:
-			return False
-		return True
-	orig_keys=list(d.keys())
-	current_input=""
-	last_displayed=None
-	if len(d)==0:
-		print("Nothing to choose")
-		return ""
-	elif len(d)==1:
-		return orig_keys[0]
-	if show_only:
-		Mostra(orig_keys, pager)
+		return sl in kl
+	# --- Logica Principale del Menu ---
+	orig_keys = list(d.keys())
+	current_input = ""
+	last_displayed = None
+	# Gestione casi limite iniziali
+	if not d:
+		print("Nessuna opzione disponibile.")
 		return None
+	if len(d) == 1 and not show_only:
+		return orig_keys[0]
+	# Gestione show_only
+	if show_only:
+		Mostra(orig_keys, pager) # Usa Mostra interna
+		return None
+	# Gestione show=True iniziale
 	if show:
-		Mostra(orig_keys, pager)
+		if not Mostra(orig_keys, pager): # Usa Mostra interna, gestisci ESC nel pager iniziale
+			return None # Se l'utente esce subito dal pager iniziale
 		last_displayed = orig_keys[:]
+	# --- Ciclo Principale di Input/Filtro ---
 	while True:
-		filtered=[k for k in orig_keys if valid_match(k, current_input)]
+		# 1. Filtra
+		filtered = [k for k in orig_keys if valid_match(k, current_input)] # Usa valid_match interna
+		# 2. Gestisci filtro vuoto
 		if not filtered:
-			print("\n"+ntf)
-			current_input=""
-			filtered=orig_keys[:]
-		if len(filtered)==1:
+			print("\n" + ntf)
+			current_input = ""
+			filtered = orig_keys[:]
+			# Non mostrare nulla qui, aspetta input o '?'
+		# 3. Gestisci risultato unico (solo se si è digitato qualcosa)
+		if len(filtered) == 1 and current_input != "":
+			print()
 			return filtered[0]
-		if show_on_filter and filtered!=last_displayed:
-			if not Mostra(filtered, pager):
+		# 4. Mostra su filtro (se richiesto E si è digitato E lista cambiata)
+		if show_on_filter and current_input != "" and filtered != last_displayed:
+			print("\n--- Opzioni Filtrate ---")
+			if not Mostra(filtered, pager): # Usa Mostra interna
 				last_displayed = filtered[:]
-				continue
+				continue # ESC nel pager, salta prompt
 			last_displayed = filtered[:]
+		# 5. Prepara il prompt
 		if keyslist:
-			prompt_str=Listaprompt(filtered, full_keyslist)
+			prompt_str = Listaprompt(filtered, full_keyslist) # Usa Listaprompt interna
 		else:
-			prompt_str=p
-		user_char=key(prompt=" "+prompt_str+current_input)
-		if user_char in ['\r','\n']:
-			if current_input=="":
-				return None
-			for k in orig_keys:
-				if k.lower()==current_input.lower():
-					return k
-			if len(filtered)==1:
-				return filtered[0]
+			prompt_str = p
+		full_prompt = " " + prompt_str + current_input
+		# 6. Ottieni input
+		user_char = key(full_prompt) # Usa key interna
+		# 7. Processa input
+		if user_char in ['\r', '\n']: # Invio
+			print()
+			if current_input == "":
+				return None # Invio su vuoto = Annulla
 			else:
-				print("\nContinua a digitare")
-		elif user_char=='\x1b':
+				match_exact = None
+				for k in orig_keys:
+					if k.lower() == current_input.lower():
+						match_exact = k
+						break
+				if match_exact:
+					return match_exact # Match esatto trovato
+				if len(filtered) == 1:
+					return filtered[0] # Unico elemento filtrato
+				elif len(filtered) > 1:
+					print("\nInput ambiguo. Filtra ulteriormente o usa '?' per vedere le opzioni.")
+					if filtered != last_displayed:
+						if not Mostra(filtered, pager): # Usa Mostra interna
+							last_displayed = filtered[:]
+							continue # ESC nel pager
+						last_displayed = filtered[:]
+				# else: # Caso filtro vuoto già gestito sopra (teoricamente)
+				#	 print("\n" + ntf)
+				#	 current_input = ""
+		elif user_char == '\x1b': # ESC
+			print()
 			return None
-		elif user_char=='?':
-			if not Mostra(filtered, pager):
+		elif user_char == '?':
+			if not Mostra(filtered, pager): # Usa Mostra interna
 				last_displayed = filtered[:]
-				continue
+				continue # ESC nel pager
 			last_displayed = filtered[:]
-		elif user_char=='\x08' or ord(user_char)==127:
+		elif user_char == '\x08': # Backspace
 			if current_input:
-				current_input=current_input[:-1]
+				current_input = current_input[:-1]
+				print('\b \b', end='', flush=True) # Feedback visivo backspace
+		elif user_char == '\x00': # Tasto speciale ignorato
+			pass
 		else:
-			current_input+=user_char
-			filtered=[k for k in orig_keys if valid_match(k, current_input)]
-			if len(filtered)==1:
-				return filtered[0]
-			if len(filtered)==0:
-				print("\n"+ntf)
-				current_input=""
+			# Carattere normale
+			print(user_char, end='', flush=True) # Feedback visivo carattere
+			current_input += user_char
+			# Controllo rapido risultato unico/vuoto
+			quick_filtered = [k for k in orig_keys if valid_match(k, current_input)]
+			if len(quick_filtered) == 1:
+				print()
+				return quick_filtered[0] # Trovato unico, esci
+			elif len(quick_filtered) == 0:
+				print("\n" + ntf) # Filtro diventato vuoto
+				# Cancella input visivo (tentativo) e logico
+				# print(f"\r{' ' * len(full_prompt)}\r", end='')
+				print("\r" + " " * len(full_prompt) + "\r", end='') # Sovrascrivi linea con spazi
+				current_input = ""
+				# Il ciclo ricomincerà e gestirà il reset completo
+	# Raggiungibile solo in caso di errore imprevisto
 	return None
 def Scandenza(y=2100, m=1, g=1, h=0, i=0):
 	'''
