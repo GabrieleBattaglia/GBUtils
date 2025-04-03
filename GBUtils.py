@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V42 di giovedì 27 marzo 2025
+	V43 di giovedì 3 aprile 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -12,7 +12,7 @@ Lista utilità contenute in questo pacchetto
 	gridapu 1.2 from IU1FIG
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
-	Mazzo 4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
+	Mazzo V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V3.11 – sabato 29 marzo 2025 - Gabriele Battaglia & Gemini 2.5
 	percent V1.0 thu 28, september 2023
 	Scadenza 1.0 del 15/12/2021
@@ -285,156 +285,365 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	return play_obj, rwpm
 class Mazzo:
 	'''
-	V4.6 - ottobre 2024 - By ChatGPT-o1 e Gabriele Battaglia
-	Classe che rappresenta un mazzo di carte italiano o francese, con funzionalità per mescolare, pescare e manipolare le carte.
+	V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
+	Classe autocontenuta che rappresenta un mazzo di carte italiano o francese,
+	con supporto per mazzi multipli, mescolamento, pesca con rimescolamento
+	automatico degli scarti, e gestione flessibile delle carte.
+	Non produce output diretto (print), ma restituisce valori o stringhe informative.
 	'''
-	def __init__(self, tipo=True, num_mazzi=1):
+	import random
+	from collections import namedtuple
+	Carta = namedtuple("Carta", ["id", "nome", "valore", "seme_nome", "seme_id", "desc_breve"])
+	_SEMI_FRANCESI = ["Cuori", "Quadri", "Fiori", "Picche"]
+	_SEMI_ITALIANI = ["Bastoni", "Spade", "Coppe", "Denari"]
+	_VALORI_FRANCESI = [("Asso", 1)] + [(str(i), i) for i in range(2, 11)] + [("Jack", 11), ("Regina", 12), ("Re", 13)]
+	_VALORI_ITALIANI = [("Asso", 1)] + [(str(i), i) for i in range(2, 8)] + [("Fante", 8), ("Cavallo", 9), ("Re", 10)]
+	_VALORI_DESCRIZIONE = {1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '0', 11: 'J', 12: 'Q', 13: 'K'}
+	_SEMI_DESCRIZIONE = {"Cuori": 'C', "Quadri": 'Q', "Fiori": 'F', "Picche": 'P',
+																						"Bastoni": 'B', "Spade": 'S', "Coppe": 'O', "Denari": 'D'} # 'O' per Coppe
+	def __init__(self, tipo_francese=True, num_mazzi=1):
 		'''
-		Inizializza un mazzo di carte.
+		Inizializza uno o più mazzi di carte.
 		Parametri:
-		- tipo (bool): True per mazzo francese, False per mazzo italiano.
-		- num_mazzi (int): Numero di mazzi da includere.
+		- tipo_francese (bool): True per mazzo francese (default), False per mazzo italiano.
+		- num_mazzi (int): Numero di mazzi da includere (default 1). Deve essere >= 1.
 		'''
-		self.tipo = tipo
+		if not isinstance(num_mazzi, int) or num_mazzi < 1:
+			raise ValueError("Il numero di mazzi deve essere un intero maggiore o uguale a 1.")
+		self.tipo_francese = tipo_francese
 		self.num_mazzi = num_mazzi
-		self.carte = []
-		self.scarti = []
-		self.scarti_permanenti = []
-		self.pescate = []
-		self.CostruisciMazzo()
-	def CostruisciMazzo(self):
+		# Liste per tracciare lo stato delle carte
+		self.carte = [] # Mazzo principale da cui pescare
+		self.pescate = [] # Carte attualmente pescate / in gioco
+		self.scarti = [] # Pila degli scarti, possono essere rimescolati
+		self.scarti_permanenti = [] # Carte rimosse permanentemente
+		self._costruisci_mazzo()
+	def _costruisci_mazzo(self):
 		'''
-		Costruisce il mazzo di carte in base al tipo e al numero di mazzi.
+		(Metodo privato) Costruisce il mazzo di carte in base al tipo e al numero di mazzi.
 		'''
-		semi_francesi = ["Cuori", "Quadri", "Fiori", "Picche"]
-		semi_italiani = ["Bastoni", "Spade", "Coppe", "Denari"]
-		valori_francesi = [("Asso", 1)] + [(str(i), i) for i in range(2, 11)] + [("Jack", 11), ("Regina", 12), ("Re", 13)]
-		valori_italiani = [("Asso", 1)] + [(str(i), i) for i in range(2, 8)] + [("Fante", 8), ("Cavallo", 9), ("Re", 10)]
-		valori_descrizione = {1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '0', 11: 'J', 12: 'Q', 13: 'K'}
-		semi_descrizione = {1: 'C', 2: 'Q', 3: 'F', 4: 'P', 5: 'B', 6: 'S', 7: 'C', 8: 'D'}
-		num_carte_per_mazzo = 52 if self.tipo else 40
-		self.carte = []
-		for n in range(self.num_mazzi):
-			if self.tipo:
-				offset = n * num_carte_per_mazzo
-				id_carta = offset + 1
-				for seme in semi_francesi:
-					for nome_valore, valore in valori_francesi:
-						carta_data = [f"{nome_valore} di {seme}", valore, semi_francesi.index(seme) + 1, True, False, False]
-						carta_data.append(valori_descrizione[valore] + semi_descrizione[semi_francesi.index(seme) + 1])
-						self.carte.append((id_carta, carta_data))
-						id_carta += 1
-			else:
-				offset = n * num_carte_per_mazzo
-				id_carta = offset + 1
-				for seme in semi_italiani:
-					for nome_valore, valore in valori_italiani:
-						carta_data = [f"{nome_valore} di {seme}", valore, semi_italiani.index(seme) + 1, True, False, False]
-						carta_data.append(valori_descrizione[valore] + semi_descrizione[semi_italiani.index(seme) + 1])
-						self.carte.append((id_carta, carta_data))
-						id_carta += 1
-	def MescolaMazzo(self, millisecondi):
+		self.carte = [] # Resetta il mazzo
+		semi = self._SEMI_FRANCESI if self.tipo_francese else self._SEMI_ITALIANI
+		valori = self._VALORI_FRANCESI if self.tipo_francese else self._VALORI_ITALIANI
+		id_carta_counter = 1
+		for _ in range(self.num_mazzi):
+			for id_seme, nome_seme in enumerate(semi, 1):
+				# Correzione: L'ID seme per mazzi italiani dovrebbe partire da 5 per distinguerli?
+				# No, l'ID seme è relativo al tipo di mazzo (1-4 per entrambi),
+				# il nome_seme è ciò che li distingue. Manteniamo 1-4.
+				seme_id_effettivo = id_seme
+				if not self.tipo_francese:
+					# Se si volesse un ID globale unico (1-4 Francese, 5-8 Italiano)
+					# seme_id_effettivo = id_seme + 4 # Questa è un'opzione di design, ma la lasciamo 1-4 per ora
+					pass # Manteniamo 1-4 come da codice originale
+				for nome_valore, valore_num in valori:
+					desc_val = self._VALORI_DESCRIZIONE.get(valore_num, '?')
+					desc_seme = self._SEMI_DESCRIZIONE.get(nome_seme, '?')
+					desc_breve = f"{desc_val}{desc_seme}"
+					nome_completo = f"{nome_valore} di {nome_seme}"
+					# Usiamo la definizione di Carta interna alla classe
+					carta = self.Carta(id=id_carta_counter,
+																								nome=nome_completo,
+																								valore=valore_num,
+																								seme_nome=nome_seme,
+																								seme_id=seme_id_effettivo,
+																								desc_breve=desc_breve)
+					self.carte.append(carta)
+					id_carta_counter += 1
+	def mescola_mazzo(self):
 		'''
-		Mescola il mazzo per un periodo specificato.
+		Mescola le carte nel mazzo principale (self.carte).
+		Non restituisce nulla.
+		'''
+		if not self.carte:
+			return # Non fare nulla se il mazzo è vuoto
+		self.random.shuffle(self.carte)
+	def pesca(self, quante=1):
+		'''
+		Pesca carte dal mazzo principale. Se il mazzo è vuoto e ci sono scarti,
+		li rimescola automaticamente nel mazzo prima di pescare.
+		Le carte pescate vengono spostate nella lista 'pescate'.
 		Parametri:
-		- millisecondi (int): Durata del mescolamento in millisecondi.
-		'''
-		import random
-		import time
-		start_time = time.time()
-		end_time = start_time + (millisecondi / 1000.0)
-		while time.time() < end_time:
-			random.shuffle(self.carte)
-	def Pesca(self, quante=1):
-		'''
-		Pesca un numero specifico di carte dalla cima del mazzo.
-		Parametri:
-		- quante (int): Numero di carte da pescare.
+		- quante (int): Numero di carte da pescare (default 1).
 		Ritorna:
-		- Mazzo: Un nuovo oggetto Mazzo contenente le carte pescate.
+		- list[Carta]: Lista delle carte pescate. Può contenere meno carte di 'quante'
+																	se il mazzo e gli scarti combinati non sono sufficienti.
 		'''
 		if quante < 0:
 			raise ValueError("Il numero di carte da pescare deve essere non negativo.")
-		mazzo_pescato = Mazzo(self.tipo)
-		mazzo_pescato.carte = []
-		for _ in range(quante):
-			if not self.carte:
-				break
-			carta = self.carte.pop(0)
-			carta[1][3] = False  # Non più nel mazzo principale
-			carta[1][4] = True   # Pescata
-			mazzo_pescato.carte.append(carta)
-			self.pescate.append(carta)
-		return mazzo_pescato
-	def Rimescola(self):
-		'''
-		Rimette le carte scartate nel mazzo e mescola. Non reintegra le carte eliminate definitivamente.
-		'''
-		if not self.scarti:
-			print("Non ci sono scarti da reintegrare nel mazzo.")
-		else:
-			print(f"Uniti {len(self.scarti)} scarti nel mazzo.")
+		if quante == 0:
+			return []
+		# Controlla se il mazzo è vuoto e se ci sono scarti da rimescolare
+		if not self.carte and self.scarti:
+			# Rimescola gli scarti nel mazzo
 			self.carte.extend(self.scarti)
 			self.scarti = []
-			for _, carta in self.carte:
-				carta[3] = True  # Torna nel mazzo principale
-				carta[5] = False  # Non più scartata
-			self.MescolaMazzo(1000)
-			print(f"{len(self.carte)} carte nel mazzo")
-	def RimuoviSemi(self, semi_da_rimuovere):
+			self.mescola_mazzo() # Mescola il mazzo appena riempito
+		num_carte_nel_mazzo = len(self.carte)
+		num_da_pescare = min(quante, num_carte_nel_mazzo)
+		carte_pescate_ora = []
+		if num_da_pescare > 0:
+			# Pesca dalla fine per efficienza O(1) con pop()
+			# Se si preferisce pescare dall'inizio (pop(0)), cambiare qui.
+			# Assumiamo che il mazzo sia già stato mescolato.
+			for _ in range(num_da_pescare):
+				carte_pescate_ora.append(self.carte.pop()) # Pesca dalla fine
+			# Se si pesca dall'inizio:
+			# carte_pescate_ora = self.carte[:num_da_pescare]
+			# self.carte = self.carte[num_da_pescare:]
+		# Aggiunge le carte pescate alla lista self.pescate per tracciamento
+		self.pescate.extend(carte_pescate_ora)
+		# Non restituisce messaggi di avviso, il chiamante verifica len(risultato)
+		return carte_pescate_ora
+	def scarta_carte(self, carte_da_scartare):
 		'''
-		Rimuove dal mazzo tutte le carte con i semi specificati e le sposta negli scarti.
+		Sposta una lista di carte (presumibilmente dalla mano di un giocatore,
+		quindi da self.pescate) nella pila degli scarti (self.scarti).
 		Parametri:
-		- semi_da_rimuovere (list): Lista di interi che rappresentano i semi da rimuovere (es. [1, 2]).
+		- carte_da_scartare (list[Carta]): Lista di oggetti Carta da spostare negli scarti.
+		Ritorna:
+		- str: Messaggio che indica quante carte sono state effettivamente trovate e scartate.
 		'''
-		carte_da_rimuovere = []
-		for carta in self.carte:
-			if carta[1][2] in semi_da_rimuovere:
-				carta[1][3] = False  # Non nel mazzo principale
-				carta[1][5] = True   # Scartata
-				self.scarti.append(carta)
-				carte_da_rimuovere.append(carta)
-		for carta in carte_da_rimuovere:
-			self.carte.remove(carta)
-	def RimuoviValori(self, valori_da_rimuovere):
+		scartate_count = 0
+		non_trovate_count = 0
+		carte_da_rimuovere_da_pescate = []
+		# Crea un set degli id delle carte da scartare per ricerca efficiente
+		ids_da_scartare = {carta.id for carta in carte_da_scartare}
+		pescate_dict = {carta.id: carta for carta in self.pescate} # Mappa id->carta per accesso rapido
+		carte_effettivamente_scartate = []
+		for carta_id in ids_da_scartare:
+			if carta_id in pescate_dict:
+				carta = pescate_dict[carta_id]
+				carte_effettivamente_scartate.append(carta)
+				carte_da_rimuovere_da_pescate.append(carta)
+				scartate_count += 1
+			else:
+				# Potrebbe essere utile tracciare quali carte non sono state trovate
+				# Ma per ora contiamo solo
+				non_trovate_count += 1
+		# Aggiorna le liste solo dopo aver iterato
+		if carte_da_rimuovere_da_pescate:
+			self.pescate = [c for c in self.pescate if c not in carte_da_rimuovere_da_pescate]
+			self.scarti.extend(carte_effettivamente_scartate)
+		msg = f"Scartate {scartate_count} carte."
+		if non_trovate_count > 0:
+			msg += f" {non_trovate_count} carte non trovate in 'pescate'."
+		return msg
+	def rimescola_scarti(self, include_pescate=False):
 		'''
-		Rimuove dal mazzo tutte le carte con i valori specificati e le sposta negli scarti permanenti.
+		Rimette le carte dalla pila degli scarti nel mazzo principale e mescola.
+		Opzionalmente, può includere anche le carte attualmente pescate.
+		Non reintegra le carte scartate permanentemente.
 		Parametri:
-		- valori_da_rimuovere (list): Lista di interi che rappresentano i valori da rimuovere (es. [2, 3, 4, 5]).
+		- include_pescate (bool): Se True, anche le carte in self.pescate sono rimesse (default False).
+		Ritorna:
+		- str: Messaggio che riepiloga l'operazione.
 		'''
-		carte_da_rimuovere = []
-		for carta in self.carte:
-			if carta[1][1] in valori_da_rimuovere:
-				carta[1][3] = False  # Non nel mazzo principale
-				carta[1][5] = True   # Scartata
-				self.scarti_permanenti.append(carta)  # Scarti permanenti
-				carte_da_rimuovere.append(carta)
-		for carta in carte_da_rimuovere:
-			self.carte.remove(carta)
-	def JollySi(self):
-		'''
-		Aggiunge i jolly al mazzo per ogni mazzo presente.
-		'''
-		if self.tipo:
-			num_jolly_aggiunti = 0
-			for n in range(self.num_mazzi):
-				id_jolly1 = len(self.carte) + 1
-				id_jolly2 = len(self.carte) + 2
-				carta_jolly1 = ["Jolly", None, 0, True, False, False]
-				carta_jolly2 = ["Jolly", None, 0, True, False, False]
-				self.carte.append((id_jolly1, carta_jolly1))
-				self.carte.append((id_jolly2, carta_jolly2))
-				num_jolly_aggiunti += 2
+		carte_da_reintegrare = []
+		msg_parts = []
+		num_scarti = len(self.scarti)
+		if num_scarti > 0:
+			carte_da_reintegrare.extend(self.scarti)
+			self.scarti = []
+			msg_parts.append(f"{num_scarti} scarti reintegrati.")
 		else:
-			print("Questo tipo di mazzo non supporta i jolly.")
-	def JollyNo(self):
+			msg_parts.append("Nessuno scarto da reintegrare.")
+		num_pescate = len(self.pescate)
+		if include_pescate:
+			if num_pescate > 0:
+				carte_da_reintegrare.extend(self.pescate)
+				self.pescate = []
+				msg_parts.append(f"{num_pescate} carte pescate reintegrate.")
+			else:
+				msg_parts.append("Nessuna carta pescata da reintegrare.")
+		if not carte_da_reintegrare:
+			return "Nessuna carta da rimescolare. " + " ".join(msg_parts)
+		self.carte.extend(carte_da_reintegrare)
+		self.mescola_mazzo()
+		msg_parts.append(f"Mazzo ora contiene {len(self.carte)} carte.")
+		return " ".join(msg_parts)
+	def _rimuovi_carte_da_lista(self, lista_sorgente, condizione, destinazione, nome_destinazione):
+		''' Funzione helper per rimuovere carte da una lista in base a una condizione. '''
+		carte_da_mantenere = []
+		carte_rimosse = []
+		for carta in lista_sorgente:
+			if condizione(carta):
+				carte_rimosse.append(carta)
+			else:
+				carte_da_mantenere.append(carta)
+		if carte_rimosse:
+			destinazione.extend(carte_rimosse)
+			# Modifica la lista originale inplace
+			lista_sorgente[:] = carte_da_mantenere
+		return carte_rimosse
+	def rimuovi_semi(self, semi_id_da_rimuovere, permanente=False):
 		'''
-		Rimuove tutti i jolly dal mazzo.
+		Rimuove dal mazzo principale (self.carte) tutte le carte con i semi specificati.
+		Le carte rimosse vengono spostate negli scarti temporanei o permanenti.
+		Parametri:
+		- semi_id_da_rimuovere (list[int]): Lista di ID numerici dei semi da rimuovere.
+		- permanente (bool): Se True, sposta in scarti_permanenti, altrimenti in scarti (default False).
+		Ritorna:
+		- int: Numero di carte rimosse dal mazzo principale.
 		'''
-		carte_da_rimuovere = [carta for carta in self.carte if carta[1][0] == "Jolly"]
-		for carta in carte_da_rimuovere:
-			self.carte.remove(carta)
-		print(f"Jolly rimossi dal mazzo. Totale jolly rimossi: {len(carte_da_rimuovere)}")
+		destinazione = self.scarti_permanenti if permanente else self.scarti
+		nome_dest = "permanenti" if permanente else "temporanei"
+		condizione = lambda carta: carta.seme_id in semi_id_da_rimuovere
+		carte_rimosse = self._rimuovi_carte_da_lista(self.carte, condizione, destinazione, nome_dest)
+		return len(carte_rimosse)
+	def rimuovi_valori(self, valori_da_rimuovere, permanente=True):
+		'''
+		Rimuove dal mazzo principale (self.carte) tutte le carte con i valori specificati.
+		Le carte rimosse vengono spostate negli scarti permanenti o temporanei.
+		Parametri:
+		- valori_da_rimuovere (list[int]): Lista di valori numerici da rimuovere.
+		- permanente (bool): Se True, sposta in scarti_permanenti (default), altrimenti in scarti.
+		Ritorna:
+		- int: Numero di carte rimosse dal mazzo principale.
+		'''
+		destinazione = self.scarti_permanenti if permanente else self.scarti
+		nome_dest = "permanenti" if permanente else "temporanei"
+		condizione = lambda carta: carta.valore in valori_da_rimuovere
+		carte_rimosse = self._rimuovi_carte_da_lista(self.carte, condizione, destinazione, nome_dest)
+		return len(carte_rimosse)
+	def aggiungi_jolly(self, quanti_per_mazzo=2):
+		'''
+		Aggiunge jolly al mazzo principale fino a raggiungere il numero corretto
+		per ogni mazzo originale (quanti_per_mazzo * num_mazzi).
+		Funziona solo per mazzi di tipo francese. Jolly esistenti non vengono duplicati.
+		Parametri:
+		- quanti_per_mazzo (int): Numero di jolly desiderato per ciascun mazzo originale (default 2).
+		Ritorna:
+		- str: Messaggio che indica quanti jolly sono stati aggiunti o se erano già presenti.
+		'''
+		if not self.tipo_francese:
+			return "I jolly possono essere aggiunti solo ai mazzi di tipo francese."
+		if quanti_per_mazzo < 0:
+			# Non ha senso avere un numero negativo di jolly per mazzo
+			return "Numero di jolly per mazzo non valido (deve essere >= 0)."
+
+		# Calcola il numero totale di jolly che dovrebbero esserci
+		jolly_attesi_totali = self.num_mazzi * quanti_per_mazzo
+		# Controlla quanti jolly esistono già in *tutte* le liste
+		all_cards = self.carte + self.pescate + self.scarti + self.scarti_permanenti
+		jolly_esistenti_count = sum(1 for c in all_cards if c.nome == "Jolly")
+		# Determina quanti jolly mancano (se ce ne sono)
+		jolly_da_aggiungere = jolly_attesi_totali - jolly_esistenti_count
+		if jolly_da_aggiungere <= 0:
+			# Se non ne mancano o ce ne sono addirittura di più (improbabile ma gestito)
+			return f"Nessun nuovo jolly aggiunto (numero richiesto: {jolly_attesi_totali}, già presenti: {jolly_esistenti_count})."
+		# Se dobbiamo aggiungere jolly:
+		# Trova l'ID massimo attuale per continuare la sequenza
+		max_id = 0
+		if all_cards:
+			ids = [c.id for c in all_cards if c.id is not None]
+			if ids:
+				max_id = max(ids)
+		jolly_aggiunti_count = 0
+		for i in range(jolly_da_aggiungere):
+			jolly_id = max_id + 1 + i
+			# Crea il jolly e aggiungilo al mazzo principale
+			jolly = self.Carta(id=jolly_id, nome="Jolly", valore=None, seme_nome="N/A", seme_id=0, desc_breve="XY")
+			self.carte.append(jolly)
+			jolly_aggiunti_count += 1
+			# Aggiorna max_id per il prossimo ciclo (se ce n'è più di uno)
+			max_id = jolly_id
+		if jolly_aggiunti_count > 0:
+			return f"Aggiunti {jolly_aggiunti_count} jolly al mazzo principale."
+		else:
+			# Questo caso non dovrebbe verificarsi data la logica precedente, ma per sicurezza
+			return "Nessun nuovo jolly aggiunto."
+	def rimuovi_jolly(self, permanente=False):
+		'''
+		Rimuove tutti i jolly dalle pile modificabili (mazzo, pescate, e scarti se permanente=True)
+		e li sposta nella destinazione appropriata (scarti temporanei o permanenti).
+		Parametri:
+		- permanente (bool): Se True, sposta in scarti_permanenti e pulisce anche gli scarti temporanei.
+		                     Se False, sposta solo in scarti temporanei.
+		Ritorna:
+		- str: Messaggio che indica quanti jolly unici sono stati rimossi e dove sono stati spostati.
+		'''
+		jolly_rimossi_total_obj = [] # Lista per collezionare gli oggetti jolly rimossi
+		destinazione = self.scarti_permanenti if permanente else self.scarti
+		tipo_destinazione = "permanenti" if permanente else "temporanei"
+		condizione = lambda carta: carta.nome == "Jolly"
+		# Helper per evitare codice duplicato e gestire la collezione degli oggetti
+		def _processa_lista(lista_sorgente):
+			carte_rimosse = self._rimuovi_carte_da_lista(lista_sorgente, condizione, destinazione, tipo_destinazione)
+			jolly_rimossi_total_obj.extend(carte_rimosse)
+		# Rimuove da self.carte
+		_processa_lista(self.carte)
+		# Rimuove da self.pescate
+		_processa_lista(self.pescate)
+		# Rimuove da self.scarti SOLO SE la destinazione NON è self.scarti
+		# Questo previene che gli elementi appena aggiunti a self.scarti vengano rimossi di nuovo.
+		if permanente:
+			_processa_lista(self.scarti) # Pulisce gli scarti temporanei spostando i jolly in quelli permanenti
+		# Calcola quanti jolly unici sono stati effettivamente spostati
+		# Utile se per errore un jolly fosse presente in più liste (non dovrebbe accadere)
+		num_rimossi_unici = len({j.id for j in jolly_rimossi_total_obj})
+		if num_rimossi_unici > 0:
+			return f"Rimossi {num_rimossi_unici} jolly unici. Spostati negli scarti {tipo_destinazione}."
+		else:
+			return "Nessun jolly trovato da rimuovere."
+	def _rimuovi_carte_da_lista(self, lista_sorgente, condizione, destinazione, nome_destinazione):
+		''' Funzione helper per rimuovere carte da una lista in base a una condizione. '''
+		carte_da_mantenere = []
+		carte_rimosse = []
+		for carta in lista_sorgente:
+			if condizione(carta):
+				carte_rimosse.append(carta)
+			else:
+				carte_da_mantenere.append(carta)
+		if carte_rimosse:
+			# Aggiunge gli elementi rimossi alla lista di destinazione
+			destinazione.extend(carte_rimosse)
+			# Modifica la lista originale inplace rimuovendo gli elementi
+			lista_sorgente[:] = carte_da_mantenere
+			# Ritorna la lista degli elementi rimossi
+		return carte_rimosse
+	def stato_mazzo(self):
+		''' Ritorna una stringa che riepiloga lo stato attuale del mazzo. '''
+		return (f"Mazzo: {len(self.carte)} carte | "
+										f"Pescate: {len(self.pescate)} carte | "
+										f"Scarti: {len(self.scarti)} carte | "
+										f"Scarti Permanenti: {len(self.scarti_permanenti)} carte")
+
+	def __len__(self):
+		''' Ritorna il numero di carte attualmente nel mazzo principale (self.carte). '''
+		return len(self.carte)
+	def __str__(self):
+		''' Rappresentazione stringa dell'oggetto Mazzo (mostra lo stato). '''
+		return self.stato_mazzo()
+	def mostra_carte(self, lista='mazzo'):
+		'''
+		Restituisce una stringa con le descrizioni brevi delle carte
+		in una specifica lista (mazzo, pescate, scarti, permanenti).
+		Parametri:
+		- lista (str): Nome della lista ('mazzo', 'pescate', 'scarti', 'permanenti').
+		Ritorna:
+		- str: Stringa formattata con le carte o messaggio di lista vuota/non valida.
+		'''
+		target_lista_ref = None
+		nome_lista = ""
+		if lista == 'mazzo':
+			target_lista_ref = self.carte
+			nome_lista = "Mazzo Principale"
+		elif lista == 'pescate':
+			target_lista_ref = self.pescate
+			nome_lista = "Carte Pescate"
+		elif lista == 'scarti':
+			target_lista_ref = self.scarti
+			nome_lista = "Pila Scarti"
+		elif lista == 'permanenti':
+			target_lista_ref = self.scarti_permanenti
+			nome_lista = "Scarti Permanenti"
+		else:
+			return "Lista non valida. Scegli tra: 'mazzo', 'pescate', 'scarti', 'permanenti'."
+		if not target_lista_ref:
+			return f"Nessuna carta nella lista '{nome_lista}'."
+		# Usa la lista referenziata per ottenere le carte
+		return f"{nome_lista} ({len(target_lista_ref)}): " + ", ".join([c.desc_breve for c in target_lista_ref])
 def percent(base=50.0, confronto=100.0, successo=False):
 	'''V1.0 thu 28, september 2023
 	Rx base e confronto e calcola la percentuale di base rispetto a confronto
@@ -834,7 +1043,7 @@ def manuale(nf):
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, full_keyslist=False, pager=20, show_on_filter=True):
-	"""V3.11 – sabato 29 marzo 2025 - Gabriele Battaglia & Gemini 2.5
+	"""V3.12 – giovedì 3 aprile 2025 - Gabriele Battaglia & Gemini 2.5
 	Parametri:
 		d: dizionario con coppie chiave:descrizione
 		p: prompt di default se keyslist è False
@@ -900,7 +1109,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 		if total == 0:
 			print("\n" + ntf)
 			return True
-		print("\n--- Opzioni Disponibili ---")
+		print("\n--- Menu ---")
 		for j in l:
 			desc = d.get(j, "N/A")
 			print(f"- ({j}) -- {desc};")
@@ -910,9 +1119,9 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 				ch_pager = key(prompt_pager) # Usa la funzione key interna
 				print()
 				if ch_pager == '\x1b': # ESC
-					print("--- Paginazione Interrotta ---")
+					print("--- Exit from paging ---")
 					return False
-		print(f"---------- [Fine Lista] ({count}/{total}) ----------")
+		print(f"---------- [End of list] ({count}/{total}) ----------")
 		return True
 	def minimal_keys(keys):
 		"""Calcola le abbreviazioni minime univoche."""
@@ -964,7 +1173,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 	last_displayed = None
 	# Gestione casi limite iniziali
 	if not d:
-		print("Nessuna opzione disponibile.")
+		print("No options available.")
 		return None
 	if len(d) == 1 and not show_only:
 		return orig_keys[0]
@@ -993,7 +1202,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 			return filtered[0]
 		# 4. Mostra su filtro (se richiesto E si è digitato E lista cambiata)
 		if show_on_filter and current_input != "" and filtered != last_displayed:
-			print("\n--- Opzioni Filtrate ---")
+			print("\n-----------------------")
 			if not Mostra(filtered, pager): # Usa Mostra interna
 				last_displayed = filtered[:]
 				continue # ESC nel pager, salta prompt
@@ -1022,7 +1231,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 				if len(filtered) == 1:
 					return filtered[0] # Unico elemento filtrato
 				elif len(filtered) > 1:
-					print("\nInput ambiguo. Filtra ulteriormente o usa '?' per vedere le opzioni.")
+					print("\n--- Press '?' for help. ---")
 					if filtered != last_displayed:
 						if not Mostra(filtered, pager): # Usa Mostra interna
 							last_displayed = filtered[:]
@@ -1055,7 +1264,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 				print()
 				return quick_filtered[0] # Trovato unico, esci
 			elif len(quick_filtered) == 0:
-				print("\n" + ntf) # Filtro diventato vuoto
+				print("\n" + ntf)
 				# Cancella input visivo (tentativo) e logico
 				# print(f"\r{' ' * len(full_prompt)}\r", end='')
 				print("\r" + " " * len(full_prompt) + "\r", end='') # Sovrascrivi linea con spazi
