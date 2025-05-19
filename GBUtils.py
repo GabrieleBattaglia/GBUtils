@@ -283,6 +283,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		play_obj.wait_done() # Usa il metodo dell'oggetto per attendere
 	# --- Ritorno Oggetto e rwpm ---
 	return play_obj, rwpm
+
 class Mazzo:
 	'''
 	V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
