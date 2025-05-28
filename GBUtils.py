@@ -3,11 +3,11 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V43 di giovedì 3 aprile 2025
+	V44 di mercoledì 28 maggio 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator V8.1 di giovedì 27 marzo 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
+	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	gridapu 1.2 from IU1FIG
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
@@ -21,11 +21,12 @@ Lista utilità contenute in questo pacchetto
 '''
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
 	"""
-	V8.1 di giovedì 27 marzo 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
+	V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
-		msg (str): Messaggio di testo da convertire in Morse.
+		msg (str|int): Messaggio di testo da convertire in Morse.
+			se == -1 restituisce la mappa	morse come dizionario.
 		wpm (int): Velocità in parole al minuto (range 5-100).
 		pitch (int): Frequenza in Hz per il tono (range 130-2000).
 		l (int): Peso per la durata della linea (default 30).
@@ -50,7 +51,22 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	from scipy import signal # Importato per le forme d'onda
 	BLOCK_SIZE = 256
 	# --- Validazione Parametri Migliorata ---
-	if not isinstance(msg, str) or msg == "": print("CWzator Error: msg deve essere una stringa non vuota.", file=sys.stderr); return None, None
+	MORSE_MAP = {
+		"a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
+		"g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..",
+		"m":"--", "n":"-.", "o":"---", "p":".--.", "q":"--.-", "r":".-.",
+		"s":"...", "t":"-", "u":"..-", "v":"...-", "w":".--", "x":"-..-",
+		"y":"-.--", "z":"--..", "0":"-----", "1":".----", "2":"..---",
+		"3":"...--", "4":"....-", "5":".....", "6":"-....", "7":"--...",
+		"8":"---..", "9":"----.", ".":".-.-.-", "-":"-....-", ",":"--..--",
+		"?":"..--..", "/":"-..-.", ";":"-.-.-.", "(":"-.--.", "[":"-.--.",
+		")":"-.--.-", "]":"-.--.-", "@":".--.-.", "*":"...-.-", "+":".-.-.",
+		"%":".-...", ":":"---...", "=":"-...-", '"':".-..-.", "'":".----.",
+		"!":"-.-.--", "$":"...-..-", " ":"", "_":"",
+		"ò":"---.", "à":".--.-", "ù":"..--", "è":"..-..",
+		"é":"..-..", "ì":".---."}
+	if msg==-1: return MORSE_MAP
+	elif not isinstance(msg, str) or msg == "": print("CWzator Error: msg deve essere una stringa non vuota.", file=sys.stderr); return None, None
 	if not (isinstance(wpm, int) and 5 <= wpm <= 100): print(f"CWzator Error: wpm ({wpm}) non valido [5-100].", file=sys.stderr); return None, None
 	if not (isinstance(pitch, int) and 130 <= pitch <= 2000): print(f"CWzator Error: pitch ({pitch}) non valido [130-2000].", file=sys.stderr); return None, None
 	if not (isinstance(l, int) and 1 <= l <= 100): print(f"CWzator Error: l ({l}) non valido [1-100].", file=sys.stderr); return None, None
@@ -99,29 +115,14 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		# Arrotonda qui per il numero di campioni
 		N = int(round(fs * duration))
 		return np.zeros(N, dtype=np.int16) if N > 0 else np.array([], dtype=np.int16)
-	# --- Mappa Morse (invariata) ---
-	morse_map = {
-		"a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
-		"g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..",
-		"m":"--", "n":"-.", "o":"---", "p":".--.", "q":"--.-", "r":".-.",
-		"s":"...", "t":"-", "u":"..-", "v":"...-", "w":".--", "x":"-..-",
-		"y":"-.--", "z":"--..", "0":"-----", "1":".----", "2":"..---",
-		"3":"...--", "4":"....-", "5":".....", "6":"-....", "7":"--...",
-		"8":"---..", "9":"----.", ".":".-.-.-", "-":"-....-", ",":"--..--",
-		"?":"..--..", "/":"-..-.", ";":"-.-.-.", "(":"-.--.", "[":"-.--.",
-		")":"-.--.-", "]":"-.--.-", "@":".--.-.", "*":"...-.-", "+":".-.-.",
-		"%":".-...", ":":"---...", "=":"-...-", '"':".-..-.", "'":".----.",
-		"!":"-.-.--", "$":"...-..-", " ":"", "_":"",
-		"ò":"---.", "à":".--.-", "ù":"..--", "è":"..-..",
-		"é":"..-..", "ì":".---."}
 	# --- Assemblaggio Sequenza (invariato) ---
 	segments = []
 	words = msg.lower().split()
 	for w_idx, word in enumerate(words):
 		# Usa una stringa per accumulare le lettere valide invece di una lista
-		valid_letters = "".join(ch for ch in word if ch in morse_map)
+		valid_letters = "".join(ch for ch in word if ch in MORSE_MAP)
 		for l_idx, letter in enumerate(valid_letters):
-			code = morse_map.get(letter) # Usa .get() per sicurezza? No, già filtrato.
+			code = MORSE_MAP.get(letter) # Usa .get() per sicurezza? No, già filtrato.
 			if not code: continue # Salta se per qualche motivo non c'è codice (non dovrebbe succedere)
 			for s_idx, symbol in enumerate(code):
 				if symbol == '.':
@@ -137,7 +138,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		# Aggiungi gap tra parole solo se non è l'ultima parola
 		if w_idx < len(words) - 1:
 			# Controlla se la parola precedente non era solo spazi o caratteri ignorati
-			if valid_letters or any(ch in morse_map for ch in words[w_idx+1]):
+			if valid_letters or any(ch in MORSE_MAP for ch in words[w_idx+1]):
 				segments.append(generate_silence(word_gap))
 	# --- Concatenazione e Aggiunta Silenzio Finale ---
 	audio = np.concatenate(segments) if segments else np.array([], dtype=np.int16)
@@ -156,8 +157,8 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			current_word_letters = 0
 			code_lengths_in_word = []
 			for letter in w:
-				if letter in morse_map:
-					code = morse_map[letter]
+				if letter in MORSE_MAP:
+					code = MORSE_MAP[letter]
 					if code: # Ignora spazi o caratteri mappati a stringa vuota
 						dots += code.count('.')
 						dashes += code.count('-')
@@ -172,7 +173,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			# Aggiungi word gap solo se la parola conteneva elementi e non è l'ultima
 			if current_word_letters > 0 and w_idx < len(words_list) - 1:
 				# E controlla anche se la parola successiva contiene elementi
-				if any(ch in morse_map and morse_map[ch] for ch in words_list[w_idx+1]):
+				if any(ch in MORSE_MAP and MORSE_MAP[ch] for ch in words_list[w_idx+1]):
 					word_gaps += 1
 		# Calcola durate totali (in unità di dot)
 		# Durata standard: 1 (dot) + 1 (gap) = 2, 3 (dash) + 1 (gap) = 4
