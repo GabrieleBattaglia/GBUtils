@@ -3,12 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V44 di mercoledì 28 maggio 2025
+	V45 di lunedì 9 giugno 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
+	Donazione 1.0 del 9 giugno 2025 by Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
@@ -1328,3 +1329,28 @@ def Vecchiume(y=1974, m=9, g=13, h=22, i=10):
 		if ETA.minutes == 1: f += str(ETA.minutes)+" minuto."
 		else: f += str(ETA.minutes)+" minuti"
 	return(f)
+
+def Donazione():
+    """
+    V1.0 del 9 giugno 2025 by Gemini 2.5 Pro
+    Mostra un messaggio di donazione con una probabilità del 20%
+    nella lingua del sistema operativo (se supportata), altrimenti in inglese.
+    Lingue supportate: Italiano, Inglese, Francese, Spagnolo.
+    """
+    import random
+    import locale
+    if random.randint(1, 100) <= 20:
+        messaggi = {
+            'it': "Se questo software ti è piaciuto, ti è stato utile, ti sei divertito ad usarlo, considera l'idea di offrirmi un caffè. Mi trovi su paypal come iz4apu@libero.it Grazie di cuore.",
+            'en': "If you enjoyed this software, found it useful, or had fun using it, consider buying me a coffee. You can find me on PayPal at iz4apu@libero.it Thank you.",
+            'fr': "Si vous avez aimé ce logiciel, l'avez trouvé utile ou vous êtes amusé en l'utilisant, envisagez de m'offrir un café. Vous pouvez me trouver sur PayPal à l'adresse iz4apu@libero.it Merci beaucoup.",
+            'es': "Si te ha gustado este software, te ha resultado útil o te has divertido usándolo, considera la idea de invitarme a un café. Me puedes encontrar en PayPal como iz4apu@libero.it. Muchas gracias."
+        }
+        try:
+            locale.setlocale(locale.LC_ALL, '') 
+            lingua_os_completa, encoding = locale.getlocale()
+            lingua_os = lingua_os_completa.split('_')[0]
+        except Exception:
+            lingua_os = 'en' 
+        messaggio_da_mostrare = messaggi.get(lingua_os, messaggi['en'])
+        print(messaggio_da_mostrare)
