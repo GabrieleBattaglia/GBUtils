@@ -3,13 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V45 di lunedì 9 giugno 2025
+	V46 di mercoledì 18 giugno 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
-	Donazione 1.0 del 9 giugno 2025 by Gemini 2.5 Pro
+	Donazione V1.1 del 18 giugno 2025
 	gridapu 1.2 from IU1FIG
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
@@ -1332,25 +1332,41 @@ def Vecchiume(y=1974, m=9, g=13, h=22, i=10):
 
 def Donazione():
     """
-    V1.0 del 9 giugno 2025 by Gemini 2.5 Pro
+    V1.1 del 18 giugno 2025
     Mostra un messaggio di donazione con una probabilità del 20%
     nella lingua del sistema operativo (se supportata), altrimenti in inglese.
-    Lingue supportate: Italiano, Inglese, Francese, Spagnolo.
+    Lingue supportate: Italiano, Portoghese, Inglese, Francese, Spagnolo, Tedesco, Russo, Cinese (semplificato), Giapponese, Arabo.
     """
     import random
     import locale
+    import platform # Importiamo il modulo platform per un rilevamento più affidabile
+
     if random.randint(1, 100) <= 20:
         messaggi = {
             'it': "Se questo software ti è piaciuto, ti è stato utile, ti sei divertito ad usarlo, considera l'idea di offrirmi un caffè. Mi trovi su paypal come iz4apu@libero.it Grazie di cuore.",
             'en': "If you enjoyed this software, found it useful, or had fun using it, consider buying me a coffee. You can find me on PayPal at iz4apu@libero.it Thank you.",
+            'pt': "Se você gostou deste software, o achou útil ou se divertiu usando-o, considere me pagar um café. Você pode me encontrar no PayPal em iz4apu@libero.it. Muito obrigado.",
             'fr': "Si vous avez aimé ce logiciel, l'avez trouvé utile ou vous êtes amusé en l'utilisant, envisagez de m'offrir un café. Vous pouvez me trouver sur PayPal à l'adresse iz4apu@libero.it Merci beaucoup.",
-            'es': "Si te ha gustado este software, te ha resultado útil o te has divertido usándolo, considera la idea de invitarme a un café. Me puedes encontrar en PayPal como iz4apu@libero.it. Muchas gracias."
+            'es': "Si te ha gustado este software, te ha resultado útil o te has divertido usándolo, considera la idea de invitarme a un café. Me puedes encontrar en PayPal como iz4apu@limero.it. Muchas gracias.",
+            'de': "Wenn Ihnen diese Software gefallen hat, sie nützlich war oder Sie Spaß daran hatten, sie zu nutzen, ziehen Sie in Betracht, mir einen Kaffee auszugeben. Sie finden mich auf PayPal unter iz4apu@libero.it Vielen Dank.",
+            'ru': "Если вам понравилась эта программа, она оказалась полезной или вы получили удовольствие от ее использования, рассмотрите возможность угостить меня кофе. Вы можете найти меня на PayPal по адресу iz4apu@libero.it Спасибо.",
+            'zh': "如果您喜欢这款软件，觉得它有用，或者在使用过程中获得了乐趣，请考虑请我喝杯咖啡。您可以在PayPal上找到我：iz4apu@libero.it 谢谢。", # Cinese (semplificato)
+            'ja': "このソフトウェアを楽しんだり、役立つと感じたり、楽しく使っていただけたなら、私にコーヒーをご馳走することを検討してください。PayPalでiz4apu@libero.itとして見つけることができます。ありがとうございます。",
+            'ar': "إذا أعجبك هذا البرنامج، أو وجدته مفيدًا، أو استمتعت باستخدامه، ففكر في شراء قهوة لي. يمكنك العثور عليّ على PayPal على iz4apu@libero.it. شكرًا لك."
         }
+
+        lingua_os = 'en' # Impostiamo l'inglese come predefinito
+
         try:
-            locale.setlocale(locale.LC_ALL, '') 
-            lingua_os_completa, encoding = locale.getlocale()
-            lingua_os = lingua_os_completa.split('_')[0]
-        except Exception:
-            lingua_os = 'en' 
+            # Tentiamo di ottenere la lingua del sistema operativo
+            # `locale.getdefaultlocale()` è spesso più robusto su diversi sistemi operativi
+            # rispetto a `locale.setlocale` seguito da `locale.getlocale`.
+            lingua_os_completa, encoding = locale.getdefaultlocale()
+            if lingua_os_completa:
+                lingua_os = lingua_os_completa.split('_')[0].lower() # Prendiamo solo le prime due lettere e convertiamo in minuscolo
+        except Exception as e:
+            print(f"Errore nel rilevamento della lingua del sistema operativo: {e}")
+            # Se c'è un errore, lingua_os rimane 'en'
+
         messaggio_da_mostrare = messaggi.get(lingua_os, messaggi['en'])
         print(messaggio_da_mostrare)
