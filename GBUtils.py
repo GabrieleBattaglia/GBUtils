@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V46 di mercoledì 18 giugno 2025
+	V47 di domenica 22 giugno 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -16,6 +16,7 @@ Lista utilità contenute in questo pacchetto
 	Mazzo V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V3.11 – sabato 29 marzo 2025 - Gabriele Battaglia & Gemini 2.5
 	percent V1.0 thu 28, september 2023
+	polipo V1.0 by Gabriele Battaglia and Gemini 2.5 Pro - 22/06/2025
 	Scadenza 1.0 del 15/12/2021
 	sonify V7.0 - 23 marzo 2025 - Gabriele Battaglia eChatGPT O1
 	Vecchiume 1.0 del 15/12/2018
@@ -1370,3 +1371,86 @@ def Donazione():
 
         messaggio_da_mostrare = messaggi.get(lingua_os, messaggi['en'])
         print(messaggio_da_mostrare)
+
+def polipo(domain=None, localedir='locales'):
+    """
+    polipo V1.0 by Gabriele Battaglia and Gemini 2.5 Pro - 22/06/2025
+    Manages multi-language setup for an application using gettext.
+    If the 'domain' is not provided, it is auto-detected from the name
+    of the script that called this function. It then prompts the user
+    to select a language if none is pre-configured, saves the choice,
+    and installs the global translation function '_'.
+    """
+    import gettext, json, os, locale, inspect
+    if domain is None:
+        try:
+            caller_frame = inspect.stack()[1]
+            caller_filename = caller_frame.filename
+            base_name = os.path.basename(caller_filename)
+            domain, _ = os.path.splitext(base_name)
+            print(f"Domain not specified, auto-detected: '{domain}'")
+        except Exception as e:
+            print(f"WARNING: Could not auto-detect domain: {e}")
+            print("Please specify a domain by calling polipo(domain='your_domain').")
+            return
+    selected_lang_file = 'selected_language.json'
+    language_code = None
+    try:
+        with open(selected_lang_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            language_code = data.get('language_code')
+            print(f"Language loaded from file: {language_code}")
+    except (FileNotFoundError, json.JSONDecodeError):
+        language_code = None
+    if not language_code:
+        print("No pre-selected language found. Starting setup.")
+        try:
+            available_languages = [d for d in os.listdir(localedir) if os.path.isdir(os.path.join(localedir, d))]
+            system_lang, _ = locale.getdefaultlocale()
+            system_lang_code = system_lang.split('_')[0] if system_lang else None
+        except FileNotFoundError:
+            print(f"ERROR: Translations folder '{localedir}' not found.")
+            print("The application will use the default language (English).")
+            gettext.install(domain)
+            return 'en'
+        print("\nSelect your language:")
+        menu_options = {}
+        current_option = 1
+        if system_lang_code and system_lang_code in available_languages:
+            print(f"{current_option}. {system_lang_code.capitalize()} (System Default)")
+            menu_options[str(current_option)] = system_lang_code
+            current_option += 1
+            available_languages.remove(system_lang_code)
+        for lang in sorted(available_languages):
+            print(f"{current_option}. {lang.capitalize()}")
+            menu_options[str(current_option)] = lang
+            current_option += 1
+        while True:
+            choice = input(f"Enter selection (1-{len(menu_options)}): ")
+            if choice in menu_options:
+                language_code = menu_options[choice]
+                break
+            else:
+                print("Invalid choice. Please try again.")
+        try:
+            with open(selected_lang_file, 'w', encoding='utf-8') as f:
+                json.dump({'language_code': language_code}, f, indent=4)
+            print(f"Language '{language_code}' saved for future use.")
+        except IOError as e:
+            print(f"WARNING: Could not save the selected language. Error: {e}")
+    try:
+        # Find the correct translation and prepare the translation object
+        translation = gettext.translation(
+            domain,
+            localedir=localedir,
+            languages=[language_code],
+            fallback=True  # Use original string if translation is missing
+        )
+        # Install the '_' function in the global namespace
+        translation.install()
+        print(f"Translation system enabled for language: '{language_code}'.\n")
+    except FileNotFoundError:
+        print(f"WARNING: Translation file for '{language_code}' with domain '{domain}' not found.")
+        print("The application will use the default language (English).")
+        gettext.install(domain)
+    return language_code
