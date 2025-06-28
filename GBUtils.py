@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V51 di mercoledì 25 giugno 2025
+	V52 di sabato 28 giugno 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -16,7 +16,7 @@ Lista utilità contenute in questo pacchetto
 	Mazzo V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V3.11 – sabato 29 marzo 2025 - Gabriele Battaglia & Gemini 2.5
 	percent V1.0 thu 28, september 2023
-	polipo V5.0 by Gabriele Battaglia and Gemini - 25/06/2025
+	polipo V5.1 by Gabriele Battaglia and Gemini - 28/06/2025
 	Scadenza 1.0 del 15/12/2021
 	sonify V7.0 - 23 marzo 2025 - Gabriele Battaglia eChatGPT O1
 	Vecchiume 1.0 del 15/12/2018
@@ -1375,10 +1375,11 @@ def Donazione():
 
 def polipo(domain='messages', localedir='locales', source_language='en'):
     """
-    polipo V5.0 by Gabriele Battaglia and Gemini - 25/06/2025
+    polipo V5.1 by Gabriele Battaglia and Gemini - 28/06/2025
     Versione autonoma e compatibile con PyInstaller.
     - Trova autonomamente le risorse (es. cartella 'locales').
     - Salva il file di configurazione della lingua accanto all'eseguibile o allo script.
+    - Salva l'elenco delle lingue disponibili e mostra il menu se cambiano.
     - Non richiede funzioni esterne di supporto.
     """
     import sys
@@ -1389,27 +1390,16 @@ def polipo(domain='messages', localedir='locales', source_language='en'):
     # Rileva se l'app è "congelata" (compilata con PyInstaller)
     is_frozen = getattr(sys, 'frozen', False)
     # LOGICA 1: Trovare il percorso delle RISORSE (dati come la cartella 'locales')
-    # Se congelata, le risorse sono nella cartella temporanea _MEIPASS.
-    # Altrimenti, sono relative allo script che sta girando.
     if is_frozen:
-        # Percorso alla cartella temporanea dove PyInstaller estrae i dati
         resources_base_path = sys._MEIPASS
     else:
-        # Percorso alla directory dello script in fase di sviluppo
-        # __file__ si riferisce al file che CONTIENE QUESTA FUNZIONE (es. GBUtils.py)
-        # Per questo motivo, è meglio usare il CWD (Current Working Directory)
-        # come base per i percorsi relativi come 'locales'.
-        # Questo presuppone che lo script principale venga eseguito dalla sua cartella.
         resources_base_path = os.getcwd()
     # LOGICA 2: Trovare il percorso di SALVATAGGIO (per il file.json)
-    # Vogliamo salvare il file accanto all'eseguibile.exe o allo script.py principale.
     if is_frozen:
-        # Percorso della directory che contiene l'eseguibile.exe
         config_save_path = os.path.dirname(sys.executable)
     else:
-        # Percorso della directory da cui lo script è stato avviato
         config_save_path = os.getcwd()
-    # Costruisce i percorsi completi che verranno usati nel resto della funzione
+    # Costruisce i percorsi completi
     localedir_abs = os.path.join(resources_base_path, localedir)
     selected_lang_file = os.path.join(config_save_path, 'selected_language.json')
     # --- Fine Blocco di Autonomia ---
@@ -1432,13 +1422,14 @@ def polipo(domain='messages', localedir='locales', source_language='en'):
         with open(selected_lang_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
             language_code = data.get('language_code')
-            #... (la logica di controllo del menu rimane identica)...
-            if language_code not in current_available_languages:
+            saved_available_languages = data.get('available_languages', [])
+            # Mostra il menu se l'elenco delle lingue è cambiato O se la lingua salvata non è più valida
+            if set(saved_available_languages) != set(current_available_languages) or language_code not in current_available_languages:
                 show_menu = True
+                print("Info: List of available languages has changed. Please select again.")
     except (FileNotFoundError, json.JSONDecodeError):
         show_menu = True
     if show_menu:
-        #... (la logica del menu di selezione rimane identica)...
         print("\nSelect your language:")
         menu_options = {}
         for i, lang in enumerate(current_available_languages, 1):
@@ -1458,7 +1449,12 @@ def polipo(domain='messages', localedir='locales', source_language='en'):
                 print("Invalid choice. Please try again.")
         try:
             with open(selected_lang_file, 'w', encoding='utf-8') as f:
-                json.dump({'language_code': language_code}, f, indent=4)
+                # Salva sia la lingua scelta sia l'elenco corrente delle lingue
+                config_data = {
+                    'language_code': language_code,
+                    'available_languages': current_available_languages
+                }
+                json.dump(config_data, f, indent=4)
             print(f"Info: Language '{language_code}' saved to '{selected_lang_file}' for future use.")
         except IOError as e:
             print(f"WARNING: Could not save the selected language. Error: {e}")
@@ -1468,9 +1464,9 @@ def polipo(domain='messages', localedir='locales', source_language='en'):
         try:
             translation = gettext.translation(
                 domain,
-                localedir=localedir_abs, # Usa il percorso assoluto delle risorse
+                localedir=localedir_abs,
                 languages=[language_code],
-                fallback=True # Impostato a True per un fallback più robusto
+                fallback=True
             )
             return language_code, translation.gettext
         except FileNotFoundError:
