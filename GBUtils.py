@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V52 di sabato 28 giugno 2025
+	V53 di martedì 8 luglio 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -14,7 +14,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	Mazzo V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
-	menu V3.11 – sabato 29 marzo 2025 - Gabriele Battaglia & Gemini 2.5
+	menu V3.13 – martedì 8 luglio 2025 - Gabriele Battaglia & Gemini 2.5
 	percent V1.0 thu 28, september 2023
 	polipo V5.1 by Gabriele Battaglia and Gemini - 28/06/2025
 	Scadenza 1.0 del 15/12/2021
@@ -1047,11 +1047,13 @@ def manuale(nf):
 	except IOError:
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
-def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, full_keyslist=False, pager=20, show_on_filter=True):
-	"""V3.12 – giovedì 3 aprile 2025 - Gabriele Battaglia & Gemini 2.5
+
+def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, full_keyslist=False, pager=20, show_on_filter=True, numbered=False):
+	"""V3.13 – martedì 8 luglio 2025 - Gabriele Battaglia & Gemini 2.5
 	Parametri:
 		d: dizionario con coppie chiave:descrizione
 		p: prompt di default se keyslist è False
+		numbered: mostra numeri al posto delle chiavi
 		ntf: messaggio in caso di filtro vuoto o input ambiguo
 		show: se True, mostra il menu iniziale completo prima del prompt
 		show_only: se True, mostra il menu completo e termina
@@ -1173,6 +1175,27 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 			return True
 		return sl in kl
 	# --- Logica Principale del Menu ---
+	if numbered:
+		keys_numerate = list(d.keys())
+		if not keys_numerate:
+			print("No available options.")
+			return None
+		while True:
+			for i, k in enumerate(keys_numerate, 1):
+				print(f"[{i}] -- {d[k]}")
+			scelta = input(f"\n{p} (1-{len(keys_numerate)})> ")
+			if not scelta:
+				return None
+			try:
+				num_scelta = int(scelta)
+				if 1 <= num_scelta <= len(keys_numerate):
+					return keys_numerate[num_scelta - 1]
+				else:
+					print(f"\n{ntf} out of range: 1-{len(keys_numerate)}.")
+			except ValueError:
+				# Messaggio di errore se l'input non è un numero
+				print(f"\n{ntf} not a number.")
+			time.sleep(1.5) # Pausa per permettere all'utente di leggere l'errore
 	orig_keys = list(d.keys())
 	current_input = ""
 	last_displayed = None
@@ -1277,6 +1300,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 				# Il ciclo ricomincerà e gestirà il reset completo
 	# Raggiungibile solo in caso di errore imprevisto
 	return None
+
 def Scandenza(y=2100, m=1, g=1, h=0, i=0):
 	'''
 	V 1.0 del 15/12/2021
