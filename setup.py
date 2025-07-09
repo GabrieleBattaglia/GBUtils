@@ -1,11 +1,12 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='GBUtils',
     version='53',
-    packages=find_packages(),
+    # MODIFICATO: Usa py_modules per i file .py nella root
+    py_modules=['GBUtils'],
     author='Gabriele Battaglia',
-    author_email='tuo.iz4apu@libero.it',
+    author_email='iz4apu@libero.it',
     description='Pacchetto di utilities varie per i miei software',
     url='https://github.com/GabrieleBattaglia/GBUtils',
 )
