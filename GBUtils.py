@@ -649,6 +649,7 @@ class Mazzo:
 			return f"Nessuna carta nella lista '{nome_lista}'."
 		# Usa la lista referenziata per ottenere le carte
 		return f"{nome_lista} ({len(target_lista_ref)}): " + ", ".join([c.desc_breve for c in target_lista_ref])
+
 def percent(base=50.0, confronto=100.0, successo=False):
 	'''V1.0 thu 28, september 2023
 	Rx base e confronto e calcola la percentuale di base rispetto a confronto
@@ -667,6 +668,7 @@ def percent(base=50.0, confronto=100.0, successo=False):
 		x=uniform(0,100)
 		if x<=perc: return perc, True
 		else: return perc, False
+
 def base62(n):
 	'''
 	Converte un intero in base 10 ad una stringa in base 62.
@@ -689,6 +691,7 @@ def base62(n):
 		out.append(r)
 	out.reverse()
 	return segno + ''.join(symbols[l] for l in out)
+
 def key(prompt="", attesa=99999):
 	'''V5.0 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	Attende per il numero di secondi specificati
@@ -719,6 +722,7 @@ def key(prompt="", attesa=99999):
 			return ''
 		finally:
 			termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
 def gridapu(x=0.0, y=0.0, num=10):
 	'''GRIDAPU V1.2 - Author unknown, and kindly find on the net by IU1FIG Diego Rispoli.
 	Translated from Java by IZ4APU Gabriele Battaglia.
@@ -766,6 +770,7 @@ def gridapu(x=0.0, y=0.0, num=10):
 	if num >= 10:
 		qthloc += L[yn[8]] + L[yn[9]]
 	return qthloc
+
 def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	"""
 	sonify V7.0 - 23 marzo 2025 - Gabriele Battaglia eChatGPT O1
@@ -833,6 +838,7 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 			wf.setframerate(sample_rate)
 			wf.writeframes(audio_stereo_int16.tobytes())
 	return
+
 def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 	"""
 	V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
@@ -963,6 +969,7 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 	if sync:
 		thread.join()
 	return
+
 def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
 	'''Versione 1.10 di lunedì 24 febbraio 2025
 	Potenzia la funzione input implementando controlli di sicurezza.
@@ -1027,6 +1034,7 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 				print(f"Accettato {p}")
 				return p
 			else: return p
+
 def manuale(nf):
 	'''
 	Versione 1.0.1 di domenica 5 maggio 2024
@@ -1068,7 +1076,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 	Restituisce:
 		la chiave scelta oppure None se annullato (ESC o Invio su input vuoto)
 	"""
-	import sys, time, os # Import principali interni
+	import sys, time, os
 	def key(prompt=""):
 		"""Legge un singolo carattere dalla console senza bisogno di Invio."""
 		print(prompt, end='', flush=True)
@@ -1328,6 +1336,7 @@ def Scandenza(y=2100, m=1, g=1, h=0, i=0):
 		if ETA.minutes == 1: f += str(ETA.minutes)+" minuto."
 		else: f += str(ETA.minutes)+" minuti"
 	return(f)
+
 def Vecchiume(y=1974, m=9, g=13, h=22, i=10):
 	'''
 	Utility che calcola la differenza fra una data e l'ADESSO.
