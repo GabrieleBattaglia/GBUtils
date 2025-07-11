@@ -816,16 +816,19 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 		freq_array = np.array(frequencies)[indices]
 	phase = 2.0*np.pi*np.cumsum(freq_array/sample_rate)
 	audio_signal = np.sin(phase)*vol
-	fade_duration_sec = 0.002
-	fade_samples = int(round(fade_duration_sec*sample_rate))
-	fade_samples = min(fade_samples, total_samples//2)
-	fade_in = np.linspace(0, 1, fade_samples)
-	fade_out = np.linspace(1, 0, fade_samples)
+	fade_duration_sec = 0.01
+	fade_samples = int(round(fade_duration_sec * sample_rate))
+	fade_samples = min(fade_samples, total_samples // 2)
+	fade_in = np.sin(np.linspace(0, np.pi / 2, fade_samples))
+	fade_out = np.sin(np.linspace(np.pi / 2, 0, fade_samples)) # o np.cos(np.linspace(0, np.pi/2, fade_samples))
 	audio_signal[:fade_samples] *= fade_in
 	audio_signal[-fade_samples:] *= fade_out
 	pan = np.linspace(-1.0, 1.0, total_samples)
-	left = audio_signal*((1.0-pan)/2.0)
-	right = audio_signal*((1.0+pan)/2.0)
+	pan_angle = (pan + 1.0) * np.pi / 4.0
+	left_gain = np.cos(pan_angle)
+	right_gain = np.sin(pan_angle)
+	left = audio_signal * left_gain
+	right = audio_signal * right_gain
 	audio_stereo = np.column_stack((left, right))
 	audio_stereo_int16 = (audio_stereo*32767).astype(np.int16)
 	sd.play(audio_stereo_int16, sample_rate)
