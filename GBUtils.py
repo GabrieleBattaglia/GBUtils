@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V53 di martedì 8 luglio 2025
+	V54 di venerdì 11 luglio 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -18,7 +18,7 @@ Lista utilità contenute in questo pacchetto
 	percent V1.0 thu 28, september 2023
 	polipo V5.1 by Gabriele Battaglia and Gemini - 28/06/2025
 	Scadenza 1.0 del 15/12/2021
-	sonify V7.0 - 23 marzo 2025 - Gabriele Battaglia eChatGPT O1
+	sonify V7.1 - 11 luglio 2025 - Gabriele Battaglia eChatGPT O1, Gemini 2.5 Pro
 	Vecchiume 1.0 del 15/12/2018
 '''
 
@@ -773,7 +773,7 @@ def gridapu(x=0.0, y=0.0, num=10):
 
 def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	"""
-	sonify V7.0 - 23 marzo 2025 - Gabriele Battaglia eChatGPT O1
+	sonify V7.1 - 11 luglio 2025 - Gabriele Battaglia eChatGPT O1, Gemini 2.5 Pro
 	Sonifies a list of float data.
 	Parameters:
 	  data_list: List of float (5 <= len <= 500000)
