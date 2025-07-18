@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V54 di venerdì 11 luglio 2025
+	V55 di venerdì 18 luglio 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -16,7 +16,7 @@ Lista utilità contenute in questo pacchetto
 	Mazzo V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V3.13 – martedì 8 luglio 2025 - Gabriele Battaglia & Gemini 2.5
 	percent V1.0 thu 28, september 2023
-	polipo V5.1 by Gabriele Battaglia and Gemini - 28/06/2025
+	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	Scadenza 1.0 del 15/12/2021
 	sonify V7.1 - 11 luglio 2025 - Gabriele Battaglia eChatGPT O1, Gemini 2.5 Pro
 	Vecchiume 1.0 del 15/12/2018
@@ -1409,9 +1409,9 @@ def Donazione():
         messaggio_da_mostrare = messaggi.get(lingua_os, messaggi['en'])
         print(messaggio_da_mostrare)
 
-def polipo(domain='messages', localedir='locales', source_language='en'):
+def polipo(domain='messages', localedir='locales', source_language='en', config_path=None):
     """
-    polipo V5.1 by Gabriele Battaglia and Gemini - 28/06/2025
+    polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
     Versione autonoma e compatibile con PyInstaller.
     - Trova autonomamente le risorse (es. cartella 'locales').
     - Salva il file di configurazione della lingua accanto all'eseguibile o allo script.
@@ -1431,14 +1431,37 @@ def polipo(domain='messages', localedir='locales', source_language='en'):
     else:
         resources_base_path = os.getcwd()
     # LOGICA 2: Trovare il percorso di SALVATAGGIO (per il file.json)
+    # 1. Determina il percorso di base di default
     if is_frozen:
-        config_save_path = os.path.dirname(sys.executable)
+        base_save_path = os.path.dirname(sys.executable) # Cartella dell'eseguibile
     else:
-        config_save_path = os.getcwd()
+        base_save_path = os.getcwd() # Cartella dello script
+    # 2. Decide il percorso finale in base a config_path
+    if config_path:
+        # Controlla se il percorso fornito è assoluto
+        if os.path.isabs(config_path):
+            # Se è assoluto (es. "E:\git\orologic\settings"), usalo direttamente
+            config_save_path = config_path
+        else:
+            # Se è relativo (es. "settings"), uniscilo al percorso di base
+            config_save_path = os.path.join(base_save_path, config_path)
+    else:
+        # Se non è stato fornito nessun config_path, usa semplicemente il percorso di base
+        config_save_path = base_save_path
+    # Assicuriamoci che la cartella di configurazione esista, altrimenti la creiamo
+    if not os.path.exists(config_save_path):
+        try:
+            os.makedirs(config_save_path)
+            print(f"Info: Created configuration directory at '{config_save_path}'")
+        except OSError as e:
+            print(f"ERROR: Could not create configuration directory: {e}")
+            # Se non possiamo creare la cartella, non possiamo procedere con il salvataggio
+            # Potremmo voler gestire questo errore in modo più robusto
+            # Per ora, terminiamo la parte di configurazione e usiamo la lingua di default
+            return source_language, lambda text: text
     # Costruisce i percorsi completi
     localedir_abs = os.path.join(resources_base_path, localedir)
     selected_lang_file = os.path.join(config_save_path, 'selected_language.json')
-    # --- Fine Blocco di Autonomia ---
     system_lang, _ = locale.getdefaultlocale()
     system_lang_code = system_lang.split('_')[0] if system_lang else source_language
     try:
