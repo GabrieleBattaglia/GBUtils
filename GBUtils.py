@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V55 di venerdì 18 luglio 2025
+	V56 di lunedì 8 settembre 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	gridapu 1.2 from IU1FIG
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
-	Mazzo V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
+	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V3.13 – martedì 8 luglio 2025 - Gabriele Battaglia & Gemini 2.5
 	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
@@ -290,7 +290,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 
 class Mazzo:
 	'''
-	V5.1 - aprile 2025 b Gabriele Battaglia & Gemini 2.5
+	V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
 	Classe autocontenuta che rappresenta un mazzo di carte italiano o francese,
 	con supporto per mazzi multipli, mescolamento, pesca con rimescolamento
 	automatico degli scarti, e gestione flessibile delle carte.
@@ -319,7 +319,6 @@ class Mazzo:
 		self.num_mazzi = num_mazzi
 		# Liste per tracciare lo stato delle carte
 		self.carte = [] # Mazzo principale da cui pescare
-		self.pescate = [] # Carte attualmente pescate / in gioco
 		self.scarti = [] # Pila degli scarti, possono essere rimescolati
 		self.scarti_permanenti = [] # Carte rimosse permanentemente
 		self._costruisci_mazzo()
@@ -365,75 +364,42 @@ class Mazzo:
 		self.random.shuffle(self.carte)
 	def pesca(self, quante=1):
 		'''
-		Pesca carte dal mazzo principale. Se il mazzo è vuoto e ci sono scarti,
-		li rimescola automaticamente nel mazzo prima di pescare.
+		Pesca carte dal mazzo principale. Se le carte nel mazzo non sono sufficienti,
+		rimescola automaticamente gli scarti prima di pescare.
 		Le carte pescate vengono spostate nella lista 'pescate'.
 		Parametri:
 		- quante (int): Numero di carte da pescare (default 1).
 		Ritorna:
 		- list[Carta]: Lista delle carte pescate. Può contenere meno carte di 'quante'
-																	se il mazzo e gli scarti combinati non sono sufficienti.
+									 se il mazzo e gli scarti combinati non sono sufficienti.
 		'''
 		if quante < 0:
 			raise ValueError("Il numero di carte da pescare deve essere non negativo.")
 		if quante == 0:
 			return []
-		# Controlla se il mazzo è vuoto e se ci sono scarti da rimescolare
-		if not self.carte and self.scarti:
-			# Rimescola gli scarti nel mazzo
+		# NUOVA LOGICA: Se le carte nel mazzo sono meno di quelle richieste, rimescola gli scarti.
+		if len(self.carte) < quante and self.scarti:
+			print("\n--- Carte insufficienti nel mazzo. Rimescolo gli scarti... ---") # Feedback utile per il giocatore
 			self.carte.extend(self.scarti)
 			self.scarti = []
-			self.mescola_mazzo() # Mescola il mazzo appena riempito
-		num_carte_nel_mazzo = len(self.carte)
-		num_da_pescare = min(quante, num_carte_nel_mazzo)
+			self.mescola_mazzo()
+			print(f"--- Rimescolamento completato. Carte nel mazzo: {len(self.carte)} ---")
+		# Ora procedi con la pesca
+		num_da_pescare = min(quante, len(self.carte))
 		carte_pescate_ora = []
 		if num_da_pescare > 0:
-			# Pesca dalla fine per efficienza O(1) con pop()
-			# Se si preferisce pescare dall'inizio (pop(0)), cambiare qui.
-			# Assumiamo che il mazzo sia già stato mescolato.
 			for _ in range(num_da_pescare):
-				carte_pescate_ora.append(self.carte.pop()) # Pesca dalla fine
-			# Se si pesca dall'inizio:
-			# carte_pescate_ora = self.carte[:num_da_pescare]
-			# self.carte = self.carte[num_da_pescare:]
-		# Aggiunge le carte pescate alla lista self.pescate per tracciamento
-		self.pescate.extend(carte_pescate_ora)
-		# Non restituisce messaggi di avviso, il chiamante verifica len(risultato)
+				carte_pescate_ora.append(self.carte.pop())
 		return carte_pescate_ora
 	def scarta_carte(self, carte_da_scartare):
 		'''
-		Sposta una lista di carte (presumibilmente dalla mano di un giocatore,
-		quindi da self.pescate) nella pila degli scarti (self.scarti).
+		Aggiunge una lista di carte alla pila degli scarti.
 		Parametri:
 		- carte_da_scartare (list[Carta]): Lista di oggetti Carta da spostare negli scarti.
-		Ritorna:
-		- str: Messaggio che indica quante carte sono state effettivamente trovate e scartate.
 		'''
-		scartate_count = 0
-		non_trovate_count = 0
-		carte_da_rimuovere_da_pescate = []
-		# Crea un set degli id delle carte da scartare per ricerca efficiente
-		ids_da_scartare = {carta.id for carta in carte_da_scartare}
-		pescate_dict = {carta.id: carta for carta in self.pescate} # Mappa id->carta per accesso rapido
-		carte_effettivamente_scartate = []
-		for carta_id in ids_da_scartare:
-			if carta_id in pescate_dict:
-				carta = pescate_dict[carta_id]
-				carte_effettivamente_scartate.append(carta)
-				carte_da_rimuovere_da_pescate.append(carta)
-				scartate_count += 1
-			else:
-				# Potrebbe essere utile tracciare quali carte non sono state trovate
-				# Ma per ora contiamo solo
-				non_trovate_count += 1
-		# Aggiorna le liste solo dopo aver iterato
-		if carte_da_rimuovere_da_pescate:
-			self.pescate = [c for c in self.pescate if c not in carte_da_rimuovere_da_pescate]
-			self.scarti.extend(carte_effettivamente_scartate)
-		msg = f"Scartate {scartate_count} carte."
-		if non_trovate_count > 0:
-			msg += f" {non_trovate_count} carte non trovate in 'pescate'."
-		return msg
+		if not carte_da_scartare:
+			return
+		self.scarti.extend(carte_da_scartare)
 	def rimescola_scarti(self, include_pescate=False):
 		'''
 		Rimette le carte dalla pila degli scarti nel mazzo principale e mescola.
@@ -610,10 +576,8 @@ class Mazzo:
 	def stato_mazzo(self):
 		''' Ritorna una stringa che riepiloga lo stato attuale del mazzo. '''
 		return (f"Mazzo: {len(self.carte)} carte | "
-										f"Pescate: {len(self.pescate)} carte | "
-										f"Scarti: {len(self.scarti)} carte | "
-										f"Scarti Permanenti: {len(self.scarti_permanenti)} carte")
-
+				f"Scarti: {len(self.scarti)} carte | "
+				f"Scarti Permanenti: {len(self.scarti_permanenti)} carte")
 	def __len__(self):
 		''' Ritorna il numero di carte attualmente nel mazzo principale (self.carte). '''
 		return len(self.carte)
