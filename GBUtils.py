@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V57 di giovedì 18 settembre 2025
+	V58 di lunedì 29 settembre 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -14,7 +14,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
-	menu V4.0 – giovedì 18 settembre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
+	menu V4.3 – lunedì 29 settembre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
 	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	Scadenza 1.0 del 15/12/2021
@@ -1024,7 +1024,7 @@ def manuale(nf):
 	return
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False):
-    """V4.0 – giovedì 18 settembre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
+    """V4.3 – lunedì 29 settembre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -1131,8 +1131,8 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     while True:
         filtered = [k for k in orig_keys if valid_match(k, user_input)]
         display_input = user_input
-        if not numbered and not disable_autocomplete_once and len(filtered) > 1:
-            common_prefix = lcp([k.lower() for k in filtered])
+        if keyslist and not numbered and not disable_autocomplete_once and len(filtered) > 1:
+            common_prefix = lcp(filtered)
             if len(common_prefix) > len(user_input):
                 user_input = common_prefix
                 display_input = common_prefix        
@@ -1142,7 +1142,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             final_choice = final_filtered[0]
             print()
             return num_map.get(final_choice, final_choice)
-        if show_on_filter and final_filtered != last_displayed:
+        if show and show_on_filter and final_filtered != last_displayed:
             print("\n-----------------------")
             if not Mostra(final_filtered, pager, numbered, num_map, user_input): return None;
             last_displayed = final_filtered[:]
@@ -1167,7 +1167,10 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
                  print("--- '?' . ---")
                  last_displayed = None
         elif user_char == '\x1b': print(); return None;
-        elif user_char == '?': last_displayed = None;
+        elif user_char == '?':
+            print("\n")
+            Mostra(final_filtered, pager, numbered, num_map, user_input)
+            last_displayed = final_filtered[:]
         elif user_char == '\x08':
             if user_input:
                 user_input = user_input[:-1]

@@ -1,4 +1,4 @@
-# menu, con cui lavora questo file di test è stato spostato in gbutils.
+
 def menuOld(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, full_keyslist=False, pager=20, show_on_filter=True, numbered=False):
 	"""V3.13 – martedì 8 luglio 2025 - Gabriele Battaglia & Gemini 2.5
 	Parametri:
