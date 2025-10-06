@@ -3,13 +3,14 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V58 di lunedì 29 settembre 2025
+	V59 di lunedì 6 ottobre 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V1.1 del 18 giugno 2025
+	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
@@ -22,6 +23,52 @@ Lista utilità contenute in questo pacchetto
 	Vecchiume 1.0 del 15/12/2018
 '''
 
+def enter_escape(prompt=""):
+    """
+				V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
+    Funzione cross-platform e auto-contenuta che attende la pressione di Invio o Esc.
+    Stampa un prompt opzionale e non richiede ulteriori pressioni di Invio.
+    Restituisce:
+        - True se viene premuto Invio.
+        - False se viene premuto Esc.
+    """
+    # Le importazioni e le definizioni sono interne per la massima portabilità
+    import sys
+
+    try:
+        # --- Implementazione per Windows ---
+        import msvcrt
+        def _get_key_press():
+            return msvcrt.getch()
+
+    except ImportError:
+        # --- Implementazione per Unix-like (macOS, Linux) ---
+        import tty
+        import termios
+        def _get_key_press():
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setcbreak(sys.stdin.fileno())
+                char = sys.stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return char.encode('utf-8')
+
+    # Logica principale della funzione
+    if prompt:
+        print(prompt, end="", flush=True)
+    
+    while True:
+        k = _get_key_press()
+        # Invio può essere \r (Windows) o \n (Unix)
+        if k in (b'\r', b'\n'):
+            print() # Pulisce la riga andando a capo
+            return True
+        # Esc è sempre \x1b
+        elif k == b'\x1b':
+            print() # Pulisce la riga andando a capo
+            return False
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
 	"""
 	V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
