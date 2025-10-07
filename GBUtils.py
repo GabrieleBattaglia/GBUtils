@@ -78,7 +78,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		msg (str|int): Messaggio di testo da convertire in Morse.
 			se == -1 restituisce la mappa	morse come dizionario.
 		wpm (int): Velocità in parole al minuto (range 5-100).
-		pitch (int): Frequenza in Hz per il tono (range 130-2000).
+		pitch (int): Frequenza in Hz per il tono (range 130-2800).
 		l (int): Peso per la durata della linea (default 30).
 		s (int): Peso per la durata degli spazi tra simboli/lettere (default 50).
 		p (int): Peso per la durata del punto (default 50).
@@ -100,7 +100,6 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	import sys
 	from scipy import signal # Importato per le forme d'onda
 	BLOCK_SIZE = 256
-	# --- Validazione Parametri Migliorata ---
 	MORSE_MAP = {
 		"a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
 		"g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..",
@@ -118,7 +117,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	if msg==-1: return MORSE_MAP
 	elif not isinstance(msg, str) or msg == "": print("CWzator Error: msg deve essere una stringa non vuota.", file=sys.stderr); return None, None
 	if not (isinstance(wpm, int) and 5 <= wpm <= 100): print(f"CWzator Error: wpm ({wpm}) non valido [5-100].", file=sys.stderr); return None, None
-	if not (isinstance(pitch, int) and 130 <= pitch <= 2000): print(f"CWzator Error: pitch ({pitch}) non valido [130-2000].", file=sys.stderr); return None, None
+	if not (isinstance(pitch, int) and 130 <= pitch <= 2800): print(f"CWzator Error: pitch ({pitch}) non valido [130-2000].", file=sys.stderr); return None, None
 	if not (isinstance(l, int) and 1 <= l <= 100): print(f"CWzator Error: l ({l}) non valido [1-100].", file=sys.stderr); return None, None
 	if not (isinstance(s, int) and 1 <= s <= 100): print(f"CWzator Error: s ({s}) non valido [1-100].", file=sys.stderr); return None, None
 	if not (isinstance(p, int) and 1 <= p <= 100): print(f"CWzator Error: p ({p}) non valido [1-100].", file=sys.stderr); return None, None
