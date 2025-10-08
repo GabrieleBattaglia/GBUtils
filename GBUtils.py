@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V59 di lunedì 6 ottobre 2025
+	V60 di mercoledì 8 ottobre 2025
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -15,7 +15,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
-	menu V4.3 – lunedì 29 settembre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
+	menu V4.4 - mercoledì 8 ottobre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
 	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	Scadenza 1.0 del 15/12/2021
@@ -1070,7 +1070,7 @@ def manuale(nf):
 	return
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False):
-    """V4.3 – lunedì 29 settembre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
+    """V4.4 - mercoledì 8 ottobre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -1199,7 +1199,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             prompt_str = Listaprompt_autocomplete(final_filtered, display_input)
         else:
             prompt_str = p
-        full_prompt = prompt_str + display_input
+        full_prompt = "\r"+prompt_str + display_input
         user_char = key(full_prompt)
         if user_char in ['\r', '\n']:
             print()
