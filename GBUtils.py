@@ -39,6 +39,7 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
         - str | None: Il changelog (testo dal campo 'body' della release), o None se non disponibile/aggiornato.
     """
     import requests
+    current_version = current_version.split(' ')[0]
     try:
         response = requests.get(api_url, timeout=5)
         response.raise_for_status()  # Solleva un'eccezione per codici di stato HTTP 4xx/5xx
