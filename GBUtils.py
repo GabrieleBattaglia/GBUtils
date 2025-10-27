@@ -1238,7 +1238,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             prompt_str = Listaprompt_autocomplete(final_filtered, display_input)
         else:
             prompt_str = p
-        full_prompt = "\r"+prompt_str + display_input
+        full_prompt = "\n"+prompt_str + display_input
         user_char = key(full_prompt)
         if user_char in ['\r', '\n']:
             print()

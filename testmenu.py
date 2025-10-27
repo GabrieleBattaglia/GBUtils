@@ -1,5 +1,5 @@
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False):
-    """V4.3 – lunedì 29 settembre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
+    """V4.5 - giovedì 23 ottobre 2025 - Gabriele Battaglia & Gemini 2.5 Pro
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -90,6 +90,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
         """Controlla se 'key_item' inizia con 'sub' (case-insensitive)."""
         return key_item.lower().startswith(sub.lower())
     orig_keys = list(d.keys())
+    orig_keys.sort()
     user_input = ""
     last_displayed = None
     num_map = {}
@@ -128,7 +129,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             prompt_str = Listaprompt_autocomplete(final_filtered, display_input)
         else:
             prompt_str = p
-        full_prompt = "\r" + prompt_str + display_input
+        full_prompt = "\n"+prompt_str + display_input
         user_char = key(full_prompt)
         if user_char in ['\r', '\n']:
             print()
