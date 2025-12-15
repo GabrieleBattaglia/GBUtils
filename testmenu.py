@@ -1,56 +1,64 @@
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False):
-    """V4.6 - Ottimizzata per Partner di Programmazione
-    Miglioramenti:
-    - ESC nel pager interrompe la lista ma NON chiude il menu.
-    - Logica di filtraggio ottimizzata (evita doppi calcoli).
-    - Gestione input e backspace più pulita.
+    """V4.5.1 - domenica 14 dicembre 2025 - Gabriele Battaglia & Gemini 3 Pro
+    Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
+    Parametri:
+    d: dizionario con coppie chiave:descrizione.
+    p: prompt personalizzato; usato in modalità non-keyslist o in modalità numerata.
+    ntf: messaggio in caso di filtro vuoto o input ambiguo.
+    show: se True, mostra il menu iniziale completo prima del prompt.
+    show_only: se True, mostra il menu completo e termina (non interattivo).
+    keyslist: se True (default), il prompt suggerisce i caratteri per l'autocompletamento.
+    pager: numero di elementi da mostrare per pagina. Impostare a 0 per disabilitare.
+    show_on_filter: se True, la lista delle opzioni si aggiorna visivamente a ogni tasto.
+    numbered: se True, il menu diventa numerato, con selezione interattiva dei numeri.
+    Restituisce:
+    La chiave scelta dal dizionario 'd', oppure None se l'utente annulla (ESC o Invio su input vuoto).
     """
-    import sys, os
-
-    # --- Funzioni Helper ---
+    import sys, time, os
     def lcp(strings):
-        """Calcola il prefisso comune più lungo."""
-        return os.path.commonprefix(strings) if strings else ""
-
+        """Calcola il prefisso comune più lungo da una lista di stringhe."""
+        if not strings: return ""
+        return os.path.commonprefix(strings)
     def key(prompt=""):
-        """Legge un singolo carattere (Windows/Unix)."""
-        if prompt:
-            print(prompt, end='', flush=True)
-        
-        char = ''
+        """Legge un singolo carattere dalla console senza bisogno di Invio."""
+        print(prompt, end='', flush=True)
         if os.name == 'nt':
             import msvcrt
             ch = msvcrt.getwch()
-            # Gestione tasti speciali (frecce, funzionali) che inviano doppio codice
             if ch in ('\x00', '\xe0'):
-                msvcrt.getwch() 
+                msvcrt.getwch()
                 return '\x00'
-            char = ch
+            if ch == '\x08': return ch
+            if ch == '\r': return ch
+            if ch == '\x1b': return ch
+            if ch == '?': return ch
+            if ord(ch) == 127: return '\x08'
+            return ch
         else:
-            import tty, termios
+            import select, tty, termios
             fd = sys.stdin.fileno()
             old_settings = termios.tcgetattr(fd)
             try:
                 tty.setcbreak(fd)
-                char = sys.stdin.read(1)
+                ch = sys.stdin.read(1)
+                if ch == '\x1b':
+                    r, _, _ = select.select([sys.stdin], [], [], 0.05)
+                    if r:
+                        sys.stdin.read(2)
+                        return '\x00'
+                    else:
+                        return '\x1b'
+                elif ord(ch) == 127: return '\x08'
+                elif ch in ['\n', '\r']: return '\r'
+                else: return ch
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        
-        # Normalizzazione tasti
-        if char == '\x1b': return '\x1b' # ESC
-        if char in ('\r', '\n'): return '\r' # INVIO
-        if char in ('\x08', '\x7f'): return '\x08' # BACKSPACE
-        return char
-
-    def Mostra(items_to_show, pager, is_numbered, num_map=None):
-        """
-        Mostra la lista. 
-        Restituisce: True se completato, False se interrotto da ESC.
-        """
+    def Mostra(items_to_show, pager, is_numbered, num_map=None, user_input=""):
+        """Visualizza una lista di elementi usando un pager internazionalizzato."""
         count = 0
         total = len(items_to_show)
+        if total == 0 and user_input: print(ntf); return True;
         if total == 0: return True
-
         print("--- Menu ---")
         for item in items_to_show:
             if is_numbered:
@@ -60,155 +68,99 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             else:
                 desc = d.get(item, "N/A")
                 print(f"- ({item}) -- {desc};")
-            
             count += 1
-            # Logica Pager
             if pager > 0 and count % pager == 0 and count < total:
                 page_num = int(count / pager)
-                prompt_pager = f"--- Pagina {page_num} [{count}/{total}] - Premi un tasto (ESC per stop) ---"
-                ch_pager = key(prompt_pager)
-                print("\r" + " " * len(prompt_pager) + "\r", end='', flush=True) # Pulisce riga pager
-                
-                if ch_pager == '\x1b': 
-                    print("--- Visualizzazione interrotta ---")
-                    return False # Interruzione richiesta
-        
-        print(f"---------- Fine Lista [{count}/{total}] ----------")
+                prompt_pager = f"--- [{page_num}] ({count-pager+1}-{count}/{total}) ---"
+                ch_pager = key(prompt_pager); print();
+                if ch_pager == '\x1b': return False;
+        print(f"---------- [{count}/{total}] ----------")
         return True
-
-    def get_autocomplete_prompt(keys_list, current_input):
-        """Genera i suggerimenti per il prompt."""
-        if not keys_list or len(keys_list) <= 1: return "> "
-        
-        input_len = len(current_input)
+    def Listaprompt_autocomplete(keys_list, display_input):
+        """Genera un prompt che suggerisce i prossimi caratteri validi."""
+        if not keys_list or len(keys_list) <= 1: return ">";
         next_chars = set()
-        for k in keys_list:
-            if len(k) > input_len:
-                next_chars.add(k[input_len].upper()) # Case insensitive display
-            
-        if not next_chars: return "> "
-        return f"({', '.join(sorted(next_chars))})> "
-
+        input_len = len(display_input)
+        for key in keys_list:
+            if len(key) > input_len:
+                next_chars.add(key[input_len].upper())
+        if not next_chars: return ">";
+        return f"({', '.join(sorted(list(next_chars)))})>"
     def valid_match(key_item, sub):
+        """Controlla se 'key_item' inizia con 'sub' (case-insensitive)."""
         return key_item.lower().startswith(sub.lower())
-
-    # --- Logica Principale ---
-    orig_keys = sorted(d.keys())
-    
-    # Mappa per menu numerato
+    orig_keys = list(d.keys())
+    orig_keys.sort()
+    user_input = ""
+    last_displayed = None
     num_map = {}
     if numbered:
         num_map = {str(i): k for i, k in enumerate(orig_keys, 1)}
         orig_keys = list(num_map.keys())
-
-    # Gestione casi limite iniziali
-    if not d: 
-        print("Nessuna opzione disponibile.")
-        return None
-    if show_only:
-        Mostra(orig_keys, pager, numbered, num_map)
-        return None
-    if len(d) == 1 and not show: # Se c'è solo una scelta e non mostriamo il menu, la selezioniamo subito?
-        # Nota: ho mantenuto la logica originale, ma attenzione se l'utente vuole confermare.
-        return list(d.keys())[0]
-
-    # Visualizzazione Iniziale
+    if not d: print("No options available."); return None;
+    if len(d) == 1 and not show_only: return list(d.keys())[0];
+    if show_only: Mostra(orig_keys, pager, numbered, num_map); return None;
     if show:
-        if not Mostra(orig_keys, pager, numbered, num_map):
-            # Se premo ESC durante la PRIMA visualizzazione (senza aver digitato nulla), esco.
-            return None
-
-    user_input = ""
-    last_displayed_list = orig_keys[:] # Copia della lista
+        Mostra(orig_keys, pager, numbered, num_map)
+        last_displayed = orig_keys[:]
     disable_autocomplete_once = False
-
     while True:
-        # 1. Filtra le chiavi
         filtered = [k for k in orig_keys if valid_match(k, user_input)]
-        
-        # 2. Gestione Autocompletamento (LCP)
-        # Se c'è un solo match esatto o l'utente ha cancellato, non autocompletare
-        current_display_input = user_input
+        display_input = user_input
         if keyslist and not numbered and not disable_autocomplete_once and len(filtered) > 1:
-            common = lcp(filtered)
-            if len(common) > len(user_input):
-                user_input = common
-                current_display_input = common
-        
-        disable_autocomplete_once = False # Reset flag
-
-        # 3. Aggiornamento lista filtrata finale (dopo eventuale autocompletamento)
-        # Ottimizzazione: ricalcoliamo solo se l'input è cambiato
-        final_filtered = [k for k in orig_keys if valid_match(k, current_display_input)]
-
-        # 4. Controllo Match Unico
-        if len(final_filtered) == 1 and len(current_display_input) > 0:
-            # Opzionale: stampa automatica della scelta effettuata
-            choice = final_filtered[0]
-            print(f"\nSelezionato: {choice}")
-            return num_map.get(choice, choice)
-
-        # 5. Visualizzazione Lista Filtrata (Show on Filter)
-        if show and show_on_filter and final_filtered != last_displayed_list:
+            common_prefix = lcp(filtered)
+            if len(common_prefix) > len(user_input):
+                user_input = common_prefix
+                display_input = common_prefix        
+        disable_autocomplete_once = False
+        final_filtered = [k for k in orig_keys if valid_match(k, display_input)]
+        if len(final_filtered) == 1 and len(display_input) > 0:
+            final_choice = final_filtered[0]
+            print()
+            return num_map.get(final_choice, final_choice)
+        if show and show_on_filter and final_filtered != last_displayed:
             print("\n-----------------------")
-            # Qui la modifica chiave: se Mostra ritorna False (ESC), NON usciamo dal while,
-            # ma semplicemente smettiamo di stampare e andiamo al prompt.
-            Mostra(final_filtered, pager, numbered, num_map)
-            last_displayed_list = final_filtered[:]
-
-        # 6. Costruzione Prompt
-        prompt_str = p
+            Mostra(final_filtered, pager, numbered, num_map, user_input)
+            last_displayed = final_filtered[:]
         if numbered:
-             if p == "> ": prompt_str = f"(1-{len(orig_keys)})> "
+            prompt_str = p if p != "> " else f"(1-{len(orig_keys)})"
+            if not prompt_str.strip().endswith('>'): prompt_str += '> ';
         elif keyslist:
-            prompt_str = get_autocomplete_prompt(final_filtered, current_display_input)
-        
-        full_prompt = f"\n{prompt_str}{current_display_input}"
-        
-        # 7. Input Utente
-        char = key(full_prompt)
-
-        # 8. Gestione Tasti
-        if char == '\r': # Invio
-            print() # A capo estetico
-            if current_display_input in final_filtered:
-                return num_map.get(current_display_input, current_display_input)
+            prompt_str = Listaprompt_autocomplete(final_filtered, display_input)
+        else:
+            prompt_str = p
+        full_prompt = "\n"+prompt_str + display_input
+        user_char = key(full_prompt)
+        if user_char in ['\r', '\n']:
+            print()
+            if display_input in final_filtered:
+                return num_map.get(display_input, display_input)
             elif len(final_filtered) == 1:
                  return num_map.get(final_filtered[0], final_filtered[0])
             elif user_input == "":
-                return None # Invio a vuoto = Annulla
+                return None
             else:
-                print(f"--- {ntf} ---")
-                # Non resettiamo last_displayed_list così non ristampa tutto subito
-
-        elif char == '\x1b': # ESC
-            print()
-            return None
-
-        elif char == '?': # Richiesta ristampa
+                 print("--- '?' . ---")
+                 last_displayed = None
+        elif user_char == '\x1b': print(); return None;
+        elif user_char == '?':
             print("\n")
-            Mostra(final_filtered, pager, numbered, num_map)
-            last_displayed_list = final_filtered[:] # Reset stato visualizzato
-
-        elif char == '\x08': # Backspace
+            Mostra(final_filtered, pager, numbered, num_map, user_input)
+            last_displayed = final_filtered[:]
+        elif user_char == '\x08':
             if user_input:
                 user_input = user_input[:-1]
-                # Trucco visivo: cancella carattere a schermo
-                print('\b \b', end='', flush=True) 
-                last_displayed_list = None # Forza refresh lista
-                disable_autocomplete_once = True # Evita che LCP riaggiunga subito la lettera cancellata
-
-        elif char == '\x00': 
-            pass # Ignora tasti speciali
-
-        else: # Carattere normale
-            # Se numerato, accetta solo cifre
-            if numbered and not char.isdigit():
-                pass
+                print('\b \b'*len(display_input), end='', flush=True)
+                last_displayed = None
+                disable_autocomplete_once = True
+        elif user_char == '\x00': pass
+        else:
+            if (numbered and not user_char.isdigit()): pass
             else:
-                user_input += char
-                print(char, end='', flush=True) # Echo del carattere
-                last_displayed_list = None # Forza refresh
+                print(user_char, end='', flush=True)
+                user_input += user_char
+                last_displayed = None
+                disable_autocomplete_once = False
 
 # run_tests.py
 # Script per testare la funzione menu() dal file test.py

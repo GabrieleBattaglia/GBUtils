@@ -1210,7 +1210,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     if len(d) == 1 and not show_only: return list(d.keys())[0];
     if show_only: Mostra(orig_keys, pager, numbered, num_map); return None;
     if show:
-        if not Mostra(orig_keys, pager, numbered, num_map): return None
+        Mostra(orig_keys, pager, numbered, num_map)
         last_displayed = orig_keys[:]
     disable_autocomplete_once = False
     while True:
