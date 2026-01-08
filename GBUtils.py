@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V63 di domenica 14 dicembre 2025
+	V64 di mercoledì 7 gennaio 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -15,7 +15,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
-	menu V4.5.1 - domenica 14 dicembre 2025 - Gabriele Battaglia & Gemini 3 Pro
+	menu V4.6.0 - mercoledì 7 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
 	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	Scadenza 1.0 del 15/12/2021
@@ -1107,8 +1107,8 @@ def manuale(nf):
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
 	return
 
-def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False):
-    """V4.5.1 - domenica 14 dicembre 2025 - Gabriele Battaglia & Gemini 3 Pro
+def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True):
+    """V4.6.0 - mercoledì 7 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -1120,6 +1120,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     pager: numero di elementi da mostrare per pagina. Impostare a 0 per disabilitare.
     show_on_filter: se True, la lista delle opzioni si aggiorna visivamente a ogni tasto.
     numbered: se True, il menu diventa numerato, con selezione interattiva dei numeri.
+    ordered: se True (default), le voci del menu vengono ordinate alfabeticamente per chiave.
     Restituisce:
     La chiave scelta dal dizionario 'd', oppure None se l'utente annulla (ESC o Invio su input vuoto).
     """
@@ -1199,7 +1200,8 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
         """Controlla se 'key_item' inizia con 'sub' (case-insensitive)."""
         return key_item.lower().startswith(sub.lower())
     orig_keys = list(d.keys())
-    orig_keys.sort()
+    if ordered:
+        orig_keys.sort()
     user_input = ""
     last_displayed = None
     num_map = {}
