@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V64 di mercoledì 7 gennaio 2026
+	V65 di martedì 13 gennaio 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -15,7 +15,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
-	menu V4.6.0 - mercoledì 7 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
+	menu V4.6.1 - martedì 13 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
 	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	Scadenza 1.0 del 15/12/2021
@@ -1108,7 +1108,7 @@ def manuale(nf):
 	return
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True):
-    """V4.6.0 - mercoledì 7 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
+    """V4.6.1 - martedì 13 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -1189,13 +1189,17 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     def Listaprompt_autocomplete(keys_list, display_input):
         """Genera un prompt che suggerisce i prossimi caratteri validi."""
         if not keys_list or len(keys_list) <= 1: return ">";
-        next_chars = set()
+        next_chars = []
+        seen = set()
         input_len = len(display_input)
         for key in keys_list:
             if len(key) > input_len:
-                next_chars.add(key[input_len].upper())
+                char = key[input_len].upper()
+                if char not in seen:
+                    seen.add(char)
+                    next_chars.append(char)
         if not next_chars: return ">";
-        return f"({', '.join(sorted(list(next_chars)))})>"
+        return f"({', '.join(next_chars)})>"
     def valid_match(key_item, sub):
         """Controlla se 'key_item' inizia con 'sub' (case-insensitive)."""
         return key_item.lower().startswith(sub.lower())
