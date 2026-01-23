@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V65 di martedì 13 gennaio 2026
+	V66 di venerdì 23 gennaio 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -12,7 +12,7 @@ Lista utilità contenute in questo pacchetto
 	Donazione V1.1 del 18 giugno 2025
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
-	key V5.0 di mercoledì 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
+	key V5.1 di venerdì 23 gennaio 2026 by Gabriele Battaglia and Stella, Gemini 3 Pro.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V4.6.1 - martedì 13 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
@@ -741,7 +741,7 @@ def base62(n):
 	return segno + ''.join(symbols[l] for l in out)
 
 def key(prompt="", attesa=99999):
-	'''V5.0 12/02/2025 by Gabriele Battaglia and ChatGPT o3-mini-high.
+	'''V5.1 23/01/2026 by Gabriele Battaglia and Stella, Gemini 3 Pro.
 	Attende per il numero di secondi specificati
 	se tempo e' scaduto, o si preme un tasto, esce.
 	prompt e' il messaggio da mostrare.
@@ -756,6 +756,7 @@ def key(prompt="", attesa=99999):
 		while time.time() - start_time <= attesa:
 			if msvcrt.kbhit():
 				return msvcrt.getwch()
+			time.sleep(0.01)
 		return ''
 	else:
 		import select, tty, termios
