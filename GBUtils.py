@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V66 di venerdì 23 gennaio 2026
+	V67 di venerdì 23 gennaio 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -19,7 +19,7 @@ Lista utilità contenute in questo pacchetto
 	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	Scadenza 1.0 del 15/12/2021
-	sonify V7.1 - 11 luglio 2025 - Gabriele Battaglia eChatGPT O1, Gemini 2.5 Pro
+	sonify V7.2 - 23 gennaio 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Vecchiume 1.0 del 15/12/2018
 	update_checker V1.0 di lunedì 13 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 '''
@@ -822,8 +822,8 @@ def gridapu(x=0.0, y=0.0, num=10):
 
 def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	"""
-	sonify V7.1 - 11 luglio 2025 - Gabriele Battaglia eChatGPT O1, Gemini 2.5 Pro
-	Sonifies a list of float data.
+	sonify V7.2 - 23 gennaio 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
+	Sonifies a list of float data. Optimized with NumPy vectorization and float32.
 	Parameters:
 	  data_list: List of float (5 <= len <= 500000)
 	  duration: Total duration in seconds (e.g., 2.58)
@@ -835,52 +835,67 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	import numpy as np
 	import sounddevice as sd
 	import wave
-	n = len(data_list)
+	
+	try:
+		data = np.asanyarray(data_list, dtype=np.float32)
+	except Exception:
+		return
+
+	n = data.size
 	if n < 5 or n > 500000:
 		print("sonify: data_list length out of range")
 		return
-	try:
-		data_list = [float(v) for v in data_list]
-	except ValueError:
-		return
+
 	vol = max(0.1, min(vol, 1.0))
-	data_min = min(data_list)
-	data_max = max(data_list)
+	data_min = data.min()
+	data_max = data.max()
+	
 	freq_min = 65.41
 	freq_max = 4186.01
-	if data_max - data_min == 0:
-		frequencies = [(freq_min+freq_max)/2]*n
+	
+	data_range = data_max - data_min
+	if data_range == 0:
+		frequencies = np.full(n, (freq_min + freq_max) / 2, dtype=np.float32)
 	else:
-		frequencies = [freq_min+(v-data_min)*(freq_max-freq_min)/(data_max-data_min) for v in data_list]
+		frequencies = freq_min + (data - data_min) * ((freq_max - freq_min) / data_range)
+
 	sample_rate = 44100
-	total_samples = int(duration*sample_rate)
+	total_samples = int(duration * sample_rate)
 	if total_samples <= 0:
 		return
-	t = np.linspace(0, duration, total_samples, endpoint=False)
+
+	t = np.linspace(0, duration, total_samples, endpoint=False, dtype=np.float32)
+	
 	if ptm:
-		segment_times = np.linspace(0, duration, n, endpoint=True)
-		freq_array = np.interp(t, segment_times, frequencies, left=frequencies[0], right=frequencies[-1])
+		segment_times = np.linspace(0, duration, n, endpoint=True, dtype=np.float32)
+		freq_array = np.interp(t, segment_times, frequencies)
 	else:
-		indices = np.floor(np.linspace(0, n, total_samples, endpoint=False)).astype(int)
-		freq_array = np.array(frequencies)[indices]
-	phase = 2.0*np.pi*np.cumsum(freq_array/sample_rate)
-	audio_signal = np.sin(phase)*vol
+		indices = np.floor(np.linspace(0, n, total_samples, endpoint=False)).astype(np.int32)
+		freq_array = frequencies[indices]
+
+	phase = 2.0 * np.pi * np.cumsum(freq_array / sample_rate)
+	audio_signal = np.sin(phase) * vol
+	
 	fade_duration_sec = 0.01
 	fade_samples = int(round(fade_duration_sec * sample_rate))
 	fade_samples = min(fade_samples, total_samples // 2)
-	fade_in = np.sin(np.linspace(0, np.pi / 2, fade_samples))
-	fade_out = np.sin(np.linspace(np.pi / 2, 0, fade_samples)) # o np.cos(np.linspace(0, np.pi/2, fade_samples))
-	audio_signal[:fade_samples] *= fade_in
-	audio_signal[-fade_samples:] *= fade_out
-	pan = np.linspace(-1.0, 1.0, total_samples)
-	pan_angle = (pan + 1.0) * np.pi / 4.0
-	left_gain = np.cos(pan_angle)
-	right_gain = np.sin(pan_angle)
-	left = audio_signal * left_gain
-	right = audio_signal * right_gain
+	
+	if fade_samples > 0:
+		fade_curve = np.sin(np.linspace(0, np.pi / 2, fade_samples, dtype=np.float32))
+		audio_signal[:fade_samples] *= fade_curve
+		audio_signal[-fade_samples:] *= fade_curve[::-1]
+
+	pan = np.linspace(-1.0, 1.0, total_samples, dtype=np.float32)
+	pan_angle = (pan + 1.0) * (np.pi / 4.0)
+	
+	left = audio_signal * np.cos(pan_angle)
+	right = audio_signal * np.sin(pan_angle)
+	
 	audio_stereo = np.column_stack((left, right))
-	audio_stereo_int16 = (audio_stereo*32767).astype(np.int16)
+	audio_stereo_int16 = (audio_stereo * 32767).astype(np.int16)
+	
 	sd.play(audio_stereo_int16, sample_rate)
+	
 	if file:
 		from datetime import datetime
 		filename = "sonification" + datetime.now().strftime("%Y%m%d%H%M%S") + ".wav"
