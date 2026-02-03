@@ -3,13 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V67 di venerdì 23 gennaio 2026
+	V68 di martedì 3 febbraio 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
-	Donazione V1.1 del 18 giugno 2025
+	Donazione V1.2 del 3 febbraio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
 	key V5.1 di venerdì 23 gennaio 2026 by Gabriele Battaglia and Stella, Gemini 3 Pro.
@@ -1351,7 +1351,7 @@ def Vecchiume(y=1974, m=9, g=13, h=22, i=10):
 
 def Donazione():
     """
-    V1.1 del 18 giugno 2025
+    V1.2 del 3 febbraio 2026
     Mostra un messaggio di donazione con una probabilità del 20%
     nella lingua del sistema operativo (se supportata), altrimenti in inglese.
     Lingue supportate: Italiano, Portoghese, Inglese, Francese, Spagnolo, Tedesco, Russo, Cinese (semplificato), Giapponese, Arabo.
@@ -1362,16 +1362,16 @@ def Donazione():
 
     if random.randint(1, 100) <= 20:
         messaggi = {
-            'it': "Se questo software ti è piaciuto, ti è stato utile, ti sei divertito ad usarlo, considera l'idea di offrirmi un caffè. Mi trovi su paypal come iz4apu@libero.it Grazie di cuore.",
-            'en': "If you enjoyed this software, found it useful, or had fun using it, consider buying me a coffee. You can find me on PayPal at iz4apu@libero.it Thank you.",
-            'pt': "Se você gostou deste software, o achou útil ou se divertiu usando-o, considere me pagar um café. Você pode me encontrar no PayPal em iz4apu@libero.it. Muito obrigado.",
-            'fr': "Si vous avez aimé ce logiciel, l'avez trouvé utile ou vous êtes amusé en l'utilisant, envisagez de m'offrir un café. Vous pouvez me trouver sur PayPal à l'adresse iz4apu@libero.it Merci beaucoup.",
-            'es': "Si te ha gustado este software, te ha resultado útil o te has divertido usándolo, considera la idea de invitarme a un café. Me puedes encontrar en PayPal como iz4apu@limero.it. Muchas gracias.",
-            'de': "Wenn Ihnen diese Software gefallen hat, sie nützlich war oder Sie Spaß daran hatten, sie zu nutzen, ziehen Sie in Betracht, mir einen Kaffee auszugeben. Sie finden mich auf PayPal unter iz4apu@libero.it Vielen Dank.",
-            'ru': "Если вам понравилась эта программа, она оказалась полезной или вы получили удовольствие от ее использования, рассмотрите возможность угостить меня кофе. Вы можете найти меня на PayPal по адресу iz4apu@libero.it Спасибо.",
-            'zh': "如果您喜欢这款软件，觉得它有用，或者在使用过程中获得了乐趣，请考虑请我喝杯咖啡。您可以在PayPal上找到我：iz4apu@libero.it 谢谢。", # Cinese (semplificato)
-            'ja': "このソフトウェアを楽しんだり、役立つと感じたり、楽しく使っていただけたなら、私にコーヒーをご馳走することを検討してください。PayPalでiz4apu@libero.itとして見つけることができます。ありがとうございます。",
-            'ar': "إذا أعجبك هذا البرنامج، أو وجدته مفيدًا، أو استمتعت باستخدامه، ففكر في شراء قهوة لي. يمكنك العثور عليّ على PayPal على iz4apu@libero.it. شكرًا لك."
+            'it': "Se questo software ti è piaciuto, ti è stato utile, ti sei divertito ad usarlo, considera l'idea di offrirmi un caffè. Mi trovi su paypal come gabriele.battaglia@gmail.com Grazie di cuore.",
+            'en': "If you enjoyed this software, found it useful, or had fun using it, consider buying me a coffee. You can find me on PayPal at gabriele.battaglia@gmail.com Thank you.",
+            'pt': "Se você gostou deste software, o achou útil ou se divertiu usando-o, considere me pagar um café. Você pode me encontrar no PayPal em gabriele.battaglia@gmail.com. Muito obrigado.",
+            'fr': "Si vous avez aimé ce logiciel, l'avez trouvé utile ou vous êtes amusé en l'utilisant, envisagez de m'offrir un café. Vous pouvez me trouver sur PayPal à l'adresse gabriele.battaglia@gmail.com Merci beaucoup.",
+            'es': "Si te ha gustado este software, te ha resultado útil o te has divertido usándolo, considera la idea de invitarme a un café. Me puedes encontrar en PayPal como gabriele.battaglia@gmail.com. Muchas gracias.",
+            'de': "Wenn Ihnen diese Software gefallen hat, sie nützlich war oder Sie Spaß daran hatten, sie zu nutzen, ziehen Sie in Betracht, mir einen Kaffee auszugeben. Sie finden mich auf PayPal unter gabriele.battaglia@gmail.com Vielen Dank.",
+            'ru': "Если вам понравилась эта программа, она оказалась полезной или вы получили удовольствие от ее использования, рассмотрите возможность угостить меня кофе. Вы можете найти меня на PayPal по адресу gabriele.battaglia@gmail.com Спасибо.",
+            'zh': "如果您喜欢这款软件，觉得它有用，或者在使用过程中获得了乐趣，请考虑请我喝杯咖啡。您可以在PayPal上找到我：gabriele.battaglia@gmail.com 谢谢。", # Cinese (semplificato)
+            'ja': "このソフトウェアを楽しんだり、役立つと感じたり、楽しく使っていただけたなら、私にコーヒーをご馳走することを検討してください。PayPalでgabriele.battaglia@gmail.comとして見つけることができます。ありがとうございます。",
+            'ar': "إذا أعجبك هذا البرنامج، أو وجدته مفيدًا، أو استمتعت باستخدامه، ففكر في شراء قهوة لي. يمكنك العثور عليّ على PayPal على gabriele.battaglia@gmail.com. شكرًا لك."
         }
 
         lingua_os = 'en' # Impostiamo l'inglese come predefinito
