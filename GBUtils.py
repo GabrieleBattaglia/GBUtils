@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V68 di martedì 3 febbraio 2026
+	V69 di martedì 3 marzo 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -21,13 +21,23 @@ Lista utilità contenute in questo pacchetto
 	Scadenza 1.0 del 15/12/2021
 	sonify V7.2 - 23 gennaio 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Vecchiume 1.0 del 15/12/2018
-	update_checker V1.0 di lunedì 13 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
+	update_checker V1.1 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
+	perform_update V1.0 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
 '''
+
+def _parse_version(version_str: str) -> tuple:
+    """Helper interno per il parsing semantico della versione."""
+    import re
+    # Estrae solo i numeri separati da punti, ignorando prefissi come 'v'
+    match = re.search(r'(\d+(?:\.\d+)*)', version_str)
+    if not match:
+        return (0,)
+    return tuple(map(int, match.group(1).split('.')))
 
 def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.0 di lunedì 13 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
-    Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
+    V1.1 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
+    Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente (semanticamente).
     Args:
         current_version (str): La versione corrente dell'applicazione (es. "v1.0.0").
         api_url (str): L'URL dell'API di GitHub per le releases (es. "https://api.github.com/repos/user/repo/releases/latest").
@@ -42,13 +52,17 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
     current_version = current_version.split(' ')[0]
     try:
         response = requests.get(api_url, timeout=5)
-        response.raise_for_status()  # Solleva un'eccezione per codici di stato HTTP 4xx/5xx
+        response.raise_for_status()
         data = response.json()
         latest_version = data.get("tag_name")
         if not latest_version:
             return False, None, None, None
         changelog = data.get("body")
-        update_available = latest_version > current_version
+        
+        current_tuple = _parse_version(current_version)
+        latest_tuple = _parse_version(latest_version)
+        
+        update_available = latest_tuple > current_tuple
         if update_available:
             download_url = None
             assets = data.get("assets")
@@ -58,8 +72,99 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
         else:
             return False, latest_version, None, None
     except (requests.exceptions.RequestException, ValueError):
-        # Errore di rete, URL non valido, o JSON malformato
         return False, None, None, None
+
+def perform_update(download_url: str, app_name: str = "App") -> bool:
+    """
+    V1.0 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
+    Scarica l'aggiornamento, lo estrae ed esegue uno script batch per sostituire l'eseguibile corrente
+    e riavviare l'applicazione. Solo per Windows (ambiente PyInstaller portable).
+    
+    Args:
+        download_url (str): L'URL dello zip da scaricare.
+        app_name (str): Il nome del file eseguibile (senza .exe), usato anche per la cartella zip se necessario.
+    Returns:
+        bool: True se il processo di aggiornamento è stato avviato e l'app deve chiudersi, False in caso di errore.
+    """
+    import os
+    import sys
+    import urllib.request
+    import zipfile
+    import subprocess
+    import time
+    
+    if not sys.platform.startswith('win'):
+        return False
+        
+    try:
+        # 1. Determina l'eseguibile corrente
+        if getattr(sys, 'frozen', False):
+            current_exe = sys.executable
+        else:
+            # Se siamo in script mode (sviluppo), non ha senso fare la sostituzione file
+            return False
+            
+        current_dir = os.path.dirname(current_exe)
+        exe_name = os.path.basename(current_exe)
+        temp_dir = os.path.join(current_dir, "_update_temp")
+        
+        # 2. Crea cartella temporanea
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+            
+        zip_path = os.path.join(temp_dir, "update.zip")
+        
+        # 3. Download
+        urllib.request.urlretrieve(download_url, zip_path)
+        
+        # 4. Estrazione
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(temp_dir)
+            
+        # 5. Genera script batch
+        # Lo script aspetterà 2 secondi per far chiudere l'app,
+        # copierà tutto il contenuto della cartella estratta (potrebbe essere in una sottocartella, quindi cerchiamo l'exe)
+        # nella cartella corrente, poi avvierà l'app e pulirà la cartella temporanea.
+        bat_path = os.path.join(temp_dir, "updater.bat")
+        
+        # Gestione path per robocopy o copy
+        # Lo zip potrebbe contenere i file direttamente o in una sottocartella (es. TerminalBeast/)
+        # Facciamo una mossa intelligente: cerchiamo la cartella che contiene l'exe scaricato
+        source_dir = temp_dir
+        for root, dirs, files in os.walk(temp_dir):
+            if exe_name in files:
+                source_dir = root
+                break
+                
+        bat_content = f"""@echo off
+title Aggiornamento {app_name}...
+echo Attendo la chiusura di {app_name}...
+ping 127.0.0.1 -n 3 > nul
+
+echo Applicazione aggiornamento...
+xcopy "{source_dir}\\*" "{current_dir}\\" /S /Y /E /Q
+
+echo Riavvio {app_name}...
+start "" "{current_exe}"
+
+echo Pulizia file temporanei...
+cd "{current_dir}"
+rmdir /S /Q "{temp_dir}"
+exit
+"""
+        with open(bat_path, "w", encoding="utf-8") as f:
+            f.write(bat_content)
+            
+        # 6. Avvia lo script batch
+        # Lo avviamo tramite subprocess senza attendere (creationflags per nascondere o meno, meglio mostrarlo un attimo così l'utente capisce)
+        CREATE_NEW_CONSOLE = 0x00000010
+        subprocess.Popen([bat_path], creationflags=CREATE_NEW_CONSOLE)
+        
+        return True
+        
+    except Exception as e:
+        print(f"Errore durante l'aggiornamento: {e}")
+        return False
 
 def enter_escape(prompt=""):
     """
