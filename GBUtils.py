@@ -24,6 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.1 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
 	perform_update V1.0 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
 '''
+VERSION = "69"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
