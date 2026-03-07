@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V69 di martedì 3 marzo 2026
+	V70 di sabato 7 marzo 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -22,9 +22,9 @@ Lista utilità contenute in questo pacchetto
 	sonify V7.2 - 23 gennaio 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Vecchiume 1.0 del 15/12/2018
 	update_checker V1.1 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
-	perform_update V1.0 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
+	perform_update V1.1 di sabato 7 marzo 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "69"
+VERSION = "70"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -77,9 +77,10 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
 
 def perform_update(download_url: str, app_name: str = "App") -> bool:
     """
-    V1.0 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
+    V1.1 di sabato 7 marzo 2026 by Gabriele Battaglia & Stella
     Scarica l'aggiornamento, lo estrae ed esegue uno script batch per sostituire l'eseguibile corrente
     e riavviare l'applicazione. Solo per Windows (ambiente PyInstaller portable).
+    Fix per il problema SSL certificate verify failed.
     
     Args:
         download_url (str): L'URL dello zip da scaricare.
@@ -116,6 +117,12 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         zip_path = os.path.join(temp_dir, "update.zip")
         
         # 3. Download
+        try:
+            import ssl
+            ssl._create_default_https_context = ssl._create_unverified_context
+        except AttributeError:
+            pass
+            
         urllib.request.urlretrieve(download_url, zip_path)
         
         # 4. Estrazione
