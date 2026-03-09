@@ -64,7 +64,8 @@ def calculate_expected_duration(msg, wpm, l, s, p):
     return total_duration
 
 # --- Parametri del Test ---
-import random,	time
+import random
+import time
 test_string = "the quick brown fox jumps over the lazy dog 1234567890 test di velocita"
 num_iterations = 10
 min_wpm = 10

@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V70 di sabato 7 marzo 2026
+	V71 di lunedì 9 marzo 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.1 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
 	perform_update V1.1 di sabato 7 marzo 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "70"
+VERSION = "71"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -93,7 +93,6 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
     import urllib.request
     import zipfile
     import subprocess
-    import time
     
     if not sys.platform.startswith('win'):
         return False
@@ -247,7 +246,6 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	import wave
 	from datetime import datetime
 	import threading
-	import re
 	import sys
 	from scipy import signal # Importato per le forme d'onda
 	BLOCK_SIZE = 256
@@ -860,7 +858,9 @@ def key(prompt="", attesa=99999):
 	prompt e' il messaggio da mostrare.
 	Restituisce il tasto premuto.
 	'''
-	import sys, time, os
+	import sys
+	import time
+	import os
 	if prompt:
 		print(prompt, end="", flush=True)
 	start_time = time.time()
@@ -872,7 +872,9 @@ def key(prompt="", attesa=99999):
 			time.sleep(0.01)
 		return ''
 	else:
-		import select, tty, termios
+		import select
+		import tty
+		import termios
 		fd = sys.stdin.fileno()
 		old_settings = termios.tcgetattr(fd)
 		try:
@@ -1047,7 +1049,8 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 	import sounddevice as sd
 	import threading
 	from scipy import signal
-	import re, sys
+	import re
+	import sys
 	def note_to_freq(note):
 		if isinstance(note, (int, float)): return float(note)
 		if isinstance(note, str):
@@ -1253,7 +1256,8 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     Restituisce:
     La chiave scelta dal dizionario 'd', oppure None se l'utente annulla (ESC o Invio su input vuoto).
     """
-    import sys, time, os
+    import sys
+    import os
     def lcp(strings):
         """Calcola il prefisso comune più lungo da una lista di stringhe."""
         if not strings: return ""
@@ -1274,7 +1278,9 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             if ord(ch) == 127: return '\x08'
             return ch
         else:
-            import select, tty, termios
+            import select
+            import tty
+            import termios
             fd = sys.stdin.fileno()
             old_settings = termios.tcgetattr(fd)
             try:
@@ -1296,7 +1302,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
         """Visualizza una lista di elementi usando un pager internazionalizzato."""
         count = 0
         total = len(items_to_show)
-        if total == 0 and user_input: print(ntf); return True;
+        if total == 0 and user_input: print(ntf); return True
         if total == 0: return True
         print("--- Menu ---")
         for item in items_to_show:
@@ -1311,13 +1317,13 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             if pager > 0 and count % pager == 0 and count < total:
                 page_num = int(count / pager)
                 prompt_pager = f"--- [{page_num}] ({count-pager+1}-{count}/{total}) ---"
-                ch_pager = key(prompt_pager); print();
-                if ch_pager == '\x1b': return False;
+                ch_pager = key(prompt_pager); print()
+                if ch_pager == '\x1b': return False
         print(f"---------- [{count}/{total}] ----------")
         return True
     def Listaprompt_autocomplete(keys_list, display_input):
         """Genera un prompt che suggerisce i prossimi caratteri validi."""
-        if not keys_list or len(keys_list) <= 1: return ">";
+        if not keys_list or len(keys_list) <= 1: return ">"
         next_chars = []
         seen = set()
         input_len = len(display_input)
@@ -1327,7 +1333,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
                 if char not in seen:
                     seen.add(char)
                     next_chars.append(char)
-        if not next_chars: return ">";
+        if not next_chars: return ">"
         return f"({', '.join(next_chars)})>"
     def valid_match(key_item, sub):
         """Controlla se 'key_item' inizia con 'sub' (case-insensitive)."""
@@ -1341,9 +1347,9 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     if numbered:
         num_map = {str(i): k for i, k in enumerate(orig_keys, 1)}
         orig_keys = list(num_map.keys())
-    if not d: print("No options available."); return None;
-    if len(d) == 1 and not show_only: return list(d.keys())[0];
-    if show_only: Mostra(orig_keys, pager, numbered, num_map); return None;
+    if not d: print("No options available."); return None
+    if len(d) == 1 and not show_only: return list(d.keys())[0]
+    if show_only: Mostra(orig_keys, pager, numbered, num_map); return None
     if show:
         Mostra(orig_keys, pager, numbered, num_map)
         last_displayed = orig_keys[:]
@@ -1368,7 +1374,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             last_displayed = final_filtered[:]
         if numbered:
             prompt_str = p if p != "> " else f"(1-{len(orig_keys)})"
-            if not prompt_str.strip().endswith('>'): prompt_str += '> ';
+            if not prompt_str.strip().endswith('>'): prompt_str += '> '
         elif keyslist:
             prompt_str = Listaprompt_autocomplete(final_filtered, display_input)
         else:
@@ -1386,7 +1392,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             else:
                  print("--- '?' . ---")
                  last_displayed = None
-        elif user_char == '\x1b': print(); return None;
+        elif user_char == '\x1b': print(); return None
         elif user_char == '?':
             print("\n")
             Mostra(final_filtered, pager, numbered, num_map, user_input)
@@ -1471,7 +1477,6 @@ def Donazione():
     """
     import random
     import locale
-    import platform # Importiamo il modulo platform per un rilevamento più affidabile
 
     if random.randint(1, 100) <= 20:
         messaggi = {

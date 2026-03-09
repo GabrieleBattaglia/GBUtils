@@ -1,5 +1,4 @@
 from pyo import Server, SigTo, Sine, Pan, Pattern
-import numpy as np
 
 def Sonify3(data=[], duration=10000, vol=0.35, ptm=False):
     # Controllo della lunghezza dei dati

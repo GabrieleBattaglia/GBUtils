@@ -44,7 +44,7 @@ if __name__ == '__main__':
     print(f"Controllo aggiornamenti su: {GITHUB_API_URL}")
     is_update_available, new_version, url, log = Aggiornami(MY_APP_VERSION, GITHUB_API_URL)
     if is_update_available:
-        print(f"--- AGGIORNAMENTO DISPONIBILE ---")
+        print("--- AGGIORNAMENTO DISPONIBILE ---")
         print(f"Nuova versione: {new_version}")
         if url:
             print(f"URL per il download: {url}")

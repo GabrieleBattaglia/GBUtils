@@ -14,7 +14,8 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     Restituisce:
     La chiave scelta dal dizionario 'd', oppure None se l'utente annulla (ESC o Invio su input vuoto).
     """
-    import sys, time, os
+    import sys
+    import os
     def lcp(strings):
         """Calcola il prefisso comune più lungo da una lista di stringhe."""
         if not strings: return ""
@@ -35,7 +36,9 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             if ord(ch) == 127: return '\x08'
             return ch
         else:
-            import select, tty, termios
+            import select
+            import tty
+            import termios
             fd = sys.stdin.fileno()
             old_settings = termios.tcgetattr(fd)
             try:
@@ -57,7 +60,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
         """Visualizza una lista di elementi usando un pager internazionalizzato."""
         count = 0
         total = len(items_to_show)
-        if total == 0 and user_input: print(ntf); return True;
+        if total == 0 and user_input: print(ntf); return True
         if total == 0: return True
         print("--- Menu ---")
         for item in items_to_show:
@@ -72,19 +75,19 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             if pager > 0 and count % pager == 0 and count < total:
                 page_num = int(count / pager)
                 prompt_pager = f"--- [{page_num}] ({count-pager+1}-{count}/{total}) ---"
-                ch_pager = key(prompt_pager); print();
-                if ch_pager == '\x1b': return False;
+                ch_pager = key(prompt_pager); print()
+                if ch_pager == '\x1b': return False
         print(f"---------- [{count}/{total}] ----------")
         return True
     def Listaprompt_autocomplete(keys_list, display_input):
         """Genera un prompt che suggerisce i prossimi caratteri validi."""
-        if not keys_list or len(keys_list) <= 1: return ">";
+        if not keys_list or len(keys_list) <= 1: return ">"
         next_chars = set()
         input_len = len(display_input)
         for key in keys_list:
             if len(key) > input_len:
                 next_chars.add(key[input_len].upper())
-        if not next_chars: return ">";
+        if not next_chars: return ">"
         return f"({', '.join(sorted(list(next_chars)))})>"
     def valid_match(key_item, sub):
         """Controlla se 'key_item' inizia con 'sub' (case-insensitive)."""
@@ -97,9 +100,9 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     if numbered:
         num_map = {str(i): k for i, k in enumerate(orig_keys, 1)}
         orig_keys = list(num_map.keys())
-    if not d: print("No options available."); return None;
-    if len(d) == 1 and not show_only: return list(d.keys())[0];
-    if show_only: Mostra(orig_keys, pager, numbered, num_map); return None;
+    if not d: print("No options available."); return None
+    if len(d) == 1 and not show_only: return list(d.keys())[0]
+    if show_only: Mostra(orig_keys, pager, numbered, num_map); return None
     if show:
         Mostra(orig_keys, pager, numbered, num_map)
         last_displayed = orig_keys[:]
@@ -124,7 +127,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             last_displayed = final_filtered[:]
         if numbered:
             prompt_str = p if p != "> " else f"(1-{len(orig_keys)})"
-            if not prompt_str.strip().endswith('>'): prompt_str += '> ';
+            if not prompt_str.strip().endswith('>'): prompt_str += '> '
         elif keyslist:
             prompt_str = Listaprompt_autocomplete(final_filtered, display_input)
         else:
@@ -142,7 +145,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             else:
                  print("--- '?' . ---")
                  last_displayed = None
-        elif user_char == '\x1b': print(); return None;
+        elif user_char == '\x1b': print(); return None
         elif user_char == '?':
             print("\n")
             Mostra(final_filtered, pager, numbered, num_map, user_input)

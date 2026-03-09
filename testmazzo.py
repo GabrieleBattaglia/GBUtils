@@ -49,7 +49,7 @@ print("Azione: Creo Mazzo(tipo_francese=True, num_mazzi=1)")
 print("Atteso: Oggetto Mazzo con 52 carte in 'carte', 0 nelle altre liste.")
 try:
 	mazzo_fr = Mazzo(tipo_francese=True, num_mazzi=1)
-	print(f"Ottenuto: Oggetto Mazzo creato.")
+	print("Ottenuto: Oggetto Mazzo creato.")
 	print(f"Stato mazzo: {mazzo_fr.stato_mazzo()}")
 	print(f"Lunghezza mazzo: {len(mazzo_fr)}")
 	assert len(mazzo_fr.carte) == 52 and len(mazzo_fr) == 52
@@ -66,7 +66,7 @@ print("Azione: Creo Mazzo(tipo_francese=False, num_mazzi=1)")
 print("Atteso: Oggetto Mazzo con 40 carte in 'carte', 0 nelle altre liste.")
 try:
 	mazzo_it = Mazzo(tipo_francese=False, num_mazzi=1)
-	print(f"Ottenuto: Oggetto Mazzo creato.")
+	print("Ottenuto: Oggetto Mazzo creato.")
 	print(f"Stato mazzo: {mazzo_it.stato_mazzo()}")
 	print(f"Lunghezza mazzo: {len(mazzo_it)}")
 	assert len(mazzo_it.carte) == 40 and len(mazzo_it) == 40
@@ -80,7 +80,7 @@ print("Azione: Creo Mazzo(tipo_francese=True, num_mazzi=3)")
 print("Atteso: Oggetto Mazzo con 156 carte (52 * 3) in 'carte'.")
 try:
 	mazzo_fr_multi = Mazzo(tipo_francese=True, num_mazzi=3)
-	print(f"Ottenuto: Oggetto Mazzo creato.")
+	print("Ottenuto: Oggetto Mazzo creato.")
 	print(f"Stato mazzo: {mazzo_fr_multi.stato_mazzo()}")
 	print(f"Lunghezza mazzo: {len(mazzo_fr_multi)}")
 	assert len(mazzo_fr_multi.carte) == 156 and len(mazzo_fr_multi) == 156
@@ -370,21 +370,21 @@ print(f"len(mazzo): {len(mazzo)}")
 print(f"str(mazzo): {str(mazzo)}")
 
 print("\n--- Test: mostra_carte (mazzo) ---")
-print(f"Atteso: Stringa con le 52 carte del mazzo.")
+print("Atteso: Stringa con le 52 carte del mazzo.")
 mostra_m = mazzo.mostra_carte('mazzo')
 print(f"Ottenuto: {mostra_m[:100]}...") # Mostra solo inizio per brevità
 assert "Mazzo Principale (52):" in mostra_m and len(mostra_m.split(',')) == 52
 print("Verifica: OK")
 
 print("\n--- Test: mostra_carte (pescate - vuoto) ---")
-print(f"Atteso: Messaggio 'Nessuna carta nella lista...'")
+print("Atteso: Messaggio 'Nessuna carta nella lista...'")
 mostra_p = mazzo.mostra_carte('pescate')
 print(f"Ottenuto: {mostra_p}")
 assert "Nessuna carta nella lista 'Carte Pescate'" in mostra_p
 print("Verifica: OK")
 
 print("\n--- Test: mostra_carte (lista non valida) ---")
-print(f"Atteso: Messaggio 'Lista non valida...'")
+print("Atteso: Messaggio 'Lista non valida...'")
 mostra_inv = mazzo.mostra_carte('invalid_list')
 print(f"Ottenuto: {mostra_inv}")
 assert "Lista non valida" in mostra_inv
