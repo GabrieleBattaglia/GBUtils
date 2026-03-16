@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V71 di lunedì 9 marzo 2026
+	V72 di lunedì 16 marzo 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -21,10 +21,10 @@ Lista utilità contenute in questo pacchetto
 	Scadenza 1.0 del 15/12/2021
 	sonify V7.2 - 23 gennaio 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Vecchiume 1.0 del 15/12/2018
-	update_checker V1.1 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
-	perform_update V1.1 di sabato 7 marzo 2026 by Gabriele Battaglia & Stella
+	update_checker V1.2 di lunedì 16 marzo 2026 by Gabriele Battaglia & Stella
+	perform_update V1.2 di lunedì 16 marzo 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "71"
+VERSION = "72"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -35,29 +35,51 @@ def _parse_version(version_str: str) -> tuple:
         return (0,)
     return tuple(map(int, match.group(1).split('.')))
 
+def _write_update_log(message: str):
+    """Scrive un messaggio di errore e il traceback in un file di log locale."""
+    import os
+    import sys
+    import traceback
+    from datetime import datetime
+    
+    try:
+        # Determina la cartella dell'eseguibile o dello script
+        if getattr(sys, 'frozen', False):
+            base_dir = os.path.dirname(sys.executable)
+        else:
+            base_dir = os.path.dirname(os.path.abspath(__sys_module_file__ if '__sys_module_file__' in locals() else __file__))
+            # Se siamo in un pacchetto/submodule, meglio usare la cartella di lavoro corrente per i log
+            base_dir = os.getcwd()
+
+        log_path = os.path.join(base_dir, "auto_updater_error.log")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(f"\n{'='*50}\n")
+            f.write(f"DATA: {timestamp}\n")
+            f.write(f"ERRORE: {message}\n")
+            f.write(f"TRACEBACK:\n{traceback.format_exc()}\n")
+            f.write(f"{'='*50}\n")
+    except Exception as e:
+        print(f"Impossibile scrivere il file di log: {e}")
+
 def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.1 di martedì 3 marzo 2026 by Gabriele Battaglia & Stella
-    Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente (semanticamente).
-    Args:
-        current_version (str): La versione corrente dell'applicazione (es. "v1.0.0").
-        api_url (str): L'URL dell'API di GitHub per le releases (es. "https://api.github.com/repos/user/repo/releases/latest").
-    Returns:
-        tuple[bool, str | None, str | None, str | None]: Una tupla contenente:
-        - bool: True se è disponibile un aggiornamento, altrimenti False.
-        - str | None: La stringa della versione più recente trovata, o None in caso di errore.
-        - str | None: L'URL per il download del primo asset della release, o None se non disponibile.
-        - str | None: Il changelog (testo dal campo 'body' della release), o None se non disponibile/aggiornato.
+    V1.2 di lunedì 16 marzo 2026 by Gabriele Battaglia & Stella
+    Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
+    Ora include logging degli errori su file per debug remoto.
     """
     import requests
     current_version = current_version.split(' ')[0]
     try:
-        response = requests.get(api_url, timeout=5)
+        response = requests.get(api_url, timeout=10) # Timeout aumentato a 10s
         response.raise_for_status()
         data = response.json()
         latest_version = data.get("tag_name")
         if not latest_version:
+            _write_update_log("Nessun tag_name trovato nella risposta JSON di GitHub.")
             return False, None, None, None
+        
         changelog = data.get("body")
         
         current_tuple = _parse_version(current_version)
@@ -72,21 +94,15 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
             return True, latest_version, download_url, changelog
         else:
             return False, latest_version, None, None
-    except (requests.exceptions.RequestException, ValueError):
+    except Exception as e:
+        _write_update_log(f"Errore durante il controllo aggiornamenti: {e}")
         return False, None, None, None
 
 def perform_update(download_url: str, app_name: str = "App") -> bool:
     """
-    V1.1 di sabato 7 marzo 2026 by Gabriele Battaglia & Stella
-    Scarica l'aggiornamento, lo estrae ed esegue uno script batch per sostituire l'eseguibile corrente
-    e riavviare l'applicazione. Solo per Windows (ambiente PyInstaller portable).
-    Fix per il problema SSL certificate verify failed.
-    
-    Args:
-        download_url (str): L'URL dello zip da scaricare.
-        app_name (str): Il nome del file eseguibile (senza .exe), usato anche per la cartella zip se necessario.
-    Returns:
-        bool: True se il processo di aggiornamento è stato avviato e l'app deve chiudersi, False in caso di errore.
+    V1.2 di lunedì 16 marzo 2026 by Gabriele Battaglia & Stella
+    Scarica l'aggiornamento, lo estrae ed esegue uno script batch per sostituire l'eseguibile corrente.
+    Ora include logging degli errori su file.
     """
     import os
     import sys
@@ -129,20 +145,13 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
             zip_ref.extractall(temp_dir)
             
         # 5. Genera script batch
-        # Lo script aspetterà 2 secondi per far chiudere l'app,
-        # copierà tutto il contenuto della cartella estratta (potrebbe essere in una sottocartella, quindi cerchiamo l'exe)
-        # nella cartella corrente, poi avvierà l'app e pulirà la cartella temporanea.
-        bat_path = os.path.join(temp_dir, "updater.bat")
-        
-        # Gestione path per robocopy o copy
-        # Lo zip potrebbe contenere i file direttamente o in una sottocartella (es. TerminalBeast/)
-        # Facciamo una mossa intelligente: cerchiamo la cartella che contiene l'exe scaricato
         source_dir = temp_dir
         for root, dirs, files in os.walk(temp_dir):
             if exe_name in files:
                 source_dir = root
                 break
                 
+        bat_path = os.path.join(temp_dir, "updater.bat")
         bat_content = f"""@echo off
 title Aggiornamento {app_name}...
 echo Attendo la chiusura di {app_name}...
@@ -163,15 +172,15 @@ exit
             f.write(bat_content)
             
         # 6. Avvia lo script batch
-        # Lo avviamo tramite subprocess senza attendere (creationflags per nascondere o meno, meglio mostrarlo un attimo così l'utente capisce)
         CREATE_NEW_CONSOLE = 0x00000010
         subprocess.Popen([bat_path], creationflags=CREATE_NEW_CONSOLE)
         
         return True
         
     except Exception as e:
-        print(f"Errore durante l'aggiornamento: {e}")
+        _write_update_log(f"Errore durante l'esecuzione dell'aggiornamento: {e}")
         return False
+
 
 def enter_escape(prompt=""):
     """
