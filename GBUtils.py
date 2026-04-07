@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V72 di lunedì 16 marzo 2026
+	V73 di martedì 7 aprile 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
 	base62 3.0 di martedì 15 novembre 2022
@@ -21,10 +21,10 @@ Lista utilità contenute in questo pacchetto
 	Scadenza 1.0 del 15/12/2021
 	sonify V7.2 - 23 gennaio 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Vecchiume 1.0 del 15/12/2018
-	update_checker V1.2 di lunedì 16 marzo 2026 by Gabriele Battaglia & Stella
-	perform_update V1.2 di lunedì 16 marzo 2026 by Gabriele Battaglia & Stella
+	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
+	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "72"
+VERSION = "73"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -65,14 +65,21 @@ def _write_update_log(message: str):
 
 def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.2 di lunedì 16 marzo 2026 by Gabriele Battaglia & Stella
+    V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
-    Ora include logging degli errori su file per debug remoto.
+    Include logging degli errori su file e retry in caso di errori SSL.
     """
     import requests
     current_version = current_version.split(' ')[0]
     try:
-        response = requests.get(api_url, timeout=10) # Timeout aumentato a 10s
+        try:
+            response = requests.get(api_url, timeout=10)
+        except requests.exceptions.SSLError:
+            _write_update_log("Errore SSL con requests. Ritento disabilitando la verifica SSL (verify=False).")
+            import urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            response = requests.get(api_url, timeout=10, verify=False)
+            
         response.raise_for_status()
         data = response.json()
         latest_version = data.get("tag_name")
@@ -100,15 +107,16 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
 
 def perform_update(download_url: str, app_name: str = "App") -> bool:
     """
-    V1.2 di lunedì 16 marzo 2026 by Gabriele Battaglia & Stella
-    Scarica l'aggiornamento, lo estrae ed esegue uno script batch per sostituire l'eseguibile corrente.
-    Ora include logging degli errori su file.
+    V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
+    Scarica l'aggiornamento, lo estrae ed esegue uno script batch.
+    Risolve conflitti cartelle temp e script batch bloccati.
     """
     import os
     import sys
     import urllib.request
     import zipfile
     import subprocess
+    import tempfile
     
     if not sys.platform.startswith('win'):
         return False
@@ -118,18 +126,20 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         if getattr(sys, 'frozen', False):
             current_exe = sys.executable
         else:
-            # Se siamo in script mode (sviluppo), non ha senso fare la sostituzione file
+            _write_update_log(f"Impossibile aggiornare: in esecuzione da sorgente (sys.frozen=False).")
             return False
             
         current_dir = os.path.dirname(current_exe)
         exe_name = os.path.basename(current_exe)
-        temp_dir = os.path.join(current_dir, "_update_temp")
+        sys_temp = tempfile.gettempdir()
         
-        # 2. Crea cartella temporanea
+        # 2. Crea cartelle e path temporanei esterni alla dir di destinazione
+        temp_dir = os.path.join(current_dir, "_update_temp_dir")
         if not os.path.exists(temp_dir):
             os.makedirs(temp_dir)
             
-        zip_path = os.path.join(temp_dir, "update.zip")
+        zip_path = os.path.join(sys_temp, f"update_{app_name}.zip")
+        bat_path = os.path.join(sys_temp, f"updater_{app_name}.bat")
         
         # 3. Download
         try:
@@ -145,17 +155,19 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
             zip_ref.extractall(temp_dir)
             
         # 5. Genera script batch
+        # Troviamo la cartella che contiene l'eseguibile appena estratto
         source_dir = temp_dir
         for root, dirs, files in os.walk(temp_dir):
             if exe_name in files:
                 source_dir = root
                 break
                 
-        bat_path = os.path.join(temp_dir, "updater.bat")
+        # Lo script batch è fuori dalla current_dir e dalla temp_dir (è in sys_temp)
+        # Si auto-eliminerà alla fine
         bat_content = f"""@echo off
 title Aggiornamento {app_name}...
 echo Attendo la chiusura di {app_name}...
-ping 127.0.0.1 -n 3 > nul
+timeout /t 3 /nobreak > nul
 
 echo Applicazione aggiornamento...
 xcopy "{source_dir}\\*" "{current_dir}\\" /S /Y /E /Q
@@ -164,9 +176,9 @@ echo Riavvio {app_name}...
 start "" "{current_exe}"
 
 echo Pulizia file temporanei...
-cd "{current_dir}"
 rmdir /S /Q "{temp_dir}"
-exit
+del /Q "{zip_path}"
+(goto) 2>nul & del "%~f0"
 """
         with open(bat_path, "w", encoding="utf-8") as f:
             f.write(bat_content)
