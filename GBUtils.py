@@ -3,9 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V73 di martedì 7 aprile 2026
+	V75 di lunedì 13 aprile 2026
 Lista utilità contenute in questo pacchetto
-	Acusticator V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
+	Acusticator V5.9 di lunedì 13 aprile 2026. Gabriele Battaglia e Gemini 3.1 Pro
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
@@ -15,16 +15,16 @@ Lista utilità contenute in questo pacchetto
 	key V5.1 di venerdì 23 gennaio 2026 by Gabriele Battaglia and Stella, Gemini 3 Pro.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
-	menu V4.6.1 - martedì 13 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
+	menu V4.6.2 - lunedì 13 aprile 2026 - Stella Gemini 3.1 Pro & Gabriele Battaglia
 	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	Scadenza 1.0 del 15/12/2021
-	sonify V7.2 - 23 gennaio 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
+	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Vecchiume 1.0 del 15/12/2018
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "73"
+VERSION = "75"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -126,7 +126,7 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         if getattr(sys, 'frozen', False):
             current_exe = sys.executable
         else:
-            _write_update_log(f"Impossibile aggiornare: in esecuzione da sorgente (sys.frozen=False).")
+            _write_update_log("Impossibile aggiornare: in esecuzione da sorgente (sys.frozen=False).")
             return False
             
         current_dir = os.path.dirname(current_exe)
@@ -958,7 +958,7 @@ def gridapu(x=0.0, y=0.0, num=10):
 
 def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	"""
-	sonify V7.2 - 23 gennaio 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
+	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Sonifies a list of float data. Optimized with NumPy vectorization and float32.
 	Parameters:
 	  data_list: List of float (5 <= len <= 500000)
@@ -986,8 +986,8 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	data_min = data.min()
 	data_max = data.max()
 	
-	freq_min = 65.41
-	freq_max = 4186.01
+	freq_min = 87.31   # F2
+	freq_max = 5587.65 # F8
 	
 	data_range = data_max - data_min
 	if data_range == 0:
@@ -1009,8 +1009,9 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 		indices = np.floor(np.linspace(0, n, total_samples, endpoint=False)).astype(np.int32)
 		freq_array = frequencies[indices]
 
-	phase = 2.0 * np.pi * np.cumsum(freq_array / sample_rate)
-	audio_signal = np.sin(phase) * vol
+	# La cumsum in float64 previene la perdita di precisione sulle durate lunghe
+	phase = 2.0 * np.pi * np.cumsum(freq_array.astype(np.float64) / sample_rate)
+	audio_signal = (np.sin(phase) * vol).astype(np.float32)
 	
 	fade_duration_sec = 0.01
 	fade_samples = int(round(fade_duration_sec * sample_rate))
@@ -1044,7 +1045,7 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 
 def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 	"""
-	V5.8 di giovedì 27 marzo 2025. Gabriele Battaglia e Gemini 2.5
+	V5.9 di lunedì 13 aprile 2026. Gabriele Battaglia e Gemini 3.1 Pro
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -1165,7 +1166,23 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 					stream.write(silence)
 				stream.stop()
 		except sd.PortAudioError as pae:
-			print(f"Acusticator Playback PortAudioError: {pae}", file=sys.stderr)
+			if "Invalid number of channels" in str(pae) or "PaErrorCode -9998" in str(pae):
+				try:
+					audio_mono = audio_data_int16.mean(axis=1).astype(np.int16)
+					with sd.OutputStream(samplerate=fs, channels=1, dtype=np.int16,
+										 blocksize=BLOCK_SIZE, latency='low') as stream:
+						for i in range(0, len(audio_mono), BLOCK_SIZE):
+							block = audio_mono[i:min(i + BLOCK_SIZE, len(audio_mono))]
+							stream.write(block.reshape(-1, 1))
+						silence_samples = int(fs * SAFETY_BUFFER_SECONDS)
+						if silence_samples > 0:
+							silence = np.zeros((silence_samples, 1), dtype=np.int16)
+							stream.write(silence)
+						stream.stop()
+				except Exception as e2:
+					print(f"Acusticator Mono Fallback Error: {e2}", file=sys.stderr)
+			else:
+				print(f"Acusticator Playback PortAudioError: {pae}", file=sys.stderr)
 		except Exception as e:
 			print(f"Acusticator Playback Error: {e}", file=sys.stderr)
 	thread = threading.Thread(target=play_audio)
@@ -1261,7 +1278,7 @@ def manuale(nf):
 	return
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True):
-    """V4.6.1 - martedì 13 gennaio 2026 - Stella Gemini3Pro & Gabriele Battaglia
+    """V4.6.2 - lunedì 13 aprile 2026 - Stella Gemini 3.1 Pro & Gabriele Battaglia
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -1413,7 +1430,7 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             else:
                  print("--- '?' . ---")
                  last_displayed = None
-        elif user_char == '\x1b': print(); return None
+        elif user_char in ['\x1b', '\x03']: print(); return None
         elif user_char == '?':
             print("\n")
             Mostra(final_filtered, pager, numbered, num_map, user_input)
