@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V75 di lunedì 13 aprile 2026
+	V76 di martedì 14 aprile 2026
 Lista utilità contenute in questo pacchetto
 	Acusticator V5.9 di lunedì 13 aprile 2026. Gabriele Battaglia e Gemini 3.1 Pro
 	base62 3.0 di martedì 15 novembre 2022
@@ -15,7 +15,7 @@ Lista utilità contenute in questo pacchetto
 	key V5.1 di venerdì 23 gennaio 2026 by Gabriele Battaglia and Stella, Gemini 3 Pro.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
-	menu V4.6.2 - lunedì 13 aprile 2026 - Stella Gemini 3.1 Pro & Gabriele Battaglia
+	menu V4.6.3 - martedì 14 aprile 2026 - Stella Gemini 3.1 Pro & Gabriele Battaglia
 	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	Scadenza 1.0 del 15/12/2021
@@ -1278,7 +1278,7 @@ def manuale(nf):
 	return
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True):
-    """V4.6.2 - lunedì 13 aprile 2026 - Stella Gemini 3.1 Pro & Gabriele Battaglia
+    """V4.6.3 - martedì 14 aprile 2026 - Stella Gemini 3.1 Pro & Gabriele Battaglia
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -1297,9 +1297,11 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     import sys
     import os
     def lcp(strings):
-        """Calcola il prefisso comune più lungo da una lista di stringhe."""
+        """Calcola il prefisso comune più lungo da una lista di stringhe ignorando il case."""
         if not strings: return ""
-        return os.path.commonprefix(strings)
+        lower_strings = [s.lower() for s in strings]
+        prefix_len = len(os.path.commonprefix(lower_strings))
+        return strings[0][:prefix_len]
     def key(prompt=""):
         """Legge un singolo carattere dalla console senza bisogno di Invio."""
         print(prompt, end='', flush=True)
@@ -1421,8 +1423,9 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
         user_char = key(full_prompt)
         if user_char in ['\r', '\n']:
             print()
-            if display_input in final_filtered:
-                return num_map.get(display_input, display_input)
+            exact_matches = [k for k in final_filtered if k.lower() == display_input.lower()]
+            if exact_matches:
+                return num_map.get(exact_matches[0], exact_matches[0])
             elif len(final_filtered) == 1:
                  return num_map.get(final_filtered[0], final_filtered[0])
             elif user_input == "":
