@@ -7,7 +7,7 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import menu, Acusticator
 
-VERSION = "0.2.0" # Gestione ADSR completa e vincoli
+VERSION = "0.2.3" # Tasto m per svuotare il preset e ripartire
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia & Stella"
 RELEASE_DATE = "23 aprile 2026"
@@ -264,6 +264,20 @@ def edit_mode(db, preset_name):
                 state.preset['adsr'][state.focus_param] = defaults[state.focus_param]
                 state.steps[param_key] = 0.1
             state.modified = True
+            
+        elif key == 'm':
+            ans = input("\nSei sicuro di voler svuotare questo preset (s/n)? ")
+            if ans.lower().strip() == 's':
+                state.preset['score'] = [['c4', 0.5, 0.0, 0.0]]
+                state.preset['adsr'] = [0.002, 0.0, 100.0, 0.002]
+                state.preset['kind'] = 1
+                state.focus_type = 'score'
+                state.focus_idx = 0
+                state.focus_param = 0
+                state.modified = True
+                print("Preset svuotato.")
+            handle_print(state, force_newline=True)
+            continue
             
         elif key == 'w':
             state.preset['kind'] = (state.preset['kind'] % 4) + 1

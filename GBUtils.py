@@ -48,7 +48,7 @@ def _write_update_log(message: str):
         if getattr(sys, 'frozen', False):
             base_dir = os.path.dirname(sys.executable)
         else:
-            base_dir = os.path.dirname(os.path.abspath(__sys_module_file__ if '__sys_module_file__' in locals() else __file__))
+            base_dir = os.path.dirname(os.path.abspath(locals().get('__sys_module_file__', __file__)))
             # Se siamo in un pacchetto/submodule, meglio usare la cartella di lavoro corrente per i log
             base_dir = os.getcwd()
 

@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v0.2.0)
+Manuale Utente: Acu_Maker (v0.2.3)
 ----------------------------------
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
@@ -52,6 +52,7 @@ Usa questi tasti per interagire con i parametri:
 - [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato.
         Nota: Se la nota è in notazione musicale, [c]/[v] spostano sempre di 1 semitono, se è "p" ignorano.
 - [n] : Riporta il parametro attualmente selezionato al suo valore di default e reimposta il suo step a 0.1.
+- [m] : Svuota completamente il preset attuale (previa conferma), riportandolo ai valori di default e a una singola nota c4.
 
 ## Struttura dello Score
 - [f] : Inserisce una nuova quartina PRIMA di quella focalizzata.
