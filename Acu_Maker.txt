@@ -1,0 +1,66 @@
+Manuale Utente: Acu_Maker (v0.2.0)
+----------------------------------
+
+Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
+I preset vengono salvati automaticamente nel file "Acu_Collection.json".
+
+# Struttura dei Preset
+
+Ogni preset è identificato da un NOME BREVE (univoco, max 50 caratteri, senza spazi) e contiene:
+- Una DESCRIZIONE libera.
+- Uno SCORE: Una sequenza di quartine (note).
+- Un KIND: Il tipo di onda (1=Sinusoide, 2=Quadra, 3=Triangolare, 4=Dente di sega).
+- Un inviluppo ADSR: Attacco, Decadimento, Sustain e Rilascio.
+
+# Dettaglio della quartina dello Score
+
+Ogni riga di uno Score è formata da 4 parametri:
+1. Nota: Espressa in notazione anglosassone (es: c4, d#4), in Hz (es: 440) o "p" per indicare una pausa.
+2. Durata: Espressa in secondi (es: 0.5 per mezzo secondo).
+3. Panning: Un valore da -1.0 (tutto a sinistra) a 1.0 (tutto a destra), con 0.0 al centro.
+4. Delta Volume:
+   IMPORTANTE! I programmi esterni che importano questi preset gestiranno il volume globalmente. 
+   Per mantenere i rapporti di volume corretti fra le note di un preset, Acu_Maker usa un volume base fisso di 0.5. 
+   Questo quarto parametro indica una "variazione" o delta.
+   Ad esempio: 
+   - Se il Delta è 0.0, il volume della nota sarà quello di default (0.5).
+   - Se il Delta è -0.1, il volume per quella nota sarà attenuato (0.4).
+   - Se il Delta è +0.1, il volume per quella nota sarà enfatizzato (0.6).
+
+# Modalità Edit (Modifica Preset)
+
+Quando carichi un preset, entri in "Edit Mode".
+Usa questi tasti per interagire con i parametri:
+
+## Riproduzione
+- [Spazio]   : Riproduce l'intero preset in background.
+
+## Navigazione Focus
+- [z]                : Sposta il focus sul parametro precedente della quartina (o dell'ADSR).
+- [x]                : Sposta il focus sul parametro successivo.
+- [a], [d], [s], [r] : Sposta il focus sui rispettivi parametri dell'ADSR.
+- [g]                : Sposta il focus sulla quartina precedente e la riproduce.
+- [h]                : Sposta il focus sulla quartina successiva e la riproduce.
+
+## Modifica Valori
+- [c]            : Incrementa il valore del parametro selezionato.
+- [v]            : Decrementa il valore del parametro selezionato.
+- [Invio]        : Inserimento manuale del valore (da tastiera).
+- [w]            : Cicla il tipo di onda (da 1 a 4).
+
+## Impostazioni di Step e Default
+- [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato.
+        Nota: Se la nota è in notazione musicale, [c]/[v] spostano sempre di 1 semitono, se è "p" ignorano.
+- [n] : Riporta il parametro attualmente selezionato al suo valore di default e reimposta il suo step a 0.1.
+
+## Struttura dello Score
+- [f] : Inserisce una nuova quartina PRIMA di quella focalizzata.
+- [j] : Inserisce una nuova quartina DOPO di quella focalizzata.
+- [e] : Elimina la quartina selezionata.
+- [l] : Stampa la lista completa dello Score del preset corrente.
+
+## Uscita e Salvataggio
+- [Esc] : Esce dalla modalità modifica. Se ci sono state modifiche, l'app chiederà se:
+          1. Sovrascrivere il preset attuale.
+          2. Salvare con nome come nuovo preset.
+          3. Uscire ignorando i cambiamenti.

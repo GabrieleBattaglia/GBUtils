@@ -3,8 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V76 di martedì 14 aprile 2026
+	V77 di giovedì 23 aprile 2026
 Lista utilità contenute in questo pacchetto
+	Acu_Maker V0.2.0 di giovedì 23 aprile 2026. Utilità CLI per preset Acusticator
 	Acusticator V5.9 di lunedì 13 aprile 2026. Gabriele Battaglia e Gemini 3.1 Pro
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro

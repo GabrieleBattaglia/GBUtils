@@ -1,0 +1,88 @@
+Piano di creazione di Acu_Maker
+
+Buongiorno Stella. Oggi iniziamo un nuovo progetto.
+
+Il suo scopo sarà quello di creare e gestire una libreria di suoni basati su una mia funzione.
+
+Creiamo una libreria di suoni basati su acusticator, presente in mine\gbutils\gbutils.py
+
+Segui queste istruzioni per la creazione di questa applicazione CLI.
+
+Per l'interazione con la tastiera usa pynput.
+
+Il DB dei suoni si chiamerà Acu_Collection.json e sarà salvato in mine\gbutils assieme ad Acu_Maker.py
+
+In fase di creazione il DB conterrà un solo present:
+
+"do_re_mi", "Tre note C D E ascendenti"
+
+score c4 d4 e4, durata 0.5 s, panning estrema sinistra, centro e estrema destra, volume delta 0.
+
+All'avvio, la libreria verrà caricata e verrà salvata alla chiusura.
+
+Per la scelta dei preset verrà usata menu(), anch'essa presente in gbutils.py
+
+Partiamo con la versione 0.1.0 (per il versioning, segui le regole prestabilite.
+
+Al lancio la libreria viene caricata, l'app si presenta con nome e versione. Viene detto quanti suoni contiene la libreria poi menu() viene lanciato con l'opzione show=False. L'utente richiamerà la lista con ? se vuole. Il prompt sarà quello di menu con le iniziali dei nomi dei suoni e l'autocompletamento di menu().
+
+L'utente inizia a digitare e sceglie un preset. A questo punto un menu chiede Carica o elimina. Il secondo ovviamente cancella la voce dal DB, il primo lo attiva. Vedi più avanti.
+
+Ogni preset prevede:
+
+1. nome breve (max 50 caratteri senza spazi, case sensitive). Questa sarà anche la chiave del dizionario di menu() e dovrà essere univoco. Se l'utente inserisce un nome esistente, l'app aggiungerà il suffisso 0 che crescerà per successivi inserimenti di nomi uguali.
+
+2. Descrizione (un campo di qualsiasi testo, senza restrizioni)
+
+3. La lista di quadrupli che definiscono i suoni del preset. (possono avere lunghezza fino a 300 quadrupli)
+
+3A. Il primo valore dello score, la nota, può essere espresso in hz, in notazione anglosassone o p per la pausa. Per chiarimenti studia Acusticator e vedi come funziona.
+
+3B. Per il quarto parametro, il volume, c'è un discorso particolare. Siccome i programmi che importeranno questi suoni vorranno gestirne i volumi per proprio conto, non possiamo usare un valore assoluto. Tuttavia, certi suoni hanno bisogno di rapporti particolari fra le note. Ad esempio potrei voler far suonare la nota 2 a metà del volume della nota 1. Perciò qui stabiliamo un volume generale di .5, e questo campo lo usiamo con un delta: 0=nessuna variazione. Ricordati di includere questa informazione nel file Acu_Maker.txt che salverai alla fine con la lista completa di tutti i comandi. Questo txt sarà un prontuario per usare questa utility.
+
+4. kind (contiene il tipo di onda, come in Acusticator)
+
+5. ADSR (un'altra quartina di valori, come in Acusticator)
+
+FS e SYNC non vengono considerati per questa applicazione.
+
+Quando il suono è caricato. Ecco i tasti per modificarlo.
+
+- spazio manda il preset in play (sync false)
+
+- invio permette l'inserimento manuale del valore selezionato
+
+- freccia su incrementa il valore selezionato
+
+- freccia giù decrementa il valore selezionato
+
+- freccia sinistra e destra scorrono fra i 4 valori dello score: nota, durata, pan, volume
+
+- 1 2 3 4 impostano gli step di incremento/decremento per rispettivamente nota, durata, pan e volume
+
+Caso particolare per la nota: se il campo contiene hz si usa lo step definito da 1, se contiene p non si usa nulla, se contiene notazione musicale lo step è sempre di un semitono.
+
+- w cicla fra i tipi di odna
+
+- a d s r rispettivamente focalizzano i loro valori
+
+- f inserisce una nuova quartina (score) prima di quella focalizzata
+
+- g focalizza la quartina (score precedente e la manda in play
+
+- h focalizza la quartina (score successiva e la manda in play
+
+- j inserisce una nuova quartina (score) dopo di quella focalizzata
+
+- e elimina la quartina selezionata
+
+- l lista tutte le quartine score del preset
+
+- esc conclude la modifica/creazione
+
+In caso di modifica verrà chiesto se si vuole sovrascrivere il preset nomepreset o crearne uno nuovo, in questo caso vengono richiesti nome breve e descrizione.
+
+Al variare di un parametro, in console verrà riportato i nome e la variazione. Se il parametro è lo stesso, la riga di stampa inizierà con \r in modo da sovrascrivere sè stessa e non generare output inutile.
+
+Metti una spunta davanti a queste voci via via che io ti dirò di considerarle completate.
+Se qualcosa non è chiaro o devi fare delle scelte o hai qualsiasi dubbio, preferisco che ti fermi e mi chiedi delucidazioni prima di scrivere codice: sarò felice di rispondere a qualsiasi domanda. Parti con il codice solo quando tutto è cristallino nella tua mente.
