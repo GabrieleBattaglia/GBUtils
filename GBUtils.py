@@ -158,8 +158,9 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         # 5. Genera script batch
         # Troviamo la cartella che contiene l'eseguibile appena estratto
         source_dir = temp_dir
+        exe_name_lower = exe_name.lower()
         for root, dirs, files in os.walk(temp_dir):
-            if exe_name in files:
+            if any(f.lower() == exe_name_lower for f in files):
                 source_dir = root
                 break
                 
