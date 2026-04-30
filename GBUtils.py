@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V77 di giovedì 23 aprile 2026
+	V78 di giovedì 30 aprile 2026
 Lista utilità contenute in questo pacchetto
-	Acu_Maker V0.2.0 di giovedì 23 aprile 2026. Utilità CLI per preset Acusticator
-	Acusticator V5.9 di lunedì 13 aprile 2026. Gabriele Battaglia e Gemini 3.1 Pro
+	Acu_Maker V1.0.0 di giovedì 30 aprile 2026. Utilità CLI per preset Acusticator
+	Acusticator V6.0 di giovedì 30 aprile 2026. Gabriele Battaglia e Stella
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
@@ -25,7 +25,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "75"
+VERSION = "78"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -1047,13 +1047,13 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 
 def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 	"""
-	V5.9 di lunedì 13 aprile 2026. Gabriele Battaglia e Gemini 3.1 Pro
+	V6.0 di giovedì 30 aprile 2026. Gabriele Battaglia e Stella
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
 	Parametri:
 	 - score: lista di valori in multipli di 4, in cui ogni gruppo rappresenta:
-	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un valore in Hz oppure "p" per pausa.
+	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un portamento separato da punto (es. "c4.e4", "880.920"), un valore in Hz, oppure "p" per pausa.
 	     * dur (float): durata in secondi.
 	     * pan (float): panning stereo da -1 (sinistra) a 1 (destra).
 	     * vol (float): volume da 0 a 1.
@@ -1080,18 +1080,26 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 		if isinstance(note, str):
 			note_lower = note.lower()
 			if note_lower == 'p': return None
-			match = re.match(r"^([a-g])([#b]?)(\d)$", note_lower)
-			if not match: raise ValueError(f"Formato nota non valido: '{note}'.")
-			note_letter, accidental, octave_str = match.groups()
-			try: octave = int(octave_str)
-			except ValueError: raise ValueError(f"Numero ottava non valido: '{octave_str}'")
-			note_base = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
-			semitone = note_base[note_letter]
-			if accidental == '#': semitone += 1
-			elif accidental == 'b': semitone -= 1
-			midi_num = 12 + semitone + 12 * octave
-			freq = 440.0 * (2.0 ** ((midi_num - 69) / 12.0))
-			return freq
+			def parse_single(p):
+				if p.isdigit(): return float(p)
+				match = re.match(r"^([a-g])([#b]?)(\d)$", p)
+				if not match: raise ValueError(f"Formato nota non valido: '{p}'.")
+				note_letter, accidental, octave_str = match.groups()
+				try: octave = int(octave_str)
+				except ValueError: raise ValueError(f"Numero ottava non valido: '{octave_str}'")
+				note_base = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
+				semitone = note_base[note_letter]
+				if accidental == '#': semitone += 1
+				elif accidental == 'b': semitone -= 1
+				midi_num = 12 + semitone + 12 * octave
+				return 440.0 * (2.0 ** ((midi_num - 69) / 12.0))
+			if '.' in note_lower:
+				parts = note_lower.split('.')
+				if len(parts) == 2:
+					return (parse_single(parts[0]), parse_single(parts[1]))
+				else:
+					raise ValueError(f"Formato portamento non valido: '{note}'")
+			return parse_single(note_lower)
 		else: raise TypeError(f"Tipo nota non riconosciuto: {type(note)}.")
 	BLOCK_SIZE = 256 # Per il loop di scrittura in play_audio
 	SAFETY_BUFFER_SECONDS = 0.001 # Buffer di silenzio alla fine (in play_audio)
@@ -1117,12 +1125,18 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 		if total_note_samples == 0: continue # Ignora durata troppo breve
 		if freq is None: # Pausa
 			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
-		else: # Nota
+		else: # Nota o Portamento
 			t = np.linspace(0, dur, total_note_samples, endpoint=False)
-			if kind == 2: wave = signal.square(2 * np.pi * freq * t)
-			elif kind == 3: wave = signal.sawtooth(2 * np.pi * freq * t, 0.5)
-			elif kind == 4: wave = signal.sawtooth(2 * np.pi * freq * t)
-			else: wave = np.sin(2 * np.pi * freq * t)
+			if isinstance(freq, tuple):
+				f_start, f_end = freq
+				freq_array = np.linspace(f_start, f_end, total_note_samples, endpoint=False)
+				phase = 2.0 * np.pi * np.cumsum(freq_array.astype(np.float64) / fs)
+			else:
+				phase = 2.0 * np.pi * freq * t
+			if kind == 2: wave = signal.square(phase)
+			elif kind == 3: wave = signal.sawtooth(phase, 0.5)
+			elif kind == 4: wave = signal.sawtooth(phase)
+			else: wave = np.sin(phase)
 			wave = wave.astype(np.float32)
 			attack_samples = int(round(attack_frac * total_note_samples))
 			decay_samples = int(round(decay_frac * total_note_samples))

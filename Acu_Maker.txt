@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v0.2.3)
+Manuale Utente: Acu_Maker (v1.0.0)
 ----------------------------------
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
@@ -15,7 +15,8 @@ Ogni preset è identificato da un NOME BREVE (univoco, max 50 caratteri, senza s
 # Dettaglio della quartina dello Score
 
 Ogni riga di uno Score è formata da 4 parametri:
-1. Nota: Espressa in notazione anglosassone (es: c4, d#4), in Hz (es: 440) o "p" per indicare una pausa.
+1. Nota: Espressa in notazione anglosassone (es: c4, d#4), in Hz (es: 440), o "p" per indicare una pausa.
+   Può anche essere un "portamento" (scivolata) unendo due valori con un punto (es. c4.e4 oppure 440.880).
 2. Durata: Espressa in secondi (es: 0.5 per mezzo secondo).
 3. Panning: Un valore da -1.0 (tutto a sinistra) a 1.0 (tutto a destra), con 0.0 al centro.
 4. Delta Volume:
@@ -39,14 +40,20 @@ Usa questi tasti per interagire con i parametri:
 - [z]                : Sposta il focus sul parametro precedente della quartina (o dell'ADSR).
 - [x]                : Sposta il focus sul parametro successivo.
 - [a], [d], [s], [r] : Sposta il focus sui rispettivi parametri dell'ADSR.
+- [q]                : Sposta il focus rapidamente alla Nota della quartina corrente.
 - [g]                : Sposta il focus sulla quartina precedente e la riproduce.
 - [h]                : Sposta il focus sulla quartina successiva e la riproduce.
 
-## Modifica Valori
+## Modifica Valori e Portamento
 - [c]            : Incrementa il valore del parametro selezionato.
 - [v]            : Decrementa il valore del parametro selezionato.
 - [Invio]        : Inserimento manuale del valore (da tastiera).
 - [w]            : Cicla il tipo di onda (da 1 a 4).
+- [.]            : Aggiunge o toglie il Portamento alla nota selezionata.
+- [1]            : Nel Portamento, focalizza e modifica solo il 1° valore.
+- [2]            : Nel Portamento, focalizza e modifica solo il 2° valore.
+- [3]            : Nel Portamento, focalizza e modifica entrambi i valori contemporaneamente.
+- [4]            : Inverte la direzione del Portamento corrente.
 
 ## Impostazioni di Step e Default
 - [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato.
@@ -57,6 +64,7 @@ Usa questi tasti per interagire con i parametri:
 ## Struttura dello Score
 - [f] : Inserisce una nuova quartina PRIMA di quella focalizzata.
 - [j] : Inserisce una nuova quartina DOPO di quella focalizzata.
+- [y] : Duplica (clona) la quartina focalizzata, creandone una identica subito dopo.
 - [e] : Elimina la quartina selezionata.
 - [l] : Stampa la lista completa dello Score del preset corrente.
 

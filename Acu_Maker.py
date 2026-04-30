@@ -7,12 +7,15 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import menu, Acusticator
 
-VERSION = "0.2.3" # Tasto m per svuotare il preset e ripartire
+VERSION = "1.0.0" # Aggiunto supporto Portamento e tasto y
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia & Stella"
-RELEASE_DATE = "23 aprile 2026"
+RELEASE_DATE = "30 aprile 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
+
+def is_portamento(val):
+    return isinstance(val, str) and '.' in val
 
 def get_keypress():
     """Legge un singolo tasto, gestendo le frecce direzionali in modo nativo e sicuro."""
@@ -115,6 +118,7 @@ class EditorState:
         self.focus_type = 'score'
         self.focus_idx = 0
         self.focus_param = 0
+        self.port_focus = 3
         
         self.steps = {
             'note': 10.0,
@@ -133,7 +137,18 @@ def get_status_string(state):
     if state.focus_type == 'score':
         quad = state.preset['score'][state.focus_idx]
         param_names = ["Nota", "Durata", "Pan", "VolD"]
-        s = f"Sc.{state.focus_idx+1} {param_names[state.focus_param]}: {quad[state.focus_param]}"
+        if state.focus_param == 0:
+            val = quad[0]
+            if is_portamento(val):
+                parts = val.split('.')
+                p1 = f"<{parts[0]}>" if state.port_focus in (1, 3) else parts[0]
+                p2 = f"<{parts[1]}>" if state.port_focus in (2, 3) else parts[1]
+                val_str = f"{p1}.{p2}"
+            else:
+                val_str = str(val)
+            s = f"Sc.{state.focus_idx+1} {param_names[0]}: {val_str}"
+        else:
+            s = f"Sc.{state.focus_idx+1} {param_names[state.focus_param]}: {quad[state.focus_param]}"
     else:
         adsr = list(state.preset['adsr'])
         adsr[state.focus_param] = f"<{adsr[state.focus_param]}>"
@@ -161,6 +176,16 @@ def play_quad(state):
     vol = max(0.0, min(1.0, DEFAULT_VOL + vol_delta))
     Acusticator([note, dur, pan, vol], kind=state.preset['kind'], adsr=state.preset['adsr'], sync=False)
 
+def transpose_single(val_str, direction, step):
+    if val_str.lower() == 'p': return 'p'
+    try:
+        fval = float(val_str)
+        if fval.is_integer():
+            return str(int(fval + direction * step))
+        return str(round(fval + direction * step, 2))
+    except ValueError:
+        return transpose_note(val_str, direction)
+
 def inc_dec_value(state, direction):
     state.modified = True
     if state.focus_type == 'score':
@@ -168,10 +193,18 @@ def inc_dec_value(state, direction):
         param = state.focus_param
         if param == 0:
             val = quad[0]
-            if isinstance(val, str) and val.lower() != 'p':
-                quad[0] = transpose_note(val, direction)
-            elif isinstance(val, (int, float)):
-                quad[0] = round(val + direction * state.steps['note'], 2)
+            if is_portamento(val):
+                parts = val.split('.')
+                if state.port_focus in (1, 3):
+                    parts[0] = transpose_single(parts[0], direction, state.steps['note'])
+                if state.port_focus in (2, 3):
+                    parts[1] = transpose_single(parts[1], direction, state.steps['note'])
+                quad[0] = f"{parts[0]}.{parts[1]}"
+            else:
+                if isinstance(val, str) and val.lower() != 'p':
+                    quad[0] = transpose_note(val, direction)
+                elif isinstance(val, (int, float)):
+                    quad[0] = round(val + direction * state.steps['note'], 2)
         elif param == 1:
             quad[1] = max(0.0, round(quad[1] + direction * state.steps['dur'], 3))
         elif param == 2:
@@ -207,17 +240,41 @@ def edit_mode(db, preset_name):
             play_preset(state)
         elif key == 'enter':
             param_name = ["Nota", "Durata", "Pan", "Delta Volume"][state.focus_param] if state.focus_type == 'score' else ["A", "D", "S", "R"][state.focus_param]
+            if state.focus_type == 'score' and state.focus_param == 0:
+                current_val = state.preset['score'][state.focus_idx][0]
+                if is_portamento(current_val):
+                    if state.port_focus == 1: param_name = "Nota (partenza)"
+                    elif state.port_focus == 2: param_name = "Nota (arrivo)"
+                    else: param_name = "Nota (entrambe)"
+                    
             val = input(f"\nInserisci nuovo valore per {param_name}: ")
             if val.strip():
                 try:
                     if state.focus_type == 'score':
                         if state.focus_param == 0:
-                            if val.lower() == 'p': state.preset['score'][state.focus_idx][0] = 'p'
+                            current_val = state.preset['score'][state.focus_idx][0]
+                            if is_portamento(current_val):
+                                if val.lower() == 'p':
+                                    print("Errore: Impossibile inserire 'p' con portamento attivo.")
+                                else:
+                                    val_to_insert = val
+                                    if val.replace('-', '').replace('.', '', 1).isdigit():
+                                        fval = float(val)
+                                        val_to_insert = str(int(fval)) if fval.is_integer() else str(fval)
+                                    parts = current_val.split('.')
+                                    if state.port_focus in (1, 3): parts[0] = val_to_insert
+                                    if state.port_focus in (2, 3): parts[1] = val_to_insert
+                                    state.preset['score'][state.focus_idx][0] = f"{parts[0]}.{parts[1]}"
+                                    state.modified = True
                             else:
-                                try: state.preset['score'][state.focus_idx][0] = float(val)
-                                except ValueError: state.preset['score'][state.focus_idx][0] = val
+                                if val.lower() == 'p': state.preset['score'][state.focus_idx][0] = 'p'
+                                else:
+                                    try: state.preset['score'][state.focus_idx][0] = float(val)
+                                    except ValueError: state.preset['score'][state.focus_idx][0] = val
+                                state.modified = True
                         else:
                             state.preset['score'][state.focus_idx][state.focus_param] = float(val)
+                            state.modified = True
                     elif state.focus_type == 'adsr':
                         param = state.focus_param
                         new_val = float(val)
@@ -229,11 +286,45 @@ def edit_mode(db, preset_name):
                         elif param == 2:
                             new_val = max(0.0, min(100.0, new_val))
                         state.preset['adsr'][param] = new_val
-                    state.modified = True
+                        state.modified = True
                 except ValueError:
                     print("Valore non valido.")
             handle_print(state, force_newline=True)
             
+        elif key == '.':
+            if state.focus_type == 'score' and state.focus_param == 0:
+                val = state.preset['score'][state.focus_idx][0]
+                if is_portamento(val):
+                    parts = val.split('.')
+                    new_val = parts[0] if state.port_focus in (1, 3) else parts[1]
+                    if new_val.replace('-', '').replace('.', '', 1).isdigit():
+                        fval = float(new_val)
+                        new_val = int(fval) if fval.is_integer() else fval
+                    state.preset['score'][state.focus_idx][0] = new_val
+                else:
+                    if isinstance(val, float) and val.is_integer(): val = int(val)
+                    state.preset['score'][state.focus_idx][0] = f"{val}.{val}"
+                    state.port_focus = 3
+                state.modified = True
+        elif key in ('1', '2', '3'):
+            if state.focus_type == 'score' and state.focus_param == 0:
+                if is_portamento(state.preset['score'][state.focus_idx][0]):
+                    state.port_focus = int(key)
+        elif key == '4':
+            if state.focus_type == 'score' and state.focus_param == 0:
+                val = state.preset['score'][state.focus_idx][0]
+                if is_portamento(val):
+                    parts = val.split('.')
+                    state.preset['score'][state.focus_idx][0] = f"{parts[1]}.{parts[0]}"
+                    state.modified = True
+        elif key == 'y':
+            if state.focus_type == 'score':
+                curr_quad = list(state.preset['score'][state.focus_idx])
+                state.preset['score'].insert(state.focus_idx + 1, curr_quad)
+                state.focus_idx += 1
+                state.modified = True
+                print(f"\r{' ' * 50}\rDuplicata Sc.{state.focus_idx}", end="", flush=True)
+                continue
         elif key == 'c': inc_dec_value(state, 1)
         elif key == 'v': inc_dec_value(state, -1)
         elif key == 'z': state.focus_param = (state.focus_param - 1) % 4
