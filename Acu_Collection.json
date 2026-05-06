@@ -1,5 +1,5 @@
 {
-    "Tripletta_su_tripletta_giu": {
+    "tripletta_su_tripletta_giu": {
         "descrizione": "c d e pausa e d c b, veloce, sega",
         "score": [
             [
@@ -53,8 +53,8 @@
             0.0
         ]
     },
-    "Tripletta_su_giu_rapidissima": {
-        "descrizione": "",
+    "tripletta_su_giu_rapidissima": {
+        "descrizione": "Suono misto rapido di 6 note (onda triangolare)",
         "score": [
             [
                 "c4",
@@ -185,7 +185,7 @@
             0.002
         ]
     },
-    "surf_menu": {
+    "men_di_navigazione": {
         "descrizione": "scorre delle voci",
         "score": [
             [
@@ -225,6 +225,7680 @@
             0.007,
             100.0,
             0.012
+        ]
+    },
+    "aggiunta_giocatore": {
+        "descrizione": "Qualcosa che viene aggiunto ad un elenco",
+        "score": [
+            [
+                "c4.c7",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "espelli": {
+        "descrizione": "qualcosa esce da un elenco o lista",
+        "score": [
+            [
+                "c7.c4",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "morto": {
+        "descrizione": "un personaggio muore o si fa molto male, qualcosa viene depennato forzatamente",
+        "score": [
+            [
+                "d2.c#0",
+                0.8,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "convalida": {
+        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o \u00e8 andato a buon fine",
+        "score": [
+            [
+                "g7",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e7",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "a7",
+                0.15,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "nuovo_preset": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "c4",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "partenza": {
+        "descrizione": "un processo che inizia, qualcosa che comincia. Un suono piuttosto gentile e soft, da usare anche in serie ripetute",
+        "score": [
+            [
+                "g2.g#3",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.008,
+            0.0,
+            100.0,
+            99.992
+        ]
+    },
+    "sys_tick_alto": {
+        "descrizione": "Tick breve acuto (singola nota (onda sinusoidale))",
+        "score": [
+            [
+                "c6",
+                0.15,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sys_tick_basso": {
+        "descrizione": "Tick breve grave (singola nota (onda sinusoidale))",
+        "score": [
+            [
+                "c5",
+                0.15,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "avviso_di_sistema": {
+        "descrizione": "Avviso o errore (singola nota (onda sinusoidale))",
+        "score": [
+            [
+                "f6",
+                0.18,
+                0.0,
+                0.7
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            100.0,
+            0.0,
+            0.0
+        ]
+    },
+    "ronzio_di_errore_di_sistema": {
+        "descrizione": "Buzz grave di errore (singola nota (onda quadra))",
+        "score": [
+            [
+                "g3",
+                0.12,
+                0.0,
+                0.7
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            1.7,
+            0.0,
+            100.0,
+            1.7
+        ]
+    },
+    "sys_notifica_a_lungo": {
+        "descrizione": "Notifica lunga estratta da p.py",
+        "score": [
+            [
+                "a2",
+                0.3,
+                0.0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "il_gioco_alto": {
+        "descrizione": "Menu tick acuto da game_mode",
+        "score": [
+            [
+                "b5",
+                0.05,
+                0.0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "il_gioco_spunta_a_met": {
+        "descrizione": "Seleziona il menu medio da game_mode",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0.0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "jingle_vince_1": {
+        "descrizione": "Jingle di vittoria variante 1",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_2": {
+        "descrizione": "Jingle di vittoria variante 2",
+        "score": [
+            [
+                "c6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c7",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_3": {
+        "descrizione": "Jingle di vittoria variante 3",
+        "score": [
+            [
+                "c4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_4": {
+        "descrizione": "Jingle di vittoria variante 4",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_5": {
+        "descrizione": "Jingle di vittoria variante 5",
+        "score": [
+            [
+                "c6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c7",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_6": {
+        "descrizione": "Jingle di vittoria variante 6",
+        "score": [
+            [
+                "c4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_7": {
+        "descrizione": "Jingle di vittoria variante 7",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_8": {
+        "descrizione": "Jingle di vittoria variante 8",
+        "score": [
+            [
+                "c6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c7",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_9": {
+        "descrizione": "Jingle di vittoria variante 9",
+        "score": [
+            [
+                "c4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_vince_10": {
+        "descrizione": "Jingle di vittoria variante 10",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "jingle_perde_1": {
+        "descrizione": "Jingle di sconfitta variante 1",
+        "score": [
+            [
+                "d#5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c#5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.6,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.5
+        ]
+    },
+    "jingle_perde_2": {
+        "descrizione": "Jingle di sconfitta variante 2",
+        "score": [
+            [
+                "d#4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "d4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c#4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.6,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.5
+        ]
+    },
+    "jingle_perde_3": {
+        "descrizione": "Jingle di sconfitta variante 3",
+        "score": [
+            [
+                "d#5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c#5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.6,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.5
+        ]
+    },
+    "jingle_perde_5": {
+        "descrizione": "Jingle di sconfitta variante 5",
+        "score": [
+            [
+                "d#5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c#5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.6,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.5
+        ]
+    },
+    "jingle_perde_6": {
+        "descrizione": "Jingle di sconfitta variante 6",
+        "score": [
+            [
+                "d#4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "d4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c#4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.6,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.5
+        ]
+    },
+    "jingle_perde_10": {
+        "descrizione": "Jingle di sconfitta variante 10",
+        "score": [
+            [
+                "d#4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "d4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c#4",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.6,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.5
+        ]
+    },
+    "sirena_d_allarme_1": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.15",
+        "score": [
+            [
+                "c5.g5",
+                0.15000000000000002,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.15000000000000002,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.15000000000000002,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.15000000000000002,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.15000000000000002,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.15000000000000002,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.15000000000000002,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.15000000000000002,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_2": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.20",
+        "score": [
+            [
+                "c5.g5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_3": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.25",
+        "score": [
+            [
+                "c5.g5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_4": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.30",
+        "score": [
+            [
+                "c5.g5",
+                0.30000000000000004,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.30000000000000004,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.30000000000000004,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.30000000000000004,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.30000000000000004,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.30000000000000004,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.30000000000000004,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.30000000000000004,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_5": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.35",
+        "score": [
+            [
+                "c5.g5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.35,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.35,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_6": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.40",
+        "score": [
+            [
+                "c5.g5",
+                0.4,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.4,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.4,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.4,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.4,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_7": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.45",
+        "score": [
+            [
+                "c5.g5",
+                0.45000000000000007,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.45000000000000007,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.45000000000000007,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.45000000000000007,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.45000000000000007,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.45000000000000007,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.45000000000000007,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.45000000000000007,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_8": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.50",
+        "score": [
+            [
+                "c5.g5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_9": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.55",
+        "score": [
+            [
+                "c5.g5",
+                0.55,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.55,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.55,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.55,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.55,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.55,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "sirena_d_allarme_10": {
+        "descrizione": "Sirena allarme velocit\u00e0 0.60",
+        "score": [
+            [
+                "c5.g5",
+                0.6,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.6,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.6,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.6,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.6,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.6,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.6,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.6,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "notifica_ui_1": {
+        "descrizione": "Notifica UI breve 1",
+        "score": [
+            [
+                "d6",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "a#7",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_2": {
+        "descrizione": "Notifica UI breve 2",
+        "score": [
+            [
+                "d#6",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_3": {
+        "descrizione": "Notifica UI breve 3",
+        "score": [
+            [
+                "f#6",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "g#7",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_4": {
+        "descrizione": "Notifica UI breve 4",
+        "score": [
+            [
+                "c#5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c#7",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_5": {
+        "descrizione": "Notifica UI breve 5",
+        "score": [
+            [
+                "a#6",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_6": {
+        "descrizione": "Notifica UI breve 6",
+        "score": [
+            [
+                "b6",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_7": {
+        "descrizione": "Notifica UI breve 7",
+        "score": [
+            [
+                "d#5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "a#6",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_8": {
+        "descrizione": "Notifica UI breve 8",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "g7",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_9": {
+        "descrizione": "Notifica UI breve 9",
+        "score": [
+            [
+                "a#5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "f#6",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "notifica_tramite_interfaccia_utente_10": {
+        "descrizione": "Notifica UI breve 10",
+        "score": [
+            [
+                "d6",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "a7",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "menu_tripletta_in_basso_1": {
+        "descrizione": "Tripletta menu direzione down variante 1",
+        "score": [
+            [
+                "c6",
+                0.06957492023568045,
+                0.41100028632836527,
+                0.0
+            ],
+            [
+                "a#5",
+                0.11983424868401445,
+                0.07699513410302106,
+                0.0
+            ],
+            [
+                "g#5",
+                0.1425756057774651,
+                -0.05424931525702803,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_triplicato_su_2": {
+        "descrizione": "Tripletta menu direzione up variante 2",
+        "score": [
+            [
+                "c4",
+                0.05656152626828226,
+                -0.2958474810663816,
+                0.0
+            ],
+            [
+                "d4",
+                0.1367292311199955,
+                0.32865944632715993,
+                0.0
+            ],
+            [
+                "e4",
+                0.07129011025251768,
+                -0.07532187826092751,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_triplicato_verso_il_basso_3": {
+        "descrizione": "Tripletta menu direzione down variante 3",
+        "score": [
+            [
+                "c6",
+                0.0701775876291457,
+                -0.3257234039002066,
+                0.0
+            ],
+            [
+                "a#5",
+                0.051831188872759726,
+                -0.11488358775915164,
+                0.0
+            ],
+            [
+                "g#5",
+                0.08166864466092316,
+                -0.42055747918911546,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_triplicato_su_4": {
+        "descrizione": "Tripletta menu direzione up variante 4",
+        "score": [
+            [
+                "c4",
+                0.12128300902042155,
+                -0.24470682788073328,
+                0.0
+            ],
+            [
+                "d4",
+                0.10618576841271338,
+                -0.038830192425205357,
+                0.0
+            ],
+            [
+                "e4",
+                0.08811088391930968,
+                0.25473587684766985,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_tripletta_in_basso_5": {
+        "descrizione": "Tripletta menu direzione down variante 5",
+        "score": [
+            [
+                "c6",
+                0.09759809663404051,
+                -0.0719854554764714,
+                0.0
+            ],
+            [
+                "a#5",
+                0.11193709864870854,
+                -0.0592660966045645,
+                0.0
+            ],
+            [
+                "g#5",
+                0.09791482087960637,
+                -0.3684260838980635,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_triplicato_su_6": {
+        "descrizione": "Tripletta menu direzione up variante 6",
+        "score": [
+            [
+                "c4",
+                0.13404281531103887,
+                -0.24095727464667216,
+                0.0
+            ],
+            [
+                "d4",
+                0.09247387132331786,
+                0.30244145078093365,
+                0.0
+            ],
+            [
+                "e4",
+                0.063144228906504,
+                0.1558427651251687,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_tripletta_gi_7": {
+        "descrizione": "Tripletta menu direzione down variante 7",
+        "score": [
+            [
+                "c6",
+                0.1077869228297045,
+                -0.3269938763344009,
+                0.0
+            ],
+            [
+                "a#5",
+                0.13464080604309148,
+                0.21532828375519752,
+                0.0
+            ],
+            [
+                "g#5",
+                0.07848400286858419,
+                -0.2889093309651133,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_triplicato_su_8": {
+        "descrizione": "Tripletta menu direzione up variante 8",
+        "score": [
+            [
+                "c4",
+                0.1430206517981033,
+                0.23693133205497607,
+                0.0
+            ],
+            [
+                "d4",
+                0.07334846183246717,
+                -0.2925058616593549,
+                0.0
+            ],
+            [
+                "e4",
+                0.06363196004776579,
+                -0.488702246458423,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_tripletta_in_basso_9": {
+        "descrizione": "Tripletta menu direzione down variante 9",
+        "score": [
+            [
+                "c6",
+                0.09538981479574585,
+                0.3012878491507599,
+                0.0
+            ],
+            [
+                "a#5",
+                0.13341444426130272,
+                -0.3598460968027659,
+                0.0
+            ],
+            [
+                "g#5",
+                0.054583309039462895,
+                0.3798080589183116,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "menu_tripletta_su_10": {
+        "descrizione": "Tripletta menu direzione up variante 10",
+        "score": [
+            [
+                "c4",
+                0.100272424551994,
+                0.3851356654373832,
+                0.0
+            ],
+            [
+                "d4",
+                0.06786591345852325,
+                0.12426161012861736,
+                0.0
+            ],
+            [
+                "e4",
+                0.11939554749742845,
+                0.03919570050426713,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "processo_quartina_1": {
+        "descrizione": "Quartina di elaborazione variante 1",
+        "score": [
+            [
+                "c5",
+                0.08,
+                -0.8,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                -0.3,
+                0.0
+            ],
+            [
+                "c6",
+                0.08,
+                0.3,
+                0.0
+            ],
+            [
+                "g6",
+                0.08,
+                0.8,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "processo_quartina_10": {
+        "descrizione": "Quartina di elaborazione variante 10",
+        "score": [
+            [
+                "c4",
+                0.08,
+                -0.8,
+                0.0
+            ],
+            [
+                "g4",
+                0.08,
+                -0.3,
+                0.0
+            ],
+            [
+                "c5",
+                0.08,
+                0.3,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.8,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "laser_da_gioco_1": {
+        "descrizione": "Effetto laser/zap 1",
+        "score": [
+            [
+                "f#6.c2",
+                0.16999999999999998,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
+    },
+    "laser_da_gioco_2": {
+        "descrizione": "Effetto laser/zap 2",
+        "score": [
+            [
+                "a#6.c#3",
+                0.19,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
+    },
+    "laser_da_gioco_3": {
+        "descrizione": "Effetto laser/zap 3",
+        "score": [
+            [
+                "c#7.a#2",
+                0.21,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
+    },
+    "laser_da_gioco_4": {
+        "descrizione": "Effetto laser/zap 4",
+        "score": [
+            [
+                "d7.e2",
+                0.22999999999999998,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
+    },
+    "gioco_laser_5": {
+        "descrizione": "Effetto laser/zap 5",
+        "score": [
+            [
+                "d#6.f#3",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.1,
+            100.0,
+            0.05
+        ]
+    },
+    "laser_da_gioco_6": {
+        "descrizione": "Effetto laser/zap 6",
+        "score": [
+            [
+                "g6.b3",
+                0.27,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
+    },
+    "laser_da_gioco_7": {
+        "descrizione": "Effetto laser/zap 7",
+        "score": [
+            [
+                "c7.f3",
+                0.29000000000000004,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
+    },
+    "laser_da_gioco_8": {
+        "descrizione": "Effetto laser/zap 8",
+        "score": [
+            [
+                "f#6.f#3",
+                0.31,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
+    },
+    "gioco_laser_9": {
+        "descrizione": "Effetto laser/zap 9",
+        "score": [
+            [
+                "d#7.a2",
+                0.32999999999999996,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
+    },
+    "gioco_laser_10": {
+        "descrizione": "Effetto laser/zap 10",
+        "score": [
+            [
+                "e7.e3",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.1,
+            100.0,
+            0.05
+        ]
+    },
+    "salto_del_gioco_1": {
+        "descrizione": "Effetto salto 1",
+        "score": [
+            [
+                "c4.c6",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "salto_del_gioco_10": {
+        "descrizione": "Effetto salto 10",
+        "score": [
+            [
+                "c3.c5",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "scintilla_magica_1": {
+        "descrizione": "Magia/Scintilla a pioggia variante 1",
+        "score": [
+            [
+                "c5",
+                0.06950630336778522,
+                0.4881336393830773,
+                0.0
+            ],
+            [
+                "a4",
+                0.110536701039573,
+                0.04114793127254257,
+                0.0
+            ],
+            [
+                "f#4",
+                0.12318056734653206,
+                0.39598815829429646,
+                0.0
+            ],
+            [
+                "d#4",
+                0.09591241210611938,
+                -0.23300286786904556,
+                0.0
+            ],
+            [
+                "c4",
+                0.10591893396666402,
+                -0.09109045717671616,
+                0.0
+            ],
+            [
+                "a3",
+                0.0798999084862868,
+                0.28811434257593704,
+                0.0
+            ],
+            [
+                "f#3",
+                0.07280255269886905,
+                -0.39835360202474646,
+                0.0
+            ],
+            [
+                "d#3",
+                0.07978392587223085,
+                -0.3642930426329949,
+                0.0
+            ],
+            [
+                "c3",
+                0.08299313283099483,
+                -0.1625479235996533,
+                0.0
+            ],
+            [
+                "a2",
+                0.08227364212540773,
+                0.21358416973834116,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_2": {
+        "descrizione": "Magia/Scintilla a pioggia variante 2",
+        "score": [
+            [
+                "c5",
+                0.07524765996550378,
+                0.17107888720265962,
+                0.0
+            ],
+            [
+                "a4",
+                0.0847021882309014,
+                -0.2595364144174851,
+                0.0
+            ],
+            [
+                "f#4",
+                0.05059575240158807,
+                0.03205103536473952,
+                0.0
+            ],
+            [
+                "d#4",
+                0.09933540872076385,
+                -0.07644222458384298,
+                0.0
+            ],
+            [
+                "c4",
+                0.05252755648598252,
+                -0.47397927482405977,
+                0.0
+            ],
+            [
+                "a3",
+                0.14990945470340983,
+                0.04134897300636009,
+                0.0
+            ],
+            [
+                "f#3",
+                0.08929172580957125,
+                -0.4207175259627528,
+                0.0
+            ],
+            [
+                "d#3",
+                0.07900704911883294,
+                -0.0196518909148774,
+                0.0
+            ],
+            [
+                "c3",
+                0.12557366323103286,
+                0.34585636603757774,
+                0.0
+            ],
+            [
+                "a2",
+                0.12781842175101638,
+                -0.07913550392348934,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_3": {
+        "descrizione": "Magia/Scintilla a pioggia variante 3",
+        "score": [
+            [
+                "c5",
+                0.12813917161269087,
+                -0.31018536673093655,
+                0.0
+            ],
+            [
+                "a4",
+                0.07174663265912926,
+                -0.18660093091531738,
+                0.0
+            ],
+            [
+                "f#4",
+                0.10728802451402585,
+                0.42320362892610974,
+                0.0
+            ],
+            [
+                "d#4",
+                0.10121996384817504,
+                -0.026071026719107993,
+                0.0
+            ],
+            [
+                "c4",
+                0.07025405653070654,
+                0.3753691992675059,
+                0.0
+            ],
+            [
+                "a3",
+                0.067195121468514,
+                -0.11513198217046039,
+                0.0
+            ],
+            [
+                "f#3",
+                0.14208145532489388,
+                -0.12022850984139455,
+                0.0
+            ],
+            [
+                "d#3",
+                0.12363080562868917,
+                -0.3808715451504906,
+                0.0
+            ],
+            [
+                "c3",
+                0.12123011324551432,
+                0.29494458767846843,
+                0.0
+            ],
+            [
+                "a2",
+                0.13506700510970565,
+                0.41180001604045446,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_4": {
+        "descrizione": "Magia/Scintilla a pioggia variante 4",
+        "score": [
+            [
+                "c5",
+                0.10632158017119933,
+                0.17389412726091036,
+                0.0
+            ],
+            [
+                "a4",
+                0.09586300230540373,
+                -0.19984868855218363,
+                0.0
+            ],
+            [
+                "f#4",
+                0.08866744818211639,
+                0.4870429699154669,
+                0.0
+            ],
+            [
+                "d#4",
+                0.07872966211208611,
+                0.3709266448609786,
+                0.0
+            ],
+            [
+                "c4",
+                0.07283102354633243,
+                -0.33240814064220925,
+                0.0
+            ],
+            [
+                "a3",
+                0.10587759566030949,
+                0.4284420156152554,
+                0.0
+            ],
+            [
+                "f#3",
+                0.06495137558638872,
+                0.20343797324968327,
+                0.0
+            ],
+            [
+                "d#3",
+                0.0693854389332734,
+                -0.44110134786526367,
+                0.0
+            ],
+            [
+                "c3",
+                0.0763811644138328,
+                0.14610341629544132,
+                0.0
+            ],
+            [
+                "a2",
+                0.0740835003110721,
+                -0.39016096924066157,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_5": {
+        "descrizione": "Magia/Scintilla a pioggia variante 5",
+        "score": [
+            [
+                "c5",
+                0.11989130860628468,
+                -0.21242358003530915,
+                0.0
+            ],
+            [
+                "a4",
+                0.09453598313743904,
+                0.45506709419007796,
+                0.0
+            ],
+            [
+                "f#4",
+                0.09552357277394266,
+                -0.33984915306548025,
+                0.0
+            ],
+            [
+                "d#4",
+                0.14097251962573282,
+                -0.31342265035119676,
+                0.0
+            ],
+            [
+                "c4",
+                0.14786288798359254,
+                0.46170739044523945,
+                0.0
+            ],
+            [
+                "a3",
+                0.08573505062811318,
+                0.2864710823498162,
+                0.0
+            ],
+            [
+                "f#3",
+                0.10403600829264129,
+                -0.15758622755505314,
+                0.0
+            ],
+            [
+                "d#3",
+                0.09323014391005335,
+                -0.47241520386770275,
+                0.0
+            ],
+            [
+                "c3",
+                0.05416819188229306,
+                -0.26287105084810414,
+                0.0
+            ],
+            [
+                "a2",
+                0.14784038762838786,
+                0.059545124087296175,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_6": {
+        "descrizione": "Magia/Scintilla a pioggia variante 6",
+        "score": [
+            [
+                "c5",
+                0.05955700996355428,
+                -0.4996768909351652,
+                0.0
+            ],
+            [
+                "a4",
+                0.07866612980535562,
+                -0.433253798137089,
+                0.0
+            ],
+            [
+                "f#4",
+                0.14822968572513984,
+                -0.42146721894752526,
+                0.0
+            ],
+            [
+                "d#4",
+                0.13483353061553033,
+                -0.3922223942447607,
+                0.0
+            ],
+            [
+                "c4",
+                0.12012623753403372,
+                0.33567528226529,
+                0.0
+            ],
+            [
+                "a3",
+                0.06947134379062483,
+                -0.2522660382004259,
+                0.0
+            ],
+            [
+                "f#3",
+                0.0832089247611844,
+                -0.3458741564401102,
+                0.0
+            ],
+            [
+                "d#3",
+                0.1416140102245856,
+                0.29990654023072705,
+                0.0
+            ],
+            [
+                "c3",
+                0.09483983655207631,
+                0.12448803577134138,
+                0.0
+            ],
+            [
+                "a2",
+                0.06320575812078275,
+                -0.30783464971820407,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_7": {
+        "descrizione": "Magia/Scintilla a pioggia variante 7",
+        "score": [
+            [
+                "c5",
+                0.10223938991779682,
+                -0.22629695215566414,
+                0.0
+            ],
+            [
+                "a4",
+                0.053916675141499386,
+                0.012806910017793327,
+                0.0
+            ],
+            [
+                "f#4",
+                0.12051023224777437,
+                0.4496411110379316,
+                0.0
+            ],
+            [
+                "d#4",
+                0.05012861444765992,
+                -0.36221587890222084,
+                0.0
+            ],
+            [
+                "c4",
+                0.09707914372778245,
+                -0.151365414797759,
+                0.0
+            ],
+            [
+                "a3",
+                0.08014549460865308,
+                -0.18692636364216675,
+                0.0
+            ],
+            [
+                "f#3",
+                0.12536660016585102,
+                -0.04578123475518481,
+                0.0
+            ],
+            [
+                "d#3",
+                0.13737026581772188,
+                -0.33298160369633967,
+                0.0
+            ],
+            [
+                "c3",
+                0.06636783378667091,
+                -0.18558246880881957,
+                0.0
+            ],
+            [
+                "a2",
+                0.13576753238457545,
+                -0.20069094832482615,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_8": {
+        "descrizione": "Magia/Scintilla a pioggia variante 8",
+        "score": [
+            [
+                "c5",
+                0.09017153731541275,
+                0.3666406846551573,
+                0.0
+            ],
+            [
+                "a4",
+                0.13055441494164344,
+                -0.12467745812304387,
+                0.0
+            ],
+            [
+                "f#4",
+                0.08897102713897434,
+                0.14527516419593745,
+                0.0
+            ],
+            [
+                "d#4",
+                0.09157624784858873,
+                0.15109229166896543,
+                0.0
+            ],
+            [
+                "c4",
+                0.10705761534958755,
+                -0.3627860679196785,
+                0.0
+            ],
+            [
+                "a3",
+                0.07071293957783699,
+                0.3227437308381831,
+                0.0
+            ],
+            [
+                "f#3",
+                0.05069519313717247,
+                -0.22049493240534568,
+                0.0
+            ],
+            [
+                "d#3",
+                0.1341792161970511,
+                -0.25052032988531137,
+                0.0
+            ],
+            [
+                "c3",
+                0.1241938304098869,
+                -0.12179617184304992,
+                0.0
+            ],
+            [
+                "a2",
+                0.13873777926345293,
+                -0.46433081323715686,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_9": {
+        "descrizione": "Magia/Scintilla a pioggia variante 9",
+        "score": [
+            [
+                "c5",
+                0.10914418380382856,
+                0.014826418383122264,
+                0.0
+            ],
+            [
+                "a4",
+                0.10330249415623197,
+                0.4603213279577021,
+                0.0
+            ],
+            [
+                "f#4",
+                0.0705991798091116,
+                0.20494987323363367,
+                0.0
+            ],
+            [
+                "d#4",
+                0.060937398162904055,
+                -0.25040627183922537,
+                0.0
+            ],
+            [
+                "c4",
+                0.0921116812248591,
+                0.21617985387382033,
+                0.0
+            ],
+            [
+                "a3",
+                0.09039614088793758,
+                -0.010263473513419274,
+                0.0
+            ],
+            [
+                "f#3",
+                0.12463481524128163,
+                -0.33785504493068474,
+                0.0
+            ],
+            [
+                "d#3",
+                0.0700630911752904,
+                0.30259166583858566,
+                0.0
+            ],
+            [
+                "c3",
+                0.0827366796315178,
+                0.23694136360646012,
+                0.0
+            ],
+            [
+                "a2",
+                0.11759573125370681,
+                0.21398585000420522,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "scintilla_magica_10": {
+        "descrizione": "Magia/Scintilla a pioggia variante 10",
+        "score": [
+            [
+                "c5",
+                0.11586031230463324,
+                -0.45568558464241815,
+                0.0
+            ],
+            [
+                "a4",
+                0.11843336557261509,
+                0.23966896221639622,
+                0.0
+            ],
+            [
+                "f#4",
+                0.09397368616755467,
+                0.01303739193772091,
+                0.0
+            ],
+            [
+                "d#4",
+                0.13870217334632318,
+                -0.01642558927306137,
+                0.0
+            ],
+            [
+                "c4",
+                0.13121624691145886,
+                0.26942579063068606,
+                0.0
+            ],
+            [
+                "a3",
+                0.05928221140989657,
+                0.4119319422089257,
+                0.0
+            ],
+            [
+                "f#3",
+                0.12196582448647125,
+                -0.45632417459867103,
+                0.0
+            ],
+            [
+                "d#3",
+                0.14016051227371357,
+                -0.27395900896842096,
+                0.0
+            ],
+            [
+                "c3",
+                0.10475978979692752,
+                0.2539857655993303,
+                0.0
+            ],
+            [
+                "a2",
+                0.11930352152291614,
+                -0.054631543648803405,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.02,
+            50.0,
+            0.05
+        ]
+    },
+    "spazzata_aliena_2": {
+        "descrizione": "Suono alieno oscillante 2",
+        "score": [
+            [
+                "a4.e6",
+                0.1,
+                -1.0,
+                0.0
+            ],
+            [
+                "e6.a3",
+                0.15,
+                1.0,
+                0.0
+            ],
+            [
+                "a3.c7",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "spazzata_aliena_3": {
+        "descrizione": "Suono alieno oscillante 3",
+        "score": [
+            [
+                "a4.e6",
+                0.1,
+                -1.0,
+                0.0
+            ],
+            [
+                "e6.a3",
+                0.15,
+                1.0,
+                0.0
+            ],
+            [
+                "a3.c7",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "spazzata_aliena_10": {
+        "descrizione": "Suono alieno oscillante 10",
+        "score": [
+            [
+                "a4.e6",
+                0.1,
+                -1.0,
+                0.0
+            ],
+            [
+                "e6.a3",
+                0.15,
+                1.0,
+                0.0
+            ],
+            [
+                "a3.c7",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "colpo_d_impatto_1": {
+        "descrizione": "Impatto percussivo 1",
+        "score": [
+            [
+                "c1.c0",
+                0.060000000000000005,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_2": {
+        "descrizione": "Impatto percussivo 2",
+        "score": [
+            [
+                "c1.c0",
+                0.07,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_3": {
+        "descrizione": "Impatto percussivo 3",
+        "score": [
+            [
+                "c1.c0",
+                0.08,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_4": {
+        "descrizione": "Impatto percussivo 4",
+        "score": [
+            [
+                "c1.c0",
+                0.09,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_5": {
+        "descrizione": "Impatto percussivo 5",
+        "score": [
+            [
+                "c1.c0",
+                0.1,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_6": {
+        "descrizione": "Impatto percussivo 6",
+        "score": [
+            [
+                "c1.c0",
+                0.11,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_7": {
+        "descrizione": "Impatto percussivo 7",
+        "score": [
+            [
+                "c1.c0",
+                0.12000000000000001,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_8": {
+        "descrizione": "Impatto percussivo 8",
+        "score": [
+            [
+                "c1.c0",
+                0.13,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_9": {
+        "descrizione": "Impatto percussivo 9",
+        "score": [
+            [
+                "c1.c0",
+                0.14,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "colpo_d_impatto_10": {
+        "descrizione": "Impatto percussivo 10",
+        "score": [
+            [
+                "c1.c0",
+                0.15000000000000002,
+                0.0,
+                0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.001,
+            99.999,
+            0.0,
+            0.0
+        ]
+    },
+    "melodia_del_campanello_1": {
+        "descrizione": "Melodia campanello 1",
+        "score": [
+            [
+                "e6",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.02,
+            0.0,
+            100.0,
+            0.2
+        ]
+    },
+    "melodia_del_campanello_10": {
+        "descrizione": "Melodia campanello 10",
+        "score": [
+            [
+                "e5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.02,
+            0.0,
+            100.0,
+            0.2
+        ]
+    },
+    "estratto_mio_p_c5": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.15,
+                0,
+                0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_mio_p_c6": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c6",
+                0.15,
+                0,
+                0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_mio_p_g5": {
+        "descrizione": "Suono misto di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.1,
+                0,
+                0.3
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.3
+            ],
+            [
+                "c5",
+                0.1,
+                0,
+                0.3
+            ],
+            [
+                "p",
+                0.1,
+                0,
+                0.5
+            ],
+            [
+                "c5",
+                0.1,
+                0,
+                0.3
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_mio_p_c5_1": {
+        "descrizione": "Suono misto di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0,
+                0.3
+            ],
+            [
+                "p",
+                0.1,
+                0,
+                0.5
+            ],
+            [
+                "c5",
+                0.1,
+                0,
+                0.3
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.3
+            ],
+            [
+                "g5",
+                0.1,
+                0,
+                0.3
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_mio_p_g4": {
+        "descrizione": "Suono discendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "g4",
+                0.15,
+                0,
+                0.5
+            ],
+            [
+                "e4",
+                0.15,
+                0,
+                0.5
+            ],
+            [
+                "c4",
+                0.3,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_mio_p_c5_2": {
+        "descrizione": "Suono ascendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.15,
+                0,
+                0.5
+            ],
+            [
+                "e5",
+                0.15,
+                0,
+                0.5
+            ],
+            [
+                "g5",
+                0.3,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_mio_p_f6": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "f6",
+                0.18,
+                0,
+                0.7
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            100,
+            0.0,
+            0.0
+        ]
+    },
+    "estratto_mio_p_g3": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "g3",
+                0.12,
+                0,
+                0.7
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            1.7,
+            0.0,
+            100,
+            1.7
+        ]
+    },
+    "estratto_mio_p_a2": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "a2",
+                0.3,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_mio_p_b6": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "b6",
+                0.025,
+                0,
+                0.7
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8,
+            0.0,
+            100,
+            8
+        ]
+    },
+    "estratto_mio_p_b3": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "b3",
+                0.025,
+                0,
+                0.7
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8,
+            0.0,
+            100,
+            8
+        ]
+    },
+    "estratto_backup_cwapu5023_350": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                350,
+                0.2,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_cwapu5023_1600": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                1600,
+                0.2,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_cwapu5023_1380": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                1380,
+                0.015,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_cwapu5023_1150": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                1150,
+                0.08,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_cwapu5023_310": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                310,
+                0.025,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_cwapu5023_900": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                900,
+                0.06,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_cwapu5023_600": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                600,
+                0.04,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_gbutils_acu_maker_0_0": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_memoboard_memoboard_in_c4": {
+        "descrizione": "Suono ascendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.08,
+                0,
+                0.0
+            ],
+            [
+                "e4",
+                0.08,
+                0,
+                0.0
+            ],
+            [
+                "g4",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_memoboard_memoboard_su_g4": {
+        "descrizione": "Suono discendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "g4",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "e4",
+                0.08,
+                0,
+                0.0
+            ],
+            [
+                "c4",
+                0.15,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_memoboard_memoboard_su_g4_1": {
+        "descrizione": "Suono ascendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "g4",
+                0.07,
+                -0.5,
+                0.0
+            ],
+            [
+                "c5",
+                0.07,
+                0.5,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_memoboard_memoboard_in_c5": {
+        "descrizione": "Suono ripetuto rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.05,
+                -0.5,
+                0.0
+            ],
+            [
+                "c5",
+                0.08,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_orologic_orologic_c5": {
+        "descrizione": "Suono ascendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -0.5,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_orologic_orologic_g4_1": {
+        "descrizione": "Suono ascendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "g4",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "c5",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_c4": {
+        "descrizione": "Suono ascendente di 7 note (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.125,
+                0,
+                0.0
+            ],
+            [
+                "d4",
+                0.125,
+                0,
+                0.0
+            ],
+            [
+                "e4",
+                0.125,
+                0,
+                0.0
+            ],
+            [
+                "g4",
+                0.125,
+                0,
+                0.0
+            ],
+            [
+                "a4",
+                0.125,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.125,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.125,
+                0,
+                0.5
+            ],
+            [
+                "a5",
+                0.125,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100,
+            99
+        ]
+    },
+    "estratto_backup_orologioc_backup_pre_easyfish_g4": {
+        "descrizione": "Suono misto di 6 note (onda sinusoidale)",
+        "score": [
+            [
+                "g4",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "g4",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "a4",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "g4",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0,
+                0
+            ],
+            [
+                "b4",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "c5",
+                0.3,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            0.0,
+            100,
+            5
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_a5": {
+        "descrizione": "Suono misto rapido di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "a5",
+                0.04,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.04,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.08,
+                0,
+                0
+            ],
+            [
+                "g5",
+                0.04,
+                0,
+                0.0
+            ],
+            [
+                "e6",
+                0.12,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            90,
+            0.0
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_1000_0": {
+        "descrizione": "Suono discendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                1000.0,
+                0.05,
+                -1,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0,
+                0
+            ],
+            [
+                900.0,
+                0.05,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            0.0
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_e7": {
+        "descrizione": "Suono misto rapido di 6 note (onda sinusoidale)",
+        "score": [
+            [
+                "e7",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "a6",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "e7",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "a6",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "e7",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "a6",
+                0.02,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_c5": {
+        "descrizione": "Suono ascendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -1,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                -0.3,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.3,
+                0.0
+            ],
+            [
+                "c6",
+                0.1,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            80,
+            10
+        ]
+    },
+    "estratto_backup_orologioc_backup_pre_easyfish_a4": {
+        "descrizione": "Suono ascendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "a4",
+                0.2,
+                0,
+                0.0
+            ],
+            [
+                "c5",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            5,
+            80,
+            10
+        ]
+    },
+    "estratto_backup_orologioc_backup_pre_easyfish_c4_1": {
+        "descrizione": "Suono ascendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.2,
+                -1,
+                0.0
+            ],
+            [
+                "e4",
+                0.2,
+                -0.3,
+                0.0
+            ],
+            [
+                "g4",
+                0.2,
+                0.3,
+                0.0
+            ],
+            [
+                "c5",
+                0.4,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            5,
+            80,
+            5
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_400_0": {
+        "descrizione": "Suono ascendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                400.0,
+                0.2,
+                0,
+                0.0
+            ],
+            [
+                600.0,
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            10,
+            80,
+            10
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_1000_0_1": {
+        "descrizione": "Suono ripetuto di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                1000.0,
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.1,
+                0,
+                0
+            ],
+            [
+                1000.0,
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            0.0
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_c5_1": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_orologioc_backup_pre_easyfish_c6": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c6",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_backup_orologic_backup_pre_easyfish_200_0": {
+        "descrizione": "Singola nota lento (onda quadra)",
+        "score": [
+            [
+                200.0,
+                0.5,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10,
+            10,
+            80,
+            10
+        ]
+    },
+    "estratto_moduli_orologici_scheda_utils_d2": {
+        "descrizione": "Suono misto di 3 note (onda triangolare)",
+        "score": [
+            [
+                "d2",
+                0.8,
+                0,
+                0.0
+            ],
+            [
+                "d7",
+                0.03,
+                0,
+                0.0
+            ],
+            [
+                "a#6",
+                0.03,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            20,
+            10,
+            75,
+            20
+        ]
+    },
+    "estratto_orologic_moduli_pulitore_c5": {
+        "descrizione": "Suono ripetuto di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -1,
+                0.0
+            ],
+            [
+                "c5",
+                0.1,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_orologio_f7": {
+        "descrizione": "Suono discendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "f7",
+                0.09,
+                0,
+                0.0
+            ],
+            [
+                "d4",
+                0.07,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_orologio_f7_2": {
+        "descrizione": "Suono misto di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "f7",
+                0.09,
+                0,
+                0.0
+            ],
+            [
+                "d5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.1,
+                0,
+                0
+            ],
+            [
+                "d5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "f7",
+                0.09,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_orologio_f7_3": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "f7",
+                0.013,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_orologio_b4": {
+        "descrizione": "Suono discendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "b4",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "d4",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_orologio_a3": {
+        "descrizione": "Singola nota lento (onda quadra)",
+        "score": [
+            [
+                "a3",
+                1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_orologio_a3_1": {
+        "descrizione": "Singola nota lento (onda quadra)",
+        "score": [
+            [
+                "a3",
+                0.5,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10,
+            10,
+            80,
+            20
+        ]
+    },
+    "estratto_moduli_orologici_orologio_c3": {
+        "descrizione": "Singola nota lento (onda quadra)",
+        "score": [
+            [
+                "c3",
+                0.72,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_orologio_c4": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.025,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_e5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "e5",
+                0.008,
+                -1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_e5_1": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "e5",
+                0.06,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            0.0
+        ]
+    },
+    "estratto_moduli_orologici_motore_c5": {
+        "descrizione": "Suono ascendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.4,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_g6": {
+        "descrizione": "Suono discendente rapido di 2 note (onda triangolare)",
+        "score": [
+            [
+                "g6",
+                0.025,
+                -0.75,
+                0.0
+            ],
+            [
+                "c5",
+                0.025,
+                -75,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_g6_1": {
+        "descrizione": "Suono discendente rapido di 2 note (onda triangolare)",
+        "score": [
+            [
+                "g6",
+                0.025,
+                -0.25,
+                0.0
+            ],
+            [
+                "c5",
+                0.025,
+                -0.25,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_g6_2": {
+        "descrizione": "Suono discendente rapido di 2 note (onda triangolare)",
+        "score": [
+            [
+                "g6",
+                0.025,
+                0,
+                0.0
+            ],
+            [
+                "c5",
+                0.025,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_g6_3": {
+        "descrizione": "Suono discendente rapido di 2 note (onda triangolare)",
+        "score": [
+            [
+                "g6",
+                0.025,
+                0.25,
+                0.0
+            ],
+            [
+                "c5",
+                0.025,
+                0.25,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_g6_4": {
+        "descrizione": "Suono discendente rapido di 2 note (onda triangolare)",
+        "score": [
+            [
+                "g6",
+                0.025,
+                0.5,
+                0.0
+            ],
+            [
+                "c5",
+                0.025,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_a6": {
+        "descrizione": "Singola nota lento (onda triangolare)",
+        "score": [
+            [
+                "a6",
+                0.5,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.001,
+            0.0,
+            100,
+            99.9
+        ]
+    },
+    "estratto_moduli_orologici_motore_c3": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "c3",
+                0.3,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_d6": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "d6",
+                0.008,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_g5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.008,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_c7": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "c7",
+                0.024,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            0.0
+        ]
+    },
+    "estratto_moduli_orologici_motore_a6_1": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "a6",
+                0.008,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_f6": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "f6",
+                0.008,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_c4": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "c4",
+                0.1,
+                -0.5,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10,
+            10,
+            30,
+            50
+        ]
+    },
+    "estratto_moduli_orologici_motore_d5": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "d5",
+                0.08,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_g5_1": {
+        "descrizione": "Suono discendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.03,
+                -0.2,
+                0.0
+            ],
+            [
+                "c5",
+                0.03,
+                -0.8,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_c4_2": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "c4",
+                0.1,
+                -0.7,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10,
+            10,
+            30,
+            50
+        ]
+    },
+    "estratto_moduli_orologici_motore_g5_2": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.1,
+                0.3,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_b3": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "b3",
+                0.12,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            5,
+            15,
+            20,
+            60
+        ]
+    },
+    "estratto_moduli_orologici_motore_c5_1": {
+        "descrizione": "Suono ascendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.03,
+                0.2,
+                0.0
+            ],
+            [
+                "g5",
+                0.03,
+                0.8,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_c4_3": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "c4",
+                0.1,
+                0.7,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10,
+            10,
+            30,
+            50
+        ]
+    },
+    "estratto_moduli_orologici_motore_c4_4": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "c4",
+                0.1,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10,
+            10,
+            30,
+            50
+        ]
+    },
+    "estratto_moduli_orologici_motore_g5_3": {
+        "descrizione": "Suono ascendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.1,
+                0,
+                0
+            ],
+            [
+                "c6",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "d6",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "g6",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_d5_1": {
+        "descrizione": "Suono ascendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "d5",
+                0.08,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.08,
+                0,
+                0
+            ],
+            [
+                "d6",
+                0.06,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_ds5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "d#5",
+                0.07,
+                -0.4,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_cs4": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "c#4",
+                0.1,
+                -0.6,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10,
+            10,
+            30,
+            50
+        ]
+    },
+    "estratto_moduli_orologici_motore_g3": {
+        "descrizione": "Suono misto rapido di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "g3",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "b3",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "a3",
+                0.06,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            0.0
+        ]
+    },
+    "estratto_moduli_orologici_motore_g6_5": {
+        "descrizione": "Suono misto rapido di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "g6",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "b6",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "a6",
+                0.06,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            0.0
+        ]
+    },
+    "estratto_moduli_orologici_motore_f5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "f5",
+                0.07,
+                0.4,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_cs4_1": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "c#4",
+                0.1,
+                0.6,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10,
+            10,
+            30,
+            50
+        ]
+    },
+    "estratto_moduli_orologici_motore_c6": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c6",
+                0.15,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            10,
+            80,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_f6_1": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "f6",
+                0.02,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_as3": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "a#3",
+                0.15,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            5,
+            20,
+            0.0,
+            75
+        ]
+    },
+    "estratto_moduli_orologici_motore_f6_2": {
+        "descrizione": "Suono ascendente rapido di 6 note (onda sinusoidale)",
+        "score": [
+            [
+                "f6",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0,
+                0
+            ],
+            [
+                "a6",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0,
+                0
+            ],
+            [
+                "c7",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0,
+                0
+            ],
+            [
+                "e7",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0,
+                0
+            ],
+            [
+                "g7",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0,
+                0
+            ],
+            [
+                "b7",
+                0.02,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_a5": {
+        "descrizione": "Suono ascendente di 5 note (onda sinusoidale)",
+        "score": [
+            [
+                "a5",
+                0.12,
+                0.3,
+                0.0
+            ],
+            [
+                "b5",
+                0.12,
+                0.3,
+                0.0
+            ],
+            [
+                "c6",
+                0.12,
+                0.3,
+                0.0
+            ],
+            [
+                "d6",
+                0.12,
+                0.3,
+                0.0
+            ],
+            [
+                "e6",
+                0.12,
+                0.3,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4,
+            8,
+            85,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_a5_1": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "a5",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_d6_1": {
+        "descrizione": "Suono ascendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "d6",
+                0.012,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0,
+                0
+            ],
+            [
+                "a6",
+                0.012,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100,
+            0.01
+        ]
+    },
+    "estratto_moduli_orologici_motore_a6_2": {
+        "descrizione": "Suono discendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "a6",
+                0.012,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.15,
+                0,
+                0
+            ],
+            [
+                "d6",
+                0.012,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100,
+            0.01
+        ]
+    },
+    "estratto_moduli_orologici_motore_g5_4": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_motore_gs5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "g#5",
+                0.03,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_d6_2": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "d6",
+                0.03,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_g5_6": {
+        "descrizione": "Suono ascendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.025,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.04,
+                0,
+                0
+            ],
+            [
+                "b6",
+                0.035,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_g5_7": {
+        "descrizione": "Suono discendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.025,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.04,
+                0,
+                0
+            ],
+            [
+                "b4",
+                0.035,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_d3": {
+        "descrizione": "Singola nota lento (onda triangolare)",
+        "score": [
+            [
+                "d3",
+                0.5,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_motore_e4": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "e4",
+                0.1,
+                -0.4,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            10,
+            70,
+            15
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_c4": {
+        "descrizione": "Suono ascendente rapido di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "e4",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "g4",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_c6": {
+        "descrizione": "Suono ripetuto lento di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c6",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.93,
+                0,
+                0.5
+            ],
+            [
+                "c6",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.93,
+                0,
+                0.5
+            ],
+            [
+                "c6",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.93,
+                0,
+                0.5
+            ],
+            [
+                "c7",
+                0.5,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_880_0": {
+        "descrizione": "Suono discendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                880.0,
+                0.2,
+                0,
+                0.0
+            ],
+            [
+                440.0,
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            25,
+            0.0,
+            50,
+            25
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_e4": {
+        "descrizione": "Suono discendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "e4",
+                0.2,
+                -0.5,
+                0.0
+            ],
+            [
+                "d4",
+                0.2,
+                0,
+                0.0
+            ],
+            [
+                "c4",
+                0.2,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            0.0,
+            90,
+            10
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_c4_1": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.2,
+                -0.75,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_c4_2": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.2,
+                0.75,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_b3": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "b3",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_f3": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "f3",
+                0.012,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_f7": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "f7",
+                0.018,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_d4": {
+        "descrizione": "Singola nota lento (onda sinusoidale)",
+        "score": [
+            [
+                "d4",
+                0.54,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_c5_19": {
+        "descrizione": "Suono discendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                1,
+                0.0
+            ],
+            [
+                "g4",
+                0.1,
+                0.3,
+                0.0
+            ],
+            [
+                "e4",
+                0.1,
+                -0.3,
+                0.0
+            ],
+            [
+                "c4",
+                0.1,
+                -1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            80,
+            10
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_d4_1": {
+        "descrizione": "Suono ascendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "d4",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "f4",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "a4",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "c5",
+                0.15,
+                -0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            15,
+            0.0,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_c5_22": {
+        "descrizione": "Suono discendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "a4",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "f4",
+                0.15,
+                -0.5,
+                0.0
+            ],
+            [
+                "d4",
+                0.15,
+                -0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            15,
+            0.0,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_e3": {
+        "descrizione": "Suono discendente lento di 2 note (onda triangolare)",
+        "score": [
+            [
+                "e3",
+                1,
+                0,
+                0.0
+            ],
+            [
+                "a2",
+                1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1,
+            7,
+            100,
+            92
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_d4_2": {
+        "descrizione": "Suono ascendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "d4",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "f4",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "a4",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "c5",
+                0.15,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            15,
+            0.0,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_c5_23": {
+        "descrizione": "Suono discendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "a4",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "f4",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "d4",
+                0.15,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            15,
+            0.0,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_game_flow_f5": {
+        "descrizione": "Suono discendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "f5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.04,
+                0,
+                0
+            ],
+            [
+                "c5",
+                0.02,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            7,
+            88,
+            2
+        ]
+    },
+    "estratto_moduli_orologici_lichess_app_c5_2": {
+        "descrizione": "Suono ascendente di 5 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "c6",
+                0.2,
+                0,
+                0.0
+            ],
+            [
+                "e6",
+                0.4,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            10,
+            80,
+            20
+        ]
+    },
+    "estratto_moduli_orologici_lichess_app_1000_0": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                1000.0,
+                0.01,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            0.0
+        ]
+    },
+    "estratto_moduli_orologici_lichess_app_a3": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "a3",
+                0.15,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            5,
+            20,
+            0.0,
+            75
+        ]
+    },
+    "estratto_moduli_orologici_lichess_app_440_0": {
+        "descrizione": "Suono ascendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                440.0,
+                0.3,
+                0,
+                0.0
+            ],
+            [
+                880.0,
+                0.3,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            0.0,
+            100,
+            20
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c5": {
+        "descrizione": "Suono ascendente rapido di 8 note (onda triangolare)",
+        "score": [
+            [
+                "c5",
+                0.07,
+                -1,
+                0.0
+            ],
+            [
+                "d5",
+                0.07,
+                -0.75,
+                0.0
+            ],
+            [
+                "e5",
+                0.07,
+                -0.5,
+                0.0
+            ],
+            [
+                "f5",
+                0.07,
+                -0.25,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "a5",
+                0.07,
+                0.25,
+                0.0
+            ],
+            [
+                "b5",
+                0.07,
+                0.5,
+                0.0
+            ],
+            [
+                "c6",
+                0.07,
+                0.75,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c5_1": {
+        "descrizione": "Suono ascendente rapido di 8 note (onda triangolare)",
+        "score": [
+            [
+                "c5",
+                0.07,
+                1,
+                0.0
+            ],
+            [
+                "d5",
+                0.07,
+                0.75,
+                0.0
+            ],
+            [
+                "e5",
+                0.07,
+                0.5,
+                0.0
+            ],
+            [
+                "f5",
+                0.07,
+                0.25,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "a5",
+                0.07,
+                -0.25,
+                0.0
+            ],
+            [
+                "b5",
+                0.07,
+                -0.5,
+                0.0
+            ],
+            [
+                "c6",
+                0.07,
+                -0.75,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_a6": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "a6",
+                0.14,
+                -1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_b6": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "b6",
+                0.14,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c5_2": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.07,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c4": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.07,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_e7": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "e7",
+                0.14,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c5_3": {
+        "descrizione": "Suono ascendente rapido di 8 note (onda triangolare)",
+        "score": [
+            [
+                "c5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "d5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "f5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "a5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "b5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "c6",
+                0.07,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_a3": {
+        "descrizione": "Suono ascendente rapido di 4 note (onda triangolare)",
+        "score": [
+            [
+                "a3",
+                0.06,
+                -1,
+                0.0
+            ],
+            [
+                "c4",
+                0.06,
+                -0.5,
+                0.0
+            ],
+            [
+                "d#4",
+                0.06,
+                0.5,
+                0.0
+            ],
+            [
+                "f4",
+                0.06,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            20,
+            5,
+            70,
+            25
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_f7": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "f7",
+                0.14,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c5_4": {
+        "descrizione": "Suono ascendente rapido di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_f4": {
+        "descrizione": "Singola nota lento (onda sinusoidale)",
+        "score": [
+            [
+                "f4",
+                0.54,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_g5": {
+        "descrizione": "Suono ripetuto rapido di 8 note (onda triangolare)",
+        "score": [
+            [
+                "g5",
+                0.07,
+                -1,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                -0.75,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                -0.5,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                -0.25,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                0.25,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                0.5,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                0.75,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_ds4": {
+        "descrizione": "Singola nota lento (onda sinusoidale)",
+        "score": [
+            [
+                "d#4",
+                0.7,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c4_1": {
+        "descrizione": "Suono ascendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.1,
+                -1,
+                0.0
+            ],
+            [
+                "e4",
+                0.1,
+                -0.3,
+                0.0
+            ],
+            [
+                "g4",
+                0.1,
+                0.3,
+                0.0
+            ],
+            [
+                "c5",
+                0.1,
+                1,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            80,
+            10
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c5_5": {
+        "descrizione": "Suono ascendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -0.5,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.5,
+                0.0
+            ],
+            [
+                "c6",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            90,
+            0.0
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_900_0": {
+        "descrizione": "Suono discendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                900.0,
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                440.0,
+                0.3,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1,
+            0.0,
+            80,
+            19
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_800_0": {
+        "descrizione": "Suono ascendente di 2 note (onda quadra)",
+        "score": [
+            [
+                800.0,
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                1200.0,
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_c4_3": {
+        "descrizione": "Suono ascendente di 5 note (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.2,
+                -1,
+                0.0
+            ],
+            [
+                "g4",
+                0.2,
+                -0.3,
+                0.0
+            ],
+            [
+                "c5",
+                0.2,
+                0.3,
+                0.0
+            ],
+            [
+                "e5",
+                0.2,
+                1,
+                0.0
+            ],
+            [
+                "g5",
+                0.4,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            5,
+            80,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_1000_0": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                1000.0,
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            0.0
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_400_0": {
+        "descrizione": "Suono discendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                400.0,
+                0.2,
+                0,
+                0.0
+            ],
+            [
+                300.0,
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_300_0": {
+        "descrizione": "Suono ascendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                300.0,
+                0.2,
+                0,
+                0.0
+            ],
+            [
+                400.0,
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_lichess_board_600_0": {
+        "descrizione": "Singola nota lento (onda sinusoidale)",
+        "score": [
+            [
+                600.0,
+                0.6,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            0.0,
+            35,
+            90
+        ]
+    },
+    "estratto_moduli_orologici_lichess_profiler_c5": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_lichess_profiler_e5": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_moduli_orologici_ui_c7": {
+        "descrizione": "Suono ascendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "c7",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "e7",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "g7",
+                0.15,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            90,
+            5
+        ]
+    },
+    "estratto_moduli_orologici_ui_0_0": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                0.0,
+                0.08,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            5,
+            80,
+            10
+        ]
+    },
+    "estratto_moduli_orologici_ui_a3": {
+        "descrizione": "Singola nota lento (onda quadra)",
+        "score": [
+            [
+                "a3",
+                1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.0,
+            0.0,
+            100,
+            100
+        ]
+    },
+    "estratto_moduli_orologici_ui_c5": {
+        "descrizione": "Suono ascendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -0.8,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.2,
+                0.8,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            90,
+            0.0
+        ]
+    },
+    "estratto_moduli_orologici_ui_a3_1": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "a3",
+                0.3,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_easyfish_disegno_c5": {
+        "descrizione": "Suono ascendente rapido di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_easyfish_disegno_c5_1": {
+        "descrizione": "Suono ascendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_disegno_easyfish_g4": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "g4",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_disegno_easyfish_g4_1": {
+        "descrizione": "Suono discendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "g4",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "c4",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_easyfish_easyfish_app_c5": {
+        "descrizione": "Suono ascendente di 4 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -0.5,
+                0.5
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.5
+            ],
+            [
+                "g5",
+                0.1,
+                0.5,
+                0.5
+            ],
+            [
+                "c6",
+                0.2,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            90,
+            0.0
+        ]
+    },
+    "estratto_modalit_gioco_easyfish_e4": {
+        "descrizione": "Suono discendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "e4",
+                0.2,
+                -0.5,
+                0.5
+            ],
+            [
+                "d4",
+                0.2,
+                0,
+                0.5
+            ],
+            [
+                "c4",
+                0.2,
+                0.5,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            0.0,
+            90,
+            10
+        ]
+    },
+    "estratto_easyfish_modalit_gioco_1000_0": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                1000.0,
+                0.05,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_easyfish_modalit_gioco_400_0": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                400.0,
+                0.2,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_easyfish_modalit_gioco_900_0": {
+        "descrizione": "Suono discendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                900.0,
+                0.1,
+                0,
+                0.5
+            ],
+            [
+                440.0,
+                0.3,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1,
+            0.0,
+            80,
+            19
+        ]
+    },
+    "estratto_modalit_gioco_easyfish_g5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_modalit_gioco_easyfish_b5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "b5",
+                0.05,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_modalit_gioco_easyfish_c4": {
+        "descrizione": "Suono ascendente di 2 note (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.1,
+                -1,
+                0.5
+            ],
+            [
+                "e4",
+                0.1,
+                0,
+                0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_c4": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "c4",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_e4": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "e4",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_g4": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "g4",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_c6": {
+        "descrizione": "Singola nota (onda sinusoidale)",
+        "score": [
+            [
+                "c6",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_c5_1": {
+        "descrizione": "Suono ascendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_g5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_a5": {
+        "descrizione": "Singola nota rapido (onda sinusoidale)",
+        "score": [
+            [
+                "a5",
+                0.05,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_g5_1": {
+        "descrizione": "Suono ascendente di 3 note (onda sinusoidale)",
+        "score": [
+            [
+                "g5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "b5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "d6",
+                0.2,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "estratto_esportatore_di_immagini_easyfish_c3": {
+        "descrizione": "Singola nota (onda quadra)",
+        "score": [
+            [
+                "c3",
+                0.3,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "rifiuto": {
+        "descrizione": "Qualcosa viene rifiutato, dato fuori range, tipo non consentito, stringa troppo lunga o corta",
+        "score": [
+            [
+                "g3.f3",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "g7",
+                0.02,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "arrivo_missile": {
+        "descrizione": "un missile o una bomba cade dall'alto",
+        "score": [
+            [
+                "g8.g7",
+                2.8,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.1,
+            0.0,
+            100.0,
+            0.1
+        ]
+    },
+    "super_salita": {
+        "descrizione": "portamento che sale rapidamente",
+        "score": [
+            [
+                "c2.g8",
+                2.8,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.1,
+            0.0,
+            100.0,
+            0.1
         ]
     }
 }

@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V78 di giovedì 30 aprile 2026
+	V79 di mercoledì 6 maggio 2026
 Lista utilità contenute in questo pacchetto
-	Acu_Maker V1.0.0 di giovedì 30 aprile 2026. Utilità CLI per preset Acusticator
-	Acusticator V6.0 di giovedì 30 aprile 2026. Gabriele Battaglia e Stella
+	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
+	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
@@ -25,7 +25,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "78"
+VERSION = "79"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -1045,9 +1045,9 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 			wf.writeframes(audio_stereo_int16.tobytes())
 	return
 
-def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
+def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 	"""
-	V6.0 di giovedì 30 aprile 2026. Gabriele Battaglia e Stella
+	V6.1 di lunedì 4 maggio 2026. Gabriele Battaglia e Stella
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -1126,18 +1126,63 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=22050, sync=False):
 		if freq is None: # Pausa
 			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
 		else: # Nota o Portamento
-			t = np.linspace(0, dur, total_note_samples, endpoint=False)
-			if isinstance(freq, tuple):
-				f_start, f_end = freq
-				freq_array = np.linspace(f_start, f_end, total_note_samples, endpoint=False)
-				phase = 2.0 * np.pi * np.cumsum(freq_array.astype(np.float64) / fs)
+			if kind == 1:
+				if isinstance(freq, tuple):
+					f_start, f_end = freq
+					freq_array = np.linspace(f_start, f_end, total_note_samples, endpoint=False)
+					phase = 2.0 * np.pi * np.cumsum(freq_array.astype(np.float64) / fs)
+				else:
+					t = np.linspace(0, dur, total_note_samples, endpoint=False)
+					phase = 2.0 * np.pi * freq * t
+				wave = np.sin(phase).astype(np.float32)
 			else:
-				phase = 2.0 * np.pi * freq * t
-			if kind == 2: wave = signal.square(phase)
-			elif kind == 3: wave = signal.sawtooth(phase, 0.5)
-			elif kind == 4: wave = signal.sawtooth(phase)
-			else: wave = np.sin(phase)
-			wave = wave.astype(np.float32)
+				# PolyBLEP + Oversampling 8x con filtro Kaiser stretto per Synth-Grade Anti-Aliasing
+				OVS = 8
+				fs_ovs = fs * OVS
+				total_ovs_samples = total_note_samples * OVS
+				
+				if isinstance(freq, tuple):
+					f_start, f_end = freq
+					freq_array_ovs = np.linspace(f_start, f_end, total_ovs_samples, endpoint=False)
+					dt_ovs = freq_array_ovs / fs_ovs
+					phase_ovs = 2.0 * np.pi * np.cumsum(freq_array_ovs.astype(np.float64) / fs_ovs)
+				else:
+					dt_ovs = np.full(total_ovs_samples, freq / fs_ovs, dtype=np.float64)
+					t_ovs = np.linspace(0, dur, total_ovs_samples, endpoint=False)
+					phase_ovs = 2.0 * np.pi * freq * t_ovs
+				
+				t_phase = (phase_ovs / (2.0 * np.pi)) % 1.0
+				dt_ovs = np.clip(dt_ovs, 1e-8, 0.5)
+				
+				def poly_blep(t_val, dt_val):
+					res = np.zeros_like(t_val)
+					m1 = t_val < dt_val
+					tt1 = t_val[m1] / dt_val[m1]
+					res[m1] = tt1 * (2.0 - tt1) - 1.0
+					m2 = t_val > 1.0 - dt_val
+					tt2 = (t_val[m2] - 1.0) / dt_val[m2]
+					res[m2] = tt2 * (tt2 + 2.0) + 1.0
+					return res
+				
+				if kind == 2: # Square
+					wave_ovs = np.where(t_phase < 0.5, 1.0, -1.0)
+					wave_ovs += poly_blep(t_phase, dt_ovs)
+					wave_ovs -= poly_blep((t_phase + 0.5) % 1.0, dt_ovs)
+				elif kind == 3: # Triangle
+					# OVS 8x + Kaiser 14 è sufficiente a pulire la triangolare
+					wave_ovs = 2.0 * np.abs(2.0 * t_phase - 1.0) - 1.0
+				elif kind == 4: # Sawtooth
+					wave_ovs = 2.0 * t_phase - 1.0
+					wave_ovs -= poly_blep(t_phase, dt_ovs)
+				
+				# Decimazione con filtro anti-aliasing molto più aggressivo
+				wave = signal.resample_poly(wave_ovs, up=1, down=OVS, window=('kaiser', 14.0)).astype(np.float32)
+				
+				# Compensazione per eventuali arrotondamenti di lunghezza
+				if len(wave) > total_note_samples:
+					wave = wave[:total_note_samples]
+				elif len(wave) < total_note_samples:
+					wave = np.pad(wave, (0, total_note_samples - len(wave)))
 			attack_samples = int(round(attack_frac * total_note_samples))
 			decay_samples = int(round(decay_frac * total_note_samples))
 			release_samples = int(round(release_frac * total_note_samples))

@@ -7,10 +7,10 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import menu, Acusticator
 
-VERSION = "1.0.0" # Aggiunto supporto Portamento e tasto y
+VERSION = "1.1.0" # Aggiunto tasto ? in editor e preset vuoto dal menu
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia & Stella"
-RELEASE_DATE = "30 aprile 2026"
+RELEASE_DATE = "4 maggio 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -421,6 +421,31 @@ def edit_mode(db, preset_name):
             print("-------------------")
             handle_print(state, force_newline=True)
             continue
+        elif key == '?':
+            print("\n--- Lista Tasti Rapidi ---")
+            print("Spazio: Riproduce l'intero preset")
+            print("Invio: Modifica il valore selezionato")
+            print(".: Attiva/disattiva o scambia fuoco portamento")
+            print("1, 2, 3: Fuoco su portamento (1: part, 2: arr, 3: entrambi)")
+            print("4: Inverte i valori del portamento")
+            print("y: Duplica la quartina corrente")
+            print("c / v: Incrementa / Decrementa valore corrente")
+            print("z / x: Passa al parametro precedente / successivo")
+            print("b: Modifica il passo (step) per il parametro corrente")
+            print("n: Ripristina valori di default per il parametro corrente")
+            print("m: Svuota l'intero preset (imposta a default)")
+            print("w: Cambia forma d'onda (Seno, Quadra, Triangolare, Dente di Sega)")
+            print("a, d, s, r: Passa alla modifica dell'inviluppo ADSR")
+            print("q: Passa alla modifica della quartina (Nota)")
+            print("f / j: Inserisce nuova quartina prima / dopo quella corrente")
+            print("g / h: Sposta il cursore alla quartina precedente / successiva e riproduce")
+            print("e: Elimina la quartina corrente")
+            print("l: Mostra la lista completa delle quartine")
+            print("?: Mostra questa lista di tasti rapidi")
+            print("Esc: Esce dall'editor")
+            print("--------------------------")
+            handle_print(state, force_newline=True)
+            continue
         elif key == 'esc':
             state.running = False
 
@@ -459,12 +484,49 @@ def main():
     while True:
         # Ordiniamo esplicitamente il dizionario alfabeticamente per nome del preset
         menu_dict = {k: v.get("descrizione", "") for k, v in sorted(db.items())}
+        menu_dict["+"] = "Nuovo preset vuoto (Default)"
+        menu_dict["/"] = "Cerca preset per parola chiave"
         print("\nScegli un preset (digita '?' per la lista, Esc/Invio vuoto per uscire):")
         scelta = menu(d=menu_dict, p="Preset> ", show=False, ordered=True)
         
         if not scelta:
             break
             
+        if scelta == "+":
+            new_name = get_unique_name(db, "nuovo_preset")
+            db[new_name] = {
+                "descrizione": "Nuovo preset vuoto",
+                "score": [["c4", 0.5, 0.0, 0.0]],
+                "kind": 1,
+                "adsr": [0.002, 0.0, 100.0, 0.002]
+            }
+            edit_mode(db, new_name)
+            continue
+            
+        if scelta == "/":
+            query = input("\nInserisci parole chiave da cercare (spazio per separare): ").strip().lower()
+            if not query:
+                continue
+            words = query.split()
+            
+            risultati = {}
+            for k, v in sorted(db.items()):
+                test_str = (k + " " + v.get("descrizione", "")).lower()
+                if all(w in test_str for w in words):
+                    risultati[k] = v.get("descrizione", "")
+                    
+            if not risultati:
+                print("Nessun preset trovato corrispondente alla ricerca.")
+                continue
+            elif len(risultati) == 1:
+                scelta = list(risultati.keys())[0]
+                print(f"\nTrovato 1 preset: '{scelta}'")
+            else:
+                print(f"\nTrovati {len(risultati)} preset. Scegli uno (Esc/Invio per annullare):")
+                scelta = menu(d=risultati, p="Risultati> ", show=True, ordered=True)
+                if not scelta:
+                    continue
+
         print(f"\nHai selezionato: '{scelta}'")
         action_dict = {"c": "Carica (Edit Mode)", "e": "Elimina"}
         azione = menu(d=action_dict, p="Azione> ", show=True)
