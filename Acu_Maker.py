@@ -7,10 +7,10 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import menu, Acusticator
 
-VERSION = "1.1.0" # Aggiunto tasto ? in editor e preset vuoto dal menu
+VERSION = "1.2.1" # Aggiunto supporto al fade in/out con le pause e step duration a 0.02
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia & Stella"
-RELEASE_DATE = "4 maggio 2026"
+RELEASE_DATE = "14 maggio 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -122,7 +122,7 @@ class EditorState:
         
         self.steps = {
             'note': 10.0,
-            'dur': 0.1,
+            'dur': 0.02,
             'pan': 0.1,
             'vol': 0.1,
             'a': 0.001,

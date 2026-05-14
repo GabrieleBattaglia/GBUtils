@@ -26,7 +26,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "80"
+VERSION = "81"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -1228,7 +1228,7 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 
 def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 	"""
-	V6.1 di lunedì 4 maggio 2026. Gabriele Battaglia e Stella
+	V6.2 di giovedì 14 maggio 2026. Gabriele Battaglia e Stella
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -1262,6 +1262,7 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 			note_lower = note.lower()
 			if note_lower == 'p': return None
 			def parse_single(p):
+				if p == 'p': return None
 				if p.isdigit(): return float(p)
 				match = re.match(r"^([a-g])([#b]?)(\d)$", p)
 				if not match: raise ValueError(f"Formato nota non valido: '{p}'.")
@@ -1304,6 +1305,19 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 		freq = note_to_freq(note_param)
 		total_note_samples = int(round(dur * fs))
 		if total_note_samples == 0: continue # Ignora durata troppo breve
+		
+		vol_portamento = None
+		if isinstance(freq, tuple):
+			f1, f2 = freq
+			if f1 is None and f2 is None:
+				freq = None
+			elif f1 is None:
+				freq = f2
+				vol_portamento = 'fade_in'
+			elif f2 is None:
+				freq = f1
+				vol_portamento = 'fade_out'
+		
 		if freq is None: # Pausa
 			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
 		else: # Nota o Portamento
@@ -1384,6 +1398,12 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 					current_pos = end_pos
 			# --- Fine Blocco Release Corretto ---
 			if current_pos < total_note_samples: envelope[current_pos:] = 0.0
+			
+			if vol_portamento == 'fade_out':
+				envelope *= np.linspace(1.0, 0.0, total_note_samples, dtype=np.float32)
+			elif vol_portamento == 'fade_in':
+				envelope *= np.linspace(0.0, 1.0, total_note_samples, dtype=np.float32)
+				
 			wave *= envelope * vol
 			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
 			pan_clipped = np.clip(pan, -1.0, 1.0); pan_angle = pan_clipped * (np.pi / 4.0)
