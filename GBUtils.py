@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V79 di mercoledì 6 maggio 2026
+	V80 di giovedì 14 maggio 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
@@ -13,7 +13,8 @@ Lista utilità contenute in questo pacchetto
 	Donazione V1.2 del 3 febbraio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
-	key V5.1 di venerdì 23 gennaio 2026 by Gabriele Battaglia and Stella, Gemini 3 Pro.
+	key V6.0 di giovedì 14 maggio 2026 by Gabriele Battaglia and Stella/Gemini 3.1 Pro.
+	key_old V5.1 del 23/01/2026 (Legacy)
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V4.6.3 - martedì 14 aprile 2026 - Stella Gemini 3.1 Pro & Gabriele Battaglia
@@ -25,7 +26,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "79"
+VERSION = "80"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -874,8 +875,8 @@ def base62(n):
 	out.reverse()
 	return segno + ''.join(symbols[l] for l in out)
 
-def key(prompt="", attesa=99999):
-	'''V5.1 23/01/2026 by Gabriele Battaglia and Stella, Gemini 3 Pro.
+def key_old(prompt="", attesa=99999):
+	'''V5.1 del 23/01/2026 (Legacy)
 	Attende per il numero di secondi specificati
 	se tempo e' scaduto, o si preme un tasto, esce.
 	prompt e' il messaggio da mostrare.
@@ -906,6 +907,186 @@ def key(prompt="", attesa=99999):
 				rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
 				if rlist:
 					return sys.stdin.read(1)
+			return ''
+		finally:
+			termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+def key(prompt="", attesa=99999):
+	"""V6.0 di giovedì 14 maggio 2026 by Gabriele Battaglia and Stella/Gemini 3.1 Pro.
+	Advanced key reader with special keys, numpad (NumLock OFF) and modifiers support.
+	Returns logical names for special keys (e.g., 'up', 'ctrl-a', 'pad-up', 'f1').
+	Retains original 'key' functionality with timeout and prompt.
+	"""
+	import sys
+	import time
+	import os
+
+	if prompt:
+		print(prompt, end="", flush=True)
+
+	start_time = time.time()
+
+	if os.name == 'nt':
+		import msvcrt
+		
+		# Mappature per codici speciali su Windows (prefisso \x00 - spesso Tastierino Numerico o F1-F10)
+		special_mapping_00 = {
+			b'H': 'pad-up', b'P': 'pad-down', b'K': 'pad-left', b'M': 'pad-right',
+			b'G': 'pad-home', b'O': 'pad-end', b'I': 'pad-pageup', b'Q': 'pad-pagedown',
+			b'R': 'pad-insert', b'S': 'pad-delete', b'L': 'pad-center', # Tasto 5 del numpad
+			
+			# Tasti funzione standard
+			b';': 'f1', b'<': 'f2', b'=': 'f3', b'>': 'f4',
+			b'?': 'f5', b'@': 'f6', b'A': 'f7', b'B': 'f8',
+			b'C': 'f9', b'D': 'f10',
+			
+			# F-Keys con modificatori (spesso restituiscono \x00)
+			# Shift+F1..F10 (84..93)
+			b'T': 'shift-f1', b'U': 'shift-f2', b'V': 'shift-f3', b'W': 'shift-f4',
+			b'X': 'shift-f5', b'Y': 'shift-f6', b'Z': 'shift-f7', b'[': 'shift-f8',
+			b'\\': 'shift-f9', b']': 'shift-f10',
+			# Ctrl+F1..F10 (94..103)
+			b'^': 'ctrl-f1', b'_': 'ctrl-f2', b'`': 'ctrl-f3', b'a': 'ctrl-f4',
+			b'b': 'ctrl-f5', b'c': 'ctrl-f6', b'd': 'ctrl-f7', b'e': 'ctrl-f8',
+			b'f': 'ctrl-f9', b'g': 'ctrl-f10',
+			# Alt+F1..F10 (104..113)
+			b'h': 'alt-f1', b'i': 'alt-f2', b'j': 'alt-f3', b'k': 'alt-f4',
+			b'l': 'alt-f5', b'm': 'alt-f6', b'n': 'alt-f7', b'o': 'alt-f8',
+			b'p': 'alt-f9', b'q': 'alt-f10',
+			
+			# Modificatori Numpad (Ctrl)
+			b'w': 'ctrl-pad-home', b'u': 'ctrl-pad-end', b'\x84': 'ctrl-pad-pageup', b'v': 'ctrl-pad-pagedown',
+			b'\x8d': 'ctrl-pad-up', b'\x91': 'ctrl-pad-down', b's': 'ctrl-pad-left', b't': 'ctrl-pad-right',
+			
+			# Modificatori Numpad (Alt)
+			b'\x97': 'alt-pad-home', b'\x9f': 'alt-pad-end', b'\x99': 'alt-pad-pageup', b'\xa1': 'alt-pad-pagedown',
+			b'\x98': 'alt-pad-up', b'\xa0': 'alt-pad-down', b'\x9b': 'alt-pad-left', b'\x9d': 'alt-pad-right',
+		}
+
+		# Mappature per codici speciali su Windows (prefisso \xe0 - Tasti Navigazione Dedicati e F11/F12)
+		special_mapping_e0 = {
+			b'H': 'up', b'P': 'down', b'K': 'left', b'M': 'right',
+			b'G': 'home', b'O': 'end', b'I': 'pageup', b'Q': 'pagedown',
+			b'R': 'insert', b'S': 'delete',
+			
+			# F11 e F12 e loro modificatori restituiscono \xe0
+			b'\x85': 'f11', b'\x86': 'f12',
+			b'\x87': 'shift-f11', b'\x88': 'shift-f12',
+			b'\x89': 'ctrl-f11', b'\x8a': 'ctrl-f12',
+			b'\x8b': 'alt-f11', b'\x8c': 'alt-f12',
+			
+			# Frecce dedicate con modificatori
+			b'\x8d': 'ctrl-up', b'\x91': 'ctrl-down', b's': 'ctrl-left', b't': 'ctrl-right',
+			b'\x98': 'alt-up', b'\xa0': 'alt-down', b'\x9b': 'alt-left', b'\x9d': 'alt-right',
+			
+			# PagUp/PagDn/Home/End dedicati con Ctrl e Alt
+			b'\x84': 'ctrl-pageup', b'v': 'ctrl-pagedown', b'w': 'ctrl-home', b'u': 'ctrl-end',
+			b'\x99': 'alt-pageup', b'\xa1': 'alt-pagedown', b'\x97': 'alt-home', b'\x9f': 'alt-end',
+			
+			b'\x94': 'ctrl-tab',
+			b'\x82': 'alt-f11', b'\x83': 'alt-f12'
+		}
+
+		while time.time() - start_time <= attesa:
+			if msvcrt.kbhit():
+				# Usiamo getch() al posto di getwch() per leggere byte per facilitare il mapping esatto
+				ch = msvcrt.getch()
+				
+				if ch == b'\x00':
+					if msvcrt.kbhit():
+						ch2 = msvcrt.getch()
+						return special_mapping_00.get(ch2, f"special-00-{ch2.hex()}")
+					return ''
+				elif ch == b'\xe0':
+					if msvcrt.kbhit():
+						ch2 = msvcrt.getch()
+						return special_mapping_e0.get(ch2, f"special-e0-{ch2.hex()}")
+					return ''
+				elif ch == b'\r':
+					return '\r'
+				elif ch == b'\x1b':
+					return '\x1b'
+				elif ch == b'\x08':
+					return '\x08'
+				elif ch == b'\t':
+					return '\t'
+				elif b'\x01' <= ch <= b'\x1a':
+					# Ctrl + Lettera (Ctrl+A = 1, Ctrl+Z = 26)
+					# Escludiamo Invio (\r=13), Tab (\t=9), Esc (\x1b=27) gestiti sopra
+					char_letter = chr(ord(ch) + 96).lower()
+					if char_letter not in ('m', 'i'): # m=13(enter), i=9(tab)
+						return f"ctrl-{char_letter}"
+					return ch.decode('utf-8', errors='ignore')
+				else:
+					return ch.decode('utf-8', errors='ignore')
+			time.sleep(0.01)
+		return ''
+	else:
+		import select
+		import tty
+		import termios
+		fd = sys.stdin.fileno()
+		old_settings = termios.tcgetattr(fd)
+		
+		# Semplice mappa per alcune sequenze ANSI comuni
+		ansi_mapping = {
+			'[A': 'up', '[B': 'down', '[C': 'right', '[D': 'left',
+			'[H': 'home', '[F': 'end', '[5~': 'pageup', '[6~': 'pagedown',
+			'[2~': 'insert', '[3~': 'delete',
+			'OP': 'f1', 'OQ': 'f2', 'OR': 'f3', 'OS': 'f4',
+			'[15~': 'f5', '[17~': 'f6', '[18~': 'f7', '[19~': 'f8',
+			'[20~': 'f9', '[21~': 'f10', '[23~': 'f11', '[24~': 'f12',
+		}
+		
+		# Modificatori ANSI: ...[1;5A = Ctrl+Up
+		# 2=Shift, 3=Alt, 4=Shift+Alt, 5=Ctrl, 6=Shift+Ctrl, 7=Alt+Ctrl, 8=Shift+Alt+Ctrl
+		mod_map = {'2': 'shift', '3': 'alt', '4': 'shift-alt', '5': 'ctrl', '6': 'shift-ctrl', '7': 'alt-ctrl', '8': 'shift-alt-ctrl'}
+		
+		try:
+			tty.setcbreak(fd)
+			while time.time() - start_time <= attesa:
+				rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+				if rlist:
+					ch = sys.stdin.read(1)
+					if ch == '\x1b':
+						# Inizio sequenza ANSI
+						rlist2, _, _ = select.select([sys.stdin], [], [], 0.05)
+						if rlist2:
+							seq = ""
+							while True:
+								# Leggiamo il resto della sequenza non in modo bloccante
+								rl, _, _ = select.select([sys.stdin], [], [], 0.01)
+								if rl:
+									seq += sys.stdin.read(1)
+								else:
+									break
+							
+							# Parsa sequenza
+							if seq in ansi_mapping:
+								return ansi_mapping[seq]
+							
+							# Controlla per modificatori complessi es. [1;5A
+							import re
+							match = re.match(r'\[1;(\d)([A-D])', seq)
+							if match:
+								mod, key_char = match.groups()
+								base_key = {'A': 'up', 'B': 'down', 'C': 'right', 'D': 'left'}.get(key_char, key_char)
+								mod_str = mod_map.get(mod, f"mod{mod}")
+								return f"{mod_str}-{base_key}"
+								
+							return f"esc-{seq}" # Seq non riconosciuta
+						else:
+							return 'esc'
+					elif ch == '\n' or ch == '\r': return 'enter'
+					elif ch == '\x08' or ch == '\x7f': return 'backspace'
+					elif ch == '\t': return 'tab'
+					elif '\x01' <= ch <= '\x1a':
+						char_letter = chr(ord(ch) + 96).lower()
+						if char_letter not in ('j', 'm', 'i'): 
+							return f"ctrl-{char_letter}"
+						return ch
+					else:
+						return ch
 			return ''
 		finally:
 			termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
