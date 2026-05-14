@@ -254,18 +254,17 @@ def edit_mode(db, preset_name):
                         if state.focus_param == 0:
                             current_val = state.preset['score'][state.focus_idx][0]
                             if is_portamento(current_val):
+                                val_to_insert = val
                                 if val.lower() == 'p':
-                                    print("Errore: Impossibile inserire 'p' con portamento attivo.")
-                                else:
-                                    val_to_insert = val
-                                    if val.replace('-', '').replace('.', '', 1).isdigit():
-                                        fval = float(val)
-                                        val_to_insert = str(int(fval)) if fval.is_integer() else str(fval)
-                                    parts = current_val.split('.')
-                                    if state.port_focus in (1, 3): parts[0] = val_to_insert
-                                    if state.port_focus in (2, 3): parts[1] = val_to_insert
-                                    state.preset['score'][state.focus_idx][0] = f"{parts[0]}.{parts[1]}"
-                                    state.modified = True
+                                    val_to_insert = 'p'
+                                elif val.replace('-', '').replace('.', '', 1).isdigit():
+                                    fval = float(val)
+                                    val_to_insert = str(int(fval)) if fval.is_integer() else str(fval)
+                                parts = current_val.split('.')
+                                if state.port_focus in (1, 3): parts[0] = val_to_insert
+                                if state.port_focus in (2, 3): parts[1] = val_to_insert
+                                state.preset['score'][state.focus_idx][0] = f"{parts[0]}.{parts[1]}"
+                                state.modified = True
                             else:
                                 if val.lower() == 'p': state.preset['score'][state.focus_idx][0] = 'p'
                                 else:

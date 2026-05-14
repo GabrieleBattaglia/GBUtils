@@ -8122,5 +8122,29 @@
             100.0,
             0.002
         ]
+    },
+    "written_ok": {
+        "descrizione": "un file \u00e8 stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
+        "score": [
+            [
+                "c4",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "c4.b4",
+                0.04,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            0.0,
+            100.0,
+            1.0
+        ]
     }
 }
