@@ -8146,5 +8146,341 @@
             100.0,
             1.0
         ]
+    },
+    "controllo_ok": {
+        "descrizione": "qualcosa ha superato un controllo ed \u00e8 stato ammesso",
+        "score": [
+            [
+                "c4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "f4.p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "b6.a7",
+                0.02,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            0.0,
+            100.0,
+            1.0
+        ]
+    },
+    "rifiutato": {
+        "descrizione": "un valore inserito non \u00e8 corretto, qualcosa viene respinto, un'azione non \u00e8 la pi\u00f9 appropriata",
+        "score": [
+            [
+                "g3.d3",
+                0.18,
+                0.0,
+                0.0
+            ],
+            [
+                "f3.c3",
+                0.18,
+                0.0,
+                0.0
+            ],
+            [
+                "d#3.a#2",
+                0.18,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            0.0,
+            100.0,
+            1.0
+        ]
+    },
+    "apertura": {
+        "descrizione": "una finestra si apre, una classifica mostrata, un elenco appare, un diagramma, una videata di risultati compaiono a schermo",
+        "score": [
+            [
+                "g5",
+                0.16,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.16,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.16,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.16,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.5,
+            99.5,
+            0.0,
+            0.0
+        ]
+    },
+    "cancellato": {
+        "descrizione": "un elemento \u00e8 stato cancellato da una lista, qualcosa \u00e8 scomparso dallo schermo, una lista o un elenco si \u00e8 ridotto di dimensioni, un dato \u00e8 diminuito",
+        "score": [
+            [
+                "b2.g#2",
+                0.22,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "a2",
+                0.08,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "vittoria": {
+        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo \u00e8 stato centrato",
+        "score": [
+            [
+                "f#4",
+                0.16,
+                0.0,
+                -0.3
+            ],
+            [
+                "c#5",
+                0.16,
+                0.0,
+                -0.3
+            ],
+            [
+                "e4",
+                0.16,
+                0.0,
+                -0.3
+            ],
+            [
+                "b5.p",
+                0.28,
+                0.0,
+                -0.3
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "convalida0": {
+        "descrizione": "un dato \u00e8 stato convalidato",
+        "score": [
+            [
+                "c4",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "f6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "d#5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g#6",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.01,
+            0.1,
+            80.0,
+            0.2
+        ]
+    },
+    "quinqu_startup": {
+        "descrizione": "Arpeggio ascendente di benvenuto per Quinqu",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "quinqu_shutdown": {
+        "descrizione": "Arpeggio discendente di chiusura per Quinqu",
+        "score": [
+            [
+                "c6",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "salita_ideale": {
+        "descrizione": "Portamento ascendente - valore superiore all'ideale",
+        "score": [
+            [
+                "c4.g4",
+                0.3,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "discesa_ideale": {
+        "descrizione": "Portamento discendente - valore inferiore all'ideale",
+        "score": [
+            [
+                "g4.c4",
+                0.3,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "in_linea_ideale": {
+        "descrizione": "Nota stabile - valore esattamente in linea con l'ideale",
+        "score": [
+            [
+                "e5",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.15,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.01
+        ]
     }
 }
