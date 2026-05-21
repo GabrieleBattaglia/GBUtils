@@ -8482,5 +8482,89 @@
             100.0,
             0.01
         ]
+    },
+    "concluso": {
+        "descrizione": "una procedura rapida si \u00e8 conclusa, un dato \u00e8 stato validato o accettato",
+        "score": [
+            [
+                "c5",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.17,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "salto": {
+        "descrizione": "fatto un saltello, qualcosa \u00e8 stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
+        "score": [
+            [
+                "f#3.d#6",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "d#6.f#3",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.1,
+            100.0,
+            0.05
+        ]
+    },
+    "spostamento": {
+        "descrizione": "ci si muove fra oggetti, si scorrono gli elementi di una lista, di un menu. Si scrollano file, voci di una casella, qualsiasi tipo di focalizzazione che passi fra oggetti di una lista",
+        "score": [
+            [
+                "g3",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "e4",
+                0.02,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
     }
 }
