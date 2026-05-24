@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V80 di giovedì 14 maggio 2026
+	V82 di domenica 24 maggio 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	Donazione V1.2 del 3 febbraio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
-	key V6.0 di giovedì 14 maggio 2026 by Gabriele Battaglia and Stella/Gemini 3.1 Pro.
+	key V6.1 di domenica 24 maggio 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	key_old V5.1 del 23/01/2026 (Legacy)
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
@@ -26,7 +26,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "81"
+VERSION = "82"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -678,7 +678,8 @@ class Mazzo:
 		'''
 		destinazione = self.scarti_permanenti if permanente else self.scarti
 		nome_dest = "permanenti" if permanente else "temporanei"
-		condizione = lambda carta: carta.seme_id in semi_id_da_rimuovere
+		def condizione(carta):
+			return carta.seme_id in semi_id_da_rimuovere
 		carte_rimosse = self._rimuovi_carte_da_lista(self.carte, condizione, destinazione, nome_dest)
 		return len(carte_rimosse)
 	def rimuovi_valori(self, valori_da_rimuovere, permanente=True):
@@ -693,7 +694,8 @@ class Mazzo:
 		'''
 		destinazione = self.scarti_permanenti if permanente else self.scarti
 		nome_dest = "permanenti" if permanente else "temporanei"
-		condizione = lambda carta: carta.valore in valori_da_rimuovere
+		def condizione(carta):
+			return carta.valore in valori_da_rimuovere
 		carte_rimosse = self._rimuovi_carte_da_lista(self.carte, condizione, destinazione, nome_dest)
 		return len(carte_rimosse)
 	def aggiungi_jolly(self, quanti_per_mazzo=2):
@@ -756,7 +758,8 @@ class Mazzo:
 		jolly_rimossi_total_obj = [] # Lista per collezionare gli oggetti jolly rimossi
 		destinazione = self.scarti_permanenti if permanente else self.scarti
 		tipo_destinazione = "permanenti" if permanente else "temporanei"
-		condizione = lambda carta: carta.nome == "Jolly"
+		def condizione(carta):
+			return carta.nome == "Jolly"
 		# Helper per evitare codice duplicato e gestire la collezione degli oggetti
 		def _processa_lista(lista_sorgente):
 			carte_rimosse = self._rimuovi_carte_da_lista(lista_sorgente, condizione, destinazione, tipo_destinazione)
@@ -912,7 +915,7 @@ def key_old(prompt="", attesa=99999):
 			termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 def key(prompt="", attesa=99999):
-	"""V6.0 di giovedì 14 maggio 2026 by Gabriele Battaglia and Stella/Gemini 3.1 Pro.
+	"""V6.1 di domenica 24 maggio 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	Advanced key reader with special keys, numpad (NumLock OFF) and modifiers support.
 	Returns logical names for special keys (e.g., 'up', 'ctrl-a', 'pad-up', 'f1').
 	Retains original 'key' functionality with timeout and prompt.
@@ -931,94 +934,93 @@ def key(prompt="", attesa=99999):
 		
 		# Mappature per codici speciali su Windows (prefisso \x00 - spesso Tastierino Numerico o F1-F10)
 		special_mapping_00 = {
-			b'H': 'pad-up', b'P': 'pad-down', b'K': 'pad-left', b'M': 'pad-right',
-			b'G': 'pad-home', b'O': 'pad-end', b'I': 'pad-pageup', b'Q': 'pad-pagedown',
-			b'R': 'pad-insert', b'S': 'pad-delete', b'L': 'pad-center', # Tasto 5 del numpad
+			'H': 'pad-up', 'P': 'pad-down', 'K': 'pad-left', 'M': 'pad-right',
+			'G': 'pad-home', 'O': 'pad-end', 'I': 'pad-pageup', 'Q': 'pad-pagedown',
+			'R': 'pad-insert', 'S': 'pad-delete', 'L': 'pad-center', # Tasto 5 del numpad
 			
 			# Tasti funzione standard
-			b';': 'f1', b'<': 'f2', b'=': 'f3', b'>': 'f4',
-			b'?': 'f5', b'@': 'f6', b'A': 'f7', b'B': 'f8',
-			b'C': 'f9', b'D': 'f10',
+			';': 'f1', '<': 'f2', '=': 'f3', '>': 'f4',
+			'?': 'f5', '@': 'f6', 'A': 'f7', 'B': 'f8',
+			'C': 'f9', 'D': 'f10',
 			
 			# F-Keys con modificatori (spesso restituiscono \x00)
 			# Shift+F1..F10 (84..93)
-			b'T': 'shift-f1', b'U': 'shift-f2', b'V': 'shift-f3', b'W': 'shift-f4',
-			b'X': 'shift-f5', b'Y': 'shift-f6', b'Z': 'shift-f7', b'[': 'shift-f8',
-			b'\\': 'shift-f9', b']': 'shift-f10',
+			'T': 'shift-f1', 'U': 'shift-f2', 'V': 'shift-f3', 'W': 'shift-f4',
+			'X': 'shift-f5', 'Y': 'shift-f6', 'Z': 'shift-f7', '[': 'shift-f8',
+			'\\': 'shift-f9', ']': 'shift-f10',
 			# Ctrl+F1..F10 (94..103)
-			b'^': 'ctrl-f1', b'_': 'ctrl-f2', b'`': 'ctrl-f3', b'a': 'ctrl-f4',
-			b'b': 'ctrl-f5', b'c': 'ctrl-f6', b'd': 'ctrl-f7', b'e': 'ctrl-f8',
-			b'f': 'ctrl-f9', b'g': 'ctrl-f10',
+			'^': 'ctrl-f1', '_': 'ctrl-f2', '`': 'ctrl-f3', 'a': 'ctrl-f4',
+			'b': 'ctrl-f5', 'c': 'ctrl-f6', 'd': 'ctrl-f7', 'e': 'ctrl-f8',
+			'f': 'ctrl-f9', 'g': 'ctrl-f10',
 			# Alt+F1..F10 (104..113)
-			b'h': 'alt-f1', b'i': 'alt-f2', b'j': 'alt-f3', b'k': 'alt-f4',
-			b'l': 'alt-f5', b'm': 'alt-f6', b'n': 'alt-f7', b'o': 'alt-f8',
-			b'p': 'alt-f9', b'q': 'alt-f10',
+			'h': 'alt-f1', 'i': 'alt-f2', 'j': 'alt-f3', 'k': 'alt-f4',
+			'l': 'alt-f5', 'm': 'alt-f6', 'n': 'alt-f7', 'o': 'alt-f8',
+			'p': 'alt-f9', 'q': 'alt-f10',
 			
 			# Modificatori Numpad (Ctrl)
-			b'w': 'ctrl-pad-home', b'u': 'ctrl-pad-end', b'\x84': 'ctrl-pad-pageup', b'v': 'ctrl-pad-pagedown',
-			b'\x8d': 'ctrl-pad-up', b'\x91': 'ctrl-pad-down', b's': 'ctrl-pad-left', b't': 'ctrl-pad-right',
+			'w': 'ctrl-pad-home', 'u': 'ctrl-pad-end', '\x84': 'ctrl-pad-pageup', 'v': 'ctrl-pad-pagedown',
+			'\x8d': 'ctrl-pad-up', '\x91': 'ctrl-pad-down', 's': 'ctrl-pad-left', 't': 'ctrl-pad-right',
 			
 			# Modificatori Numpad (Alt)
-			b'\x97': 'alt-pad-home', b'\x9f': 'alt-pad-end', b'\x99': 'alt-pad-pageup', b'\xa1': 'alt-pad-pagedown',
-			b'\x98': 'alt-pad-up', b'\xa0': 'alt-pad-down', b'\x9b': 'alt-pad-left', b'\x9d': 'alt-pad-right',
+			'\x97': 'alt-pad-home', '\x9f': 'alt-pad-end', '\x99': 'alt-pad-pageup', '\xa1': 'alt-pad-pagedown',
+			'\x98': 'alt-pad-up', '\xa0': 'alt-pad-down', '\x9b': 'alt-pad-left', '\x9d': 'alt-pad-right',
 		}
 
 		# Mappature per codici speciali su Windows (prefisso \xe0 - Tasti Navigazione Dedicati e F11/F12)
 		special_mapping_e0 = {
-			b'H': 'up', b'P': 'down', b'K': 'left', b'M': 'right',
-			b'G': 'home', b'O': 'end', b'I': 'pageup', b'Q': 'pagedown',
-			b'R': 'insert', b'S': 'delete',
+			'H': 'up', 'P': 'down', 'K': 'left', 'M': 'right',
+			'G': 'home', 'O': 'end', 'I': 'pageup', 'Q': 'pagedown',
+			'R': 'insert', 'S': 'delete',
 			
 			# F11 e F12 e loro modificatori restituiscono \xe0
-			b'\x85': 'f11', b'\x86': 'f12',
-			b'\x87': 'shift-f11', b'\x88': 'shift-f12',
-			b'\x89': 'ctrl-f11', b'\x8a': 'ctrl-f12',
-			b'\x8b': 'alt-f11', b'\x8c': 'alt-f12',
+			'\x85': 'f11', '\x86': 'f12',
+			'\x87': 'shift-f11', '\x88': 'shift-f12',
+			'\x89': 'ctrl-f11', '\x8a': 'ctrl-f12',
+			'\x8b': 'alt-f11', '\x8c': 'alt-f12',
 			
 			# Frecce dedicate con modificatori
-			b'\x8d': 'ctrl-up', b'\x91': 'ctrl-down', b's': 'ctrl-left', b't': 'ctrl-right',
-			b'\x98': 'alt-up', b'\xa0': 'alt-down', b'\x9b': 'alt-left', b'\x9d': 'alt-right',
+			'\x8d': 'ctrl-up', '\x91': 'ctrl-down', 's': 'ctrl-left', 't': 'ctrl-right',
+			'\x98': 'alt-up', '\xa0': 'alt-down', '\x9b': 'alt-left', '\x9d': 'alt-right',
 			
 			# PagUp/PagDn/Home/End dedicati con Ctrl e Alt
-			b'\x84': 'ctrl-pageup', b'v': 'ctrl-pagedown', b'w': 'ctrl-home', b'u': 'ctrl-end',
-			b'\x99': 'alt-pageup', b'\xa1': 'alt-pagedown', b'\x97': 'alt-home', b'\x9f': 'alt-end',
+			'\x84': 'ctrl-pageup', 'v': 'ctrl-pagedown', 'w': 'ctrl-home', 'u': 'ctrl-end',
+			'\x99': 'alt-pageup', '\xa1': 'alt-pagedown', '\x97': 'alt-home', '\x9f': 'alt-end',
 			
-			b'\x94': 'ctrl-tab',
-			b'\x82': 'alt-f11', b'\x83': 'alt-f12'
+			'\x94': 'ctrl-tab',
+			'\x82': 'alt-f11', '\x83': 'alt-f12'
 		}
 
 		while time.time() - start_time <= attesa:
 			if msvcrt.kbhit():
-				# Usiamo getch() al posto di getwch() per leggere byte per facilitare il mapping esatto
-				ch = msvcrt.getch()
+				ch = msvcrt.getwch()
 				
-				if ch == b'\x00':
+				if ch == '\x00':
 					if msvcrt.kbhit():
-						ch2 = msvcrt.getch()
-						return special_mapping_00.get(ch2, f"special-00-{ch2.hex()}")
+						ch2 = msvcrt.getwch()
+						return special_mapping_00.get(ch2, f"special-00-{ord(ch2):02x}")
 					return ''
-				elif ch == b'\xe0':
+				elif ch == '\xe0':
 					if msvcrt.kbhit():
-						ch2 = msvcrt.getch()
-						return special_mapping_e0.get(ch2, f"special-e0-{ch2.hex()}")
+						ch2 = msvcrt.getwch()
+						return special_mapping_e0.get(ch2, f"special-e0-{ord(ch2):02x}")
 					return ''
-				elif ch == b'\r':
+				elif ch == '\r':
 					return '\r'
-				elif ch == b'\x1b':
+				elif ch == '\x1b':
 					return '\x1b'
-				elif ch == b'\x08':
+				elif ch == '\x08':
 					return '\x08'
-				elif ch == b'\t':
+				elif ch == '\t':
 					return '\t'
-				elif b'\x01' <= ch <= b'\x1a':
+				elif '\x01' <= ch <= '\x1a':
 					# Ctrl + Lettera (Ctrl+A = 1, Ctrl+Z = 26)
 					# Escludiamo Invio (\r=13), Tab (\t=9), Esc (\x1b=27) gestiti sopra
 					char_letter = chr(ord(ch) + 96).lower()
 					if char_letter not in ('m', 'i'): # m=13(enter), i=9(tab)
 						return f"ctrl-{char_letter}"
-					return ch.decode('utf-8', errors='ignore')
+					return ch
 				else:
-					return ch.decode('utf-8', errors='ignore')
+					return ch
 			time.sleep(0.01)
 		return ''
 	else:
@@ -1097,7 +1099,7 @@ def gridapu(x=0.0, y=0.0, num=10):
 	It Receives long, lat in float and how many digits (num)
 	It returns the locator as string.
 	'''
-	if type(y) != float or type(x) != float:
+	if not isinstance(y, float) or not isinstance(x, float):
 		print('Lat or Lon wrong type!')
 		return''
 	from string import ascii_lowercase as L

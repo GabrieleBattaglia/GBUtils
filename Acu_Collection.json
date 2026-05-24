@@ -282,7 +282,7 @@
         ]
     },
     "convalida": {
-        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o \u00e8 andato a buon fine",
+        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o è andato a buon fine",
         "score": [
             [
                 "g7",
@@ -1056,7 +1056,7 @@
         ]
     },
     "sirena_d_allarme_1": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.15",
+        "descrizione": "Sirena allarme velocità 0.15",
         "score": [
             [
                 "c5.g5",
@@ -1116,7 +1116,7 @@
         ]
     },
     "sirena_d_allarme_2": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.20",
+        "descrizione": "Sirena allarme velocità 0.20",
         "score": [
             [
                 "c5.g5",
@@ -1188,7 +1188,7 @@
         ]
     },
     "sirena_d_allarme_3": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.25",
+        "descrizione": "Sirena allarme velocità 0.25",
         "score": [
             [
                 "c5.g5",
@@ -1236,7 +1236,7 @@
         ]
     },
     "sirena_d_allarme_4": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.30",
+        "descrizione": "Sirena allarme velocità 0.30",
         "score": [
             [
                 "c5.g5",
@@ -1296,7 +1296,7 @@
         ]
     },
     "sirena_d_allarme_5": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.35",
+        "descrizione": "Sirena allarme velocità 0.35",
         "score": [
             [
                 "c5.g5",
@@ -1368,7 +1368,7 @@
         ]
     },
     "sirena_d_allarme_6": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.40",
+        "descrizione": "Sirena allarme velocità 0.40",
         "score": [
             [
                 "c5.g5",
@@ -1416,7 +1416,7 @@
         ]
     },
     "sirena_d_allarme_7": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.45",
+        "descrizione": "Sirena allarme velocità 0.45",
         "score": [
             [
                 "c5.g5",
@@ -1476,7 +1476,7 @@
         ]
     },
     "sirena_d_allarme_8": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.50",
+        "descrizione": "Sirena allarme velocità 0.50",
         "score": [
             [
                 "c5.g5",
@@ -1548,7 +1548,7 @@
         ]
     },
     "sirena_d_allarme_9": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.55",
+        "descrizione": "Sirena allarme velocità 0.55",
         "score": [
             [
                 "c5.g5",
@@ -1596,7 +1596,7 @@
         ]
     },
     "sirena_d_allarme_10": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.60",
+        "descrizione": "Sirena allarme velocità 0.60",
         "score": [
             [
                 "c5.g5",
@@ -7896,7 +7896,7 @@
         ]
     },
     "roger_cw_conferma": {
-        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta s\u00ec prosegui approvato",
+        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta sì prosegui approvato",
         "score": [
             [
                 "e5",
@@ -7968,7 +7968,7 @@
         ]
     },
     "campanellino": {
-        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa \u00e8 comparso",
+        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa è comparso",
         "score": [
             [
                 "c8.c#8",
@@ -8124,7 +8124,7 @@
         ]
     },
     "written_ok": {
-        "descrizione": "un file \u00e8 stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
+        "descrizione": "un file è stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
         "score": [
             [
                 "c4",
@@ -8148,7 +8148,7 @@
         ]
     },
     "controllo_ok": {
-        "descrizione": "qualcosa ha superato un controllo ed \u00e8 stato ammesso",
+        "descrizione": "qualcosa ha superato un controllo ed è stato ammesso",
         "score": [
             [
                 "c4",
@@ -8178,7 +8178,7 @@
         ]
     },
     "rifiutato": {
-        "descrizione": "un valore inserito non \u00e8 corretto, qualcosa viene respinto, un'azione non \u00e8 la pi\u00f9 appropriata",
+        "descrizione": "un valore inserito non è corretto, qualcosa viene respinto, un'azione non è la più appropriata",
         "score": [
             [
                 "g3.d3",
@@ -8244,7 +8244,7 @@
         ]
     },
     "cancellato": {
-        "descrizione": "un elemento \u00e8 stato cancellato da una lista, qualcosa \u00e8 scomparso dallo schermo, una lista o un elenco si \u00e8 ridotto di dimensioni, un dato \u00e8 diminuito",
+        "descrizione": "un elemento è stato cancellato da una lista, qualcosa è scomparso dallo schermo, una lista o un elenco si è ridotto di dimensioni, un dato è diminuito",
         "score": [
             [
                 "b2.g#2",
@@ -8274,7 +8274,7 @@
         ]
     },
     "vittoria": {
-        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo \u00e8 stato centrato",
+        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo è stato centrato",
         "score": [
             [
                 "f#4",
@@ -8310,7 +8310,7 @@
         ]
     },
     "convalida0": {
-        "descrizione": "un dato \u00e8 stato convalidato",
+        "descrizione": "un dato è stato convalidato",
         "score": [
             [
                 "c4",
@@ -8484,7 +8484,7 @@
         ]
     },
     "concluso": {
-        "descrizione": "una procedura rapida si \u00e8 conclusa, un dato \u00e8 stato validato o accettato",
+        "descrizione": "una procedura rapida si è conclusa, un dato è stato validato o accettato",
         "score": [
             [
                 "c5",
@@ -8520,7 +8520,7 @@
         ]
     },
     "salto": {
-        "descrizione": "fatto un saltello, qualcosa \u00e8 stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
+        "descrizione": "fatto un saltello, qualcosa è stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
         "score": [
             [
                 "f#3.d#6",
@@ -8565,6 +8565,630 @@
             0.0,
             100.0,
             0.002
+        ]
+    },
+    "successivo": {
+        "descrizione": "dato accettato e passo al successivo, digitazione ok, mostro il prossimo elemento, giro pagina",
+        "score": [
+            [
+                "c4",
+                0.14,
+                0.0,
+                0.0
+            ],
+            [
+                "a3",
+                0.14,
+                0.0,
+                0.0
+            ],
+            [
+                "b4",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "notifica": {
+        "descrizione": "una notifica compare e richiede attenzione, un elemento cambia stato e richiede attenzione",
+        "score": [
+            [
+                "e7",
+                0.74,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            1.0,
+            99.0,
+            0.0,
+            0.0
+        ]
+    },
+    "nuovo_preset0": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "c4",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "eliminato": {
+        "descrizione": "qualsiasi oggetto è stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta",
+        "score": [
+            [
+                "f4.d7",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "tornello_avvio": {
+        "descrizione": "Suono di benvenuto per Tornello (arpeggio ascendente solare)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -0.8,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                -0.4,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.2,
+                0.4,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.01
+        ]
+    },
+    "tornello_abbinamento": {
+        "descrizione": "Arpeggio rapido per generazione abbinamenti Tornello",
+        "score": [
+            [
+                "e5",
+                0.08,
+                -0.5,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.15,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.01
+        ]
+    },
+    "tornello_chiusura": {
+        "descrizione": "Arpeggio discendente di chiusura per l'uscita da Tornello",
+        "score": [
+            [
+                "c6",
+                0.1,
+                0.4,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                -0.4,
+                0.0
+            ],
+            [
+                "c5",
+                0.2,
+                -0.8,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.01
+        ]
+    },
+    "tornello_time_machine": {
+        "descrizione": "Effetto rewind per Time Machine",
+        "score": [
+            [
+                "g4",
+                0.08,
+                -0.5,
+                0.0
+            ],
+            [
+                "e4",
+                0.08,
+                -0.2,
+                0.0
+            ],
+            [
+                "c4",
+                0.15,
+                0.2,
+                0.0
+            ],
+            [
+                "g3",
+                0.25,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.02,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "tornello_conclusione_turno": {
+        "descrizione": "Accordo di conclusione turno",
+        "score": [
+            [
+                "c5",
+                0.15,
+                -0.3,
+                0.0
+            ],
+            [
+                "e5",
+                0.15,
+                0.3,
+                0.0
+            ],
+            [
+                "g5",
+                0.3,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "tornello_conclusione_torneo": {
+        "descrizione": "Fanfara trionfale per la conclusione del torneo",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -0.5,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                -0.2,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.2,
+                0.0
+            ],
+            [
+                "c6",
+                0.15,
+                0.5,
+                0.0
+            ],
+            [
+                "e6",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "tornello_aggiunta_giocatore": {
+        "descrizione": "Suono per aggiunta giocatore (due note ascendenti rapide)",
+        "score": [
+            [
+                "c5",
+                0.08,
+                -0.5,
+                0.0
+            ],
+            [
+                "g5",
+                0.15,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "tornello_ritiro_giocatore": {
+        "descrizione": "Suono per ritiro giocatore (due note discendenti tristi)",
+        "score": [
+            [
+                "f4",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.3,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.02,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "tornello_rimozione_giocatore": {
+        "descrizione": "Suono per rimozione giocatore dalla lista",
+        "score": [
+            [
+                "g4",
+                0.1,
+                -0.2,
+                0.0
+            ],
+            [
+                "d4",
+                0.2,
+                0.2,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "tornello_pianifica_crea": {
+        "descrizione": "Pianificazione partita creata",
+        "score": [
+            [
+                "d5",
+                0.08,
+                -0.3,
+                0.0
+            ],
+            [
+                "f5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.15,
+                0.3,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "tornello_pianifica_modifica": {
+        "descrizione": "Pianificazione partita modificata",
+        "score": [
+            [
+                "f5",
+                0.08,
+                -0.3,
+                0.0
+            ],
+            [
+                "d5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "f5",
+                0.15,
+                0.3,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "tornello_pianifica_rimuovi": {
+        "descrizione": "Pianificazione partita rimossa",
+        "score": [
+            [
+                "a5",
+                0.08,
+                0.3,
+                0.0
+            ],
+            [
+                "f5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.15,
+                -0.3,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "tornello_risultato_1_0": {
+        "descrizione": "Risultato 1-0: Bianco vince (pan a sinistra, arpeggio brillante)",
+        "score": [
+            [
+                "c5",
+                0.08,
+                -0.8,
+                0.0
+            ],
+            [
+                "e5",
+                0.08,
+                -0.8,
+                0.0
+            ],
+            [
+                "g5",
+                0.15,
+                -0.8,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.01
+        ]
+    },
+    "tornello_risultato_0_1": {
+        "descrizione": "Risultato 0-1: Nero vince (pan a destra, arpeggio brillante)",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.8,
+                0.0
+            ],
+            [
+                "e5",
+                0.08,
+                0.8,
+                0.0
+            ],
+            [
+                "g5",
+                0.15,
+                0.8,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.01
+        ]
+    },
+    "tornello_risultato_patta": {
+        "descrizione": "Risultato patta: accordo equilibrato centrato",
+        "score": [
+            [
+                "e5",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.03
+        ]
+    },
+    "tornello_risultato_1_F": {
+        "descrizione": "Risultato 1-F: forfait Nero (pan a sinistra, toni alterni)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -0.8,
+                0.0
+            ],
+            [
+                "c4",
+                0.2,
+                -0.8,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "tornello_risultato_F_1": {
+        "descrizione": "Risultato F-1: forfait Bianco (pan a destra, toni alterni)",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0.8,
+                0.0
+            ],
+            [
+                "c4",
+                0.2,
+                0.8,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.02
+        ]
+    },
+    "tornello_risultato_0_0F": {
+        "descrizione": "Risultato 0-0F: doppio forfait (toni discendenti cupi)",
+        "score": [
+            [
+                "c4",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "b3",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "bb3",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.02,
+            0.0,
+            100.0,
+            0.04
         ]
     }
 }
