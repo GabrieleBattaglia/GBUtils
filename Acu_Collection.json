@@ -282,7 +282,7 @@
         ]
     },
     "convalida": {
-        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o è andato a buon fine",
+        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o \u00e8 andato a buon fine",
         "score": [
             [
                 "g7",
@@ -414,7 +414,7 @@
                 "g3",
                 0.12,
                 0.0,
-                0.7
+                -0.3
             ]
         ],
         "kind": 2,
@@ -1056,7 +1056,7 @@
         ]
     },
     "sirena_d_allarme_1": {
-        "descrizione": "Sirena allarme velocità 0.15",
+        "descrizione": "Sirena allarme velocit\u00e0 0.15",
         "score": [
             [
                 "c5.g5",
@@ -1116,7 +1116,7 @@
         ]
     },
     "sirena_d_allarme_2": {
-        "descrizione": "Sirena allarme velocità 0.20",
+        "descrizione": "Sirena allarme velocit\u00e0 0.20",
         "score": [
             [
                 "c5.g5",
@@ -1188,7 +1188,7 @@
         ]
     },
     "sirena_d_allarme_3": {
-        "descrizione": "Sirena allarme velocità 0.25",
+        "descrizione": "Sirena allarme velocit\u00e0 0.25",
         "score": [
             [
                 "c5.g5",
@@ -1236,7 +1236,7 @@
         ]
     },
     "sirena_d_allarme_4": {
-        "descrizione": "Sirena allarme velocità 0.30",
+        "descrizione": "Sirena allarme velocit\u00e0 0.30",
         "score": [
             [
                 "c5.g5",
@@ -1296,7 +1296,7 @@
         ]
     },
     "sirena_d_allarme_5": {
-        "descrizione": "Sirena allarme velocità 0.35",
+        "descrizione": "Sirena allarme velocit\u00e0 0.35",
         "score": [
             [
                 "c5.g5",
@@ -1368,7 +1368,7 @@
         ]
     },
     "sirena_d_allarme_6": {
-        "descrizione": "Sirena allarme velocità 0.40",
+        "descrizione": "Sirena allarme velocit\u00e0 0.40",
         "score": [
             [
                 "c5.g5",
@@ -1416,7 +1416,7 @@
         ]
     },
     "sirena_d_allarme_7": {
-        "descrizione": "Sirena allarme velocità 0.45",
+        "descrizione": "Sirena allarme velocit\u00e0 0.45",
         "score": [
             [
                 "c5.g5",
@@ -1476,7 +1476,7 @@
         ]
     },
     "sirena_d_allarme_8": {
-        "descrizione": "Sirena allarme velocità 0.50",
+        "descrizione": "Sirena allarme velocit\u00e0 0.50",
         "score": [
             [
                 "c5.g5",
@@ -1548,7 +1548,7 @@
         ]
     },
     "sirena_d_allarme_9": {
-        "descrizione": "Sirena allarme velocità 0.55",
+        "descrizione": "Sirena allarme velocit\u00e0 0.55",
         "score": [
             [
                 "c5.g5",
@@ -1596,7 +1596,7 @@
         ]
     },
     "sirena_d_allarme_10": {
-        "descrizione": "Sirena allarme velocità 0.60",
+        "descrizione": "Sirena allarme velocit\u00e0 0.60",
         "score": [
             [
                 "c5.g5",
@@ -7896,7 +7896,7 @@
         ]
     },
     "roger_cw_conferma": {
-        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta sì prosegui approvato",
+        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta s\u00ec prosegui approvato",
         "score": [
             [
                 "e5",
@@ -7968,7 +7968,7 @@
         ]
     },
     "campanellino": {
-        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa è comparso",
+        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa \u00e8 comparso",
         "score": [
             [
                 "c8.c#8",
@@ -8124,7 +8124,7 @@
         ]
     },
     "written_ok": {
-        "descrizione": "un file è stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
+        "descrizione": "un file \u00e8 stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
         "score": [
             [
                 "c4",
@@ -8148,7 +8148,7 @@
         ]
     },
     "controllo_ok": {
-        "descrizione": "qualcosa ha superato un controllo ed è stato ammesso",
+        "descrizione": "qualcosa ha superato un controllo ed \u00e8 stato ammesso",
         "score": [
             [
                 "c4",
@@ -8178,7 +8178,7 @@
         ]
     },
     "rifiutato": {
-        "descrizione": "un valore inserito non è corretto, qualcosa viene respinto, un'azione non è la più appropriata",
+        "descrizione": "un valore inserito non \u00e8 corretto, qualcosa viene respinto, un'azione non \u00e8 la pi\u00f9 appropriata",
         "score": [
             [
                 "g3.d3",
@@ -8244,7 +8244,7 @@
         ]
     },
     "cancellato": {
-        "descrizione": "un elemento è stato cancellato da una lista, qualcosa è scomparso dallo schermo, una lista o un elenco si è ridotto di dimensioni, un dato è diminuito",
+        "descrizione": "un elemento \u00e8 stato cancellato da una lista, qualcosa \u00e8 scomparso dallo schermo, una lista o un elenco si \u00e8 ridotto di dimensioni, un dato \u00e8 diminuito",
         "score": [
             [
                 "b2.g#2",
@@ -8274,7 +8274,7 @@
         ]
     },
     "vittoria": {
-        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo è stato centrato",
+        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo \u00e8 stato centrato",
         "score": [
             [
                 "f#4",
@@ -8310,7 +8310,7 @@
         ]
     },
     "convalida0": {
-        "descrizione": "un dato è stato convalidato",
+        "descrizione": "un dato \u00e8 stato convalidato",
         "score": [
             [
                 "c4",
@@ -8484,7 +8484,7 @@
         ]
     },
     "concluso": {
-        "descrizione": "una procedura rapida si è conclusa, un dato è stato validato o accettato",
+        "descrizione": "una procedura rapida si \u00e8 conclusa, un dato \u00e8 stato validato o accettato",
         "score": [
             [
                 "c5",
@@ -8520,7 +8520,7 @@
         ]
     },
     "salto": {
-        "descrizione": "fatto un saltello, qualcosa è stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
+        "descrizione": "fatto un saltello, qualcosa \u00e8 stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
         "score": [
             [
                 "f#3.d#6",
@@ -8634,7 +8634,7 @@
         ]
     },
     "eliminato": {
-        "descrizione": "qualsiasi oggetto è stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta",
+        "descrizione": "qualsiasi oggetto \u00e8 stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta",
         "score": [
             [
                 "f4.d7",
@@ -9189,6 +9189,372 @@
             0.0,
             100.0,
             0.04
+        ]
+    },
+    "gabryscola_avvio": {
+        "descrizione": "Arpeggio brillante di benvenuto per Gabryscola",
+        "score": [
+            [
+                "c4",
+                0.08,
+                -0.5,
+                0.0
+            ],
+            [
+                "e4",
+                0.08,
+                -0.2,
+                0.0
+            ],
+            [
+                "g4",
+                0.08,
+                0.2,
+                0.0
+            ],
+            [
+                "c5",
+                0.2,
+                0.5,
+                0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.005
+        ]
+    },
+    "gabryscola_conferma_nome": {
+        "descrizione": "Conferma inserimento nome giocatore in Gabryscola",
+        "score": [
+            [
+                "e5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "gabryscola_gioca_carta": {
+        "descrizione": "Suono rapido per la carta giocata sul tavolo",
+        "score": [
+            [
+                "d5.a5",
+                0.06,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            0.002,
+            99.998,
+            0.0,
+            0.0
+        ]
+    },
+    "gabryscola_presa_giocatore": {
+        "descrizione": "Suono allegro per la presa della mano da parte del giocatore",
+        "score": [
+            [
+                "g5",
+                0.05,
+                -0.2,
+                0.0
+            ],
+            [
+                "c6",
+                0.12,
+                0.2,
+                0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "gabryscola_presa_pc": {
+        "descrizione": "Tono basso per la presa della mano da parte della CPU",
+        "score": [
+            [
+                "f4",
+                0.05,
+                0.2,
+                0.0
+            ],
+            [
+                "c4",
+                0.12,
+                -0.2,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "gabryscola_vittoria": {
+        "descrizione": "Fanfara festosa per la vittoria della partita a Gabryscola",
+        "score": [
+            [
+                "c5",
+                0.1,
+                -0.5,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                -0.2,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.2,
+                0.0
+            ],
+            [
+                "c6",
+                0.1,
+                0.5,
+                0.0
+            ],
+            [
+                "e6",
+                0.1,
+                -0.2,
+                0.0
+            ],
+            [
+                "g6",
+                0.1,
+                0.2,
+                0.0
+            ],
+            [
+                "c7",
+                0.4,
+                0.0,
+                0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.005,
+            0.1,
+            80.0,
+            0.1
+        ]
+    },
+    "gabryscola_sconfitta": {
+        "descrizione": "Melodia discendente e triste per la sconfitta a Gabryscola",
+        "score": [
+            [
+                "g4",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "f4",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "e4",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "c#4",
+                0.4,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.01
+        ]
+    },
+    "gabryscola_patta": {
+        "descrizione": "Accordo neutro e bilanciato per la partita finita in pareggio",
+        "score": [
+            [
+                "a4",
+                0.2,
+                -0.3,
+                0.0
+            ],
+            [
+                "c5",
+                0.2,
+                0.3,
+                0.0
+            ],
+            [
+                "e5",
+                0.4,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.01,
+            0.0,
+            100.0,
+            0.01
+        ]
+    },
+    "gabryscola_chiusura": {
+        "descrizione": "Arpeggio discendente di saluto e chiusura per Gabryscola",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.5,
+                0.0
+            ],
+            [
+                "g4",
+                0.08,
+                0.2,
+                0.0
+            ],
+            [
+                "e4",
+                0.08,
+                -0.2,
+                0.0
+            ],
+            [
+                "c4",
+                0.2,
+                -0.5,
+                0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.005
+        ]
+    },
+    "gabryscola_nuovo_turno": {
+        "descrizione": "Segnale discreto di inizio di un nuovo turno/mano di gioco",
+        "score": [
+            [
+                "c5",
+                0.04,
+                0.0,
+                -0.1
+            ],
+            [
+                "e5",
+                0.06,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "nuovo_preset1": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "c4",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "terminata": {
+        "descrizione": "elaborazione terminata, operazione conclusa",
+        "score": [
+            [
+                "c7",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.4,
+                0.0,
+                0.0
+            ],
+            [
+                "c7",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.4,
+                0.0,
+                0.0
+            ],
+            [
+                "g7",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
         ]
     }
 }
