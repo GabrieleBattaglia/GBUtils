@@ -3,13 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V83 di venerdì 29 maggio 2026
+	V84 di sabato 30 maggio 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator_old V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro (Legacy)
-	CWzator V9.0 di giovedì 29 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Claude Opus 4.6
+	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V1.2 del 3 febbraio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
@@ -510,7 +510,7 @@ def CWzator_old(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.
 
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False):
 	"""
-	CWzator V9.0 di venerdì	29 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Claude Opus 4.6
+	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -780,6 +780,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	# --- Creazione Oggetto e Avvio Playback ---
 	PlaybackHandle = CWzator._PlaybackHandle
 	play_obj = PlaybackHandle(audio, fs, BLOCK_SIZE)
+	CWzator._last_play_obj = play_obj
 	play_obj.play()
 	# --- Salvataggio File ---
 	if to_file:
