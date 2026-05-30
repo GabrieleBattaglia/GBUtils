@@ -3,12 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V82 di domenica 24 maggio 2026
+	V83 di venerdì 29 maggio 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
+	CWzator_old V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro (Legacy)
+	CWzator V9.0 di giovedì 29 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Claude Opus 4.6
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V1.2 del 3 febbraio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
@@ -26,7 +27,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "82"
+VERSION = "83"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -243,7 +244,7 @@ def enter_escape(prompt=""):
         elif k == b'\x1b':
             print() # Pulisce la riga andando a capo
             return False
-def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
+def CWzator_old(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
 	"""
 	V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
 		da un'idea originale di Kevin Schmidt W9CF
@@ -505,6 +506,312 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	if sync:
 		play_obj.wait_done() # Usa il metodo dell'oggetto per attendere
 	# --- Ritorno Oggetto e rwpm ---
+	return play_obj, rwpm
+
+def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False):
+	"""
+	CWzator V9.0 di venerdì	29 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Claude Opus 4.6
+		da un'idea originale di Kevin Schmidt W9CF
+	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
+	Parameters:
+		msg (str|int): Messaggio di testo da convertire in Morse.
+			se == -1 restituisce la mappa morse come dizionario (deprecato, usare get_map=True).
+		wpm (int): Velocità in parole al minuto (range 5-100).
+		pitch (int): Frequenza in Hz per il tono (range 130-2800).
+		l (int): Peso per la durata della linea (default 30).
+		s (int): Peso per la durata degli spazi tra simboli/lettere (default 50).
+		p (int): Peso per la durata del punto (default 50).
+		fs (int): Frequenza di campionamento (default 44100 Hz).
+		ms (int): Durata in millisecondi per i fade-in/out sui toni (default 1).
+		vol (float): Volume (range 0.0 a 1.0, default 0.5).
+		wv (int): Tipo d'onda (scipy.signal): 1=Sine(default), 2=Square, 3=Triangle, 4=Sawtooth (dente di sega discendente classica).
+		sync (bool): Se True, la funzione aspetta la fine della riproduzione; altrimenti ritorna subito.
+		to_file (bool): Se True, salva l'audio in un file WAV.
+		wave_output_path_file (str|None): Percorso e/o nome file per il salvataggio WAV.
+			Può contenere solo il percorso (directory), solo il nome file, o entrambi.
+			Se None (default), salva nella directory corrente con nome autogenerato.
+			Dove i dati sono presenti, hanno priorità sul comportamento di default.
+		get_map (bool): Se True, restituisce immediatamente il dizionario MORSE_MAP senza generare audio.
+	Returns:
+		dict: Se get_map=True o msg==-1, restituisce il dizionario della mappa Morse.
+		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm (velocità effettiva wpm).
+		tuple[None, None]: In caso di errore di validazione parametri.
+	"""
+	import numpy as np
+	import sounddevice as sd
+	import wave
+	from datetime import datetime
+	import threading
+	import sys
+	import os
+	from scipy import signal as scipy_signal
+	BLOCK_SIZE = 256
+	# --- Caching MORSE_MAP sulla funzione stessa ---
+	if not hasattr(CWzator, '_morse_map'):
+		CWzator._morse_map = {
+			"a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
+			"g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..",
+			"m":"--", "n":"-.", "o":"---", "p":".--.", "q":"--.-", "r":".-.",
+			"s":"...", "t":"-", "u":"..-", "v":"...-", "w":".--", "x":"-..-",
+			"y":"-.--", "z":"--..", "0":"-----", "1":".----", "2":"..---",
+			"3":"...--", "4":"....-", "5":".....", "6":"-....", "7":"--...",
+			"8":"---..", "9":"----.", ".":".-.-.-", "-":"-....-", ",":"--..--",
+			"?":"..--..", "/":"-..-.", ";":"-.-.-.", "(":"-.--.", "[":"-.--.",
+			")":"-.--.-", "]":"-.--.-", "@":".--.-.", "*":"...-.-", "+":".-.-.",
+			"%":".-...", ":":"---...", "=":"-...-", '"':".-..-.", "'":".----.",
+			"!":"-.-.--", "$":"...-..-", " ":"", "_":"",
+			"ò":"---.", "à":".--.-", "ù":"..--", "è":"..-..",
+			"é":"..-..", "ì":".---."}
+	MORSE_MAP = CWzator._morse_map
+	# --- Restituzione mappa Morse ---
+	if get_map or msg == -1:
+		return MORSE_MAP
+	# --- Validazione parametri (DRY) ---
+	if not isinstance(msg, str) or msg == "":
+		print("CWzator Error: msg deve essere una stringa non vuota.", file=sys.stderr)
+		return None, None
+	validations = [
+		("wpm", wpm, (int,), 5, 100),
+		("pitch", pitch, (int,), 130, 2800),
+		("l", l, (int,), 1, 100),
+		("s", s, (int,), 1, 100),
+		("p", p, (int,), 1, 100),
+		("fs", fs, (int,), 1, None),
+		("ms", ms, (int, float), 0, None),
+		("vol", vol, (int, float), 0.0, 1.0),
+	]
+	for name, val, types, lo, hi in validations:
+		if not isinstance(val, types):
+			print(f"CWzator Error: {name} ({val}) tipo non valido.", file=sys.stderr)
+			return None, None
+		if lo is not None and val < lo:
+			print(f"CWzator Error: {name} ({val}) sotto il minimo [{lo}].", file=sys.stderr)
+			return None, None
+		if hi is not None and val > hi:
+			print(f"CWzator Error: {name} ({val}) sopra il massimo [{hi}].", file=sys.stderr)
+			return None, None
+	if not (isinstance(wv, int) and wv in (1, 2, 3, 4)):
+		print(f"CWzator Error: wv ({wv}) non valido [1-4].", file=sys.stderr)
+		return None, None
+	# --- Calcolo Durate ---
+	T = 1.2 / float(wpm)
+	dot_duration = T * (p / 50.0)
+	dash_duration = 3.0 * T * (l / 30.0)
+	intra_gap = T * (s / 50.0)
+	letter_gap = 3.0 * T * (s / 50.0)
+	word_gap = 7.0 * T * (s / 50.0)
+	# --- Pre-generazione dei 5 segmenti base ---
+	def _generate_tone(duration):
+		N = int(round(fs * duration))
+		if N <= 0:
+			return np.array([], dtype=np.int16)
+		t = np.linspace(0, duration, N, endpoint=False, dtype=np.float64)
+		if wv == 1:
+			signal_float = np.sin(2 * np.pi * pitch * t)
+		elif wv == 2:
+			signal_float = scipy_signal.square(2 * np.pi * pitch * t)
+		elif wv == 3:  # Triangle
+			signal_float = scipy_signal.sawtooth(2 * np.pi * pitch * t, width=0.5)
+		else:  # Sawtooth classica discendente
+			signal_float = scipy_signal.sawtooth(2 * np.pi * pitch * t, width=0)
+		signal_float = signal_float.astype(np.float32)
+		fade_samples = int(round(fs * ms / 1000.0))
+		if fade_samples > 0 and fade_samples <= N // 2:
+			ramp = np.linspace(0, 1, fade_samples, dtype=np.float32)
+			signal_float[:fade_samples] *= ramp
+			signal_float[-fade_samples:] *= ramp[::-1]
+		signal_float = np.clip(signal_float * vol, -1.0, 1.0)
+		return (signal_float * 32767.0).astype(np.int16)
+	def _generate_silence(duration):
+		N = int(round(fs * duration))
+		return np.zeros(N, dtype=np.int16) if N > 0 else np.array([], dtype=np.int16)
+	seg_dot = _generate_tone(dot_duration)
+	seg_dash = _generate_tone(dash_duration)
+	seg_intra = _generate_silence(intra_gap)
+	seg_letter = _generate_silence(letter_gap)
+	seg_word = _generate_silence(word_gap)
+	# --- Primo passaggio: pianifica i segmenti e calcola la lunghezza totale ---
+	words_list = msg.lower().split()
+	plan = []
+	total_samples = 0
+	valid_char_count = 0
+	for w_idx, word in enumerate(words_list):
+		valid_letters = "".join(ch for ch in word if ch in MORSE_MAP)
+		for l_idx, letter in enumerate(valid_letters):
+			code = MORSE_MAP.get(letter)
+			if not code:
+				continue
+			valid_char_count += 1
+			for s_idx, symbol in enumerate(code):
+				if symbol == '.':
+					plan.append(seg_dot)
+					total_samples += seg_dot.size
+				elif symbol == '-':
+					plan.append(seg_dash)
+					total_samples += seg_dash.size
+				if s_idx < len(code) - 1:
+					plan.append(seg_intra)
+					total_samples += seg_intra.size
+			if l_idx < len(valid_letters) - 1:
+				plan.append(seg_letter)
+				total_samples += seg_letter.size
+		if w_idx < len(words_list) - 1:
+			if valid_letters or any(ch in MORSE_MAP for ch in words_list[w_idx + 1]):
+				plan.append(seg_word)
+				total_samples += seg_word.size
+	# --- Silenzio finale (5ms) ---
+	silence_samples_end = int(round(fs * 0.005))
+	if total_samples > 0 and silence_samples_end > 0:
+		total_samples += silence_samples_end
+	# --- Assemblaggio in array pre-allocato ---
+	if total_samples > 0:
+		audio = np.empty(total_samples, dtype=np.int16)
+		pos = 0
+		for seg in plan:
+			n = seg.size
+			if n > 0:
+				audio[pos:pos + n] = seg
+				pos += n
+		if silence_samples_end > 0:
+			audio[pos:pos + silence_samples_end] = 0
+	else:
+		audio = np.array([], dtype=np.int16)
+	# --- Calcolo rwpm (soglia: ≤3 caratteri → wpm nominale) ---
+	rwpm = wpm
+	if (l, s, p) != (30, 50, 50) and valid_char_count > 3:
+		dots = dashes = intra_gaps = letter_gaps_count = word_gaps_count = 0
+		for w_idx, w in enumerate(words_list):
+			current_word_letters = 0
+			for letter in w:
+				if letter in MORSE_MAP:
+					code = MORSE_MAP[letter]
+					if code:
+						dots += code.count('.')
+						dashes += code.count('-')
+						code_len = len(code)
+						if code_len > 1:
+							intra_gaps += (code_len - 1)
+						current_word_letters += 1
+			if current_word_letters > 1:
+				letter_gaps_count += (current_word_letters - 1)
+			if current_word_letters > 0 and w_idx < len(words_list) - 1:
+				if any(ch in MORSE_MAP and MORSE_MAP[ch] for ch in words_list[w_idx + 1]):
+					word_gaps_count += 1
+		standard_total_units = dots + 3 * dashes + intra_gaps + 3 * letter_gaps_count + 7 * word_gaps_count
+		actual_dot_units = p / 50.0
+		actual_dash_units = 3.0 * (l / 30.0)
+		actual_intra_gap_units = s / 50.0
+		actual_letter_gap_units = 3.0 * (s / 50.0)
+		actual_word_gap_units = 7.0 * (s / 50.0)
+		actual_total_units = (dots * actual_dot_units) + \
+							 (dashes * actual_dash_units) + \
+							 (intra_gaps * actual_intra_gap_units) + \
+							 (letter_gaps_count * actual_letter_gap_units) + \
+							 (word_gaps_count * actual_word_gap_units)
+		if standard_total_units > 0 and actual_total_units > 0:
+			ratio = actual_total_units / standard_total_units
+			rwpm = wpm / ratio
+		elif standard_total_units == 0 and actual_total_units == 0:
+			rwpm = wpm
+		else:
+			rwpm = wpm
+			print("CWzator Warning: Calcolo rwpm anomalo, possibile input solo con spazi?", file=sys.stderr)
+	# --- Classe PlaybackHandle con caching ---
+	if not hasattr(CWzator, '_PlaybackHandle'):
+		class _PlaybackHandle:
+			def __init__(self, audio_data, sample_rate, block_size):
+				self.audio_data = audio_data
+				self.sample_rate = sample_rate
+				self._block_size = block_size
+				self.stream = None
+				self.is_playing = threading.Event()
+				self._thread = None
+				self._lock = threading.Lock()
+			def _playback_target(self):
+				"""Target function per il thread di riproduzione."""
+				self.is_playing.set()
+				try:
+					with sd.OutputStream(
+						samplerate=self.sample_rate, channels=1, dtype=np.int16,
+						blocksize=self._block_size, latency='low'
+					) as stream:
+						with self._lock:
+							self.stream = stream
+						for i in range(0, len(self.audio_data), self._block_size):
+							if not self.is_playing.is_set():
+								try:
+									stream.stop()
+								except Exception:
+									pass
+								break
+							block = self.audio_data[i:min(i + self._block_size, len(self.audio_data))]
+							stream.write(block)
+						if self.is_playing.is_set():
+							pass
+				except sd.PortAudioError as pae:
+					print(f"CWzator Playback PortAudioError: {pae}", file=sys.stderr)
+				except Exception as e:
+					print(f"CWzator Playback Error: {e}", file=sys.stderr)
+				finally:
+					self.is_playing.clear()
+					with self._lock:
+						self.stream = None
+			def play(self):
+				"""Avvia la riproduzione in un thread separato."""
+				with self._lock:
+					if not self.is_playing.is_set() and self.audio_data.size > 0:
+						self._thread = threading.Thread(target=self._playback_target)
+						self._thread.daemon = True
+						self._thread.start()
+			def wait_done(self):
+				"""Attende la fine della riproduzione corrente."""
+				if self._thread is not None and self._thread.is_alive():
+					self._thread.join()
+			def stop(self):
+				"""Richiede l'interruzione della riproduzione."""
+				self.is_playing.clear()
+			def __del__(self):
+				"""Cleanup automatico: ferma la riproduzione se l'oggetto viene distrutto."""
+				try:
+					self.is_playing.clear()
+				except Exception:
+					pass
+		CWzator._PlaybackHandle = _PlaybackHandle
+	# --- Creazione Oggetto e Avvio Playback ---
+	PlaybackHandle = CWzator._PlaybackHandle
+	play_obj = PlaybackHandle(audio, fs, BLOCK_SIZE)
+	play_obj.play()
+	# --- Salvataggio File ---
+	if to_file:
+		default_name = f"cwapu Morse recorded at {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"
+		if wave_output_path_file is not None:
+			given = wave_output_path_file.strip()
+			given_dir = os.path.dirname(given)
+			given_file = os.path.basename(given)
+			if given_dir and given_file:
+				filename = given
+			elif given_dir and not given_file:
+				filename = os.path.join(given_dir, default_name)
+			elif not given_dir and given_file:
+				filename = given_file
+			else:
+				filename = default_name
+		else:
+			filename = default_name
+		try:
+			target_dir = os.path.dirname(filename)
+			if target_dir and not os.path.exists(target_dir):
+				os.makedirs(target_dir, exist_ok=True)
+			with wave.open(filename, 'wb') as wf:
+				wf.setnchannels(1)
+				wf.setsampwidth(2)
+				wf.setframerate(fs)
+				wf.writeframes(audio.tobytes())
+		except Exception as e:
+			print(f"CWzator Error durante salvataggio file: {e}", file=sys.stderr)
+	# --- Gestione Sync ---
+	if sync:
+		play_obj.wait_done()
 	return play_obj, rwpm
 
 class Mazzo:
