@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V84 di sabato 30 maggio 2026
+	V85 di lunedì 1 giugno 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
@@ -14,7 +14,7 @@ Lista utilità contenute in questo pacchetto
 	Donazione V1.2 del 3 febbraio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
-	key V6.1 di domenica 24 maggio 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
+	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	key_old V5.1 del 23/01/2026 (Legacy)
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
@@ -27,7 +27,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "83"
+VERSION = "85"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -1223,7 +1223,7 @@ def key_old(prompt="", attesa=99999):
 			termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 def key(prompt="", attesa=99999):
-	"""V6.1 di domenica 24 maggio 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
+	"""V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	Advanced key reader with special keys, numpad (NumLock OFF) and modifiers support.
 	Returns logical names for special keys (e.g., 'up', 'ctrl-a', 'pad-up', 'f1').
 	Retains original 'key' functionality with timeout and prompt.
@@ -1303,15 +1303,11 @@ def key(prompt="", attesa=99999):
 				ch = msvcrt.getwch()
 				
 				if ch == '\x00':
-					if msvcrt.kbhit():
-						ch2 = msvcrt.getwch()
-						return special_mapping_00.get(ch2, f"special-00-{ord(ch2):02x}")
-					return ''
+					ch2 = msvcrt.getwch()
+					return special_mapping_00.get(ch2, f"special-00-{ord(ch2):02x}")
 				elif ch == '\xe0':
-					if msvcrt.kbhit():
-						ch2 = msvcrt.getwch()
-						return special_mapping_e0.get(ch2, f"special-e0-{ord(ch2):02x}")
-					return ''
+					ch2 = msvcrt.getwch()
+					return special_mapping_e0.get(ch2, f"special-e0-{ord(ch2):02x}")
 				elif ch == '\r':
 					return '\r'
 				elif ch == '\x1b':
