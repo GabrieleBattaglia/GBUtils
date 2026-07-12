@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V86 di sabato 27 giugno 2026
+	V87 di domenica 12 luglio 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
@@ -11,7 +11,7 @@ Lista utilità contenute in questo pacchetto
 	CWzator_old V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro (Legacy)
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
-	Donazione V1.2 del 3 febbraio 2026
+	Donazione V2.0 del 12 luglio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
@@ -27,7 +27,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "86"
+VERSION = "87"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -2077,15 +2077,19 @@ def Vecchiume(y=1974, m=9, g=13, h=22, i=10):
 		else: f += str(ETA.minutes)+" minuti"
 	return(f)
 
-def Donazione():
+def Donazione(lang=None):
     """
-    V1.2 del 3 febbraio 2026
+    V2.0 del 12 luglio 2026
     Mostra un messaggio di donazione con una probabilità del 20%
-    nella lingua del sistema operativo (se supportata), altrimenti in inglese.
+    nella lingua specificata o rilevata dal sistema/configurazione.
     Lingue supportate: Italiano, Portoghese, Inglese, Francese, Spagnolo, Tedesco, Russo, Cinese (semplificato), Giapponese, Arabo.
     """
     import random
+    import os
+    import sys
+    import json
     import locale
+    import builtins
 
     if random.randint(1, 100) <= 20:
         messaggi = {
@@ -2096,25 +2100,105 @@ def Donazione():
             'es': "Si te ha gustado este software, te ha resultado útil o te has divertido usándolo, considera la idea de invitarme a un café. Me puedes encontrar en PayPal como gabriele.battaglia@gmail.com. Muchas gracias.",
             'de': "Wenn Ihnen diese Software gefallen hat, sie nützlich war oder Sie Spaß daran hatten, sie zu nutzen, ziehen Sie in Betracht, mir einen Kaffee auszugeben. Sie finden mich auf PayPal unter gabriele.battaglia@gmail.com Vielen Dank.",
             'ru': "Если вам понравилась эта программа, она оказалась полезной или вы получили удовольствие от ее использования, рассмотрите возможность угостить меня кофе. Вы можете найти меня на PayPal по адресу gabriele.battaglia@gmail.com Спасибо.",
-            'zh': "如果您喜欢这款软件，觉得它有用，或者在使用过程中获得了乐趣，请考虑请我喝杯咖啡。您可以在PayPal上找到我：gabriele.battaglia@gmail.com 谢谢。", # Cinese (semplificato)
+            'zh': "如果您喜欢这款软件，觉得它有用，或者在使用过程中获得了乐趣，请考虑请我喝杯咖啡。您可以在PayPal上找到我：gabriele.battaglia@gmail.com 谢谢。",
             'ja': "このソフトウェアを楽しんだり、役立つと感じたり、楽しく使っていただけたなら、私にコーヒーをご馳走することを検討してください。PayPalでgabriele.battaglia@gmail.comとして見つけることができます。ありがとうございます。",
             'ar': "إذا أعجبك هذا البرنامج، أو وجدته مفيدًا، أو استمتعت باستخدامه، ففكر في شراء قهوة لي. يمكنك العثور عليّ على PayPal على gabriele.battaglia@gmail.com. شكرًا لك."
         }
+        lingua_rilevata = None
 
-        lingua_os = 'en' # Impostiamo l'inglese come predefinito
+        # 1. Priorità: Parametro esplicito 'lang'
+        if lang:
+            try:
+                lingua_rilevata = str(lang).strip().lower().split('_')[0].split('-')[0]
+            except Exception:
+                pass
 
-        try:
-            # Tentiamo di ottenere la lingua del sistema operativo
-            # `locale.getdefaultlocale()` è spesso più robusto su diversi sistemi operativi
-            # rispetto a `locale.setlocale` seguito da `locale.getlocale`.
-            lingua_os_completa, encoding = locale.getdefaultlocale()
-            if lingua_os_completa:
-                lingua_os = lingua_os_completa.split('_')[0].lower() # Prendiamo solo le prime due lettere e convertiamo in minuscolo
-        except Exception as e:
-            print(f"Errore nel rilevamento della lingua del sistema operativo: {e}")
-            # Se c'è un errore, lingua_os rimane 'en'
+        # 2. Priorità: Leggere la lingua selezionata da selected_language.json (usato da polipo)
+        if not lingua_rilevata:
+            percorsi_ricerca = []
+            try:
+                if hasattr(sys, 'frozen') and sys.frozen:
+                    percorsi_ricerca.append(os.path.dirname(sys.executable))
+                if sys.argv and sys.argv[0]:
+                    percorsi_ricerca.append(os.path.dirname(os.path.abspath(sys.argv[0])))
+            except Exception:
+                pass
+            percorsi_ricerca.append(os.getcwd())
 
-        messaggio_da_mostrare = messaggi.get(lingua_os, messaggi['en'])
+            for percorso in percorsi_ricerca:
+                if not percorso:
+                    continue
+                file_settings = os.path.join(percorso, 'selected_language.json')
+                if os.path.exists(file_settings):
+                    try:
+                        with open(file_settings, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                            codice = data.get('language_code')
+                            if codice:
+                                lingua_rilevata = str(codice).strip().lower().split('_')[0].split('-')[0]
+                                break
+                    except Exception:
+                        pass
+
+        # 3. Priorità: Ispezionare la funzione di traduzione builtins._
+        if not lingua_rilevata:
+            try:
+                if hasattr(builtins, '_'):
+                    _ = builtins._
+                    if hasattr(_, '__self__'):
+                        trans = _.__self__
+                        if hasattr(trans, 'info'):
+                            info = trans.info()
+                            if 'language' in info:
+                                lingua_rilevata = info['language'].strip().lower().split('_')[0].split('-')[0]
+            except Exception:
+                pass
+
+        # 4. Priorità: Variabili d'ambiente standard
+        if not lingua_rilevata:
+            for var in ('LANGUAGE', 'LC_ALL', 'LC_MESSAGES', 'LANG'):
+                valore = os.environ.get(var)
+                if valore:
+                    valore_pulito = valore.split(':')[0].split('_')[0].split('-')[0].strip().lower()
+                    if valore_pulito:
+                        lingua_rilevata = valore_pulito
+                        break
+
+        # 5. Priorità: Windows UI Language via ctypes
+        if not lingua_rilevata and sys.platform == 'win32':
+            try:
+                import ctypes
+                lang_id = ctypes.windll.kernel32.GetUserDefaultUILanguage()
+                locale_name = locale.windows_locale.get(lang_id)
+                if locale_name:
+                    lingua_rilevata = locale_name.split('_')[0].lower()
+            except Exception:
+                pass
+
+        # 6. Priorità: Unix/Mac fallback locale.getlocale()
+        if not lingua_rilevata:
+            try:
+                locale_tuple = locale.getlocale()
+                if locale_tuple and locale_tuple[0]:
+                    lingua_rilevata = locale_tuple[0].split('_')[0].lower()
+            except Exception:
+                pass
+
+        # 7. Priorità: locale.getdefaultlocale() (ultimo fallback deprecato prima della rimozione)
+        if not lingua_rilevata:
+            try:
+                if hasattr(locale, 'getdefaultlocale'):
+                    lingua_os_completa, _ = locale.getdefaultlocale()
+                    if lingua_os_completa:
+                        lingua_rilevata = lingua_os_completa.split('_')[0].lower()
+            except Exception:
+                pass
+
+        # Fallback finale: inglese
+        if not lingua_rilevata:
+            lingua_rilevata = 'en'
+
+        messaggio_da_mostrare = messaggi.get(lingua_rilevata, messaggi['en'])
         print(messaggio_da_mostrare)
 
 def polipo(domain='messages', localedir='locales', source_language='en', config_path=None):
