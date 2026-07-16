@@ -9592,5 +9592,113 @@
             100.0,
             0.01
         ]
+    },
+    "donazione": {
+        "descrizione": "Alert allegro con frequenze alte e portamento veloce (glissando ascendente) per donazione",
+        "score": [
+            [
+                "c6",
+                0.08,
+                -0.6,
+                0.0
+            ],
+            [
+                "e6",
+                0.08,
+                -0.2,
+                0.0
+            ],
+            [
+                "g6",
+                0.08,
+                0.2,
+                0.0
+            ],
+            [
+                "c7.c8",
+                0.4,
+                0.6,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            0.005,
+            0.02,
+            80.0,
+            0.1
+        ]
+    },
+    "spostamento_f5": {
+        "descrizione": "Spostamento focus F5 (-1 ottava)",
+        "score": [
+            [
+                "g2",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "e3",
+                0.02,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "spostamento_f6": {
+        "descrizione": "Spostamento focus F6 (altezza standard)",
+        "score": [
+            [
+                "g3",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "e4",
+                0.02,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "spostamento_f7": {
+        "descrizione": "Spostamento focus F7 (+1 ottava)",
+        "score": [
+            [
+                "g4",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.02,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
     }
 }
