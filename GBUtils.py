@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V87 di domenica 12 luglio 2026
+	V88 di giovedì 16 luglio 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
@@ -25,9 +25,9 @@ Lista utilità contenute in questo pacchetto
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Vecchiume 1.0 del 15/12/2018
 	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
-	perform_update V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
+	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "87"
+VERSION = "88"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -110,7 +110,7 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
 
 def perform_update(download_url: str, app_name: str = "App") -> bool:
     """
-    V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
+    V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
     Scarica l'aggiornamento, lo estrae ed esegue uno script batch.
     Risolve conflitti cartelle temp e script batch bloccati.
     """
@@ -177,7 +177,7 @@ echo Applicazione aggiornamento...
 xcopy "{source_dir}\\*" "{current_dir}\\" /S /Y /E /Q
 
 echo Riavvio {app_name}...
-start "" "{current_exe}"
+start "" /D "{current_dir}" "{current_exe}"
 
 echo Pulizia file temporanei...
 rmdir /S /Q "{temp_dir}"
