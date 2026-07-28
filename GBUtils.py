@@ -2274,13 +2274,29 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
             data = json.load(f)
             language_code = data.get('language_code')
             saved_available_languages = data.get('available_languages', [])
-            # Mostra il menu se l'elenco delle lingue è cambiato O se la lingua salvata non è più valida
-            if set(saved_available_languages) != set(current_available_languages) or language_code not in current_available_languages:
+            if language_code not in current_available_languages:
                 show_menu = True
-                print("Info: List of available languages has changed. Please select again.")
+            elif set(saved_available_languages) != set(current_available_languages):
+                # Se la lingua salvata è già valida ma la lista di lingue disponibili è cambiata,
+                # aggiorna il file in modo silente senza interrompere l'utente con il menu.
+                try:
+                    with open(selected_lang_file, 'w', encoding='utf-8') as sf:
+                        config_data = {
+                            'language_code': language_code,
+                            'available_languages': current_available_languages
+                        }
+                        json.dump(config_data, sf, indent=4)
+                except IOError:
+                    pass
     except (FileNotFoundError, json.JSONDecodeError):
         show_menu = True
+
     if show_menu:
+        if system_lang_code in current_available_languages:
+            default_fallback = system_lang_code
+        else:
+            default_fallback = source_language
+
         print("\nSelect your language:")
         menu_options = {}
         for i, lang in enumerate(current_available_languages, 1):
@@ -2292,12 +2308,17 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
             print(f"{i}. {label}")
             menu_options[str(i)] = lang
         while True:
-            choice = input(f"Enter selection (1-{len(menu_options)}): ")
-            if choice in menu_options:
-                language_code = menu_options[choice]
+            try:
+                choice = input(f"Enter selection (1-{len(menu_options)}): ")
+                if choice in menu_options:
+                    language_code = menu_options[choice]
+                    break
+                else:
+                    print("Invalid choice. Please try again.")
+            except (EOFError, KeyboardInterrupt):
+                language_code = default_fallback
                 break
-            else:
-                print("Invalid choice. Please try again.")
+
         try:
             with open(selected_lang_file, 'w', encoding='utf-8') as f:
                 # Salva sia la lingua scelta sia l'elenco corrente delle lingue
