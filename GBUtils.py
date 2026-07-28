@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V88 di giovedì 16 luglio 2026
+	V89 di martedì 28 luglio 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
@@ -24,10 +24,10 @@ Lista utilità contenute in questo pacchetto
 	Scadenza 1.0 del 15/12/2021
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	Vecchiume 1.0 del 15/12/2018
-	update_checker V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
+	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "88"
+VERSION = "89"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -68,9 +68,10 @@ def _write_update_log(message: str):
 
 def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.3 di martedì 7 aprile 2026 by Gabriele Battaglia & Stella
+    V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
     Include logging degli errori su file e retry in caso di errori SSL.
+    Gestisce in modo silenzioso la mancanza di connessione internet senza generare file di log allarmanti.
     """
     import requests
     current_version = current_version.split(' ')[0]
@@ -104,6 +105,9 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
             return True, latest_version, download_url, changelog
         else:
             return False, latest_version, None, None
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        # Assenza di rete / DNS fallito: evento di rete fisiologico, non scriviamo il traceback nel file di log.
+        return False, None, None, None
     except Exception as e:
         _write_update_log(f"Errore durante il controllo aggiornamenti: {e}")
         return False, None, None, None
@@ -115,11 +119,11 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
     Risolve conflitti cartelle temp e script batch bloccati.
     """
     import os
+    import subprocess
     import sys
+    import tempfile
     import urllib.request
     import zipfile
-    import subprocess
-    import tempfile
     
     if not sys.platform.startswith('win'):
         return False
@@ -218,8 +222,8 @@ def enter_escape(prompt=""):
 
     except ImportError:
         # --- Implementazione per Unix-like (macOS, Linux) ---
-        import tty
         import termios
+        import tty
         def _get_key_press():
             fd = sys.stdin.fileno()
             old_settings = termios.tcgetattr(fd)
@@ -266,13 +270,14 @@ def CWzator_old(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.
 	Returns:
 		Un oggetto PlaybackHandle e rwpm (velocità effettiva wpm), o (None, None) in caso di errore.
 	"""
-	import numpy as np
-	import sounddevice as sd
+	import sys
+	import threading
 	import wave
 	from datetime import datetime
-	import threading
-	import sys
-	from scipy import signal # Importato per le forme d'onda
+
+	import numpy as np
+	import sounddevice as sd
+	from scipy import signal  # Importato per le forme d'onda
 	BLOCK_SIZE = 256
 	MORSE_MAP = {
 		"a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
@@ -537,13 +542,14 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm (velocità effettiva wpm).
 		tuple[None, None]: In caso di errore di validazione parametri.
 	"""
-	import numpy as np
-	import sounddevice as sd
+	import os
+	import sys
+	import threading
 	import wave
 	from datetime import datetime
-	import threading
-	import sys
-	import os
+
+	import numpy as np
+	import sounddevice as sd
 	from scipy import signal as scipy_signal
 	BLOCK_SIZE = 256
 	# --- Caching MORSE_MAP sulla funzione stessa ---
@@ -1193,9 +1199,9 @@ def key_old(prompt="", attesa=99999):
 	prompt e' il messaggio da mostrare.
 	Restituisce il tasto premuto.
 	'''
+	import os
 	import sys
 	import time
-	import os
 	if prompt:
 		print(prompt, end="", flush=True)
 	start_time = time.time()
@@ -1208,8 +1214,8 @@ def key_old(prompt="", attesa=99999):
 		return ''
 	else:
 		import select
-		import tty
 		import termios
+		import tty
 		fd = sys.stdin.fileno()
 		old_settings = termios.tcgetattr(fd)
 		try:
@@ -1228,9 +1234,9 @@ def key(prompt="", attesa=99999):
 	Returns logical names for special keys (e.g., 'up', 'ctrl-a', 'pad-up', 'f1').
 	Retains original 'key' functionality with timeout and prompt.
 	"""
+	import os
 	import sys
 	import time
-	import os
 
 	if prompt:
 		print(prompt, end="", flush=True)
@@ -1329,8 +1335,8 @@ def key(prompt="", attesa=99999):
 		return ''
 	else:
 		import select
-		import tty
 		import termios
+		import tty
 		fd = sys.stdin.fileno()
 		old_settings = termios.tcgetattr(fd)
 		
@@ -1406,10 +1412,10 @@ def gridapu(x=0.0, y=0.0, num=10):
 	if not isinstance(y, float) or not isinstance(x, float):
 		print('Lat or Lon wrong type!')
 		return''
+	import math
 	from string import ascii_lowercase as L
 	from string import ascii_uppercase as U
 	from string import digits as D
-	import math
 	if x<-180: x+=360
 	if x>180: x += -360
 	ycalc = [0,0,0]
@@ -1457,9 +1463,10 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 	  file: If True, saves the audio to sonification[datetime].wav
 	Returns immediately (non-blocking playback).
 	"""
+	import wave
+
 	import numpy as np
 	import sounddevice as sd
-	import wave
 	
 	try:
 		data = np.asanyarray(data_list, dtype=np.float32)
@@ -1556,12 +1563,13 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
 	Se sync è False la riproduzione avviene in background, restituendo subito il controllo al chiamante.
 	"""
-	import numpy as np
-	import sounddevice as sd
-	import threading
-	from scipy import signal
 	import re
 	import sys
+	import threading
+
+	import numpy as np
+	import sounddevice as sd
+	from scipy import signal
 	def note_to_freq(note):
 		if isinstance(note, (int, float)): return float(note)
 		if isinstance(note, str):
@@ -1841,9 +1849,8 @@ def manuale(nf):
 			if cr % 15 == 0:
 				tasto = dgt("\nPremi invio per proseguire o 'e' per uscire dalla guida. Pagina "+str(int(cr/15)))
 				if tasto.lower() == "e": break
-	except IOError:
+	except OSError:
 		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
-	return
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None):
     """V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
@@ -1862,8 +1869,8 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     Restituisce:
     La chiave scelta dal dizionario 'd', oppure None se l'utente annulla (ESC o Invio su input vuoto).
     """
-    import sys
     import os
+    import sys
     def lcp(strings):
         """Calcola il prefisso comune più lungo da una lista di stringhe ignorando il case."""
         if not strings: return ""
@@ -1887,8 +1894,8 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             return ch
         else:
             import select
-            import tty
             import termios
+            import tty
             fd = sys.stdin.fileno()
             old_settings = termios.tcgetattr(fd)
             try:
@@ -2027,6 +2034,7 @@ def Scandenza(y=2100, m=1, g=1, h=0, i=0):
 	Riceve anno, mese, giorno, ora e minuto e calcola la differenza con l'ADESSO. Quindi la ritorna
 	'''
 	from datetime import datetime
+
 	from dateutil import relativedelta
 	APP=datetime(y,m,g,h,i)
 	NOW = datetime.today()
@@ -2055,6 +2063,7 @@ def Vecchiume(y=1974, m=9, g=13, h=22, i=10):
 	V1.0 del 15/12 2018 Di Gabriele Battaglia
 	Riceve anno, mese, giorno, ora e minuto e calcola la differenza con l'ADESSO. Quindi la ritorna'''
 	from datetime import datetime
+
 	from dateutil import relativedelta
 	APP=datetime(y,m,g,h,i)
 	NOW = datetime.today()
@@ -2084,12 +2093,12 @@ def Donazione(lang=None):
     nella lingua specificata o rilevata dal sistema/configurazione.
     Lingue supportate: Italiano, Portoghese, Inglese, Francese, Spagnolo, Tedesco, Russo, Cinese (semplificato), Giapponese, Arabo.
     """
-    import random
-    import os
-    import sys
+    import builtins
     import json
     import locale
-    import builtins
+    import os
+    import random
+    import sys
 
     if random.randint(1, 100) <= 20:
         messaggi = {
@@ -2210,11 +2219,11 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
     - Salva l'elenco delle lingue disponibili e mostra il menu se cambiano.
     - Non richiede funzioni esterne di supporto.
     """
-    import sys
-    import os
-    import json
     import gettext
+    import json
     import locale
+    import os
+    import sys
     # Rileva se l'app è "congelata" (compilata con PyInstaller)
     is_frozen = getattr(sys, 'frozen', False)
     # LOGICA 1: Trovare il percorso delle RISORSE (dati come la cartella 'locales')
@@ -2286,7 +2295,7 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
                             'available_languages': current_available_languages
                         }
                         json.dump(config_data, sf, indent=4)
-                except IOError:
+                except OSError:
                     pass
     except (FileNotFoundError, json.JSONDecodeError):
         show_menu = True
@@ -2328,7 +2337,7 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
                 }
                 json.dump(config_data, f, indent=4)
             print(f"Info: Language '{language_code}' saved to '{selected_lang_file}' for future use.")
-        except IOError as e:
+        except OSError as e:
             print(f"WARNING: Could not save the selected language. Error: {e}")
     if language_code == source_language:
         return source_language, lambda text: text
