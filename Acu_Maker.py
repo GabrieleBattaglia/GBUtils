@@ -5,12 +5,12 @@ import re
 
 # Aggiungo la cartella corrente al path per importare GBUtils
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from GBUtils import menu, Acusticator
+from GBUtils import menu, Acusticator, parse_pan_parts
 
-VERSION = "1.2.1" # Aggiunto supporto al fade in/out con le pause e step duration a 0.02
+VERSION = "1.3.0" # Aggiunto supporto al panning portamento (2 valori di pan)
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia & Stella"
-RELEASE_DATE = "14 maggio 2026"
+RELEASE_DATE = "5 agosto 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -123,8 +123,8 @@ class EditorState:
         self.steps = {
             'note': 10.0,
             'dur': 0.02,
-            'pan': 0.1,
-            'vol': 0.1,
+            'pan': 10,
+            'vol': 10,
             'a': 0.001,
             'd': 0.001,
             's': 1.0,
@@ -133,10 +133,58 @@ class EditorState:
         self.modified = False
         self.running = True
 
+def pan_to_user(val):
+    if is_portamento(val):
+        parts = parse_pan_parts(val)
+        p1 = int(round(float(parts[0]) * 100))
+        p2 = int(round(float(parts[1]) * 100))
+        return f"{p1}.{p2}"
+    else:
+        return str(int(round(float(val) * 100)))
+
+def user_to_pan(val_str):
+    val_str = str(val_str).strip()
+    if is_portamento(val_str):
+        parts = parse_pan_parts(val_str)
+        p1 = max(-1.0, min(1.0, float(parts[0]) / 100.0))
+        p2 = max(-1.0, min(1.0, float(parts[1]) / 100.0))
+        s1 = str(int(p1)) if p1.is_integer() else str(round(p1, 2))
+        s2 = str(int(p2)) if p2.is_integer() else str(round(p2, 2))
+        return f"{s1}.{s2}"
+    else:
+        fval = float(val_str) / 100.0
+        return max(-1.0, min(1.0, round(fval, 2)))
+
+def vol_to_user(val):
+    if is_portamento(val):
+        parts = parse_pan_parts(val)
+        v1 = int(round((DEFAULT_VOL + float(parts[0])) * 100))
+        v2 = int(round((DEFAULT_VOL + float(parts[1])) * 100))
+        return f"{v1}.{v2}"
+    else:
+        v = int(round((DEFAULT_VOL + float(val)) * 100))
+        return str(max(0, min(100, v)))
+
+def user_to_vol(val_str):
+    val_str = str(val_str).strip()
+    if is_portamento(val_str):
+        parts = parse_pan_parts(val_str)
+        d1 = (float(parts[0]) / 100.0) - DEFAULT_VOL
+        d2 = (float(parts[1]) / 100.0) - DEFAULT_VOL
+        d1 = max(-0.5, min(0.5, d1))
+        d2 = max(-0.5, min(0.5, d2))
+        s1 = str(int(d1)) if d1.is_integer() else str(round(d1, 2))
+        s2 = str(int(d2)) if d2.is_integer() else str(round(d2, 2))
+        return f"{s1}.{s2}"
+    else:
+        v = float(val_str) / 100.0
+        d = v - DEFAULT_VOL
+        return max(-0.5, min(0.5, round(d, 2)))
+
 def get_status_string(state):
     if state.focus_type == 'score':
         quad = state.preset['score'][state.focus_idx]
-        param_names = ["Nota", "Durata", "Pan", "VolD"]
+        param_names = ["Nota", "Durata", "Pan", "Volume"]
         if state.focus_param == 0:
             val = quad[0]
             if is_portamento(val):
@@ -147,6 +195,26 @@ def get_status_string(state):
             else:
                 val_str = str(val)
             s = f"Sc.{state.focus_idx+1} {param_names[0]}: {val_str}"
+        elif state.focus_param == 2:
+            val_user = pan_to_user(quad[2])
+            if is_portamento(val_user):
+                parts = val_user.split('.')
+                p1 = f"<{parts[0]}>" if state.port_focus in (1, 3) else parts[0]
+                p2 = f"<{parts[1]}>" if state.port_focus in (2, 3) else parts[1]
+                val_str = f"{p1}.{p2}"
+            else:
+                val_str = str(val_user)
+            s = f"Sc.{state.focus_idx+1} {param_names[2]}: {val_str}"
+        elif state.focus_param == 3:
+            val_user = vol_to_user(quad[3])
+            if is_portamento(val_user):
+                parts = val_user.split('.')
+                p1 = f"<{parts[0]}>" if state.port_focus in (1, 3) else parts[0]
+                p2 = f"<{parts[1]}>" if state.port_focus in (2, 3) else parts[1]
+                val_str = f"{p1}.{p2}"
+            else:
+                val_str = str(val_user)
+            s = f"Sc.{state.focus_idx+1} {param_names[3]}: {val_str}"
         else:
             s = f"Sc.{state.focus_idx+1} {param_names[state.focus_param]}: {quad[state.focus_param]}"
     else:
@@ -166,15 +234,27 @@ def play_preset(state):
     score_flat = []
     for q in state.preset['score']:
         note, dur, pan, vol_delta = q
-        vol = max(0.0, min(1.0, DEFAULT_VOL + vol_delta))
-        score_flat.extend([note, dur, pan, vol])
+        if is_portamento(vol_delta):
+            parts = parse_pan_parts(vol_delta)
+            v1 = max(0.0, min(1.0, DEFAULT_VOL + float(parts[0])))
+            v2 = max(0.0, min(1.0, DEFAULT_VOL + float(parts[1])))
+            vol_param = (v1, v2)
+        else:
+            vol_param = max(0.0, min(1.0, DEFAULT_VOL + float(vol_delta)))
+        score_flat.extend([note, dur, pan, vol_param])
     Acusticator(score_flat, kind=state.preset['kind'], adsr=state.preset['adsr'], sync=False)
 
 def play_quad(state):
     q = state.preset['score'][state.focus_idx]
     note, dur, pan, vol_delta = q
-    vol = max(0.0, min(1.0, DEFAULT_VOL + vol_delta))
-    Acusticator([note, dur, pan, vol], kind=state.preset['kind'], adsr=state.preset['adsr'], sync=False)
+    if is_portamento(vol_delta):
+        parts = parse_pan_parts(vol_delta)
+        v1 = max(0.0, min(1.0, DEFAULT_VOL + float(parts[0])))
+        v2 = max(0.0, min(1.0, DEFAULT_VOL + float(parts[1])))
+        vol_param = (v1, v2)
+    else:
+        vol_param = max(0.0, min(1.0, DEFAULT_VOL + float(vol_delta)))
+    Acusticator([note, dur, pan, vol_param], kind=state.preset['kind'], adsr=state.preset['adsr'], sync=False)
 
 def transpose_single(val_str, direction, step):
     if val_str.lower() == 'p': return 'p'
@@ -208,9 +288,35 @@ def inc_dec_value(state, direction):
         elif param == 1:
             quad[1] = max(0.0, round(quad[1] + direction * state.steps['dur'], 3))
         elif param == 2:
-            quad[2] = max(-1.0, min(1.0, round(quad[2] + direction * state.steps['pan'], 2)))
+            val_user = pan_to_user(quad[2])
+            step_val = int(state.steps['pan'])
+            if is_portamento(val_user):
+                parts = val_user.split('.')
+                p1, p2 = int(parts[0]), int(parts[1])
+                if state.port_focus in (1, 3):
+                    p1 = max(-100, min(100, p1 + direction * step_val))
+                if state.port_focus in (2, 3):
+                    p2 = max(-100, min(100, p2 + direction * step_val))
+                quad[2] = user_to_pan(f"{p1}.{p2}")
+            else:
+                p = int(val_user)
+                p = max(-100, min(100, p + direction * step_val))
+                quad[2] = user_to_pan(str(p))
         elif param == 3:
-            quad[3] = round(quad[3] + direction * state.steps['vol'], 2)
+            val_user = vol_to_user(quad[3])
+            step_val = int(state.steps['vol'])
+            if is_portamento(val_user):
+                parts = val_user.split('.')
+                v1, v2 = int(parts[0]), int(parts[1])
+                if state.port_focus in (1, 3):
+                    v1 = max(0, min(100, v1 + direction * step_val))
+                if state.port_focus in (2, 3):
+                    v2 = max(0, min(100, v2 + direction * step_val))
+                quad[3] = user_to_vol(f"{v1}.{v2}")
+            else:
+                v = int(val_user)
+                v = max(0, min(100, v + direction * step_val))
+                quad[3] = user_to_vol(str(v))
     elif state.focus_type == 'adsr':
         param = state.focus_param
         val = state.preset['adsr'][param]
@@ -239,13 +345,26 @@ def edit_mode(db, preset_name):
         if key == 'space':
             play_preset(state)
         elif key == 'enter':
-            param_name = ["Nota", "Durata", "Pan", "Delta Volume"][state.focus_param] if state.focus_type == 'score' else ["A", "D", "S", "R"][state.focus_param]
-            if state.focus_type == 'score' and state.focus_param == 0:
-                current_val = state.preset['score'][state.focus_idx][0]
-                if is_portamento(current_val):
-                    if state.port_focus == 1: param_name = "Nota (partenza)"
-                    elif state.port_focus == 2: param_name = "Nota (arrivo)"
-                    else: param_name = "Nota (entrambe)"
+            param_name = ["Nota", "Durata", "Pan (-100..100)", "Volume (0..100)"][state.focus_param] if state.focus_type == 'score' else ["A", "D", "S", "R"][state.focus_param]
+            if state.focus_type == 'score':
+                if state.focus_param == 0:
+                    current_val = state.preset['score'][state.focus_idx][0]
+                    if is_portamento(current_val):
+                        if state.port_focus == 1: param_name = "Nota (partenza)"
+                        elif state.port_focus == 2: param_name = "Nota (arrivo)"
+                        else: param_name = "Nota (entrambe)"
+                elif state.focus_param == 2:
+                    current_val = state.preset['score'][state.focus_idx][2]
+                    if is_portamento(current_val):
+                        if state.port_focus == 1: param_name = "Pan partenza (-100..100)"
+                        elif state.port_focus == 2: param_name = "Pan arrivo (-100..100)"
+                        else: param_name = "Pan entrambi (-100..100)"
+                elif state.focus_param == 3:
+                    current_val = state.preset['score'][state.focus_idx][3]
+                    if is_portamento(current_val):
+                        if state.port_focus == 1: param_name = "Volume partenza (0..100)"
+                        elif state.port_focus == 2: param_name = "Volume arrivo (0..100)"
+                        else: param_name = "Volume entrambi (0..100)"
                     
             val = input(f"\nInserisci nuovo valore per {param_name}: ")
             if val.strip():
@@ -271,6 +390,26 @@ def edit_mode(db, preset_name):
                                     try: state.preset['score'][state.focus_idx][0] = float(val)
                                     except ValueError: state.preset['score'][state.focus_idx][0] = val
                                 state.modified = True
+                        elif state.focus_param == 2:
+                            current_val = state.preset['score'][state.focus_idx][2]
+                            if is_portamento(current_val):
+                                parts_user = pan_to_user(current_val).split('.')
+                                if state.port_focus in (1, 3): parts_user[0] = val
+                                if state.port_focus in (2, 3): parts_user[1] = val
+                                state.preset['score'][state.focus_idx][2] = user_to_pan(f"{parts_user[0]}.{parts_user[1]}")
+                            else:
+                                state.preset['score'][state.focus_idx][2] = user_to_pan(val)
+                            state.modified = True
+                        elif state.focus_param == 3:
+                            current_val = state.preset['score'][state.focus_idx][3]
+                            if is_portamento(current_val):
+                                parts_user = vol_to_user(current_val).split('.')
+                                if state.port_focus in (1, 3): parts_user[0] = val
+                                if state.port_focus in (2, 3): parts_user[1] = val
+                                state.preset['score'][state.focus_idx][3] = user_to_vol(f"{parts_user[0]}.{parts_user[1]}")
+                            else:
+                                state.preset['score'][state.focus_idx][3] = user_to_vol(val)
+                            state.modified = True
                         else:
                             state.preset['score'][state.focus_idx][state.focus_param] = float(val)
                             state.modified = True
@@ -291,30 +430,55 @@ def edit_mode(db, preset_name):
             handle_print(state, force_newline=True)
             
         elif key == '.':
-            if state.focus_type == 'score' and state.focus_param == 0:
-                val = state.preset['score'][state.focus_idx][0]
+            if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
+                param_idx = state.focus_param
+                val = state.preset['score'][state.focus_idx][param_idx]
                 if is_portamento(val):
-                    parts = val.split('.')
-                    new_val = parts[0] if state.port_focus in (1, 3) else parts[1]
-                    if new_val.replace('-', '').replace('.', '', 1).isdigit():
-                        fval = float(new_val)
-                        new_val = int(fval) if fval.is_integer() else fval
-                    state.preset['score'][state.focus_idx][0] = new_val
+                    if param_idx == 0:
+                        parts = val.split('.')
+                        new_val = parts[0] if state.port_focus in (1, 3) else parts[1]
+                        if new_val.replace('-', '').replace('.', '', 1).isdigit():
+                            fval = float(new_val)
+                            new_val = int(fval) if fval.is_integer() else fval
+                        state.preset['score'][state.focus_idx][0] = new_val
+                    elif param_idx == 2:
+                        user_parts = pan_to_user(val).split('.')
+                        new_val_str = user_parts[0] if state.port_focus in (1, 3) else user_parts[1]
+                        state.preset['score'][state.focus_idx][2] = user_to_pan(new_val_str)
+                    elif param_idx == 3:
+                        user_parts = vol_to_user(val).split('.')
+                        new_val_str = user_parts[0] if state.port_focus in (1, 3) else user_parts[1]
+                        state.preset['score'][state.focus_idx][3] = user_to_vol(new_val_str)
                 else:
-                    if isinstance(val, float) and val.is_integer(): val = int(val)
-                    state.preset['score'][state.focus_idx][0] = f"{val}.{val}"
+                    if param_idx == 0:
+                        if isinstance(val, float) and val.is_integer(): val = int(val)
+                        state.preset['score'][state.focus_idx][0] = f"{val}.{val}"
+                    elif param_idx == 2:
+                        u_val = pan_to_user(val)
+                        state.preset['score'][state.focus_idx][2] = user_to_pan(f"{u_val}.{u_val}")
+                    elif param_idx == 3:
+                        u_val = vol_to_user(val)
+                        state.preset['score'][state.focus_idx][3] = user_to_vol(f"{u_val}.{u_val}")
                     state.port_focus = 3
                 state.modified = True
         elif key in ('1', '2', '3'):
-            if state.focus_type == 'score' and state.focus_param == 0:
-                if is_portamento(state.preset['score'][state.focus_idx][0]):
+            if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
+                if is_portamento(state.preset['score'][state.focus_idx][state.focus_param]):
                     state.port_focus = int(key)
         elif key == '4':
-            if state.focus_type == 'score' and state.focus_param == 0:
-                val = state.preset['score'][state.focus_idx][0]
+            if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
+                param_idx = state.focus_param
+                val = state.preset['score'][state.focus_idx][param_idx]
                 if is_portamento(val):
-                    parts = val.split('.')
-                    state.preset['score'][state.focus_idx][0] = f"{parts[1]}.{parts[0]}"
+                    if param_idx == 0:
+                        parts = val.split('.')
+                        state.preset['score'][state.focus_idx][0] = f"{parts[1]}.{parts[0]}"
+                    elif param_idx == 2:
+                        u_parts = pan_to_user(val).split('.')
+                        state.preset['score'][state.focus_idx][2] = user_to_pan(f"{u_parts[1]}.{u_parts[0]}")
+                    elif param_idx == 3:
+                        u_parts = vol_to_user(val).split('.')
+                        state.preset['score'][state.focus_idx][3] = user_to_vol(f"{u_parts[1]}.{u_parts[0]}")
                     state.modified = True
         elif key == 'y':
             if state.focus_type == 'score':
@@ -331,7 +495,7 @@ def edit_mode(db, preset_name):
         elif key == 'b':
             if state.focus_type == 'score':
                 param_key = ['note', 'dur', 'pan', 'vol'][state.focus_param]
-                param_name = ["Nota", "Durata", "Pan", "Delta Volume"][state.focus_param]
+                param_name = ["Nota", "Durata", "Pan (-100..100)", "Volume (0..100)"][state.focus_param]
             else:
                 param_key = ['a', 'd', 's', 'r'][state.focus_param]
                 param_name = ["Attacco", "Decadimento", "Sustain", "Rilascio"][state.focus_param]
@@ -346,8 +510,9 @@ def edit_mode(db, preset_name):
             if state.focus_type == 'score':
                 param_key = ['note', 'dur', 'pan', 'vol'][state.focus_param]
                 defaults = ['c4', 0.5, 0.0, 0.0]
+                default_steps = [10.0, 0.02, 10, 10]
                 state.preset['score'][state.focus_idx][state.focus_param] = defaults[state.focus_param]
-                state.steps[param_key] = 0.1
+                state.steps[param_key] = default_steps[state.focus_param]
             else:
                 param_key = ['a', 'd', 's', 'r'][state.focus_param]
                 defaults = [0.002, 0.0, 100.0, 0.002]
@@ -416,7 +581,7 @@ def edit_mode(db, preset_name):
             print("\n--- Lista Score ---")
             for i, q in enumerate(state.preset['score']):
                 indicator = "->" if i == state.focus_idx else "  "
-                print(f"{indicator} [{i+1}] Nota: {q[0]}, Dur: {q[1]}, Pan: {q[2]}, VolD: {q[3]}")
+                print(f"{indicator} [{i+1}] Nota: {q[0]}, Dur: {q[1]}, Pan: {pan_to_user(q[2])}, Vol: {vol_to_user(q[3])}")
             print("-------------------")
             handle_print(state, force_newline=True)
             continue

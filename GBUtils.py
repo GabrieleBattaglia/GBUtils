@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V89 di martedì 28 luglio 2026
+	V90 di mercoledì 5 agosto 2026
 Lista utilità contenute in questo pacchetto
-	Acu_Maker V1.1.0 di mercoledì 6 maggio 2026. Utilità CLI per preset Acusticator
-	Acusticator V6.1 di mercoledì 6 maggio 2026. Gabriele Battaglia e Stella
+	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
+	Acusticator V6.4 di mercoledì 5 agosto 2026. Gabriele Battaglia e Stella
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator_old V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro (Legacy)
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
@@ -27,7 +27,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "89"
+VERSION = "90"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
@@ -1539,9 +1539,109 @@ def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
 			wf.writeframes(audio_stereo_int16.tobytes())
 	return
 
+def parse_pan_parts(val):
+	"""
+	Parsa una stringa, tupla, lista o numero che rappresenta uno o due valori di panning.
+	Restituisce una lista di 2 stringhe [p1_str, p2_str].
+	"""
+	if isinstance(val, (tuple, list)) and len(val) == 2:
+		def fmt(x):
+			fx = float(x)
+			return str(int(fx)) if fx.is_integer() else str(round(fx, 2))
+		return [fmt(val[0]), fmt(val[1])]
+	
+	val_str = str(val).strip()
+	dot_indices = [i for i, ch in enumerate(val_str) if ch == '.']
+	
+	for idx in dot_indices:
+		left = val_str[:idx]
+		right = val_str[idx+1:]
+		try:
+			f_left = float(left)
+			f_right = float(right)
+			if -1.0 <= f_left <= 1.0 and -1.0 <= f_right <= 1.0:
+				def fmt(fval, orig_str):
+					return orig_str if orig_str in (str(int(fval)), str(round(fval, 2))) else (str(int(fval)) if fval.is_integer() else str(round(fval, 2)))
+				return [fmt(f_left, left), fmt(f_right, right)]
+		except ValueError:
+			continue
+			
+	parts = val_str.split('.')
+	if len(parts) >= 2:
+		return [parts[0], parts[1]]
+	return [val_str, val_str]
+
+def parse_pan_values(pan_param):
+	"""
+	Parsa il parametro pan (float, int, str, tuple, list).
+	Restituisce un float (se panning fisso) oppure una tupla (p_start, p_end) se portamento panning.
+	Tutti i valori sono limitati nell'intervallo [-1.0, 1.0].
+	"""
+	if isinstance(pan_param, (int, float)):
+		return max(-1.0, min(1.0, float(pan_param)))
+	if isinstance(pan_param, (tuple, list)) and len(pan_param) == 2:
+		p1 = max(-1.0, min(1.0, float(pan_param[0])))
+		p2 = max(-1.0, min(1.0, float(pan_param[1])))
+		return (p1, p2)
+	if isinstance(pan_param, str):
+		pan_str = pan_param.strip()
+		is_single_float = False
+		try:
+			fval = float(pan_str)
+			if -1.0 <= fval <= 1.0 and pan_str.count('.') <= 1:
+				is_single_float = True
+		except ValueError:
+			pass
+			
+		if is_single_float:
+			return float(pan_str)
+			
+		parts = parse_pan_parts(pan_str)
+		try:
+			p1 = max(-1.0, min(1.0, float(parts[0])))
+			p2 = max(-1.0, min(1.0, float(parts[1])))
+			return (p1, p2)
+		except ValueError:
+			pass
+	return 0.0
+
+def parse_vol_values(vol_param):
+	"""
+	Parsa il parametro vol (float, int, str, tuple, list).
+	Restituisce un float (se volume fisso) oppure una tupla (v_start, v_end) se portamento volume.
+	Tutti i valori sono limitati nell'intervallo [0.0, 1.0].
+	"""
+	if isinstance(vol_param, (int, float)):
+		return max(0.0, min(1.0, float(vol_param)))
+	if isinstance(vol_param, (tuple, list)) and len(vol_param) == 2:
+		v1 = max(0.0, min(1.0, float(vol_param[0])))
+		v2 = max(0.0, min(1.0, float(vol_param[1])))
+		return (v1, v2)
+	if isinstance(vol_param, str):
+		vol_str = vol_param.strip()
+		is_single_float = False
+		try:
+			fval = float(vol_str)
+			if 0.0 <= fval <= 1.0 and vol_str.count('.') <= 1:
+				is_single_float = True
+		except ValueError:
+			pass
+			
+		if is_single_float:
+			return float(vol_str)
+			
+		parts = parse_pan_parts(vol_str)
+		try:
+			v1 = max(0.0, min(1.0, float(parts[0])))
+			v2 = max(0.0, min(1.0, float(parts[1])))
+			return (v1, v2)
+		except ValueError:
+			pass
+	return 0.5
+
 def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 	"""
-	V6.2 di giovedì 14 maggio 2026. Gabriele Battaglia e Stella
+	V6.4 di mercoledì 5 agosto 2026. Gabriele Battaglia e Stella
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -1549,17 +1649,10 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 	 - score: lista di valori in multipli di 4, in cui ogni gruppo rappresenta:
 	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un portamento separato da punto (es. "c4.e4", "880.920"), un valore in Hz, oppure "p" per pausa.
 	     * dur (float): durata in secondi.
-	     * pan (float): panning stereo da -1 (sinistra) a 1 (destra).
-	     * vol (float): volume da 0 a 1.
+	     * pan (float|str|tuple): panning stereo da -1 (sinistra) a 1 (destra), oppure portamento panning con due valori (es. "-1.1", "-0.5.0.5").
+	     * vol (float|str|tuple): volume da 0 a 1, oppure portamento volume con due valori.
 	 - kind (int): tipo di onda (1=sinusoide, 2=quadra, 3=triangolare, 4=dente di sega).
-	 - adsr: lista di quattro valori [a, d, s, r] in percentuali (0 a 100) dove:
-	         • a = percentuale della durata della nota destinata all'attacco (rampa da 0 a 1),
-	         • d = percentuale destinata al decadimento (rampa da 1 al livello di sustain),
-	         • s = livello di sustain (valore percentuale volume, che verrà scalato in un numero frazionario da 0 a 1),
-	         • r = percentuale destinata al rilascio (rampa da sustain a 0).
-	         La fase di sustain occupa il tempo rimanente, cioè: 100 - (a + d + r) in percentuale della durata totale.
-	         È richiesto che a + d + r ≤ 100.
-	         Il valore di default è [.005, 0.0, 100.0, .005].
+	 - adsr: lista di quattro valori [a, d, s, r] in percentuali (0 a 100).
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
 	Se sync è False la riproduzione avviene in background, restituendo subito il controllo al chiamante.
 	"""
@@ -1610,8 +1703,10 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 	segments = []
 	for i in range(0, len(score), 4):
 		try:
-			note_param, dur, pan, vol = score[i:i+4]
-			dur, pan, vol = float(dur), float(pan), float(vol)
+			note_param, dur, pan_param, vol_param = score[i:i+4]
+			dur = float(dur)
+			pan = parse_pan_values(pan_param)
+			vol = parse_vol_values(vol_param)
 		except (IndexError, ValueError) as e:
 			print(f"Acusticator Warn: Parametri {i} errati. Ignoro. {e}", file=sys.stderr)
 			continue
@@ -1718,10 +1813,26 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 			elif vol_portamento == 'fade_in':
 				envelope *= np.linspace(0.0, 1.0, total_note_samples, dtype=np.float32)
 				
-			wave *= envelope * vol
+			if isinstance(vol, tuple):
+				v_start, v_end = vol
+				vol_array = np.linspace(v_start, v_end, total_note_samples, endpoint=False, dtype=np.float32)
+				wave *= envelope * vol_array
+			else:
+				wave *= envelope * vol
+
 			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
-			pan_clipped = np.clip(pan, -1.0, 1.0); pan_angle = pan_clipped * (np.pi / 4.0)
-			left_gain = np.cos(pan_angle + np.pi / 4.0); right_gain = np.sin(pan_angle + np.pi / 4.0)
+			if isinstance(pan, tuple):
+				p_start, p_end = pan
+				pan_array = np.linspace(p_start, p_end, total_note_samples, endpoint=False, dtype=np.float32)
+				pan_clipped = np.clip(pan_array, -1.0, 1.0)
+				pan_angle = pan_clipped * (np.pi / 4.0)
+				left_gain = np.cos(pan_angle + np.pi / 4.0)
+				right_gain = np.sin(pan_angle + np.pi / 4.0)
+			else:
+				pan_clipped = np.clip(pan, -1.0, 1.0)
+				pan_angle = pan_clipped * (np.pi / 4.0)
+				left_gain = np.cos(pan_angle + np.pi / 4.0)
+				right_gain = np.sin(pan_angle + np.pi / 4.0)
 			stereo_segment[:, 0] = wave * left_gain
 			stereo_segment[:, 1] = wave * right_gain
 		segments.append(stereo_segment)

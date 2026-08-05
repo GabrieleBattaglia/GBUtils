@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.2.0)
+Manuale Utente: Acu_Maker (v1.3.0)
 ----------------------------------
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
@@ -23,15 +23,12 @@ Ogni riga di uno Score è formata da 4 parametri:
 1. Nota: Espressa in notazione anglosassone (es: c4, d#4), in Hz (es: 440), o "p" per indicare una pausa.
    Può anche essere un "portamento" (scivolata) unendo due valori con un punto (es. c4.e4 oppure 440.880).
 2. Durata: Espressa in secondi (es: 0.5 per mezzo secondo).
-3. Panning: Un valore da -1.0 (tutto a sinistra) a 1.0 (tutto a destra), con 0.0 al centro.
-4. Delta Volume:
-   IMPORTANTE! I programmi esterni che importano questi preset gestiranno il volume globalmente. 
-   Per mantenere i rapporti di volume corretti fra le note di un preset, Acu_Maker usa un volume base fisso di 0.5. 
-   Questo quarto parametro indica una "variazione" o delta.
-   Ad esempio: 
-   - Se il Delta è 0.0, il volume della nota sarà quello di default (0.5).
-   - Se il Delta è -0.1, il volume per quella nota sarà attenuato (0.4).
-   - Se il Delta è +0.1, il volume per quella nota sarà enfatizzato (0.6).
+3. Panning: Espresso su una scala da -100 (100% sinistra) a +100 (100% destra), con 0 al centro.
+   Può anche essere un "portamento panning" unendo due valori interi con un punto (es. -100.100 o -50.50).
+   Nota: Nei file salvati (JSON) il panning viene automaticamente convertito nella scala normalizzata da -1.0 a +1.0.
+4. Volume: Espresso su una scala percentuale da 0 (silenzio) a 100 (volume massimo 100%), con 50 come volume base di default.
+   Può anche essere un "portamento di volume" (es. 20.80 per una sfumatura/crescendo da 20% a 80%).
+   Nota: Nei file salvati (JSON) il volume viene convertito in delta volume relativo al valore base 0.5 (es. Volume 50 = Delta 0.0, Volume 80 = Delta +0.3).
 
 # Modalità Edit (Modifica Preset)
 
@@ -54,10 +51,10 @@ Usa questi tasti per interagire con i parametri:
 - [v]            : Decrementa il valore del parametro selezionato.
 - [Invio]        : Inserimento manuale del valore (da tastiera).
 - [w]            : Cicla il tipo di onda (da 1 a 4).
-- [.]            : Aggiunge o toglie il Portamento alla nota selezionata.
-- [1]            : Nel Portamento, focalizza e modifica solo il 1° valore.
-- [2]            : Nel Portamento, focalizza e modifica solo il 2° valore.
-- [3]            : Nel Portamento, focalizza e modifica entrambi i valori contemporaneamente.
+- [.]            : Aggiunge o toglie il Portamento alla nota o al panning selezionato.
+- [1]            : Nel Portamento (nota o pan), focalizza e modifica solo il 1° valore.
+- [2]            : Nel Portamento (nota o pan), focalizza e modifica solo il 2° valore.
+- [3]            : Nel Portamento (nota o pan), focalizza e modifica entrambi i valori contemporaneamente.
 - [4]            : Inverte la direzione del Portamento corrente.
 
 ## Impostazioni di Step e Default
