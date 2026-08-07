@@ -9796,5 +9796,41 @@
             100.0,
             0.002
         ]
+    },
+    "nuovo_preset3": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "c4",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "Laser_destra_sinistra": {
+        "descrizione": "Uno sparo laser da destra a sinistra",
+        "score": [
+            [
+                "g4.a3",
+                0.12,
+                "0.9.-0.9",
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.011,
+            0.1,
+            85.0,
+            1.0
+        ]
     }
 }
