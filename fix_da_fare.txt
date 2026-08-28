@@ -1,0 +1,117 @@
+GBUTILS - COSE DA SISTEMARE NEL COMPARTO AUDIO (fix_da_fare.txt)
+Data: 28 agosto 2026
+Autore: Claudia, su richiesta di Gabriele
+Osservazioni raccolte lavorando sull'audio di Terminal Beast, versioni dalla 3.11.0 alla 4.0.0.
+Riguardano Acusticator, Acu_Maker e Acu_Collection.json. Non ho modificato nulla in GBUtils:
+questo file e' soltanto un promemoria per una sessione futura.
+Ogni punto e' stato verificato sul codice o provato sulla macchina, non e' un sospetto.
+PUNTO 1 [ALTA] - Un nome di nota sbagliato fa cadere l'applicazione che chiama
+  DOVE: GBUtils.py:1714, con l'eccezione sollevata dalla riga 1675.
+  COSA SUCCEDE:
+    Nel ciclo che legge lo score, la lettura dei quattro parametri e' protetta da un
+    try che intercetta IndexError e ValueError (riga 1710) e in caso di guaio stampa un
+    avviso su stderr e passa alla quartina successiva. La conversione della nota in
+    frequenza, pero', sta una riga piu' sotto, fuori da quel try: se il nome della nota
+    non e' valido, parse_single solleva ValueError e l'eccezione arriva dritta al
+    chiamante.
+  PROVA FATTA:
+    Acusticator(['h4', 0.01, 0, 0.0], sync=True) solleva
+    ValueError: Formato nota non valido: 'h4'.
+    Con una quartina incompleta, invece, l'errore viene gestito correttamente e il suono
+    prosegue: la differenza di trattamento e' proprio la posizione della riga 1714.
+  PERCHE' CONTA:
+    Un refuso in uno score, magari in un preset importato, non dovrebbe zittire un suono
+    e basta: oggi ferma l'applicazione. Per una libreria condivisa da tutti i progetti e'
+    il difetto piu' pericoloso dei quattro.
+  PROPOSTA:
+    Portare la chiamata a note_to_freq dentro il try esistente, cosi' la quartina
+    malformata viene ignorata come tutte le altre, con il suo avviso su stderr.
+PUNTO 2 [MEDIA] - Ogni chiamata apre e chiude uno stream audio suo
+  DOVE: GBUtils.py:1845 (apertura dello stream) e 1875 (un thread nuovo per ogni chiamata).
+  COSA SUCCEDE:
+    Acusticator sintetizza, poi lancia un thread che apre un OutputStream, ci scrive
+    dentro a blocchi e lo chiude. Nessuna coda, nessuno stream tenuto aperto.
+  MISURA FATTA (sulla macchina di Gabriele, uscita Realtek):
+    Apertura e chiusura a vuoto di uno stream con gli stessi parametri usati da
+    Acusticator, blocksize 256 e latency 'low': 160,7 ms di media su cinque prove.
+    Sono 160 ms di ritardo pagati da ogni singolo effetto sonoro, in tutte le app.
+    Per confronto, in Terminal Beast il passaggio a uno stream persistente ha portato un
+    suono da 100 ms da 338 a 101 ms complessivi.
+  PROPOSTA:
+    Uno stream tenuto aperto e chiuso dopo un tempo di silenzio, come ora fa Terminal
+    Beast. Vedi pero' il punto 6: non e' una modifica indolore per le app esistenti.
+PUNTO 3 [MEDIA] - Acu_Collection.json contiene due preset nel formato sbagliato
+  DOVE: Acu_Collection.json, voci "perfect_match" e "perfect_bonus".
+  COSA SUCCEDE:
+    Tutti gli altri preset hanno tre chiavi, descrizione, kind, adsr, e uno score fatto
+    di quartine annidate con il volume espresso come scarto dalla base 0.5.
+    Questi due invece hanno lo score in lista piatta, i volumi assoluti e nessuna
+    descrizione: sono stati copiati dal formato interno di Terminal Beast senza
+    conversione.
+    Esempio, perfect_match nella collezione:
+      ['c5.g5', 0.15, -0.3, 0.7, 'e5.c6', 0.25, 0.3, 0.8]
+    lo stesso preset nel formato della collezione sarebbe:
+      [['c5.g5', 0.15, -0.3, 0.2], ['e5.c6', 0.25, 0.3, 0.3]]
+  PERCHE' CONTA:
+    Acu_Maker si aspetta le quartine e la descrizione: su queste due voci la ricerca per
+    parola chiave non trova nulla e l'editor rischia di non leggerle correttamente.
+  PROPOSTA:
+    Riscriverle nel formato della collezione, oppure toglierle e reimportarle da
+    Terminal Beast, che ora ha il suo sounds.json gia' nel formato giusto.
+PUNTO 4 [BASSA] - Manca un lettore condiviso della collezione
+  DOVE: nessun file, e' proprio cio' che non c'e'.
+  COSA SUCCEDE:
+    Il volume nei file salvati e' uno scarto rispetto a 0.5, mentre Acusticator vuole il
+    volume assoluto: lo conferma Acu_Maker.py:243, che in riproduzione fa
+    DEFAULT_VOL + vol_delta. Ne segue che uno score preso pari pari dal JSON e passato ad
+    Acusticator suona sbagliato, e con uno scarto negativo il volume diventa addirittura
+    minore di zero.
+    Serve anche appiattire le quartine nella lista unica che Acusticator legge.
+    Oggi ogni applicazione che voglia attingere alla collezione deve riscriversi da sola
+    questa conversione: Terminal Beast l'ha fatto in sound_bank.py.
+  PROPOSTA:
+    Una funzione in GBUtils, per esempio AcuPreset(nome), che apra Acu_Collection.json,
+    converta e restituisca score, kind e adsr pronti per Acusticator. Diventerebbe il
+    modo unico e corretto di attingere alla libreria condivisa, che e' poi l'obiettivo.
+PUNTO 5 [BASSA] - Parametro predefinito mutabile
+  DOVE: GBUtils.py:1642, adsr=[.002, 0, 100, .002].
+  COSA SUCCEDE:
+    Una lista come valore predefinito viene creata una sola volta e condivisa da tutte le
+    chiamate. Qui non fa danno, perche' la lista viene solo letta, ma e' il classico
+    errore che i validatori segnalano e che diventa un guaio il giorno in cui qualcuno
+    scrivera' adsr[0] = ... dentro la funzione.
+  PROPOSTA:
+    adsr=None e, nel corpo, se e' None si usa la lista predefinita.
+PUNTO 6 [DA VALUTARE] - Ricadute sulle app se Acusticator adottasse la coda di Terminal Beast
+  Questa e' la risposta alla domanda di Gabriele sul punto 13 dell'analisi audio di
+  Terminal Beast, cioe' se convenga spostare dentro Acusticator la coda con il worker e
+  lo stream persistente. Conviene, ma non e' una modifica trasparente: cambia il
+  comportamento di tutte le applicazioni che gia' usano la libreria.
+  COSA CAMBIEREBBE:
+    1. Oggi ogni chiamata apre il suo stream in un thread suo, quindi due suoni chiesti
+       uno dopo l'altro si sovrappongono davvero. Con una coda unica diventerebbero
+       sequenziali, uno dopo l'altro. Chi oggi ottiene un accordo chiamando Acusticator
+       due volte di fila si ritroverebbe due note separate.
+       Un mixer che somma i campioni eviterebbe questo effetto collaterale, ed e' la
+       strada che sto seguendo in Terminal Beast.
+    2. Il parametro sync cambierebbe significato. Oggi sync=True aspetta il thread e
+       quindi la fine reale del suono. Con uno stream persistente la scrittura ritorna
+       quando i campioni sono nel buffer, non quando sono usciti dalle casse: senza uno
+       svuotamento esplicito, un suono di congedo riprodotto poco prima della chiusura
+       dell'applicazione verrebbe troncato. In Terminal Beast ho aggiunto proprio quello
+       svuotamento, e costa la latenza dello stream, sui 180 ms.
+    3. Lo stream resterebbe aperto sul dispositivo audio fra un suono e l'altro. In
+       Terminal Beast lo chiudo dopo trenta secondi di silenzio proprio per non tenere
+       occupata la scheda; la stessa cautela servirebbe qui.
+    4. Se la coda si riempie i suoni vengono scartati. Va deciso cosa fare: scartare in
+       silenzio, come faceva Terminal Beast, e' comodo ma nasconde i problemi; scriverlo
+       da qualche parte e' meglio, ma GBUtils non ha un logger suo e oggi si limita a
+       stampare su stderr.
+    5. Ogni applicazione andrebbe riprovata all'ascolto, perche' il ritmo dei suoni
+       cambierebbe: piu' pronti, ma diversi da come suonano oggi.
+  IN SINTESI:
+    I vantaggi sono grossi, 160 ms di ritardo in meno per effetto e un solo motore audio
+    da mantenere invece di due, ma la modifica va fatta con calma, con un mixer e non con
+    una semplice coda, e riascoltando le app una per una. Non e' roba da infilare in coda
+    a un altro lavoro.
+FINE ELENCO

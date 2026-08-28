@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V90 di mercoledì 5 agosto 2026
+	V91 di venerdì 28 agosto 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.4 di mercoledì 5 agosto 2026. Gabriele Battaglia e Stella
@@ -27,7 +27,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "90"
+VERSION = "91"
 
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
