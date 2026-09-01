@@ -1,0 +1,44 @@
+Note per il refactoring di GBUtils, integrazioni raccolte dagli altri progetti
+Documento aperto il 2026-09-01 da ClaudIA, modello Claude Opus 5, modalita' UltraCode, su richiesta di Gabriele.
+A cosa serve questo file e come si rapporta a fix_da_fare.txt
+In questa cartella esiste gia' fix_da_fare.txt, del 28 agosto 2026, che raccoglie sei punti sul comparto audio emersi lavorando su Terminal Beast. Questo file non lo sostituisce e non lo ripete: raccoglie le voci ulteriori emerse analizzando gli altri progetti, piu' le conferme che quei sei punti hanno ricevuto altrove. Quando arrivera' il turno di GBUtils nel refactoring generale si leggono entrambi i file.
+Nessuna di queste voci e' stata applicata: la regola vieta di modificare GBUtils senza richiesta esplicita di Gabriele.
+Chi aggiunge una voce nuova indichi progetto di provenienza e data.
+
+Conferme ai punti gia' presenti in fix_da_fare.txt
+Il PUNTO 3, i due preset perfect_match e perfect_bonus nel formato sbagliato, e' confermato da Tornello: il suo lettore, che scompatta ogni elemento dello score in nota, durata, panoramica e scarto di volume, su quelle due voci solleva un'eccezione e non produce alcun suono. Non e' quindi solo un problema di Acu_Maker: qualunque applicazione che attinga alla collezione ci inciampa. Su 339 preset i difformi restano soltanto quei due.
+Il PUNTO 4, il lettore condiviso che manca, e' confermato ed e' la voce piu' importante per il parco software. Tornello ha dovuto riscriversi la conversione per conto proprio, come Terminal Beast, e l'ha scritta in modo che oggi funziona ma che ha gia' due punti di rottura, descritti nelle voci A e B qui sotto. La funzione proposta nel PUNTO 4, chiamata li' AcuPreset, andrebbe estesa fino a comprendere anche la riproduzione, cioe' una play_preset(nome, volume, sync) che carichi la collezione una sola volta in una cache di modulo, converta e chiami Acusticator. Gabriele ha dichiarato il 2026-09-01 che l'obiettivo e' usare Acu_Collection.json come banca suoni centralizzata di tutti i progetti: quella funzione e' il pezzo che manca perche' succeda davvero.
+
+Voce A, le applicazioni scrivono dentro Acu_Collection.json.
+Origine: Tornello, analisi fase 1 del 2026-08-31, rilievo A4.
+Situazione: Tornello, a ogni riproduzione di un suono, apre Acu_Collection.json nella cartella di GBUtils, confronta le chiavi con i propri preset locali e, se ne trova di mancanti, riscrive il file aggiungendole. E' cosi' che i diciotto preset con prefisso tornello sono finiti nella collezione condivisa, senza che nessuno lo decidesse. Se la cartella di GBUtils fosse di sola lettura, la scrittura fallirebbe con un messaggio su stderr che nell'interfaccia grafica nessuno vede.
+Perche' conta: una libreria condivisa scritta a runtime dalle applicazioni che la usano non ha piu' un contenuto prevedibile, e due macchine di Gabriele possono ritrovarsi con collezioni diverse a seconda di quali programmi hanno avviato.
+Proposta: stabilire che la collezione si scrive solo con Acu_Maker o con un intervento esplicito, e che le applicazioni la leggono e basta. Il lettore condiviso del PUNTO 4 e' anche il modo per far rispettare questa regola.
+
+Voce B, il volume a portamento non e' gestibile dai lettori delle applicazioni.
+Origine: Tornello, analisi fase 1 del 2026-08-31, sezione audio.
+Situazione: Acusticator 6.4 accetta il volume anche come portamento, cioe' come stringa o coppia con valore iniziale e finale, e lo stesso vale per la panoramica. I lettori scritti dentro le applicazioni calcolano pero' il volume finale sommando allo scarto del preset il volume di base dell'utente, operazione che presuppone un numero. Oggi nella collezione nessun preset usa il volume a portamento, quindi il difetto e' latente; ce n'e' gia' uno, Laser_destra_sinistra, che usa la panoramica a portamento, e quella per fortuna viene inoltrata senza calcoli.
+Perche' conta: il primo preset scritto con il volume a portamento rendera' muto quel suono in tutte le applicazioni, e senza messaggi, perche' l'errore finisce dentro il blocco che intercetta tutto.
+Proposta: nel lettore condiviso, applicare lo scarto a entrambi gli estremi quando il volume e' un portamento. E' la stessa conversione del PUNTO 4, estesa a un caso in piu'.
+
+Voce C, preset con lo stesso nome e contenuto diverso.
+Origine: Tornello, analisi fase 1 del 2026-08-31, rilievo A23.
+Situazione: quattro preset, apertura, spostamento, salto e successivo, esistono in due versioni diverse fra Acu_Collection.json e il file locale di Tornello. Nessuno se ne accorge perche' la fusione automatica descritta nella voce A inserisce solo le chiavi mancanti e non tocca quelle gia' presenti.
+Perche' conta: lo stesso nome produce un suono diverso a seconda che la collezione sia raggiungibile o no, quindi fra esecuzione da sorgente ed eseguibile compilato. Se la collezione diventa la banca comune, il problema si moltiplica per il numero di progetti.
+Proposta: stabilire quale versione e' quella buona, allineare l'altra e togliere ogni fusione automatica.
+
+Voce D, la collezione non viaggia con gli eseguibili compilati.
+Origine: Tornello, analisi fase 1 del 2026-08-31, rilievo A22.
+Situazione: Acu_Collection.json vive nella cartella di GBUtils e non viene incluso nei pacchetti PyInstaller, che dichiarano GBUtils solo come percorso di ricerca dei moduli. Nella versione compilata di Tornello sette suoni fra cui conferma, errore, salvato, cancellato e notifica esistono soltanto nella collezione e non nel file di ripiego locale, quindi non si sentono affatto.
+Perche' conta: e' un problema che riguarda ogni progetto che attinga alla collezione, non solo Tornello, e si manifesta solo nella versione che usano gli utenti.
+Proposta: decidere una regola unica per tutto il parco software, o includere la collezione fra i dati di ogni spec, o prevedere che il lettore condiviso sappia caricarla da una posizione nota accanto all'eseguibile.
+
+Voce E, polipo risolve i percorsi rispetto alla directory di lavoro.
+Origine: orologic, analisi fase 1 del 2026-08-29; confermata da Tornello, analisi fase 1 del 2026-08-31, rilievo C3. Gia' annotata nel documento Refactoring_generale_tutti_i_repo_ClaudIA.txt, ripetuta qui per averla insieme alle altre.
+Situazione: quando il programma non e' congelato, polipo risolve sia la cartella delle traduzioni sia quella di configurazione rispetto a os.getcwd(). Chi lo chiama con percorsi relativi, avviando l'applicazione da un'altra cartella, non trova piu' le traduzioni, non ritrova la lingua gia' scelta e si vede creare una cartella di impostazioni vuota nel posto sbagliato. Orologic e' stato messo al riparo passando percorsi assoluti, che polipo accetta gia' senza modifiche. In Tornello il difetto e' in Players_DB.py e Sync_DB.py, ma li' la correzione sta dentro Tornello.
+Proposta: valutare se far ricavare a polipo la radice dal file del chiamante invece che dalla directory di lavoro.
+
+Voce F, enter_escape reimplementata dentro i progetti.
+Origine: Tornello, analisi fase 1 del 2026-08-31, rilievo A3.
+Situazione: Tornello ha una propria copia di enter_escape, usata in quindici punti, mentre il suo punto di ingresso importa quella di GBUtils: le due convivono nello stesso programma. Non e' un difetto di GBUtils, ma e' il segnale che la funzione o non e' abbastanza nota o non copre un caso d'uso.
+Proposta: al momento del refactoring, confrontare le due implementazioni prima di eliminare quella locale, per capire se la versione di Tornello faccia qualcosa che merita di risalire nella libreria.
