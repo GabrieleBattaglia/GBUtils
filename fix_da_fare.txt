@@ -1,9 +1,12 @@
-GBUTILS - COSE DA SISTEMARE NEL COMPARTO AUDIO (fix_da_fare.txt)
-Data: 28 agosto 2026
+GBUTILS - COSE DA SISTEMARE (fix_da_fare.txt)
+Data: 28 agosto 2026, ampliato il 2 settembre 2026
 Autore: Claudia, su richiesta di Gabriele
-Osservazioni raccolte lavorando sull'audio di Terminal Beast, versioni dalla 3.11.0 alla 4.0.0.
-Riguardano Acusticator, Acu_Maker e Acu_Collection.json. Non ho modificato nulla in GBUtils:
-questo file e' soltanto un promemoria per una sessione futura.
+I punti da 1 a 6 riguardano il comparto audio, cioe' Acusticator, Acu_Maker e
+Acu_Collection.json, e sono stati raccolti lavorando sull'audio di Terminal Beast, versioni
+dalla 3.11.0 alla 4.0.0. Il punto 7 riguarda invece lo script che prepara gli archivi di
+release, ed e' emerso durante il rilascio di Orologic 8.20.2.
+Non ho modificato nulla in GBUtils: questo file e' soltanto un promemoria per una sessione
+futura.
 Ogni punto e' stato verificato sul codice o provato sulla macchina, non e' un sospetto.
 PUNTO 1 [ALTA] - Un nome di nota sbagliato fa cadere l'applicazione che chiama
   DOVE: GBUtils.py:1714, con l'eccezione sollevata dalla riga 1675.
@@ -114,4 +117,46 @@ PUNTO 6 [DA VALUTARE] - Ricadute sulle app se Acusticator adottasse la coda di T
     da mantenere invece di due, ma la modifica va fatta con calma, con un mixer e non con
     una semplice coda, e riascoltando le app una per una. Non e' roba da infilare in coda
     a un altro lavoro.
+PUNTO 7 [MEDIA] - zip_maker vive in quattro copie diverse, e due sono rischiose
+  DOVE: Mine\Dadillo\zip_maker.py, Mine\Terminal_Beast\zip_maker.py,
+    Mine\Tornello\zip_maker.py, Mine\orologic\zip_maker.py. In GBUtils non c'e' niente.
+  COSA SUCCEDE:
+    Ogni progetto compilato con PyInstaller ha una copia propria dello script che comprime
+    dist nell'archivio della release. Fra le quattro copie cambiano soltanto due cose, il
+    nome della cartella dist e il nome dello zip: tutto il resto e' lo stesso lavoro, e non
+    puo' essere diverso, perche' il formato che perform_update sa gestire e' uno solo, cioe'
+    eseguibile e _internal alla radice dell'archivio, senza cartelle intermedie.
+    Quello che invece cambia, e non dovrebbe, e' la qualita'.
+    - Dadillo e Tornello non escludono niente. Chi segue il prontuario prova l'eseguibile
+      prima di comprimere, e la prova crea accanto all'exe le cartelle dei salvataggi, dei
+      log e delle impostazioni: finiscono dritte nel pacchetto pubblico insieme ai dati di
+      chi ha compilato.
+    - Terminal Beast le esclusioni ce le ha, ma cerca le estensioni come sottostringa nel
+      percorso intero: la riga e' any(ign in norm_path for ign in [...]) con '.dat' nella
+      lista. Cosi' esclude qualsiasi file che contenga quei caratteri in qualunque punto del
+      percorso, compresi i .dat che scipy si porta dentro _internal.
+  PROVA FATTA:
+    Scrivendo la versione di Orologic ho commesso lo stesso errore, applicando il filtro
+    sulle estensioni a tutto l'albero. Lo script mi ha detto che stava lasciando fuori
+    base_library.zip, eeg.dat e membrane.dat: il primo e' la libreria standard di Python
+    dentro il pacchetto, senza il quale l'applicazione non parte nemmeno. Me ne sono accorta
+    solo perche' quella versione stampa l'elenco di cio' che scarta; le altre tre tacciono.
+  PERCHE' CONTA:
+    Un pacchetto senza base_library.zip non si avvia, e il guaio si vede solo dopo la
+    pubblicazione. Un pacchetto con dentro i salvataggi di chi ha compilato e' peggio: parte
+    benissimo e nessuno se ne accorge.
+  PROPOSTA:
+    Portare lo script in GBUtils come funzione, per esempio
+    crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=None),
+    che restituisca il numero di file scritti e l'elenco di quelli lasciati fuori.
+    La regola da incorporare e' quella imparata su Orologic: le cartelle dell'utente, cioe'
+    log, settings, pgn, txt e images, si saltano dovunque si trovino, mentre il filtro sulle
+    estensioni vale soltanto per i file che stanno accanto all'eseguibile, mai dentro
+    _internal, dove c'e' quello che ha messo PyInstaller e che serve tutto.
+    La versione buona da cui partire e' Mine\orologic\zip_maker.py, gia' scritta cosi'.
+  DA FARE SUBITO DOPO:
+    Sostituire le quattro copie con la chiamata alla funzione di GBUtils, progetto per
+    progetto, e ricompilare ogni pacchetto per verificare che l'archivio resti valido.
+    L'elenco e' quello: Dadillo, Terminal_Beast, Tornello, orologic. Fino a quando anche uno
+    solo tiene la copia propria, il difetto resta suo e non si vede da GBUtils.
 FINE ELENCO
