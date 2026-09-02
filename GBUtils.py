@@ -1,34 +1,28 @@
 '''
-	GBUtils di Gabriele Battaglia (IZ4APU)
+	GBUtils di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V91 di venerdì 28 agosto 2026
+	V92 di mercoledì 2 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.4 di mercoledì 5 agosto 2026. Gabriele Battaglia e Stella
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator_old V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro (Legacy)
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0 del 12 luglio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
-	key_old V5.1 del 23/01/2026 (Legacy)
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
-	percent V1.0 thu 28, september 2023
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
-	Scadenza 1.0 del 15/12/2021
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
-	Vecchiume 1.0 del 15/12/2018
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "91"
-
+VERSION = "92"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -248,271 +242,6 @@ def enter_escape(prompt=""):
         elif k == b'\x1b':
             print() # Pulisce la riga andando a capo
             return False
-def CWzator_old(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, file=False):
-	"""
-	V8.2 di mercoledì 28 maggio 2025 - Gabriele Battaglia (IZ4APU), Claude 3.5, ChatGPT o3-mini-high, Gemini 2.5 Pro
-		da un'idea originale di Kevin Schmidt W9CF
-	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
-	Parameters:
-		msg (str|int): Messaggio di testo da convertire in Morse.
-			se == -1 restituisce la mappa	morse come dizionario.
-		wpm (int): Velocità in parole al minuto (range 5-100).
-		pitch (int): Frequenza in Hz per il tono (range 130-2800).
-		l (int): Peso per la durata della linea (default 30).
-		s (int): Peso per la durata degli spazi tra simboli/lettere (default 50).
-		p (int): Peso per la durata del punto (default 50).
-		fs (int): Frequenza di campionamento (default 44100 Hz).
-		ms (int): Durata in millisecondi per i fade-in/out sui toni (default 1).
-		vol (float): Volume (range 0.0 a 1.0, default 0.5).
-		wv (int): Tipo d’onda (scipy.signal): 1=Sine(default), 2=Square, 3=Triangle, 4=Sawtooth.
-		sync (bool): Se True, la funzione aspetta la fine della riproduzione; altrimenti ritorna subito.
-		file (bool): Se True, salva l’audio in un file WAV.
-	Returns:
-		Un oggetto PlaybackHandle e rwpm (velocità effettiva wpm), o (None, None) in caso di errore.
-	"""
-	import sys
-	import threading
-	import wave
-	from datetime import datetime
-
-	import numpy as np
-	import sounddevice as sd
-	from scipy import signal  # Importato per le forme d'onda
-	BLOCK_SIZE = 256
-	MORSE_MAP = {
-		"a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.",
-		"g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..",
-		"m":"--", "n":"-.", "o":"---", "p":".--.", "q":"--.-", "r":".-.",
-		"s":"...", "t":"-", "u":"..-", "v":"...-", "w":".--", "x":"-..-",
-		"y":"-.--", "z":"--..", "0":"-----", "1":".----", "2":"..---",
-		"3":"...--", "4":"....-", "5":".....", "6":"-....", "7":"--...",
-		"8":"---..", "9":"----.", ".":".-.-.-", "-":"-....-", ",":"--..--",
-		"?":"..--..", "/":"-..-.", ";":"-.-.-.", "(":"-.--.", "[":"-.--.",
-		")":"-.--.-", "]":"-.--.-", "@":".--.-.", "*":"...-.-", "+":".-.-.",
-		"%":".-...", ":":"---...", "=":"-...-", '"':".-..-.", "'":".----.",
-		"!":"-.-.--", "$":"...-..-", " ":"", "_":"",
-		"ò":"---.", "à":".--.-", "ù":"..--", "è":"..-..",
-		"é":"..-..", "ì":".---."}
-	if msg==-1: return MORSE_MAP
-	elif not isinstance(msg, str) or msg == "": print("CWzator Error: msg deve essere una stringa non vuota.", file=sys.stderr); return None, None
-	if not (isinstance(wpm, int) and 5 <= wpm <= 100): print(f"CWzator Error: wpm ({wpm}) non valido [5-100].", file=sys.stderr); return None, None
-	if not (isinstance(pitch, int) and 130 <= pitch <= 2800): print(f"CWzator Error: pitch ({pitch}) non valido [130-2000].", file=sys.stderr); return None, None
-	if not (isinstance(l, int) and 1 <= l <= 100): print(f"CWzator Error: l ({l}) non valido [1-100].", file=sys.stderr); return None, None
-	if not (isinstance(s, int) and 1 <= s <= 100): print(f"CWzator Error: s ({s}) non valido [1-100].", file=sys.stderr); return None, None
-	if not (isinstance(p, int) and 1 <= p <= 100): print(f"CWzator Error: p ({p}) non valido [1-100].", file=sys.stderr); return None, None
-	if not (isinstance(fs, int) and fs > 0): print(f"CWzator Error: fs ({fs}) non valido [>0].", file=sys.stderr); return None, None
-	if not (isinstance(ms, (int, float)) and ms >= 0): print(f"CWzator Error: ms ({ms}) non valido [>=0].", file=sys.stderr); return None, None
-	if not (isinstance(vol, (int, float)) and 0.0 <= vol <= 1.0): print(f"CWzator Error: vol ({vol}) non valido [0.0-1.0].", file=sys.stderr); return None, None
-	if not (isinstance(wv, int) and wv in [1, 2, 3, 4]): print(f"CWzator Error: wv ({wv}) non valido [1-4].", file=sys.stderr); return None, None
-	# --- Calcolo Durate (con arrotondamento campioni implicito dopo) ---
-	T = 1.2 / float(wpm)
-	dot_duration = T * (p / 50.0)
-	dash_duration = 3.0 * T * (l / 30.0) # Usato 3.0 per float
-	intra_gap = T * (s / 50.0)
-	letter_gap = 3.0 * T * (s / 50.0)
-	word_gap = 7.0 * T * (s / 50.0)
-	# --- Funzioni Generazione Segmenti (con forme d'onda scipy e arrotondamento) ---
-	def generate_tone(duration):
-		# Arrotonda qui per il numero di campioni
-		N = int(round(fs * duration))
-		if N <= 0: return np.array([], dtype=np.int16) # Ritorna array vuoto se durata troppo breve
-		# Usa float64 per tempo e fase per precisione
-		t = np.linspace(0, duration, N, endpoint=False, dtype=np.float64)
-		# Forme d'onda via scipy.signal (output in [-1, 1])
-		if wv == 1:  # Sine
-			signal_float = np.sin(2 * np.pi * pitch * t)
-		elif wv == 2:  # Square
-			signal_float = signal.square(2 * np.pi * pitch * t)
-		elif wv == 3:  # Triangle (width=0.5)
-			signal_float = signal.sawtooth(2 * np.pi * pitch * t, width=0.5)
-		else:  # Sawtooth (width=1)
-			signal_float = signal.sawtooth(2 * np.pi * pitch * t, width=1)
-		signal_float = signal_float.astype(np.float32) # Converti a float32 per audio
-		# Applica Fade In/Out
-		fade_samples = int(round(fs * ms / 1000.0)) # Arrotonda campioni fade
-		# Condizione robusta per sovrapposizione fade
-		if fade_samples > 0 and fade_samples <= N // 2:
-			ramp = np.linspace(0, 1, fade_samples, dtype=np.float32)
-			signal_float[:fade_samples] *= ramp
-			signal_float[-fade_samples:] *= ramp[::-1] # Usa slicing negativo per l'ultimo pezzo
-		# Applica volume e converti a int16
-		# Clipping prima della conversione int16
-		signal_float = np.clip(signal_float * vol, -1.0, 1.0)
-		return (signal_float * 32767.0).astype(np.int16)
-	def generate_silence(duration):
-		# Arrotonda qui per il numero di campioni
-		N = int(round(fs * duration))
-		return np.zeros(N, dtype=np.int16) if N > 0 else np.array([], dtype=np.int16)
-	# --- Assemblaggio Sequenza (invariato) ---
-	segments = []
-	words = msg.lower().split()
-	for w_idx, word in enumerate(words):
-		# Usa una stringa per accumulare le lettere valide invece di una lista
-		valid_letters = "".join(ch for ch in word if ch in MORSE_MAP)
-		for l_idx, letter in enumerate(valid_letters):
-			code = MORSE_MAP.get(letter) # Usa .get() per sicurezza? No, già filtrato.
-			if not code: continue # Salta se per qualche motivo non c'è codice (non dovrebbe succedere)
-			for s_idx, symbol in enumerate(code):
-				if symbol == '.':
-					segments.append(generate_tone(dot_duration))
-				elif symbol == '-':
-					segments.append(generate_tone(dash_duration))
-				# Aggiungi gap intra-simbolo solo se non è l'ultimo simbolo
-				if s_idx < len(code) - 1:
-					segments.append(generate_silence(intra_gap))
-			# Aggiungi gap tra lettere solo se non è l'ultima lettera
-			if l_idx < len(valid_letters) - 1:
-				segments.append(generate_silence(letter_gap))
-		# Aggiungi gap tra parole solo se non è l'ultima parola
-		if w_idx < len(words) - 1:
-			# Controlla se la parola precedente non era solo spazi o caratteri ignorati
-			if valid_letters or any(ch in MORSE_MAP for ch in words[w_idx+1]):
-				segments.append(generate_silence(word_gap))
-	# --- Concatenazione e Aggiunta Silenzio Finale ---
-	audio = np.concatenate(segments) if segments else np.array([], dtype=np.int16)
-	if audio.size > 0: # Aggiungi solo se c'è audio
-		silence_samples_end = int(round(fs * 0.005)) # Es. 5ms di silenzio finale
-		if silence_samples_end > 0:
-			final_silence = np.zeros(silence_samples_end, dtype=np.int16)
-			audio = np.concatenate((audio, final_silence))
-	# --- Calcolo rwpm (con gestione divisione per zero robusta) ---
-	rwpm = wpm # Default se pesi standard o nessun elemento contato
-	if (l, s, p) != (30, 50, 50):
-		dots = dashes = intra_gaps = letter_gaps = word_gaps = 0
-		words_list = msg.lower().split()
-		processed_letters_count = 0 # Contatore per gestire gaps
-		for w_idx, w in enumerate(words_list):
-			current_word_letters = 0
-			code_lengths_in_word = []
-			for letter in w:
-				if letter in MORSE_MAP:
-					code = MORSE_MAP[letter]
-					if code: # Ignora spazi o caratteri mappati a stringa vuota
-						dots += code.count('.')
-						dashes += code.count('-')
-						code_len = len(code)
-						if code_len > 1:
-							intra_gaps += (code_len - 1)
-						code_lengths_in_word.append(code_len)
-						current_word_letters += 1
-			if current_word_letters > 1:
-				letter_gaps += (current_word_letters - 1)
-			processed_letters_count += current_word_letters
-			# Aggiungi word gap solo se la parola conteneva elementi e non è l'ultima
-			if current_word_letters > 0 and w_idx < len(words_list) - 1:
-				# E controlla anche se la parola successiva contiene elementi
-				if any(ch in MORSE_MAP and MORSE_MAP[ch] for ch in words_list[w_idx+1]):
-					word_gaps += 1
-		# Calcola durate totali (in unità di dot)
-		# Durata standard: 1 (dot) + 1 (gap) = 2, 3 (dash) + 1 (gap) = 4
-		# Gap tra lettere = 3, Gap tra parole = 7
-		# L'unità base è la durata del dot standard (T * p/50 dove p=50)
-		standard_total_units = dots + 3*dashes + intra_gaps + 3*letter_gaps + 7*word_gaps
-		# Durata attuale con pesi
-		actual_dot_units = p / 50.0
-		actual_dash_units = 3.0 * (l / 30.0)
-		actual_intra_gap_units = s / 50.0
-		actual_letter_gap_units = 3.0 * (s / 50.0)
-		actual_word_gap_units = 7.0 * (s / 50.0)
-		actual_total_units = (dots * actual_dot_units) + \
-							 (dashes * actual_dash_units) + \
-							 (intra_gaps * actual_intra_gap_units) + \
-							 (letter_gaps * actual_letter_gap_units) + \
-							 (word_gaps * actual_word_gap_units)
-		# Calcola rapporto e rwpm solo se ci sono state durate
-		if standard_total_units > 0 and actual_total_units > 0:
-			ratio = actual_total_units / standard_total_units
-			rwpm = wpm / ratio
-		elif standard_total_units == 0 and actual_total_units == 0:
-			rwpm = wpm # Messaggio vuoto, rwpm è uguale a wpm nominale
-		else:
-			# Caso anomalo (es. solo spazi?), imposta rwpm a wpm o 0?
-			# Manteniamo wpm per ora, ma potrebbe essere indice di errore input.
-			rwpm = wpm
-			print("CWzator Warning: Calcolo rwpm anomalo, possibile input solo con spazi?", file=sys.stderr)
-	# --- Classe PlaybackHandle (invariata ma ora riceve audio con silenzio finale) ---
-	class PlaybackHandle:
-		def __init__(self, audio_data, sample_rate):
-			self.audio_data = audio_data
-			self.sample_rate = sample_rate
-			self.stream = None
-			self.is_playing = threading.Event() # Usa Event per thread-safety
-			self._thread = None # Riferimento al thread
-		def _playback_target(self):
-			"""Target function per il thread di riproduzione."""
-			self.is_playing.set() # Segnala inizio riproduzione
-			stream = None # Inizializza per blocco finally
-			try:
-				with sd.OutputStream(
-					samplerate=self.sample_rate, channels=1, dtype=np.int16,
-					blocksize=BLOCK_SIZE, latency='low'
-				) as stream:
-					# Salva riferimento allo stream *dopo* che è stato creato con successo
-					self.stream = stream
-					# Scrittura a blocchi, controllando il flag ad ogni blocco
-					for i in range(0, len(self.audio_data), BLOCK_SIZE):
-						if not self.is_playing.is_set(): # Controlla l'evento
-							# print("Debug: Stop richiesto durante la riproduzione.")
-							stream.stop() # Prova a fermare lo stream corrente
-							break
-						block = self.audio_data[i:min(i + BLOCK_SIZE, len(self.audio_data))]
-						stream.write(block)
-					# Se il loop finisce normalmente, attendi che lo stream finisca l'output bufferizzato
-					if self.is_playing.is_set():
-						# print("Debug: Loop terminato, attendo stream.close() implicito.")
-						pass # 'with' gestisce la chiusura e l'attesa implicita
-			except sd.PortAudioError as pae:
-				print(f"CWzator Playback PortAudioError: {pae}", file=sys.stderr)
-			except Exception as e:
-				print(f"CWzator Playback Error: {e}", file=sys.stderr)
-			finally:
-				# print("Debug: Uscita blocco try/finally _playback_target.")
-				self.is_playing.clear() # Segnala fine riproduzione o errore
-				self.stream = None # Rilascia riferimento allo stream
-		def play(self):
-			"""Avvia la riproduzione in un thread separato."""
-			if not self.is_playing.is_set() and self.audio_data.size > 0:
-				# Crea e avvia il thread solo se non sta già suonando e c'è audio
-				self._thread = threading.Thread(target=self._playback_target)
-				self._thread.daemon = False # Assicura non-daemon
-				self._thread.start()
-			# else: print("Debug: Play chiamato ma già in esecuzione o audio vuoto.")
-		def wait_done(self):
-			"""Attende la fine della riproduzione corrente."""
-			# Attende che l'evento is_playing sia clear O che il thread termini
-			if self._thread is not None and self._thread.is_alive():
-				# print("Debug: wait_done chiamato, joining thread...")
-				self._thread.join()
-			# print("Debug: wait_done terminato.")
-		def stop(self):
-			"""Richiede l'interruzione della riproduzione."""
-			# print("Debug: stop richiesto.")
-			self.is_playing.clear() # Segnala al loop di playback di fermarsi
-			# Nota: l'interruzione effettiva dipende da quanto velocemente il loop
-			# controlla l'evento e da quanto tempo impiega stream.stop().
-			# Non chiudiamo lo stream qui, il blocco 'with' lo farà.
-	# --- Creazione Oggetto e Avvio Playback (Logica Originale) ---
-	play_obj = PlaybackHandle(audio, fs)
-	# Avvia la riproduzione nel thread interno all'oggetto
-	play_obj.play() # Il metodo play ora gestisce l'avvio del thread
-	# --- Salvataggio File (invariato) ---
-	if file:
-		filename = f"cwapu Morse recorded at {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"
-		try:
-			with wave.open(filename, 'wb') as wf:
-				wf.setnchannels(1) # Mono
-				wf.setsampwidth(2) # 16-bit
-				wf.setframerate(fs)
-				wf.writeframes(audio.tobytes())
-			# print(f"CWzator: Audio salvato in {filename}")
-		except Exception as e:
-			print(f"CWzator Error durante salvataggio file: {e}", file=sys.stderr)
-	# --- Gestione Sync (usa wait_done dell'oggetto) ---
-	if sync:
-		play_obj.wait_done() # Usa il metodo dell'oggetto per attendere
-	# --- Ritorno Oggetto e rwpm ---
-	return play_obj, rwpm
-
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False):
 	"""
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
@@ -1150,25 +879,6 @@ class Mazzo:
 		# Usa la lista referenziata per ottenere le carte
 		return f"{nome_lista} ({len(target_lista_ref)}): " + ", ".join([c.desc_breve for c in target_lista_ref])
 
-def percent(base=50.0, confronto=100.0, successo=False):
-	'''V1.0 thu 28, september 2023
-	Rx base e confronto e calcola la percentuale di base rispetto a confronto
-	rx anche successo: se vero, estrae un numero casuale fra 0 e 100
-	se il numero estratto è uguale o inferiore alla percentuale, restituisce vero, altrimenti falso
-	se successo è vero: restituisce la percentuale e una booleana che indica successo o fallimento
-	se sucesso è falso: restituisce solo la percentuale
-	'''
-	from random import uniform
-	if not isinstance(base,float): base=float(base)
-	if not isinstance(confronto,float): confronto=float(confronto)
-	perc=(base/confronto)*100
-	if not successo:
-		return perc
-	else:
-		x=uniform(0,100)
-		if x<=perc: return perc, True
-		else: return perc, False
-
 def base62(n):
 	'''
 	Converte un intero in base 10 ad una stringa in base 62.
@@ -1191,42 +901,6 @@ def base62(n):
 		out.append(r)
 	out.reverse()
 	return segno + ''.join(symbols[l] for l in out)
-
-def key_old(prompt="", attesa=99999):
-	'''V5.1 del 23/01/2026 (Legacy)
-	Attende per il numero di secondi specificati
-	se tempo e' scaduto, o si preme un tasto, esce.
-	prompt e' il messaggio da mostrare.
-	Restituisce il tasto premuto.
-	'''
-	import os
-	import sys
-	import time
-	if prompt:
-		print(prompt, end="", flush=True)
-	start_time = time.time()
-	if os.name == 'nt':
-		import msvcrt
-		while time.time() - start_time <= attesa:
-			if msvcrt.kbhit():
-				return msvcrt.getwch()
-			time.sleep(0.01)
-		return ''
-	else:
-		import select
-		import termios
-		import tty
-		fd = sys.stdin.fileno()
-		old_settings = termios.tcgetattr(fd)
-		try:
-			tty.setcbreak(fd)
-			while time.time() - start_time <= attesa:
-				rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-				if rlist:
-					return sys.stdin.read(1)
-			return ''
-		finally:
-			termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 def key(prompt="", attesa=99999):
 	"""V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
@@ -2138,64 +1812,6 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
                 user_input += user_char
                 last_displayed = None
                 disable_autocomplete_once = False
-
-def Scandenza(y=2100, m=1, g=1, h=0, i=0):
-	'''
-	V 1.0 del 15/12/2021
-	Riceve anno, mese, giorno, ora e minuto e calcola la differenza con l'ADESSO. Quindi la ritorna
-	'''
-	from datetime import datetime
-
-	from dateutil import relativedelta
-	APP=datetime(y,m,g,h,i)
-	NOW = datetime.today()
-	ETA=relativedelta.relativedelta(APP, NOW)
-	if ETA.years > 0:
-		if ETA.years == 1: f = str(ETA.years)+" anno, "
-		else: f = str(ETA.years)+" anni, "
-	else: f = ""
-	if ETA.months > 0:
-		if ETA.months == 1: f += str(ETA.months)+" mese, "
-		else: f += str(ETA.months)+" mesi, "
-	if ETA.days > 0:
-		if ETA.days == 1: f += str(ETA.days)+" giorno, "
-		else: f += str(ETA.days)+" giorni, "
-	if ETA.hours > 0:
-		if ETA.hours == 1: f += str(ETA.hours)+" ora e "
-		else: f += str(ETA.hours)+" ore e "
-	if ETA.minutes > 0:
-		if ETA.minutes == 1: f += str(ETA.minutes)+" minuto."
-		else: f += str(ETA.minutes)+" minuti"
-	return(f)
-
-def Vecchiume(y=1974, m=9, g=13, h=22, i=10):
-	'''
-	Utility che calcola la differenza fra una data e l'ADESSO.
-	V1.0 del 15/12 2018 Di Gabriele Battaglia
-	Riceve anno, mese, giorno, ora e minuto e calcola la differenza con l'ADESSO. Quindi la ritorna'''
-	from datetime import datetime
-
-	from dateutil import relativedelta
-	APP=datetime(y,m,g,h,i)
-	NOW = datetime.today()
-	ETA=relativedelta.relativedelta(NOW,APP)
-	if ETA.years > 0:
-		if ETA.years == 1: f = str(ETA.years)+" anno, "
-		else: f = str(ETA.years)+" anni, "
-	else: f = ""
-	if ETA.months > 0:
-		if ETA.months == 1: f += str(ETA.months)+" mese, "
-		else: f += str(ETA.months)+" mesi, "
-	if ETA.days > 0:
-		if ETA.days == 1: f += str(ETA.days)+" giorno, "
-		else: f += str(ETA.days)+" giorni, "
-	if ETA.hours > 0:
-		if ETA.hours == 1: f += str(ETA.hours)+" ora e "
-		else: f += str(ETA.hours)+" ore e "
-	if ETA.minutes > 0:
-		if ETA.minutes == 1: f += str(ETA.minutes)+" minuto."
-		else: f += str(ETA.minutes)+" minuti"
-	return(f)
 
 def Donazione(lang=None):
     """
