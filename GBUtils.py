@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V94 di mercoledì 2 settembre 2026
+	V95 di mercoledì 2 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
-	Acusticator V6.5 di mercoledì 2 settembre 2026. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	Acusticator V7.0 di mercoledì 2 settembre 2026. Oggetto chiamabile con la collezione dei suoni. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "94"
+VERSION = "95"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1427,9 +1427,10 @@ def parse_vol_values(vol_param):
 			pass
 	return 0.5
 
-def Acusticator(score, kind=1, adsr=None, fs=44100, sync=False):
+def _motore_audio(score, kind=1, adsr=None, fs=44100, sync=False):
 	"""
-	V6.5 di mercoledì 2 settembre 2026. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	Motore di sintesi di Acusticator, gia' V6.5, ora interno alla classe _Acusticator.
+	Non va chiamato direttamente: si usa l'oggetto Acusticator, vedi la sua docstring.
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -1671,6 +1672,291 @@ def Acusticator(score, kind=1, adsr=None, fs=44100, sync=False):
 	if sync:
 		thread.join()
 	return
+
+
+class _Acusticator:
+    """V7.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+
+    Motore audio e libreria dei suoni del parco software.
+
+    L'oggetto si usa in due modi, e sono indipendenti fra loro.
+
+    Primo modo, chiamarlo come una funzione, che e' come ha sempre
+    funzionato Acusticator e come lo usano tutte le chiamate esistenti:
+
+        Acusticator(["c5", 0.2, 0, 0.5])
+        Acusticator(["c4", 0.1, -1, 0.4, "g4", 0.1, 1, 0.4], kind=2, sync=True)
+
+    Lo score e' una lista piatta di quartine [nota, durata, pan, volume]:
+      nota    nome della nota come "c4" o "c#4", oppure un valore in Hz,
+              oppure due valori uniti da un punto per il portamento come
+              "c4.e4" o "880.920", oppure "p" per una pausa.
+      durata  secondi.
+      pan     da -1 tutto a sinistra a 1 tutto a destra; anche in
+              portamento, come "-1.1".
+      volume  da 0 a 1; anche in portamento.
+    kind sceglie l'onda: 1 sinusoide, 2 quadra, 3 triangolare, 4 dente di
+    sega. adsr sono quattro percentuali [attacco, decadimento, sostegno,
+    rilascio]. Con sync a False il suono parte e il controllo torna subito.
+
+    Secondo modo, attingere alla collezione condivisa Acu_Collection.json,
+    che e' la libreria dei suoni gia' pronti, curata con Acu_Maker:
+
+        Acusticator.play("conferma")            suona un preset
+        Acusticator.play("conferma", volume=.8) lo stesso, piu' forte
+        Acusticator.list("vittoria")            cerca fra nomi e descrizioni
+        Acusticator.preset("conferma")          restituisce (score, kind, adsr)
+        Acusticator.info()                      due conti sulla collezione
+        Acusticator.save(...)                   aggiunge un preset nuovo
+
+    Nella collezione il volume di ogni quartina e' scritto come scarto
+    rispetto a una base di 0.5, mentre il motore vuole il valore assoluto:
+    la conversione, insieme all'appiattimento delle quartine, la fanno
+    play e preset, ed e' il motivo per cui non va mai passato ad
+    Acusticator uno score preso pari pari dal file.
+
+    Un progetto puo' avere una collezione propria, che viene cercata prima
+    di quella condivisa, cosi' i suoi suoni non devono per forza entrare
+    nell'archivio comune:
+
+        Acusticator.collezione("suoni_del_progetto.json")
+
+    Un preset che non esiste non fa cadere niente: viene segnalato su
+    stderr e il suono semplicemente non parte.
+    """
+
+    NOME_COLLEZIONE = "Acu_Collection.json"
+    BASE_VOL = 0.5
+
+    def __init__(self):
+        self._cache = {}
+        self._locali = []
+
+    def __call__(self, score, kind=1, adsr=None, fs=44100, sync=False):
+        """Sintetizza e riproduce uno score. Vedi la spiegazione della classe."""
+        return _motore_audio(score, kind, adsr, fs, sync)
+
+    def _avvisa(self, messaggio):
+        import sys
+        print(f"Acusticator: {messaggio}", file=sys.stderr)
+
+    def _percorso_hub(self):
+        """Dove sta la collezione condivisa, da sorgente e da eseguibile."""
+        import os
+        import sys
+        if getattr(sys, "frozen", False):
+            for base in (getattr(sys, "_MEIPASS", None), os.path.dirname(sys.executable)):
+                if base:
+                    p = os.path.join(base, self.NOME_COLLEZIONE)
+                    if os.path.isfile(p):
+                        return p
+        return os.path.join(os.path.dirname(os.path.abspath(__file__)), self.NOME_COLLEZIONE)
+
+    def _percorsi(self):
+        """Le collezioni da consultare, quelle del progetto prima dell'hub."""
+        return list(self._locali) + [self._percorso_hub()]
+
+    def collezione(self, percorso):
+        """Aggiunge una collezione del progetto, cercata prima di quella condivisa.
+
+        Il percorso relativo si intende rispetto al file che chiama.
+        Restituisce il numero di preset letti, oppure 0 se il file manca.
+        """
+        import os
+        import sys
+        if not os.path.isabs(percorso):
+            try:
+                chiamante = sys._getframe(1).f_globals["__file__"]
+                percorso = os.path.join(os.path.dirname(os.path.abspath(chiamante)), percorso)
+            except (AttributeError, KeyError, ValueError):
+                percorso = os.path.abspath(percorso)
+        percorso = os.path.normpath(percorso)
+        dati = self._carica(percorso)
+        if dati is None:
+            self._avvisa(f"collezione non trovata: {percorso}")
+            return 0
+        if percorso not in self._locali:
+            self._locali.insert(0, percorso)
+        return len(dati)
+
+    def _carica(self, percorso):
+        """Legge una collezione, tenendola in memoria. None se non c'e'."""
+        import json
+        import os
+        if percorso in self._cache:
+            return self._cache[percorso]
+        if not os.path.isfile(percorso):
+            return None
+        try:
+            with open(percorso, encoding="utf-8") as f:
+                dati = json.load(f)
+        except (OSError, ValueError) as e:
+            self._avvisa(f"collezione illeggibile, {percorso}: {e}")
+            return None
+        if not isinstance(dati, dict):
+            self._avvisa(f"collezione malformata, {percorso}: la radice non e' un dizionario")
+            return None
+        self._cache[percorso] = dati
+        return dati
+
+    def reload(self):
+        """Dimentica quello che ha in memoria: da rilanciare dopo Acu_Maker."""
+        self._cache.clear()
+
+    def _cerca(self, nome):
+        """Il primo preset con quel nome, e da quale collezione viene."""
+        for percorso in self._percorsi():
+            dati = self._carica(percorso)
+            if dati and nome in dati:
+                return dati[nome], percorso
+        return None, None
+
+    def preset(self, nome, volume=None):
+        """Restituisce (score, kind, adsr) pronti da passare al motore.
+
+        Lo score torna appiattito e con i volumi assoluti, cioe' gia'
+        convertiti dagli scarti scritti nel file. volume, se dato,
+        sostituisce la base 0.5 su cui gli scarti si applicano: e' il modo
+        di rispettare il volume scelto dall'utente nelle impostazioni.
+        Restituisce (None, None, None) se il preset non esiste.
+        """
+        dati, _ = self._cerca(nome)
+        if dati is None:
+            self._avvisa(f"preset sconosciuto: {nome}")
+            return None, None, None
+        base = self.BASE_VOL if volume is None else float(volume)
+        piatto = []
+        for quartina in dati.get("score", []):
+            try:
+                nota, dur, pan, scarto = quartina
+            except (TypeError, ValueError):
+                self._avvisa(f"preset {nome}: quartina malformata, la salto")
+                continue
+            if isinstance(scarto, str):
+                assoluto = scarto
+            else:
+                assoluto = max(0.0, min(1.0, base + float(scarto)))
+            piatto.extend([nota, dur, pan, assoluto])
+        return piatto, dati.get("kind", 1), dati.get("adsr")
+
+    def play(self, nome, sync=False, volume=None):
+        """Suona un preset della collezione. Vero se e' partito."""
+        score, kind, adsr = self.preset(nome, volume=volume)
+        if not score:
+            return False
+        self(score, kind=kind, adsr=adsr, sync=sync)
+        return True
+
+    def list(self, filtro=None):
+        """I nomi dei preset, in ordine.
+
+        Con un filtro restituisce solo quelli il cui nome o la cui
+        descrizione contengono quel testo, senza badare alle maiuscole.
+        """
+        nomi = {}
+        for percorso in self._percorsi():
+            dati = self._carica(percorso)
+            if not dati:
+                continue
+            for nome, v in dati.items():
+                nomi.setdefault(nome, v)
+        if not filtro:
+            return sorted(nomi)
+        cercato = str(filtro).lower()
+        return sorted(
+            n for n, v in nomi.items()
+            if cercato in n.lower() or cercato in str(v.get("descrizione", "")).lower()
+        )
+
+    def descrizione(self, nome):
+        """La descrizione di un preset, stringa vuota se non ce l'ha."""
+        dati, _ = self._cerca(nome)
+        return "" if dati is None else str(dati.get("descrizione", ""))
+
+    def info(self):
+        """Due conti sulle collezioni consultabili, come dizionario."""
+        conti = {"collezioni": [], "preset": 0, "senza_descrizione": 0, "durata_media": 0.0}
+        durate = []
+        visti = set()
+        for percorso in self._percorsi():
+            dati = self._carica(percorso)
+            if not dati:
+                continue
+            conti["collezioni"].append((percorso, len(dati)))
+            for nome, v in dati.items():
+                if nome in visti:
+                    continue
+                visti.add(nome)
+                conti["preset"] += 1
+                if not str(v.get("descrizione", "")).strip():
+                    conti["senza_descrizione"] += 1
+                try:
+                    durate.append(sum(float(q[1]) for q in v.get("score", [])))
+                except (TypeError, ValueError, IndexError):
+                    pass
+        if durate:
+            conti["durata_media"] = round(sum(durate) / len(durate), 3)
+        return conti
+
+    def save(self, nome, score, kind=1, adsr=None, descrizione="", percorso=None):
+        """Aggiunge o sostituisce un preset in una collezione.
+
+        score si passa nella stessa forma che vuole il motore, cioe' la
+        lista piatta con i volumi assoluti: qui viene ripiegato in
+        quartine e i volumi tornano scarti dalla base 0.5, che e' il
+        formato del file.
+        Da eseguibile congelato non si salva: la collezione sta dentro la
+        cartella del pacchetto, che ogni aggiornamento sostituisce, quindi
+        il preset andrebbe perso. Aggiungere suoni e' un lavoro da
+        sorgente, con Acu_Maker o con questo metodo.
+        Restituisce True se ha scritto.
+        """
+        import json
+        import os
+        import sys
+        if getattr(sys, "frozen", False):
+            self._avvisa("da eseguibile la collezione non si scrive, usa Acu_Maker da sorgente")
+            return False
+        if not str(descrizione).strip():
+            self._avvisa(f"preset {nome} senza descrizione: non lo salvo")
+            return False
+        if percorso is None:
+            percorso = self._locali[0] if self._locali else self._percorso_hub()
+        dati = self._carica(percorso)
+        if dati is None:
+            dati = {}
+        quartine = []
+        for i in range(0, len(score), 4):
+            try:
+                nota, dur, pan, vol = score[i:i + 4]
+            except ValueError:
+                self._avvisa(f"preset {nome}: lo score non e' fatto di quartine")
+                return False
+            if isinstance(vol, str):
+                scarto = vol
+            else:
+                scarto = round(float(vol) - self.BASE_VOL, 4)
+            quartine.append([nota, dur, pan, scarto])
+        if not quartine:
+            self._avvisa(f"preset {nome}: score vuoto, non lo salvo")
+            return False
+        dati[nome] = {
+            "descrizione": str(descrizione),
+            "score": quartine,
+            "kind": kind,
+            "adsr": adsr if adsr is not None else [0.002, 0.0, 100.0, 0.002],
+        }
+        try:
+            with open(percorso, "w", encoding="utf-8") as f:
+                json.dump(dati, f, indent=4)
+        except OSError as e:
+            self._avvisa(f"non riesco a scrivere {os.path.basename(percorso)}: {e}")
+            return False
+        self._cache[percorso] = dati
+        return True
+
+
+Acusticator = _Acusticator()
 
 def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
 	'''Versione 1.10 di lunedì 24 febbraio 2025
