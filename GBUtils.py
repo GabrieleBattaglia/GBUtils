@@ -3,12 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V92 di mercoledì 2 settembre 2026
+	V93 di mercoledì 2 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
 	Acusticator V6.4 di mercoledì 5 agosto 2026. Gabriele Battaglia e Stella
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
+	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0 del 12 luglio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
@@ -22,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "92"
+VERSION = "93"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -194,6 +195,119 @@ del /Q "{zip_path}"
     except Exception as e:
         _write_update_log(f"Errore durante l'esecuzione dell'aggiornamento: {e}")
         return False
+
+
+def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=None, silenzioso=False):
+    """V1.0 di mercoledì 2 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+    Comprime in un solo archivio la cartella prodotta da PyInstaller.
+    I file finiscono alla radice dell'archivio, senza cartelle intermedie: e' il
+    solo formato che perform_update sa gestire, e che gli strumenti di
+    compressione di Windows non producono.
+    Parametri:
+        nome_app: nome dell'applicazione. Se cartella_dist o archivio non sono
+            indicati, si assumono dist/<nome_app> e <nome_app>.zip accanto al
+            file che chiama la funzione, non alla directory di lavoro.
+        cartella_dist: percorso della cartella da comprimere. Se relativo, e'
+            risolto rispetto alla cartella del chiamante.
+        archivio: percorso dello zip da creare. Stessa regola sui relativi.
+        escludi: voci aggiuntive da lasciare fuori, oltre a quelle di serie.
+            Una voce che termina con barra o barra rovescia e' un nome di
+            cartella e viene saltata a qualunque profondita'. Ogni altra voce e'
+            un motivo alla maniera di fnmatch, per esempio partite.json oppure
+            *.danneggiato_*, ed e' applicata ai soli file che stanno accanto
+            all'eseguibile.
+        silenzioso: se vero non stampa nulla e si limita a restituire il conto.
+    Le cartelle dei dati dell'utente, cioe' log, settings, pgn, txt e images, si
+    saltano dovunque si trovino, perche' nascono provando l'eseguibile prima di
+    comprimere e conterrebbero i dati di chi ha compilato.
+    Il filtro sulle estensioni vale invece soltanto per i file accanto
+    all'eseguibile, mai dentro _internal, dove sta quello che ha messo
+    PyInstaller: li' un base_library.zip o un membrane.dat servono davvero e
+    senza di loro il pacchetto non parte nemmeno.
+    Restituisce la coppia (quanti, lasciati), cioe' il numero di file scritti
+    nell'archivio e l'elenco ordinato di quelli lasciati fuori.
+    Solleva FileNotFoundError se la cartella da comprimere non esiste.
+    """
+    import fnmatch
+    import os
+    import sys
+    import zipfile
+
+    cartelle_utente = {"log", "logs", "settings", "pgn", "txt", "images"}
+    cartelle_di_lavoro = {"__pycache__", ".git", ".github", ".pytest_cache", ".ruff_cache"}
+    estensioni_escluse = (".bak", ".tmp", ".pdb", ".log", ".pyc", ".zip", ".dat")
+
+    try:
+        base_dir = os.path.dirname(os.path.abspath(sys._getframe(1).f_globals["__file__"]))
+    except (AttributeError, KeyError, ValueError):
+        base_dir = os.getcwd()
+
+    def assoluto(percorso):
+        return percorso if os.path.isabs(percorso) else os.path.join(base_dir, percorso)
+
+    if cartella_dist is None:
+        cartella_dist = os.path.join("dist", nome_app)
+    if archivio is None:
+        archivio = f"{nome_app}.zip"
+    cartella_dist = os.path.normpath(assoluto(cartella_dist))
+    archivio = os.path.normpath(assoluto(archivio))
+
+    cartelle_extra = set()
+    motivi_extra = []
+    for voce in escludi or ():
+        voce = str(voce)
+        if voce.endswith(("/", "\\")):
+            cartelle_extra.add(voce.rstrip("/\\").lower())
+        else:
+            motivi_extra.append(voce.lower())
+    salta_sempre = cartelle_utente | cartelle_di_lavoro | cartelle_extra
+
+    if not silenzioso:
+        print(f"Creo {os.path.basename(archivio)}")
+        print(f"a partire da {cartella_dist}")
+    if not os.path.isdir(cartella_dist):
+        raise FileNotFoundError(f"Cartella da comprimere assente: {cartella_dist}")
+
+    quanti = 0
+    lasciati = []
+    radice_assoluta = os.path.abspath(cartella_dist)
+    try:
+        with zipfile.ZipFile(archivio, "w", zipfile.ZIP_DEFLATED) as zip_out:
+            for radice, cartelle, file in os.walk(cartella_dist):
+                dentro = os.path.relpath(radice, cartella_dist)
+                for c in cartelle:
+                    if c.lower() in salta_sempre:
+                        ramo = c if dentro == "." else os.path.join(dentro, c)
+                        lasciati.append(f"{ramo} e quel che contiene")
+                cartelle[:] = [c for c in cartelle if c.lower() not in salta_sempre]
+                accanto_all_exe = os.path.abspath(radice) == radice_assoluta
+                for nome in sorted(file):
+                    minuscolo = nome.lower()
+                    if accanto_all_exe and (
+                        minuscolo.endswith(estensioni_escluse)
+                        or any(fnmatch.fnmatch(minuscolo, m) for m in motivi_extra)
+                    ):
+                        lasciati.append(nome)
+                        continue
+                    percorso = os.path.join(radice, nome)
+                    zip_out.write(percorso, os.path.relpath(percorso, cartella_dist))
+                    quanti += 1
+    except OSError as e:
+        if os.path.exists(archivio):
+            try:
+                os.remove(archivio)
+            except OSError:
+                pass
+        raise OSError(f"Archivio non creato: {e}") from e
+
+    lasciati.sort()
+    if not silenzioso:
+        print(f"Fatto: {quanti} file archiviati.")
+        if lasciati:
+            print(f"Lasciati fuori {len(lasciati)} elementi:")
+            for voce in lasciati:
+                print(f"  {voce}")
+    return quanti, lasciati
 
 
 def enter_escape(prompt=""):
