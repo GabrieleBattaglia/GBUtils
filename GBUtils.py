@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V95 di mercoledì 2 settembre 2026
+	V96 di mercoledì 2 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
-	Acusticator V7.0 di mercoledì 2 settembre 2026. Oggetto chiamabile con la collezione dei suoni. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	Acusticator V7.1 di mercoledì 2 settembre 2026. Oggetto chiamabile, collezione dei suoni e mixer a 16 voci. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "95"
+VERSION = "96"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1427,10 +1427,13 @@ def parse_vol_values(vol_param):
 			pass
 	return 0.5
 
-def _motore_audio(score, kind=1, adsr=None, fs=44100, sync=False):
+def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	"""
-	Motore di sintesi di Acusticator, gia' V6.5, ora interno alla classe _Acusticator.
-	Non va chiamato direttamente: si usa l'oggetto Acusticator, vedi la sua docstring.
+	Motore di sintesi di Acusticator, gia' V6.5, ora interno.
+	Produce il buffer stereo float32 e non lo riproduce: della riproduzione si
+	occupa il mixer della classe _Acusticator. Non va chiamato direttamente:
+	si usa l'oggetto Acusticator, vedi la sua docstring.
+	Restituisce un array (campioni, 2) float32, oppure None se lo score e' vuoto.
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -1447,10 +1450,8 @@ def _motore_audio(score, kind=1, adsr=None, fs=44100, sync=False):
 	"""
 	import re
 	import sys
-	import threading
 
 	import numpy as np
-	import sounddevice as sd
 	from scipy import signal
 	def note_to_freq(note):
 		if isinstance(note, (int, float)): return float(note)
@@ -1482,8 +1483,6 @@ def _motore_audio(score, kind=1, adsr=None, fs=44100, sync=False):
 	# adsr predefinito costruito a ogni chiamata: una lista come valore di
 	# default sarebbe creata una volta sola e condivisa da tutti i chiamanti.
 	if adsr is None: adsr = [.002, 0, 100, .002]
-	BLOCK_SIZE = 256 # Per il loop di scrittura in play_audio
-	SAFETY_BUFFER_SECONDS = 0.001 # Buffer di silenzio alla fine (in play_audio)
 	if len(adsr) != 4: raise ValueError("ADSR deve contenere 4 valori")
 	a_pct, d_pct, s_level_pct, r_pct = adsr
 	if not all(0 <= val <= 100 for val in adsr): raise ValueError("Valori ADSR devono essere tra 0 e 100.")
@@ -1631,51 +1630,13 @@ def _motore_audio(score, kind=1, adsr=None, fs=44100, sync=False):
 			stereo_segment[:, 0] = wave * left_gain
 			stereo_segment[:, 1] = wave * right_gain
 		segments.append(stereo_segment)
-	if not segments: return
+	if not segments: return None
 	full_signal_float = np.concatenate(segments, axis=0)
 	full_signal_float = np.clip(full_signal_float, -1.0, 1.0)
-	audio_data_int16 = (full_signal_float * 32767.0).astype(np.int16)
-	def play_audio():
-		try:
-			with sd.OutputStream(samplerate=fs, channels=2, dtype=np.int16,
-								 blocksize=BLOCK_SIZE, latency='low') as stream:
-				for i in range(0, len(audio_data_int16), BLOCK_SIZE):
-					block = audio_data_int16[i:min(i + BLOCK_SIZE, len(audio_data_int16))]
-					stream.write(block)
-				silence_samples = int(fs * SAFETY_BUFFER_SECONDS)
-				if silence_samples > 0:
-					silence = np.zeros((silence_samples, 2), dtype=np.int16)
-					stream.write(silence)
-				stream.stop()
-		except sd.PortAudioError as pae:
-			if "Invalid number of channels" in str(pae) or "PaErrorCode -9998" in str(pae):
-				try:
-					audio_mono = audio_data_int16.mean(axis=1).astype(np.int16)
-					with sd.OutputStream(samplerate=fs, channels=1, dtype=np.int16,
-										 blocksize=BLOCK_SIZE, latency='low') as stream:
-						for i in range(0, len(audio_mono), BLOCK_SIZE):
-							block = audio_mono[i:min(i + BLOCK_SIZE, len(audio_mono))]
-							stream.write(block.reshape(-1, 1))
-						silence_samples = int(fs * SAFETY_BUFFER_SECONDS)
-						if silence_samples > 0:
-							silence = np.zeros((silence_samples, 1), dtype=np.int16)
-							stream.write(silence)
-						stream.stop()
-				except Exception as e2:
-					print(f"Acusticator Mono Fallback Error: {e2}", file=sys.stderr)
-			else:
-				print(f"Acusticator Playback PortAudioError: {pae}", file=sys.stderr)
-		except Exception as e:
-			print(f"Acusticator Playback Error: {e}", file=sys.stderr)
-	thread = threading.Thread(target=play_audio)
-	thread.start()
-	if sync:
-		thread.join()
-	return
-
+	return full_signal_float
 
 class _Acusticator:
-    """V7.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+    """V7.1 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -1723,18 +1684,310 @@ class _Acusticator:
 
     Un preset che non esiste non fa cadere niente: viene segnalato su
     stderr e il suono semplicemente non parte.
+
+    Sotto entrambi i modi c'e' un mixer con un solo stream tenuto aperto.
+    Prima ogni chiamata ne apriva e chiudeva uno suo, e quella sola
+    apertura costava sui 138 ms, pagati da ogni singolo effetto sonoro di
+    ogni applicazione. Ora i suoni si sommano davvero fra loro, fino a
+    sedici per volta: quando le voci sono tutte occupate, la piu' vecchia
+    lascia il posto alla nuova, cosi' l'ultimo evento si sente sempre.
+
+        Acusticator.setup(volume=0.6)   il volume generale, una volta sola
+        Acusticator.stop()              silenzio immediato, stream aperto
+        Acusticator.close()             chiude e libera la scheda audio
+        Acusticator.stato()             come sta il mixer in questo momento
+
+    Il volume generale impostato con setup si applica a tutto, quindi non
+    serve piu' passarlo a ogni chiamata. Dopo il silenzio impostato, due
+    minuti di partenza, lo stream si chiude da solo e la scheda torna
+    libera; al suono successivo si riapre senza che nessuno debba fare
+    niente, e alla fine del programma si chiude comunque.
+
+    Il parametro sync dice quanto aspettare: False non aspetta, True
+    aspetta la fine reale del suono, un numero aspetta al massimo quei
+    secondi. La scadenza serve da rete di sicurezza, perche' se il
+    dispositivo audio si pianta il chiamante non resti appeso.
     """
 
     NOME_COLLEZIONE = "Acu_Collection.json"
     BASE_VOL = 0.5
+    VOCI_MAX = 16
+    SILENZIO_MAX = 120.0
+    BLOCCO = 256
 
     def __init__(self):
+        import threading
         self._cache = {}
         self._locali = []
+        # Stato del mixer
+        self._volume = 1.0
+        self._voci_max = self.VOCI_MAX
+        self._silenzio = self.SILENZIO_MAX
+        self._fs = 44100
+        self._device = None
+        self._canali = 2
+        self._voci = []
+        self._stream = None
+        self._guardiano = None
+        self._silenzio_da = None
+        self._uscita_registrata = False
+        self._lock = threading.Lock()
+        self._avvio = threading.RLock()
 
     def __call__(self, score, kind=1, adsr=None, fs=44100, sync=False):
-        """Sintetizza e riproduce uno score. Vedi la spiegazione della classe."""
-        return _motore_audio(score, kind, adsr, fs, sync)
+        """Sintetizza uno score e lo manda al mixer. Vedi la classe per lo score.
+
+        sync dice quanto aspettare prima di restituire il controllo:
+          False   non aspetta, il suono prosegue per conto suo.
+          True    aspetta che il suono sia davvero finito nelle casse.
+          numero  aspetta al massimo quei secondi, poi torna comunque.
+        La scadenza e' una rete di sicurezza: se il dispositivo audio si
+        pianta, il chiamante non resta appeso per sempre.
+        Restituisce True se il suono e' stato accodato.
+        """
+        buffer = _sintetizza(score, kind, adsr, fs)
+        if buffer is None:
+            return False
+        return self.riproduci(buffer, fs=fs, sync=sync)
+
+    # --- Il mixer -------------------------------------------------------
+    # Un solo stream tenuto aperto, invece di aprirne e chiuderne uno per
+    # ogni suono: l'apertura da sola costava 160 ms misurati, pagati da
+    # ogni singolo effetto sonoro di ogni applicazione.
+
+    def setup(self, volume=None, voci_max=None, silenzio=None, fs=None, device=None):
+        """Imposta il mixer, di solito una volta sola all'avvio dell'applicazione.
+
+        volume    volume generale da 0 a 1, applicato a tutto cio' che suona.
+                  Impostandolo qui non serve piu' passarlo a ogni chiamata.
+        voci_max  quanti suoni possono sovrapporsi, 16 di partenza. Quando
+                  sono tutte occupate, la voce piu' vecchia lascia il posto
+                  alla nuova, cosi' l'ultimo evento si sente sempre.
+        silenzio  secondi di silenzio dopo i quali lo stream viene chiuso e
+                  la scheda audio liberata, 120 di partenza. Si riapre da
+                  solo al suono successivo.
+        fs        frequenza di campionamento dello stream, 44100 di partenza.
+        device    dispositivo di uscita, None per quello di sistema.
+        Cambiare fs o device chiude lo stream in corso, che si riaprira'
+        con i valori nuovi. Restituisce le impostazioni in vigore.
+        """
+        if volume is not None:
+            self._volume = max(0.0, min(1.0, float(volume)))
+        if voci_max is not None:
+            self._voci_max = max(1, int(voci_max))
+        if silenzio is not None:
+            self._silenzio = max(0.0, float(silenzio))
+        riapri = False
+        if fs is not None and int(fs) != self._fs:
+            self._fs = int(fs)
+            riapri = True
+        if device is not None and device != self._device:
+            self._device = device
+            riapri = True
+        if riapri:
+            self.close()
+        return {"volume": self._volume, "voci_max": self._voci_max,
+                "silenzio": self._silenzio, "fs": self._fs, "device": self._device}
+
+    def _adatta_frequenza(self, buffer, fs):
+        """Riporta un buffer alla frequenza dello stream, se serve."""
+        if fs == self._fs:
+            return buffer
+        from fractions import Fraction
+
+        import numpy as np
+        from scipy import signal
+        rapporto = Fraction(self._fs, int(fs)).limit_denominator(1000)
+        adattato = signal.resample_poly(buffer, rapporto.numerator,
+                                        rapporto.denominator, axis=0)
+        return np.clip(adattato, -1.0, 1.0).astype(np.float32)
+
+    def _callback(self, outdata, frames, tempo, stato):
+        """Somma le voci attive. Gira nel thread audio: niente di lento qui."""
+        import numpy as np
+        outdata.fill(0.0)
+        with self._lock:
+            finite = []
+            for voce in self._voci:
+                dati = voce["buffer"]
+                da = voce["pos"]
+                a = min(da + frames, len(dati))
+                quanti = a - da
+                if quanti > 0:
+                    outdata[:quanti] += dati[da:a]
+                voce["pos"] = a
+                if a >= len(dati):
+                    finite.append(voce)
+            for voce in finite:
+                self._voci.remove(voce)
+                voce["fine"].set()
+            attive = len(self._voci)
+        if self._volume != 1.0:
+            outdata *= self._volume
+        np.clip(outdata, -1.0, 1.0, out=outdata)
+        if attive == 0:
+            self._silenzio_da = self._silenzio_da or self._orologio()
+        else:
+            self._silenzio_da = None
+
+    def _orologio(self):
+        import time
+        return time.monotonic()
+
+    def _apri_stream(self):
+        """Apre lo stream, provando il mono se il dispositivo rifiuta lo stereo."""
+        import sys
+
+        import sounddevice as sd
+        for canali in (2, 1):
+            try:
+                stream = sd.OutputStream(
+                    samplerate=self._fs, channels=canali, dtype="float32",
+                    blocksize=self.BLOCCO, latency="low", device=self._device,
+                    callback=self._callback)
+                stream.start()
+                self._canali = canali
+                return stream
+            except Exception as e:  # noqa: BLE001 - il dispositivo audio fallisce in molti modi
+                ultimo = e
+        print(f"Acusticator: non riesco ad aprire l'uscita audio: {ultimo}", file=sys.stderr)
+        return None
+
+    def _assicura_stream(self):
+        """Lo stream esiste ed e' attivo, altrimenti lo apre."""
+        if self._stream is not None:
+            return True
+        self._stream = self._apri_stream()
+        if self._stream is None:
+            return False
+        if not self._uscita_registrata:
+            # Alla fine del programma lo stream va chiuso, altrimenti la scheda
+            # audio resta impegnata: il guardiano e' un thread daemon e in
+            # chiusura non fa in tempo ad accorgersene.
+            import atexit
+            atexit.register(self.close)
+            self._uscita_registrata = True
+        self._avvia_guardiano()
+        return True
+
+    def _avvia_guardiano(self):
+        """Il thread che chiude lo stream dopo abbastanza silenzio."""
+        import threading
+        if self._guardiano is not None and self._guardiano.is_alive():
+            return
+        self._guardiano = threading.Thread(target=self._guardia, daemon=True,
+                                           name="Acusticator-guardiano")
+        self._guardiano.start()
+
+    def _guardia(self):
+        import time
+        while True:
+            time.sleep(1.0)
+            if self._stream is None:
+                return
+            if self._silenzio <= 0:
+                continue
+            da = self._silenzio_da
+            if da is not None and self._orologio() - da >= self._silenzio:
+                self.close()
+                return
+
+    def riproduci(self, buffer, fs=None, sync=False):
+        """Manda al mixer un buffer gia' pronto, stereo float32 fra -1 e 1.
+
+        E' la strada di servizio usata da __call__; torna utile a chi si
+        sintetizza l'audio per conto suo e vuole comunque passare dal
+        mixer condiviso.
+        """
+        import threading
+
+        import numpy as np
+        if buffer is None or len(buffer) == 0:
+            return False
+        buffer = np.asarray(buffer, dtype=np.float32)
+        if buffer.ndim == 1:
+            buffer = np.column_stack((buffer, buffer))
+        if fs is not None:
+            buffer = self._adatta_frequenza(buffer, fs)
+        with self._avvio:
+            if not self._assicura_stream():
+                return False
+            if self._canali == 1:
+                buffer = buffer.mean(axis=1, keepdims=True).astype(np.float32)
+        fine = threading.Event()
+        voce = {"buffer": buffer, "pos": 0, "fine": fine, "nata": self._orologio()}
+        with self._lock:
+            # Voci esaurite: la piu' vecchia lascia il posto, cosi' l'ultimo
+            # evento si sente sempre. Chi la stava aspettando viene svegliato.
+            while len(self._voci) >= self._voci_max:
+                vecchia = self._voci.pop(0)
+                vecchia["fine"].set()
+            self._voci.append(voce)
+            self._silenzio_da = None
+        if sync is not False and sync is not None:
+            attesa = None if sync is True else max(0.0, float(sync))
+            fine.wait(timeout=attesa)
+            if sync is True:
+                # I campioni sono usciti dal mixer ma non ancora dalle casse:
+                # senza questa attesa un suono di congedo verrebbe troncato.
+                self._aspetta_uscita()
+        return True
+
+    def _aspetta_uscita(self):
+        """Il tempo che i campioni gia' consegnati impiegano a uscire."""
+        import time
+        ritardo = 0.05
+        try:
+            if self._stream is not None:
+                ritardo = float(self._stream.latency) + 0.02
+        except (AttributeError, TypeError, ValueError):
+            pass
+        time.sleep(min(ritardo, 0.5))
+
+    def stop(self):
+        """Zittisce subito tutto quello che sta suonando, senza chiudere nulla.
+
+        Lo stream resta aperto e pronto: e' quello che serve quando l'utente
+        preme Esc e vuole silenzio immediato. Restituisce quante voci ha
+        interrotto.
+        """
+        with self._lock:
+            quante = len(self._voci)
+            for voce in self._voci:
+                voce["fine"].set()
+            self._voci.clear()
+            self._silenzio_da = self._orologio()
+        return quante
+
+    def close(self):
+        """Zittisce e chiude lo stream, liberando la scheda audio.
+
+        Da chiamare all'uscita dell'applicazione. Non serve farlo per forza:
+        dopo il silenzio impostato con setup lo stream si chiude da solo, e
+        al suono successivo si riapre. Restituisce True se c'era da chiudere.
+        """
+        self.stop()
+        with self._avvio:
+            stream = self._stream
+            self._stream = None
+            self._guardiano = None
+        if stream is None:
+            return False
+        try:
+            stream.stop()
+            stream.close()
+        except Exception:  # noqa: BLE001, S110 - in chiusura non c'e' piu' niente da salvare
+            pass
+        return True
+
+    def stato(self):
+        """Come sta il mixer adesso, come dizionario. Utile per capire i guai."""
+        with self._lock:
+            attive = len(self._voci)
+        return {"stream_aperto": self._stream is not None, "voci_attive": attive,
+                "voci_max": self._voci_max, "volume": self._volume,
+                "silenzio": self._silenzio, "fs": self._fs,
+                "canali": self._canali, "device": self._device}
 
     def _avvisa(self, messaggio):
         import sys
