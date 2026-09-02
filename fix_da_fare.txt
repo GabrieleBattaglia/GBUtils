@@ -1,15 +1,16 @@
 GBUTILS - COSE DA SISTEMARE (fix_da_fare.txt)
-Data: 28 agosto 2026, ampliato e in parte risolto il 2 settembre 2026
+Data: 28 agosto 2026, ampliato e risolto per intero il 2 settembre 2026
 Autore: Claudia, su richiesta di Gabriele
 I punti da 1 a 6 riguardano il comparto audio, cioe' Acusticator, Acu_Maker e
 Acu_Collection.json, e sono stati raccolti lavorando sull'audio di Terminal Beast, versioni
 dalla 3.11.0 alla 4.0.0. Il punto 7 riguarda invece lo script che prepara gli archivi di
 release, ed e' emerso durante il rilascio di Orologic 8.20.2.
-Il punto 7 e' stato risolto il 2 settembre 2026, e in quell'occasione GBUtils e' passato
-alla V93. I punti da 1 a 6 restano promemoria per la revisione del comparto audio: li'
-non ho ancora modificato nulla. I numeri di riga qui sotto sono aggiornati alla V93.
+Tutti e sette i punti sono stati risolti il 2 settembre 2026. GBUtils e' passato dalla
+V91 alla V96 e Acusticator dalla V6.4 alla V7.1. Il dettaglio di come sta sotto ogni
+punto. I numeri di riga citati sono quelli di partenza, della V91, e non corrispondono
+piu' al file di oggi: servono solo a ritrovare di cosa si parlava.
 Ogni punto e' stato verificato sul codice o provato sulla macchina, non e' un sospetto.
-PUNTO 1 [ALTA] - Un nome di nota sbagliato fa cadere l'applicazione che chiama
+PUNTO 1 [RISOLTO il 2026-09-02] - Un nome di nota sbagliato fa cadere l'applicazione che chiama
   DOVE: GBUtils.py:1502, con l'eccezione sollevata dalla riga 1463.
   COSA SUCCEDE:
     Nel ciclo che legge lo score, la lettura dei quattro parametri e' protetta da un
@@ -30,7 +31,12 @@ PUNTO 1 [ALTA] - Un nome di nota sbagliato fa cadere l'applicazione che chiama
   PROPOSTA:
     Portare la chiamata a note_to_freq dentro il try esistente, cosi' la quartina
     malformata viene ignorata come tutte le altre, con il suo avviso su stderr.
-PUNTO 2 [MEDIA] - Ogni chiamata apre e chiude uno stream audio suo
+  COME E' STATO RISOLTO:
+    La chiamata a note_to_freq e' entrata nel try che protegge la lettura della quartina,
+    e il try intercetta anche TypeError, cosi' pure un tipo non gestito fa saltare la sola
+    quartina invece dell'applicazione. La prova esatta riportata qui sopra,
+    Acusticator(['h4', 0.01, 0, 0.0], sync=True), ora scrive un avviso su stderr e prosegue.
+PUNTO 2 [RISOLTO il 2026-09-02] - Ogni chiamata apre e chiude uno stream audio suo
   DOVE: GBUtils.py:1633 (apertura dello stream) e 1663 (un thread nuovo per ogni chiamata).
   COSA SUCCEDE:
     Acusticator sintetizza, poi lancia un thread che apre un OutputStream, ci scrive
@@ -44,7 +50,29 @@ PUNTO 2 [MEDIA] - Ogni chiamata apre e chiude uno stream audio suo
   PROPOSTA:
     Uno stream tenuto aperto e chiuso dopo un tempo di silenzio, come ora fa Terminal
     Beast. Vedi pero' il punto 6: non e' una modifica indolore per le app esistenti.
-PUNTO 3 [MEDIA] - Acu_Collection.json contiene due preset nel formato sbagliato
+  COME E' STATO RISOLTO:
+    Il motore e' stato diviso in due: _sintetizza produce il buffer e basta, la riproduzione
+    passa al mixer della classe _Acusticator, che tiene un solo stream aperto e somma fino a
+    sedici voci. A voci piene la piu' vecchia lascia il posto alla nuova, cosi' l'ultimo
+    evento si sente sempre, e chi la stava aspettando con sync viene svegliato.
+    ATTENZIONE, la misura di 160,7 ms citata qui sopra e' fuorviante, ed e' lo stesso errore
+    che ho rifatto scrivendo il mixer. Erano apertura piu' chiusura misurate a vuoto, ma la
+    chiusura avveniva dopo la fine del suono dentro un thread di sfondo, quindi il chiamante
+    non la pagava se non con sync=True. Misure rifatte separando i tre pezzi, su Realtek in
+    MME: apertura 4,1 ms, scrittura di 100 ms 134,9 ms, chiusura 113,8 ms. Il confronto
+    onesto fra i due motori su un suono da 100 ms e' 4,1 contro 0,16 ms di attesa prima di
+    sentire, e 252,8 contro 227,2 ms con sync=True. Il grosso del ritardo e' il buffering
+    della scheda e non dipende dal codice.
+    Il mixer resta la scelta giusta per altri motivi: niente piu' apertura e chiusura
+    continua del dispositivo, con uno stream e un thread per ogni singolo suono; suoni che
+    si sommano davvero invece di essere stream distinti mescolati dal sistema operativo; il
+    limite di voci; il volume generale; stop e close. Gabriele ha ascoltato un confronto alla
+    pari fra i due motori, stesso materiale e stessa sintesi, e ha giudicato il nuovo
+    decisamente migliore sia sull'accordo sia sulla raffica di note brevi.
+    Verificato anche che non c'erano difetti nel vecchio motore: regge otto stream
+    contemporanei senza perdere campioni, e non c'e' contesa con il mixer aperto. CWzator e
+    sonify continuano a suonare mentre il mixer tiene lo stream aperto.
+PUNTO 3 [RISOLTO il 2026-09-02] - Acu_Collection.json contiene due preset nel formato sbagliato
   DOVE: Acu_Collection.json, voci "perfect_match" e "perfect_bonus".
   COSA SUCCEDE:
     Tutti gli altri preset hanno tre chiavi, descrizione, kind, adsr, e uno score fatto
@@ -62,7 +90,15 @@ PUNTO 3 [MEDIA] - Acu_Collection.json contiene due preset nel formato sbagliato
   PROPOSTA:
     Riscriverle nel formato della collezione, oppure toglierle e reimportarle da
     Terminal Beast, che ora ha il suo sounds.json gia' nel formato giusto.
-PUNTO 4 [BASSA] - Manca un lettore condiviso della collezione
+  COME E' STATO RISOLTO:
+    I due preset sono stati riportati alle quartine con il volume come scarto dalla base 0.5
+    e corredati di descrizione. Nella stessa occasione sono stati tolti i 167 preset
+    estratto_*, che erano l'estrazione automatica degli score scritti a mano dentro orologic:
+    una scansione di 1004 file di tutto il parco non ha trovato un solo riferimento a nessuno
+    di loro. La collezione passa da 339 a 172 preset, tutti in quartine e tutti con una
+    descrizione, che era la richiesta di Gabriele: niente roba priva di descrizione o senza
+    senso.
+PUNTO 4 [RISOLTO il 2026-09-02] - Manca un lettore condiviso della collezione
   DOVE: nessun file, e' proprio cio' che non c'e'.
   COSA SUCCEDE:
     Il volume nei file salvati e' uno scarto rispetto a 0.5, mentre Acusticator vuole il
@@ -77,7 +113,18 @@ PUNTO 4 [BASSA] - Manca un lettore condiviso della collezione
     Una funzione in GBUtils, per esempio AcuPreset(nome), che apra Acu_Collection.json,
     converta e restituisca score, kind e adsr pronti per Acusticator. Diventerebbe il
     modo unico e corretto di attingere alla libreria condivisa, che e' poi l'obiettivo.
-PUNTO 5 [BASSA] - Parametro predefinito mutabile
+  COME E' STATO RISOLTO:
+    Non con una funzione sciolta ma con dei metodi, perche' Acusticator e' diventato un
+    oggetto chiamabile: Acusticator.preset(nome) restituisce score, kind e adsr gia'
+    convertiti, e Acusticator.play(nome) suona direttamente. Entrambi accettano volume, che
+    sostituisce la base 0.5 su cui si applicano gli scarti, cosi' un progetto puo' rispettare
+    il volume scelto dall'utente senza ripeterlo in ogni chiamata. Ci sono anche list con
+    ricerca fra nomi e descrizioni, descrizione, info, save e collezione, quest'ultimo per
+    registrare una collezione del progetto che viene cercata prima di quella condivisa.
+    Un preset che non esiste avvisa su stderr e restituisce False: le tre copie che questo
+    metodo sostituisce tacevano, ed e' per questo che i suoni di batnav compilato erano morti
+    senza che nessuno se ne accorgesse.
+PUNTO 5 [RISOLTO il 2026-09-02] - Parametro predefinito mutabile
   DOVE: GBUtils.py:1430, adsr=[.002, 0, 100, .002].
   COSA SUCCEDE:
     Una lista come valore predefinito viene creata una sola volta e condivisa da tutte le
@@ -86,7 +133,10 @@ PUNTO 5 [BASSA] - Parametro predefinito mutabile
     scrivera' adsr[0] = ... dentro la funzione.
   PROPOSTA:
     adsr=None e, nel corpo, se e' None si usa la lista predefinita.
-PUNTO 6 [DA VALUTARE] - Ricadute sulle app se Acusticator adottasse la coda di Terminal Beast
+  COME E' STATO RISOLTO:
+    adsr=None nella firma e la lista costruita nel corpo. Ruff non segnala piu' B006 su
+    Acusticator.
+PUNTO 6 [DECISO E FATTO il 2026-09-02] - Ricadute sulle app se Acusticator adottasse la coda di Terminal Beast
   Questa e' la risposta alla domanda di Gabriele sul punto 13 dell'analisi audio di
   Terminal Beast, cioe' se convenga spostare dentro Acusticator la coda con il worker e
   lo stream persistente. Conviene, ma non e' una modifica trasparente: cambia il
@@ -118,6 +168,26 @@ PUNTO 6 [DA VALUTARE] - Ricadute sulle app se Acusticator adottasse la coda di T
     da mantenere invece di due, ma la modifica va fatta con calma, con un mixer e non con
     una semplice coda, e riascoltando le app una per una. Non e' roba da infilare in coda
     a un altro lavoro.
+  COSA SI E' DECISO, il 2026-09-02:
+    Si fa, ed e' stato fatto insieme al punto 2. Le cinque ricadute previste qui sopra si
+    sono verificate quasi tutte, e sono state affrontate una per una.
+    1. I suoni non diventano sequenziali: il mixer somma i campioni, quindi due chiamate
+       ravvicinate restano un accordo vero. La coda semplice, che avrebbe rotto gli accordi,
+       e' stata scartata proprio per questo.
+    2. sync e' stato risolto meglio del previsto e resta retrocompatibile: False non aspetta,
+       True aspetta la fine reale con lo svuotamento esplicito, e ora accetta anche un numero
+       di secondi come scadenza. La scadenza e' la rete di sicurezza se il dispositivo si
+       pianta, ed e' la stessa lezione gia' imparata in Terminal Beast.
+    3. Lo stream si chiude da solo dopo 120 secondi di silenzio, non 30: scelta di Gabriele.
+       Si riapre al suono successivo, e alla fine del programma si chiude comunque con una
+       registrazione atexit fatta solo se l'audio viene davvero usato.
+    4. A coda piena non si scarta il suono nuovo ma si ruba la voce piu' vecchia, scelta di
+       Gabriele: e' il comportamento dei sintetizzatori e per l'accessibilita' e' il piu'
+       sicuro, perche' l'ultimo evento si sente sempre. Le voci sono 16, non 8, per lasciare
+       spazio agli effetti polifonici.
+    5. Il riascolto e' stato fatto, con Gabriele, su un confronto alla pari fra vecchio e
+       nuovo motore. Resta da riascoltare ogni singola applicazione quando adotteranno il
+       motore nuovo.
 PUNTO 7 [RISOLTO il 2026-09-02] - zip_maker vive in quattro copie diverse, e due sono rischiose
   DOVE: Mine\Dadillo\zip_maker.py, Mine\Terminal_Beast\zip_maker.py,
     Mine\Tornello\zip_maker.py, Mine\orologic\zip_maker.py. In GBUtils non c'e' niente.
@@ -193,4 +263,31 @@ PUNTO 7 [RISOLTO il 2026-09-02] - zip_maker vive in quattro copie diverse, e due
       Le versioni delle quattro applicazioni non sono state alzate, perche' e' cambiato
       solo lo script di preparazione dell'archivio e non il codice che finisce
       nell'eseguibile.
+PUNTO 8 [DA FARE] - Il rumore come forma d'onda, deciso il 2026-09-02
+  COSA SERVE A GABRIELE:
+    Una forma d'onda di rumore con due frequenze di taglio che definiscono un passabanda,
+    per ottenere il vento e simili. ADSR e panning restano come sono; i due tagli devono
+    potersi muovere in portamento, ciascuno per conto suo.
+  PRECISAZIONE EMERSA PARLANDONE:
+    Il colore del rumore e il passabanda sono due cose diverse. Il colore e' la pendenza
+    dello spettro: bianco piatto, rosa meno 3 dB per ottava, marrone meno 6, azzurro piu' 3.
+    Il passabanda invece taglia via tutto fuori da due frequenze. Con i soli due tagli si
+    ottiene rumore bianco filtrato, che per il vento basta, ma non si ottengono il rosa, il
+    marrone e l'azzurro, che richiedono un filtro sulla pendenza.
+  COSA SI E' DECISO:
+    Il colore diventa forma d'onda, cioe' kind, coerentemente con il fatto che kind e' gia'
+    la forma d'onda: kind 5 bianco, 6 rosa, 7 marrone, 8 azzurro. La banda si scrive nel
+    campo dove di solito sta la nota, riusando il punto per il portamento come gia' si fa
+    per pan e volume, e il trattino per separare i due tagli:
+      ["200-2000", 2.0, 0, 0.4]      banda fissa fra 200 e 2000 Hz
+      ["200-2000.400", 3.0, 0, 0.4]  il taglio alto scende da 2000 a 400, il vento che cala
+      ["100.400-3000", 3.0, 0, 0.4]  si muove solo il taglio basso
+      ["n", 1.0, 0, 0.4]             nessuna banda, il colore puro
+    I due tagli restano indipendenti, ciascuno con il suo portamento, e in Acu_Maker
+    diventano due valori separati da regolare con gli slider.
+  DA RICORDARE QUANDO SI FARA':
+    Acu_Maker va aggiornato per modificare i due tagli, e la trasposizione per semitoni non
+    ha senso su una banda: va decisa una regola sua, per esempio spostare i tagli in
+    proporzione.
+    Serve una sessione di ascolto dedicata, separata da quella del mixer.
 FINE ELENCO
