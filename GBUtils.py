@@ -1686,11 +1686,18 @@ class _Acusticator:
     stderr e il suono semplicemente non parte.
 
     Sotto entrambi i modi c'e' un mixer con un solo stream tenuto aperto.
-    Prima ogni chiamata ne apriva e chiudeva uno suo, e quella sola
-    apertura costava sui 138 ms, pagati da ogni singolo effetto sonoro di
-    ogni applicazione. Ora i suoni si sommano davvero fra loro, fino a
-    sedici per volta: quando le voci sono tutte occupate, la piu' vecchia
-    lascia il posto alla nuova, cosi' l'ultimo evento si sente sempre.
+    Prima ogni chiamata apriva uno stream suo dentro un thread suo, e lo
+    chiudeva alla fine del suono: una raffica di otto notifiche apriva e
+    chiudeva otto stream e otto thread. Sul ritardo il guadagno e'
+    modesto, perche' il grosso e' il buffering della scheda e non dipende
+    da noi: misurato su Realtek in MME, l'attesa prima di sentire scende
+    da 4,1 a 0,2 ms, e una chiamata con sync=True su un suono da 100 ms
+    da 253 a 227 ms. Il guadagno vero e' altrove: niente piu' apertura e
+    chiusura continua del dispositivo, e i suoni che ora si sommano
+    davvero fra loro, fino a sedici per volta, invece di essere otto
+    stream distinti che il sistema operativo mescola per conto suo.
+    Quando le voci sono tutte occupate la piu' vecchia lascia il posto
+    alla nuova, cosi' l'ultimo evento si sente sempre.
 
         Acusticator.setup(volume=0.6)   il volume generale, una volta sola
         Acusticator.stop()              silenzio immediato, stream aperto
