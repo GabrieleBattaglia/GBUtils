@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V93 di mercoledì 2 settembre 2026
+	V94 di mercoledì 2 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
-	Acusticator V6.4 di mercoledì 5 agosto 2026. Gabriele Battaglia e Stella
+	Acusticator V6.5 di mercoledì 2 settembre 2026. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "93"
+VERSION = "94"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1427,9 +1427,9 @@ def parse_vol_values(vol_param):
 			pass
 	return 0.5
 
-def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
+def Acusticator(score, kind=1, adsr=None, fs=44100, sync=False):
 	"""
-	V6.4 di mercoledì 5 agosto 2026. Gabriele Battaglia e Stella
+	V6.5 di mercoledì 2 settembre 2026. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	Crea e riproduce (in maniera asincrona) un segnale acustico in base allo score fornito,
 	utilizzando sounddevice per la riproduzione e applicando un envelope ADSR definito in termini
 	di percentuali della durata della nota.
@@ -1478,6 +1478,9 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 					raise ValueError(f"Formato portamento non valido: '{note}'")
 			return parse_single(note_lower)
 		else: raise TypeError(f"Tipo nota non riconosciuto: {type(note)}.")
+	# adsr predefinito costruito a ogni chiamata: una lista come valore di
+	# default sarebbe creata una volta sola e condivisa da tutti i chiamanti.
+	if adsr is None: adsr = [.002, 0, 100, .002]
 	BLOCK_SIZE = 256 # Per il loop di scrittura in play_audio
 	SAFETY_BUFFER_SECONDS = 0.001 # Buffer di silenzio alla fine (in play_audio)
 	if len(adsr) != 4: raise ValueError("ADSR deve contenere 4 valori")
@@ -1490,16 +1493,19 @@ def Acusticator(score, kind=1, adsr=[.002, 0, 100, .002], fs=44100, sync=False):
 	release_frac = r_pct / 100.0
 	segments = []
 	for i in range(0, len(score), 4):
+		# La conversione della nota sta dentro il try insieme al resto della
+		# quartina: un nome di nota sbagliato deve far saltare quella quartina
+		# come ogni altro errore, non abbattere l'applicazione che chiama.
 		try:
 			note_param, dur, pan_param, vol_param = score[i:i+4]
 			dur = float(dur)
 			pan = parse_pan_values(pan_param)
 			vol = parse_vol_values(vol_param)
-		except (IndexError, ValueError) as e:
+			freq = note_to_freq(note_param)
+		except (IndexError, ValueError, TypeError) as e:
 			print(f"Acusticator Warn: Parametri {i} errati. Ignoro. {e}", file=sys.stderr)
 			continue
 		if dur <= 0: continue # Ignora durata non positiva
-		freq = note_to_freq(note_param)
 		total_note_samples = int(round(dur * fs))
 		if total_note_samples == 0: continue # Ignora durata troppo breve
 		
