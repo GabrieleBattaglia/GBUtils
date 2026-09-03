@@ -329,4 +329,35 @@ PUNTO 8 [RISOLTO il 2026-09-03] - Il rumore come forma d'onda
     senso su una banda: va decisa una regola sua, per esempio spostare i tagli in
     proporzione.
     Nessuna applicazione usa ancora il rumore.
+PUNTO 9 [DA TENERE D'OCCHIO] - sounddevice avvisa su numpy 2.5, trovato il 2026-09-03
+  DOVE: sounddevice 0.5.6, funzione _array, riga 2795, non nel nostro codice.
+  COSA SUCCEDE:
+    La riga incriminata e' data.shape = -1, channels. Assegnare la forma a un array
+    NumPy e' deprecato da NumPy 2.5, e sulla macchina di Gabriele c'e' la 2.5.2.
+    _array serve a sounddevice per avvolgere il buffer che arriva dal dispositivo in un
+    array NumPy, e viene usata soltanto quando si riproduce con un callback.
+  PROVA FATTA:
+    Con la scrittura bloccante, cioe' come faceva Acusticator fino alla V7.0: zero
+    avvisi. Con il mixer a callback introdotto nella V7.1: 39 avvisi per un suono da un
+    decimo di secondo, uno per ogni giro del callback. Nella suite pytest di Tornello ne
+    compaiono 216, che sono i soli distinti perche' Python li raggruppa.
+  PERCHE' CONTA, E QUANTO:
+    Oggi non fa danno e non si vede: il filtro predefinito di Python non mostra i
+    DeprecationWarning fuori dal modulo principale, quindi nelle applicazioni non
+    compaiono; si vedono solo sotto pytest, che li abilita tutti.
+    Il giorno in cui NumPy togliera' davvero quella possibilita', pero', il callback di
+    sounddevice sollevera' un'eccezione e l'audio smettera' di funzionare, non solo per
+    noi ma per chiunque usi la sua API a callback. Gli eseguibili gia' compilati non ne
+    risentono, perche' PyInstaller congela le versioni: il guaio si vedrebbe alla prima
+    ricompilazione fatta con un NumPy futuro.
+  STATO:
+    La 0.5.6 e' l'ultima versione pubblicata, quindi a monte non c'e' ancora una
+    correzione. Non e' un difetto nostro e non va zittito: nascondere l'avviso
+    nasconderebbe la rottura futura.
+  COSA SI PUO' FARE, quando servira':
+    Aspettare la correzione di sounddevice, che e' la strada naturale.
+    Oppure, se un giorno il mixer dovesse rompersi davvero, tenere lo stream aperto ma
+    scrivere da un thread con stream.write invece che dal callback: si conserverebbe il
+    vantaggio dello stream persistente evitando del tutto la funzione incriminata. E' un
+    rifacimento del mixer, quindi da fare solo se costretti e con un riascolto.
 FINE ELENCO
