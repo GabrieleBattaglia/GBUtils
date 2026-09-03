@@ -1,0 +1,88 @@
+COLLAUDO A MANO DEL COMPARTO AUDIO
+Cosa deve provare Gabriele, perche' sono prove che l'AI non puo' fare
+Creato il 3 settembre 2026 da ClaudIA (Claude Opus 5, modalita' auto)
+Riferimento: punto 3.7 di docs/Refactoring_generale_tutti_i_repo_ClaudIA.txt
+
+A COSA SERVE QUESTO FILE
+Le 88 prove automatiche scritte finora verificano numeri e strutture: che lo spettro
+abbia la pendenza giusta, che l'energia stia dove deve, che nessun nome di suono resti
+senza risposta. Non possono verificare due cose: come suona davvero una applicazione
+mentre la si usa, e se un pacchetto compilato si comporta come quello lanciato da
+sorgente. Quelle restano a te. Aggiungi qui sotto le tue osservazioni, e quando una
+prova e' superata scrivilo accanto: alla prossima sessione le rileggo e ne ricavo la
+lista di cose da correggere.
+
+STATO DEL LAVORO AL 3 SETTEMBRE 2026
+GBUtils V100, Acusticator V7.2.3, Acu_Maker 1.4.0.
+Sono chiusi tutti e otto i punti di fix_da_fare.txt.
+Hanno cambiato motore audio: gabryscola 3.1.1, batnav 2.4.1, Terminal Beast 4.2.4.
+
+PROVA 1, LA PIU' IMPORTANTE: BATNAV COMPILATO
+Perche': fino alla 2.4.0 batnav compilato era senza i suoni presi dalla collezione, e
+nessuno se ne era accorto perche' il difetto era silenzioso. Sono state riparate tutte
+e due le meta' del guasto, il codice e il file .spec, ma la prova vale solo sul
+pacchetto.
+Cosa fare: ricompilare batnav, lanciare l'eseguibile e giocare una partita fino in
+fondo, colpendo, mancando, affondando e arrivando alla vittoria o alla sconfitta.
+Cosa osservare: i sei suoni devono esserci tutti, cioe' arrivo del missile, discesa,
+colpo a segno, sirena di allarme, e i due jingle di vittoria e sconfitta.
+Se non si sentono: dire quale manca, e se manca anche lanciando batnav.py da sorgente.
+Esito:
+
+PROVA 2: TERMINAL BEAST COMPILATO
+Perche': il gioco ha lasciato il suo motore audio per quello condiviso, e nel pacchetto
+sono state aggiunte entrambe le collezioni, la sua e quella comune.
+Cosa fare: ricompilare, lanciare l'eseguibile, fare una battaglia intera, entrare nelle
+impostazioni e muovere il cursore del volume, spegnere e riaccendere l'audio.
+Cosa osservare: che i suoni ci siano tutti, che il volume risponda come prima e che
+spegnendo l'audio si faccia davvero silenzio.
+Esito:
+
+PROVA 3: IL RITMO DEI SUONI DI TERMINAL BEAST
+Perche': e' la prova piu' delicata di tutte. Il motore di prima era tuo e lo hai
+regolato all'orecchio; ora sotto c'e' il mixer condiviso a sedici voci, con il furto
+della voce piu' vecchia quando sono tutte occupate. Il ritmo puo' essere cambiato.
+Cosa fare: una battaglia con molti effetti ravvicinati, e una sfida mortale.
+Cosa osservare: se i suoni si accavallano come prima, se qualcuno viene troncato, se
+nei momenti concitati qualche effetto sparisce, e se la collocazione a destra e a
+sinistra dei due lottatori si sente come prima.
+Esito:
+
+PROVA 4: GABRYSCOLA
+Cosa fare: una partita intera, dall'avvio alla chiusura, passando dalla classifica.
+Cosa osservare: che i dodici suoni della mappa eventi si sentano tutti al momento
+giusto. Gabryscola non e' compilato, quindi qui si prova solo il cambio di motore.
+Esito:
+
+PROVA 5: IL RUMORE IN ACU_MAKER
+Perche': l'editor ora sa modificare le bande, ma l'ho provato solo per via logica.
+Cosa fare: aprire Acu_Maker, creare un preset nuovo, premere w fino a un rumore, e con
+i tasti 1, 2 e 3 scegliere il taglio basso, l'alto o entrambi, spostandoli con c e v.
+Provare anche a scrivere una banda a mano con invio, per esempio 200-3000.400.
+Cosa osservare: che la riga di stato dica Banda e mostri quale taglio e' scelto, che i
+tagli si muovano per rapporto e non a scatti irregolari, che il suono segua quello che
+si vede scritto, e che passando da un rumore a una nota il primo campo si converta
+senza lasciare valori senza senso.
+Esito:
+
+PROVA 6: NESSUNO SCHIOCCO, IN GENERALE
+Perche': gli schiocchi sono stati la cosa piu' insidiosa di tutto il lavoro e sono
+saltati fuori tre volte, ogni volta per una ragione diversa.
+Cosa fare: usare normalmente una qualsiasi delle applicazioni per un po'.
+Cosa osservare: qualunque clic, scoppio o tonfo all'inizio o alla fine di un suono, e
+soprattutto il primo suono dopo un lungo silenzio, perche' li' il mixer riapre lo
+stream dopo i due minuti di attesa.
+Esito:
+
+COSE GIA' PROVATE E APPROVATE, da non rifare
+Il confronto fra il vecchio e il nuovo motore su un accordo e su una raffica di note
+brevi: giudicato decisamente migliore il nuovo, il 2 settembre 2026.
+I quattro colori del rumore, dopo quattro sessioni di ascolto: accettati il 3 settembre
+2026, con la soglia a 40 Hz e il tetto a 12 kHz scelti all'ascolto. L'azzurro resta un
+filo meno potente degli altri ed e' stato accettato cosi', perche' fra orecchio e casse
+economiche le incognite sono troppe.
+
+QUELLO CHE RESTA APERTO, e non dipende da queste prove
+La segnalazione su polipo annotata nella tabella del refactoring.
+L'analisi vera e propria del pacchetto GBUtils, che sara' la sua fase 1: finora sono
+state fatte solo le correzioni mirate dei punti di fix_da_fare.txt.
