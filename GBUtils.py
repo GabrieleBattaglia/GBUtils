@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V98 di giovedì 3 settembre 2026
+	V99 di giovedì 3 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
-	Acusticator V7.2.1 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	Acusticator V7.2.2 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "98"
+VERSION = "99"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1440,11 +1440,18 @@ _SENZA_BANDA = (None, None, None, None)
 # riproduce nulla: quell'energia non si sentiva ma pesava sulla
 # normalizzazione, e la sua componente quasi continua faceva partire il
 # segnale da un valore alto, cioe' uno schiocco all'attacco.
-_MINIMO_UDIBILE = 30.0
-# Il valore efficace a cui si porta ogni rumore. Corrisponde a quanto forte
-# si sente, mentre il picco no: normalizzando al picco i colori scuri, che
-# hanno poche escursioni molto ampie, restavano deboli all'orecchio.
-_RMS_RUMORE = 0.2
+# Portato da 30 a 50 Hz dopo il secondo ascolto: sotto, il marrone spendeva
+# meta' della sua energia dove gli altoparlanti comuni non arrivano.
+_MINIMO_UDIBILE = 50.0
+# Il livello ponderato A a cui si porta ogni rumore. Si pareggia questo e non
+# il valore efficace, perche' l'orecchio pesa le frequenze: a parita' di
+# energia il marrone si sentiva 8,9 dB piu' piano del bianco e l'azzurro 2.
+_LIVELLO_RUMORE = 0.15
+# Il limitatore morbido comincia ad agire qui e non lascia passare oltre il
+# tetto. Serve perche' pareggiare il livello percepito chiede di alzare il
+# marrone di quasi 9 dB, che tagliarebbe di netto.
+_LIMITE_GINOCCHIO = 0.6
+_LIMITE_TETTO = 0.95
 # Segnaposto al posto della frequenza quando la quartina e' di rumore: basta
 # che non sia None, che vuol dire pausa, e che non sia una coppia, che vuol
 # dire portamento.
@@ -1589,6 +1596,51 @@ def _filtra_banda_mobile(onda, b0, b1, a0, a1, fs):
 	return uscita[utile] / peso
 
 
+def _ponderazione_a(frequenze):
+	"""Il guadagno della curva A, che approssima la sensibilita' dell'orecchio.
+
+	E' la ponderazione della norma IEC 61672: attenua fortemente i bassi,
+	dove sentiamo poco, e leggermente gli acuti estremi.
+	"""
+	import numpy as np
+	f2 = np.asarray(frequenze, dtype=np.float64) ** 2
+	numeratore = (12194.0 ** 2) * (f2 ** 2)
+	denominatore = ((f2 + 20.6 ** 2)
+					* np.sqrt((f2 + 107.7 ** 2) * (f2 + 737.9 ** 2))
+					* (f2 + 12194.0 ** 2))
+	with np.errstate(divide='ignore', invalid='ignore'):
+		guadagno = np.where(denominatore > 0, numeratore / denominatore, 0.0)
+	return guadagno * (10 ** 0.1)
+
+
+def _livello_ponderato(onda, fs):
+	"""Quanto forte si sente un suono, pesando le frequenze come l'orecchio."""
+	import numpy as np
+	spettro = np.fft.rfft(onda)
+	frequenze = np.fft.rfftfreq(len(onda), 1.0 / fs)
+	pesato = spettro * _ponderazione_a(frequenze)
+	return float(np.sqrt(np.sum(np.abs(pesato) ** 2)) / len(onda) * np.sqrt(2))
+
+
+def _limita_morbido(onda):
+	"""Arrotonda i picchi invece di tagliarli di netto.
+
+	Sotto il ginocchio non tocca niente; sopra comprime con una tangente
+	iperbolica, che non introduce lo spigolo del taglio netto. Sul rumore e'
+	inudibile: misurato, la pendenza dello spettro resta quella di prima
+	anche quando il limitatore lavora su un quinto dei campioni.
+	"""
+	import numpy as np
+	fuori = np.abs(onda) > _LIMITE_GINOCCHIO
+	if not fuori.any():
+		return onda
+	larghezza = _LIMITE_TETTO - _LIMITE_GINOCCHIO
+	eccesso = (np.abs(onda[fuori]) - _LIMITE_GINOCCHIO) / larghezza
+	onda = onda.copy()
+	onda[fuori] = np.sign(onda[fuori]) * (_LIMITE_GINOCCHIO + larghezza * np.tanh(eccesso))
+	return onda
+
+
 def _genera_rumore(kind, banda, campioni, fs):
 	"""Il rumore del colore chiesto, filtrato dalla banda, normalizzato a uno.
 
@@ -1623,15 +1675,15 @@ def _genera_rumore(kind, banda, campioni, fs):
 		onda = _filtra_banda_fissa(onda, b0, a0, fs)
 	else:
 		onda = _filtra_banda_mobile(onda, b0, b1, a0, a1, fs)
-	# Si normalizza al valore efficace, non al picco: e' quello a
-	# corrispondere a quanto forte si sente un suono. Poi, se il picco
-	# sfonda, si abbassa tutto quanto basta a non tagliare.
-	efficace = float(np.sqrt(np.mean(onda ** 2)))
-	if efficace > 0:
-		onda = onda * (_RMS_RUMORE / efficace)
-	picco = float(np.max(np.abs(onda)))
-	if picco > 0.95:
-		onda = onda * (0.95 / picco)
+	# Si pareggia il livello ponderato, cioe' quanto forte si sente, e non il
+	# valore efficace, che pesa allo stesso modo frequenze che l'orecchio
+	# sente in modo molto diverso. Poi il limitatore morbido tiene i picchi
+	# senza tagliarli di netto: al marrone serve quasi il doppio e mezzo, che
+	# altrimenti sfonderebbe.
+	livello = _livello_ponderato(onda, fs)
+	if livello > 0:
+		onda = onda * (_LIVELLO_RUMORE / livello)
+	onda = _limita_morbido(onda)
 	return onda.astype(np.float32)
 
 def _sintetizza(score, kind=1, adsr=None, fs=44100):
@@ -1854,7 +1906,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V7.2.1 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+    """V7.2.2 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -1904,9 +1956,11 @@ class _Acusticator:
     c'e' solo energia che nessun altoparlante riproduce, e nel marrone era
     il 97 per cento del totale, tanto da farlo sentire debolissimo pur
     essendo il piu' forte, e da fargli produrre uno schiocco all'attacco.
-    E la normalizzazione e' sul valore efficace, non sul picco, perche' e'
-    quello a corrispondere a quanto forte si sente un suono: cosi' i quattro
-    colori, a parita' di volume chiesto, arrivano all'orecchio uguali.
+    E il livello viene pareggiato su quanto un suono si sente, non su quanta
+    energia ha: l'orecchio e' molto meno sensibile ai bassi, e a parita' di
+    energia il marrone arrivava 8,9 dB piu' piano del bianco. Il pareggio usa
+    la ponderazione A e un limitatore morbido, cosi' i quattro colori, a
+    parita' di volume chiesto, arrivano all'orecchio ugualmente forti.
 
     Secondo modo, attingere alla collezione condivisa Acu_Collection.json,
     che e' la libreria dei suoni gia' pronti, curata con Acu_Maker:
