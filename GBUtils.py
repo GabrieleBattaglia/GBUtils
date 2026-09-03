@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V101 di giovedì 3 settembre 2026
+	V102 di giovedì 3 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.4.0 di giovedì 3 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
-	Acusticator V7.2.4 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
+	Acusticator V7.2.5 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4.1 di giovedì 3 settembre 2026 by Gabriele Battaglia & ClaudIA (Claude Sonnet 5, modalità auto)
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "101"
+VERSION = "102"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1930,7 +1930,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V7.2.4 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
+    """V7.2.5 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -2053,6 +2053,10 @@ class _Acusticator:
     NOME_COLLEZIONE = "Acu_Collection.json"
     BASE_VOL = 0.5
     VOCI_MAX = 16
+    # Quanto si concede a un suono oltre la sua durata, prima di considerare
+    # che il mixer si sia fermato. Comprende la latenza del dispositivo, che
+    # sulle schede lente arriva a un decimo di secondo, e un po' di respiro.
+    MARGINE_ATTESA = 2.0
     SILENZIO_MAX = 120.0
     BLOCCO = 256
 
@@ -2269,13 +2273,46 @@ class _Acusticator:
             self._voci.append(voce)
             self._silenzio_da = None
         if sync is not False and sync is not None:
-            attesa = None if sync is True else max(0.0, float(sync))
-            fine.wait(timeout=attesa)
+            if sync is True:
+                # Anche l'attesa senza limite ha un limite, ricavato dalla durata
+                # del suono stesso piu' un margine: in condizioni normali non
+                # scatta mai. Serve per il caso in cui lo stream smetta di
+                # rispondere senza passare da stop o close, per esempio se il
+                # dispositivo sparisce o il driver si pianta: allora il callback
+                # non gira piu', la voce non finisce mai, e senza questo limite
+                # il chiamante resterebbe appeso per sempre.
+                attesa = len(buffer) / float(self._fs) + self.MARGINE_ATTESA
+            else:
+                attesa = max(0.0, float(sync))
+            finito = fine.wait(timeout=attesa)
+            if not finito:
+                self._attesa_scaduta(voce)
+                return True
             if sync is True:
                 # I campioni sono usciti dal mixer ma non ancora dalle casse:
                 # senza questa attesa un suono di congedo verrebbe troncato.
                 self._aspetta_uscita()
         return True
+
+    def _attesa_scaduta(self, voce):
+        """Il suono non ha segnalato la fine entro il tempo massimo.
+
+        Vuol dire che il mixer si e' fermato. La voce va tolta, altrimenti
+        occuperebbe per sempre uno dei posti disponibili, e lo stream va
+        chiuso: il suono successivo ne riaprira' uno sano, cosi' un guasto
+        permanente diventa un inciampo di un suono solo.
+        """
+        import sys
+        with self._lock:
+            # Si confronta per identita' e non per uguaglianza: due voci si
+            # confrontano anche nei loro buffer, e numpy solleva ValueError
+            # quando le forme non combaciano invece di dire "diverso". E' lo
+            # stesso motivo per cui il callback non usa list.remove.
+            self._voci = [v for v in self._voci if v is not voce]
+            voce["fine"].set()
+        print("Acusticator: l'uscita audio non ha risposto, la richiudo. "
+              "Il suono successivo la riaprira'.", file=sys.stderr)
+        self.close()
 
     def _aspetta_uscita(self):
         """Il tempo che i campioni gia' consegnati impiegano a uscire."""
