@@ -7,15 +7,76 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import menu, Acusticator, parse_pan_parts
 
-VERSION = "1.3.0" # Aggiunto supporto al panning portamento (2 valori di pan)
+VERSION = "1.4.0" # Il rumore: quattro colori nuovi e la banda del passabanda
 APP_NAME = "Acu_Maker"
-APP_AUTHOR = "Gabriele Battaglia & Stella"
-RELEASE_DATE = "5 agosto 2026"
+APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)"
+RELEASE_DATE = "3 settembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
+# Le forme d'onda, comprese le quattro di rumore introdotte in Acusticator V7.2
+ONDE = {1: 'Sinusoide', 2: 'Quadra', 3: 'Triangolare', 4: 'DenteSega',
+        5: 'Rumore bianco', 6: 'Rumore rosa', 7: 'Rumore marrone',
+        8: 'Rumore azzurro'}
+KIND_RUMORE = (5, 6, 7, 8)
+BANDA_DEFAULT = "200-3000"
+# Un passo di banda e' un rapporto, non una quantita' di Hertz: cosi' vale
+# lo stesso in ogni punto dello spettro. 2 elevato a un dodicesimo e' il
+# rapporto di un semitono, circa il sei per cento.
+PASSO_BANDA = 2 ** (1 / 12)
+
+
 def is_portamento(val):
     return isinstance(val, str) and '.' in val
+
+
+def is_rumore(kind):
+    """Vero se questa forma d'onda vuole una banda al posto della nota."""
+    return kind in KIND_RUMORE
+
+
+def banda_parti(val):
+    """Spezza una banda nei suoi due tagli, basso e alto."""
+    testo = str(val).strip()
+    if testo.lower() in ('p', 'n', ''):
+        return testo.lower(), ''
+    if '-' not in testo:
+        return testo, ''
+    basso, _, alto = testo.partition('-')
+    return basso.strip(), alto.strip()
+
+
+def banda_unisci(basso, alto):
+    """Rimette insieme i due tagli, tenendo conto di pausa e banda assente."""
+    if not alto:
+        return basso
+    return f"{basso}-{alto}"
+
+
+def scala_taglio(taglio, direzione, passo=PASSO_BANDA):
+    """Sposta un taglio per rapporto, rispettando il suo portamento.
+
+    Un taglio puo' essere un solo valore, per esempio 200, oppure due uniti
+    da un punto, per esempio 200.400, e allora si spostano tutti e due
+    insieme cosi' la scivolata resta quella che era.
+    """
+    def uno(testo):
+        try:
+            valore = float(testo)
+        except ValueError:
+            return testo
+        nuovo = valore * (passo if direzione > 0 else 1.0 / passo)
+        nuovo = max(20.0, min(20000.0, nuovo))
+        return str(int(round(nuovo)))
+
+    testo = str(taglio).strip()
+    if not testo or testo.lower() in ('p', 'n'):
+        return testo
+    if '.' in testo:
+        pezzi = testo.split('.')
+        if len(pezzi) == 2:
+            return f"{uno(pezzi[0])}.{uno(pezzi[1])}"
+    return uno(testo)
 
 def get_keypress():
     """Legge un singolo tasto, gestendo le frecce direzionali in modo nativo e sicuro."""
@@ -121,6 +182,7 @@ class EditorState:
         self.port_focus = 3
         
         self.steps = {
+            'banda': PASSO_BANDA,
             'note': 10.0,
             'dur': 0.02,
             'pan': 10,
@@ -185,7 +247,16 @@ def get_status_string(state):
     if state.focus_type == 'score':
         quad = state.preset['score'][state.focus_idx]
         param_names = ["Nota", "Durata", "Pan", "Volume"]
-        if state.focus_param == 0:
+        if state.focus_param == 0 and is_rumore(state.preset.get('kind', 1)):
+            basso, alto = banda_parti(quad[0])
+            if alto:
+                b = f"<{basso}>" if state.port_focus in (1, 3) else basso
+                a = f"<{alto}>" if state.port_focus in (2, 3) else alto
+                val_str = f"{b}-{a}"
+            else:
+                val_str = basso
+            s = f"Sc.{state.focus_idx+1} Banda: {val_str}"
+        elif state.focus_param == 0:
             val = quad[0]
             if is_portamento(val):
                 parts = val.split('.')
@@ -271,7 +342,17 @@ def inc_dec_value(state, direction):
     if state.focus_type == 'score':
         quad = state.preset['score'][state.focus_idx]
         param = state.focus_param
-        if param == 0:
+        if param == 0 and is_rumore(state.preset.get('kind', 1)):
+            basso, alto = banda_parti(quad[0])
+            if not alto:
+                return  # pausa oppure nessuna banda: non c'e' niente da spostare
+            passo = state.steps.get('banda', PASSO_BANDA)
+            if state.port_focus in (1, 3):
+                basso = scala_taglio(basso, direction, passo)
+            if state.port_focus in (2, 3):
+                alto = scala_taglio(alto, direction, passo)
+            quad[0] = banda_unisci(basso, alto)
+        elif param == 0:
             val = quad[0]
             if is_portamento(val):
                 parts = val.split('.')
@@ -347,7 +428,11 @@ def edit_mode(db, preset_name):
         elif key == 'enter':
             param_name = ["Nota", "Durata", "Pan (-100..100)", "Volume (0..100)"][state.focus_param] if state.focus_type == 'score' else ["A", "D", "S", "R"][state.focus_param]
             if state.focus_type == 'score':
-                if state.focus_param == 0:
+                if state.focus_param == 0 and is_rumore(state.preset.get('kind', 1)):
+                    if state.port_focus == 1: param_name = "Taglio basso in Hz"
+                    elif state.port_focus == 2: param_name = "Taglio alto in Hz"
+                    else: param_name = "Banda intera, per esempio 200-3000, n, p"
+                elif state.focus_param == 0:
                     current_val = state.preset['score'][state.focus_idx][0]
                     if is_portamento(current_val):
                         if state.port_focus == 1: param_name = "Nota (partenza)"
@@ -370,7 +455,17 @@ def edit_mode(db, preset_name):
             if val.strip():
                 try:
                     if state.focus_type == 'score':
-                        if state.focus_param == 0:
+                        if state.focus_param == 0 and is_rumore(state.preset.get('kind', 1)):
+                            basso, alto = banda_parti(state.preset['score'][state.focus_idx][0])
+                            scritto = val.strip()
+                            if state.port_focus == 3 or not alto:
+                                state.preset['score'][state.focus_idx][0] = scritto
+                            else:
+                                if state.port_focus == 1: basso = scritto
+                                else: alto = scritto
+                                state.preset['score'][state.focus_idx][0] = banda_unisci(basso, alto)
+                            state.modified = True
+                        elif state.focus_param == 0:
                             current_val = state.preset['score'][state.focus_idx][0]
                             if is_portamento(current_val):
                                 val_to_insert = val
@@ -463,7 +558,10 @@ def edit_mode(db, preset_name):
                 state.modified = True
         elif key in ('1', '2', '3'):
             if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
-                if is_portamento(state.preset['score'][state.focus_idx][state.focus_param]):
+                sulla_banda = (state.focus_param == 0
+                               and is_rumore(state.preset.get('kind', 1)))
+                if sulla_banda or is_portamento(
+                        state.preset['score'][state.focus_idx][state.focus_param]):
                     state.port_focus = int(key)
         elif key == '4':
             if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
@@ -494,8 +592,11 @@ def edit_mode(db, preset_name):
         elif key == 'x': state.focus_param = (state.focus_param + 1) % 4
         elif key == 'b':
             if state.focus_type == 'score':
-                param_key = ['note', 'dur', 'pan', 'vol'][state.focus_param]
-                param_name = ["Nota", "Durata", "Pan (-100..100)", "Volume (0..100)"][state.focus_param]
+                rumore = is_rumore(state.preset.get('kind', 1))
+                param_key = ['banda' if rumore else 'note',
+                             'dur', 'pan', 'vol'][state.focus_param]
+                param_name = ["Banda (rapporto)" if rumore else "Nota", "Durata",
+                              "Pan (-100..100)", "Volume (0..100)"][state.focus_param]
             else:
                 param_key = ['a', 'd', 's', 'r'][state.focus_param]
                 param_name = ["Attacco", "Decadimento", "Sustain", "Rilascio"][state.focus_param]
@@ -508,9 +609,11 @@ def edit_mode(db, preset_name):
             handle_print(state, force_newline=True)
         elif key == 'n':
             if state.focus_type == 'score':
-                param_key = ['note', 'dur', 'pan', 'vol'][state.focus_param]
-                defaults = ['c4', 0.5, 0.0, 0.0]
-                default_steps = [10.0, 0.02, 10, 10]
+                rumore = is_rumore(state.preset.get('kind', 1))
+                param_key = ['banda' if rumore else 'note',
+                             'dur', 'pan', 'vol'][state.focus_param]
+                defaults = [BANDA_DEFAULT if rumore else 'c4', 0.5, 0.0, 0.0]
+                default_steps = [PASSO_BANDA if rumore else 10.0, 0.02, 10, 10]
                 state.preset['score'][state.focus_idx][state.focus_param] = defaults[state.focus_param]
                 state.steps[param_key] = default_steps[state.focus_param]
             else:
@@ -535,10 +638,25 @@ def edit_mode(db, preset_name):
             continue
             
         elif key == 'w':
-            state.preset['kind'] = (state.preset['kind'] % 4) + 1
+            prima_rumore = is_rumore(state.preset['kind'])
+            state.preset['kind'] = (state.preset['kind'] % len(ONDE)) + 1
             state.modified = True
-            waves = {1: 'Sinusoide', 2: 'Quadra', 3: 'Triangolare', 4: 'DenteSeg'}
-            print(f"\r{' ' * 50}\rOnda: {waves[state.preset['kind']]}", end="", flush=True)
+            # Passando fra note e rumore il primo campo cambia significato:
+            # si converte quello che c'e', altrimenti resterebbe illeggibile.
+            adesso_rumore = is_rumore(state.preset['kind'])
+            if prima_rumore != adesso_rumore:
+                for quartina in state.preset['score']:
+                    if str(quartina[0]).strip().lower() == 'p':
+                        continue
+                    quartina[0] = BANDA_DEFAULT if adesso_rumore else 'c4'
+                state.port_focus = 3
+                print(f"\r{' ' * 60}\rOnda: {ONDE[state.preset['kind']]}, "
+                      f"il primo campo ora e' "
+                      f"{'la banda' if adesso_rumore else 'la nota'}",
+                      end="", flush=True)
+            else:
+                print(f"\r{' ' * 60}\rOnda: {ONDE[state.preset['kind']]}",
+                      end="", flush=True)
             continue
         elif key in ('a', 'd', 's', 'r'):
             state.focus_type = 'adsr'
@@ -548,7 +666,8 @@ def edit_mode(db, preset_name):
             state.focus_param = 0 # Torna alla Nota della quartina corrente
         elif key == 'f':
             state.focus_type = 'score'
-            new_quad = ['c4', 0.5, 0.0, 0.0]
+            primo = BANDA_DEFAULT if is_rumore(state.preset.get('kind', 1)) else 'c4'
+            new_quad = [primo, 0.5, 0.0, 0.0]
             state.preset['score'].insert(state.focus_idx, new_quad)
             state.modified = True
             print(f"\r{' ' * 50}\rIns. Sc.{state.focus_idx+1}", end="", flush=True)
@@ -598,7 +717,13 @@ def edit_mode(db, preset_name):
             print("b: Modifica il passo (step) per il parametro corrente")
             print("n: Ripristina valori di default per il parametro corrente")
             print("m: Svuota l'intero preset (imposta a default)")
-            print("w: Cambia forma d'onda (Seno, Quadra, Triangolare, Dente di Sega)")
+            print("w: Cambia forma d'onda, otto in tutto: Seno, Quadra, Triangolare,")
+            print("   Dente di Sega e i quattro rumori, bianco, rosa, marrone e azzurro.")
+            print("   Con un rumore il primo campo della quartina non e' la nota ma la")
+            print("   banda del filtro, per esempio 200-3000, oppure n per nessuna banda.")
+            print("   I tagli si scrivono anche in scivolata, per esempio 200-3000.400.")
+            print("   Sulla banda i tasti 1, 2 e 3 scelgono il taglio basso, l'alto o")
+            print("   entrambi, e c e v li spostano per rapporto, non per Hertz.")
             print("a, d, s, r: Passa alla modifica dell'inviluppo ADSR")
             print("q: Passa alla modifica della quartina (Nota)")
             print("f / j: Inserisce nuova quartina prima / dopo quella corrente")
