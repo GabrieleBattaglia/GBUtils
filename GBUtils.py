@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V100 di giovedì 3 settembre 2026
+	V101 di giovedì 3 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.4.0 di giovedì 3 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
-	Acusticator V7.2.3 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	Acusticator V7.2.4 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -20,10 +20,10 @@ Lista utilità contenute in questo pacchetto
 	menu V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
-	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
+	update_checker V1.4.1 di giovedì 3 settembre 2026 by Gabriele Battaglia & ClaudIA (Claude Sonnet 5, modalità auto)
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "100"
+VERSION = "101"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -63,12 +63,19 @@ def _write_update_log(message: str):
 
 def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
+    V1.4.1 di giovedì 3 settembre 2026 by Gabriele Battaglia & ClaudIA (Claude Sonnet 5, modalità auto)
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
     Include logging degli errori su file e retry in caso di errori SSL.
     Gestisce in modo silenzioso la mancanza di connessione internet senza generare file di log allarmanti.
     """
-    import requests
+    try:
+        # Fuori da questo try, un import rotto (es. una dipendenza di
+        # requests compilata male) farebbe cadere tutto il programma a
+        # ogni avvio invece di limitarsi a saltare il controllo aggiornamenti.
+        import requests
+    except ImportError as e:
+        _write_update_log(f"Impossibile importare requests: {e}")
+        return False, None, None, None
     current_version = current_version.split(' ')[0]
     try:
         try:
@@ -1923,7 +1930,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V7.2.3 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+    """V7.2.4 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -2141,7 +2148,10 @@ class _Acusticator:
         import numpy as np
         outdata.fill(0.0)
         with self._lock:
-            finite = []
+            # Niente list.remove(voce): confrontare due voci per uguaglianza
+            # confronta anche i loro buffer, e numpy solleva ValueError se le
+            # forme non combaciano invece di dire semplicemente "diverso".
+            attive_voci = []
             for voce in self._voci:
                 dati = voce["buffer"]
                 da = voce["pos"]
@@ -2151,10 +2161,10 @@ class _Acusticator:
                     outdata[:quanti] += dati[da:a]
                 voce["pos"] = a
                 if a >= len(dati):
-                    finite.append(voce)
-            for voce in finite:
-                self._voci.remove(voce)
-                voce["fine"].set()
+                    voce["fine"].set()
+                else:
+                    attive_voci.append(voce)
+            self._voci = attive_voci
             attive = len(self._voci)
         if self._volume != 1.0:
             outdata *= self._volume
