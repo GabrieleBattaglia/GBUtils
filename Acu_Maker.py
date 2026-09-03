@@ -7,7 +7,7 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import menu, Acusticator, parse_pan_parts
 
-VERSION = "1.4.0" # Il rumore: quattro colori nuovi e la banda del passabanda
+VERSION = "1.4.1" # Il tasto punto sulle bande, e la validazione di cio' che si scrive
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)"
 RELEASE_DATE = "3 settembre 2026"
@@ -53,6 +53,69 @@ def banda_unisci(basso, alto):
     return f"{basso}-{alto}"
 
 
+# I tagli non escono da questi limiti: sotto e sopra non si sente niente e
+# non ha senso continuare a spostarli. Il motore poi restringe ancora, fra 40
+# Hz e 12 kHz, che e' la fascia in cui l'orecchio e le casse lavorano davvero.
+BANDA_MINIMA = 20.0
+BANDA_MASSIMA = 20000.0
+
+
+def alterna_scivolata(taglio):
+    """Accende o spegne la scivolata su un taglio.
+
+    Un taglio fermo, per esempio 200, diventa 200.200 e comincia a scorrere;
+    uno che gia' scorre torna fermo sul suo valore di partenza.
+    """
+    testo = str(taglio).strip()
+    if not testo or testo.lower() in ('p', 'n'):
+        return testo
+    if '.' in testo:
+        return testo.split('.')[0]
+    return f"{testo}.{testo}"
+
+
+def normalizza_banda(testo):
+    """Controlla e riordina una banda scritta a mano.
+
+    Restituisce la banda ripulita, con i tagli riportati dentro i limiti
+    udibili, oppure None se non e' scritta in modo leggibile. Serve a non
+    lasciare entrare nel preset una banda che poi farebbe cadere l'editor.
+    """
+    from GBUtils import parse_banda
+
+    grezzo = str(testo).strip().lower()
+    if grezzo in ('p', 'n'):
+        return grezzo
+    try:
+        parse_banda(grezzo)
+    except (ValueError, TypeError):
+        return None
+
+    def limita(pezzo):
+        try:
+            v = float(pezzo)
+        except ValueError:
+            return None
+        return str(int(round(max(BANDA_MINIMA, min(BANDA_MASSIMA, v)))))
+
+    def taglio(pezzo):
+        pezzi = pezzo.split('.')
+        if len(pezzi) > 2:
+            return None
+        limitati = [limita(p) for p in pezzi]
+        if any(x is None for x in limitati):
+            return None
+        return '.'.join(limitati)
+
+    basso, alto = banda_parti(grezzo)
+    if not alto:
+        return None
+    b, a = taglio(basso), taglio(alto)
+    if b is None or a is None:
+        return None
+    return banda_unisci(b, a)
+
+
 def scala_taglio(taglio, direzione, passo=PASSO_BANDA):
     """Sposta un taglio per rapporto, rispettando il suo portamento.
 
@@ -66,7 +129,7 @@ def scala_taglio(taglio, direzione, passo=PASSO_BANDA):
         except ValueError:
             return testo
         nuovo = valore * (passo if direzione > 0 else 1.0 / passo)
-        nuovo = max(20.0, min(20000.0, nuovo))
+        nuovo = max(BANDA_MINIMA, min(BANDA_MASSIMA, nuovo))
         return str(int(round(nuovo)))
 
     testo = str(taglio).strip()
@@ -459,12 +522,23 @@ def edit_mode(db, preset_name):
                             basso, alto = banda_parti(state.preset['score'][state.focus_idx][0])
                             scritto = val.strip()
                             if state.port_focus == 3 or not alto:
-                                state.preset['score'][state.focus_idx][0] = scritto
+                                candidata = scritto
+                            elif state.port_focus == 1:
+                                candidata = banda_unisci(scritto, alto)
                             else:
-                                if state.port_focus == 1: basso = scritto
-                                else: alto = scritto
-                                state.preset['score'][state.focus_idx][0] = banda_unisci(basso, alto)
-                            state.modified = True
+                                candidata = banda_unisci(basso, scritto)
+                            # Si controlla prima di scrivere: una banda illeggibile
+                            # resterebbe nel preset e farebbe cadere l'editor dopo.
+                            pulita = normalizza_banda(candidata)
+                            if pulita is None:
+                                print("\nBanda non valida. Si scrive taglio basso, "
+                                      "trattino, taglio alto, per esempio 200-3000. "
+                                      "Il punto indica la scivolata di un taglio, "
+                                      "per esempio 200-3000.400. Vale anche n per "
+                                      "nessuna banda e p per pausa.")
+                            else:
+                                state.preset['score'][state.focus_idx][0] = pulita
+                                state.modified = True
                         elif state.focus_param == 0:
                             current_val = state.preset['score'][state.focus_idx][0]
                             if is_portamento(current_val):
@@ -528,7 +602,19 @@ def edit_mode(db, preset_name):
             if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
                 param_idx = state.focus_param
                 val = state.preset['score'][state.focus_idx][param_idx]
-                if is_portamento(val):
+                if param_idx == 0 and is_rumore(state.preset.get('kind', 1)):
+                    # Su una banda il punto accende o spegne la scivolata del
+                    # taglio scelto. Senza questo ramo la banda verrebbe presa
+                    # per un valore singolo e duplicata, restando poi corrotta.
+                    basso, alto = banda_parti(val)
+                    if alto:
+                        if state.port_focus in (1, 3):
+                            basso = alterna_scivolata(basso)
+                        if state.port_focus in (2, 3):
+                            alto = alterna_scivolata(alto)
+                        state.preset['score'][state.focus_idx][0] = banda_unisci(basso, alto)
+                        state.modified = True
+                elif is_portamento(val):
                     if param_idx == 0:
                         parts = val.split('.')
                         new_val = parts[0] if state.port_focus in (1, 3) else parts[1]

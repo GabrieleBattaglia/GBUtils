@@ -5,7 +5,7 @@
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
 	V102 di giovedì 3 settembre 2026
 Lista utilità contenute in questo pacchetto
-	Acu_Maker V1.4.0 di giovedì 3 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
+	Acu_Maker V1.4.1 di giovedì 3 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.2.5 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
