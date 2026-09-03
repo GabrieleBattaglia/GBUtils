@@ -4,17 +4,21 @@ Creato il 3 settembre 2026 da ClaudIA (Claude Opus 5, modalita' auto)
 Riferimento: punto 3.7 di docs/Refactoring_generale_tutti_i_repo_ClaudIA.txt
 
 A COSA SERVE QUESTO FILE
-Le 88 prove automatiche scritte finora verificano numeri e strutture: che lo spettro
+Le 95 prove automatiche scritte finora verificano numeri e strutture: che lo spettro
 abbia la pendenza giusta, che l'energia stia dove deve, che nessun nome di suono resti
 senza risposta. Non possono verificare due cose: come suona davvero una applicazione
 mentre la si usa, e se un pacchetto compilato si comporta come quello lanciato da
-sorgente. Quelle restano a te. Aggiungi qui sotto le tue osservazioni, e quando una
-prova e' superata scrivilo accanto: alla prossima sessione le rileggo e ne ricavo la
-lista di cose da correggere.
+sorgente. Quelle restano a te.
+Se una prova non va, scrivi qui sotto cosa hai sentito: alla prossima sessione lo
+leggo e ne ricavo cosa correggere. Se invece va bene, cancella la prova. Questo file
+deve svuotarsi, e quando e' vuoto va cancellato anche lui: il suo svuotamento vuol
+dire che il lavoro e' finito. Quello che funziona non serve tenerlo scritto, e se un
+giorno servisse sta nella cronologia di GitHub.
+Le segnalazioni, le proposte e i promemoria non stanno qui: vanno fra le issue del
+progetto a cui si riferiscono.
 
 STATO DEL LAVORO AL 3 SETTEMBRE 2026
 GBUtils V100, Acusticator V7.2.3, Acu_Maker 1.4.0.
-Sono chiusi tutti e otto i punti di fix_da_fare.txt.
 Hanno cambiato motore audio: gabryscola 3.1.1, batnav 2.4.1, Terminal Beast 4.2.4
 Tornello 9.3.16 e QuinQu 4.4.1.
 
@@ -103,16 +107,3 @@ Cosa osservare: qualunque clic, scoppio o tonfo all'inizio o alla fine di un suo
 soprattutto il primo suono dopo un lungo silenzio, perche' li' il mixer riapre lo
 stream dopo i due minuti di attesa.
 Esito:
-
-COSE GIA' PROVATE E APPROVATE, da non rifare
-Il confronto fra il vecchio e il nuovo motore su un accordo e su una raffica di note
-brevi: giudicato decisamente migliore il nuovo, il 2 settembre 2026.
-I quattro colori del rumore, dopo quattro sessioni di ascolto: accettati il 3 settembre
-2026, con la soglia a 40 Hz e il tetto a 12 kHz scelti all'ascolto. L'azzurro resta un
-filo meno potente degli altri ed e' stato accettato cosi', perche' fra orecchio e casse
-economiche le incognite sono troppe.
-
-QUELLO CHE RESTA APERTO, e non dipende da queste prove
-La segnalazione su polipo annotata nella tabella del refactoring.
-L'analisi vera e propria del pacchetto GBUtils, che sara' la sua fase 1: finora sono
-state fatte solo le correzioni mirate dei punti di fix_da_fare.txt.
