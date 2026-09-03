@@ -16,7 +16,7 @@ STATO DEL LAVORO AL 3 SETTEMBRE 2026
 GBUtils V100, Acusticator V7.2.3, Acu_Maker 1.4.0.
 Sono chiusi tutti e otto i punti di fix_da_fare.txt.
 Hanno cambiato motore audio: gabryscola 3.1.1, batnav 2.4.1, Terminal Beast 4.2.4
-e Tornello 9.3.16.
+Tornello 9.3.16 e QuinQu 4.4.1.
 
 PROVA 1, LA PIU' IMPORTANTE: BATNAV COMPILATO
 Perche': fino alla 2.4.0 batnav compilato era senza i suoni presi dalla collezione, e
@@ -74,7 +74,17 @@ Da provare anche sul pacchetto compilato, perche' tornello.spec ora porta dentro
 collezione condivisa.
 Esito:
 
-PROVA 6: IL RUMORE IN ACU_MAKER
+PROVA 6: QUINQU
+Perche': anche QuinQu aveva il suo lettore della collezione, il quinto, ed e' saltato
+fuori solo da un censimento su tutto il parco. Sono stati tolti anche i quindici score
+di scorta che si portava dietro, che pero' non venivano mai usati.
+Cosa fare: usare QuinQu normalmente, dall'avvio alla chiusura, registrando qualche
+valore, aprendo un obiettivo e facendo comparire le liste.
+Cosa osservare: che i sedici effetti si sentano tutti e come prima. QuinQu non e'
+compilato, quindi qui si prova solo il cambio di motore.
+Esito:
+
+PROVA 7: IL RUMORE IN ACU_MAKER
 Perche': l'editor ora sa modificare le bande, ma l'ho provato solo per via logica.
 Cosa fare: aprire Acu_Maker, creare un preset nuovo, premere w fino a un rumore, e con
 i tasti 1, 2 e 3 scegliere il taglio basso, l'alto o entrambi, spostandoli con c e v.
@@ -85,7 +95,7 @@ si vede scritto, e che passando da un rumore a una nota il primo campo si conver
 senza lasciare valori senza senso.
 Esito:
 
-PROVA 7: NESSUNO SCHIOCCO, IN GENERALE
+PROVA 8: NESSUNO SCHIOCCO, IN GENERALE
 Perche': gli schiocchi sono stati la cosa piu' insidiosa di tutto il lavoro e sono
 saltati fuori tre volte, ogni volta per una ragione diversa.
 Cosa fare: usare normalmente una qualsiasi delle applicazioni per un po'.
