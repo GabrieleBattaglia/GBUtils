@@ -15,7 +15,8 @@ lista di cose da correggere.
 STATO DEL LAVORO AL 3 SETTEMBRE 2026
 GBUtils V100, Acusticator V7.2.3, Acu_Maker 1.4.0.
 Sono chiusi tutti e otto i punti di fix_da_fare.txt.
-Hanno cambiato motore audio: gabryscola 3.1.1, batnav 2.4.1, Terminal Beast 4.2.4.
+Hanno cambiato motore audio: gabryscola 3.1.1, batnav 2.4.1, Terminal Beast 4.2.4
+e Tornello 9.3.16.
 
 PROVA 1, LA PIU' IMPORTANTE: BATNAV COMPILATO
 Perche': fino alla 2.4.0 batnav compilato era senza i suoni presi dalla collezione, e
@@ -54,7 +55,26 @@ Cosa osservare: che i dodici suoni della mappa eventi si sentano tutti al moment
 giusto. Gabryscola non e' compilato, quindi qui si prova solo il cambio di motore.
 Esito:
 
-PROVA 5: IL RUMORE IN ACU_MAKER
+PROVA 5: TORNELLO, ED E' QUELLA CHE TI SERVE ADESSO
+Perche': Tornello aveva il quarto lettore della collezione, ed era il solo che
+scrivesse dentro il file condiviso mentre il programma girava. E' stato tolto insieme
+ad audio_presets.py, i cui 31 preset non venivano mai usati perche' il codice leggeva
+prima la collezione condivisa. Le prove automatiche dicono che i 32 nomi di evento
+danno tutti un suono, ma non che il suono giusto arrivi al momento giusto.
+Cosa fare: usare Tornello normalmente, e in particolare creare un torneo, aggiungere e
+ritirare giocatori, generare gli abbinamenti, inserire i sei tipi di risultato, chiudere
+un turno e chiudere il torneo. Poi entrare nelle impostazioni e muovere il cursore del
+volume.
+Cosa osservare in particolare: che ogni evento suoni come prima, che il volume cambi
+davvero appena si muove il cursore e non dal riavvio successivo, perche' ora il volume
+viene tenuto in memoria e c'e' un aggancio apposta per aggiornarlo. Attenzione al suono
+chiamato successivo: la versione locale che Tornello si portava dietro era diversa, ma
+non veniva usata, quindi non dovrebbe cambiare niente; se ti sembra cambiato, dimmelo.
+Da provare anche sul pacchetto compilato, perche' tornello.spec ora porta dentro la
+collezione condivisa.
+Esito:
+
+PROVA 6: IL RUMORE IN ACU_MAKER
 Perche': l'editor ora sa modificare le bande, ma l'ho provato solo per via logica.
 Cosa fare: aprire Acu_Maker, creare un preset nuovo, premere w fino a un rumore, e con
 i tasti 1, 2 e 3 scegliere il taglio basso, l'alto o entrambi, spostandoli con c e v.
@@ -65,7 +85,7 @@ si vede scritto, e che passando da un rumore a una nota il primo campo si conver
 senza lasciare valori senza senso.
 Esito:
 
-PROVA 6: NESSUNO SCHIOCCO, IN GENERALE
+PROVA 7: NESSUNO SCHIOCCO, IN GENERALE
 Perche': gli schiocchi sono stati la cosa piu' insidiosa di tutto il lavoro e sono
 saltati fuori tre volte, ogni volta per una ragione diversa.
 Cosa fare: usare normalmente una qualsiasi delle applicazioni per un po'.
