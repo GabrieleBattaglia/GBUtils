@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V97 di giovedì 3 settembre 2026
+	V98 di giovedì 3 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
-	Acusticator V7.2 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	Acusticator V7.2.1 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "97"
+VERSION = "98"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1435,6 +1435,16 @@ def parse_vol_values(vol_param):
 _RUMORE_ESPONENTE = {5: 0.0, 6: -0.5, 7: -1.0, 8: 0.5}
 _RUMORE_NOMI = {5: "bianco", 6: "rosa", 7: "marrone", 8: "azzurro"}
 _SENZA_BANDA = (None, None, None, None)
+# Sotto questa frequenza non si scende mai. Il rumore marrone teneva il 98,8
+# per cento della sua energia sotto i 40 Hz, dove un altoparlante normale non
+# riproduce nulla: quell'energia non si sentiva ma pesava sulla
+# normalizzazione, e la sua componente quasi continua faceva partire il
+# segnale da un valore alto, cioe' uno schiocco all'attacco.
+_MINIMO_UDIBILE = 30.0
+# Il valore efficace a cui si porta ogni rumore. Corrisponde a quanto forte
+# si sente, mentre il picco no: normalizzando al picco i colori scuri, che
+# hanno poche escursioni molto ampie, restavano deboli all'orecchio.
+_RMS_RUMORE = 0.2
 # Segnaposto al posto della frequenza quando la quartina e' di rumore: basta
 # che non sia None, che vuol dire pausa, e che non sia una coppia, che vuol
 # dire portamento.
@@ -1600,18 +1610,28 @@ def _genera_rumore(kind, banda, campioni, fs):
 		onda = np.fft.irfft(spettro * scala, campioni)
 	b0, b1, a0, a1 = banda
 	nyquist = fs / 2.0
-	if b0 is not None:
-		b0, b1 = min(b0, nyquist), min(b1, nyquist)
+	# Il taglio basso non scende mai sotto la soglia dell'udibile, anche
+	# quando nessuna banda e' stata chiesta: sotto di essa c'e' solo energia
+	# che non si sente ma che falserebbe la normalizzazione e farebbe partire
+	# il segnale da un valore alto, con uno schiocco.
+	b0 = _MINIMO_UDIBILE if b0 is None else max(b0, _MINIMO_UDIBILE)
+	b1 = _MINIMO_UDIBILE if b1 is None else max(b1, _MINIMO_UDIBILE)
+	b0, b1 = min(b0, nyquist), min(b1, nyquist)
 	if a0 is not None:
 		a0, a1 = min(a0, nyquist), min(a1, nyquist)
-	if b0 is not None or a0 is not None:
-		if b0 == b1 and a0 == a1:
-			onda = _filtra_banda_fissa(onda, b0, a0, fs)
-		else:
-			onda = _filtra_banda_mobile(onda, b0, b1, a0, a1, fs)
-	picco = np.max(np.abs(onda))
-	if picco > 0:
-		onda = onda / picco
+	if b0 == b1 and a0 == a1:
+		onda = _filtra_banda_fissa(onda, b0, a0, fs)
+	else:
+		onda = _filtra_banda_mobile(onda, b0, b1, a0, a1, fs)
+	# Si normalizza al valore efficace, non al picco: e' quello a
+	# corrispondere a quanto forte si sente un suono. Poi, se il picco
+	# sfonda, si abbassa tutto quanto basta a non tagliare.
+	efficace = float(np.sqrt(np.mean(onda ** 2)))
+	if efficace > 0:
+		onda = onda * (_RMS_RUMORE / efficace)
+	picco = float(np.max(np.abs(onda)))
+	if picco > 0.95:
+		onda = onda * (0.95 / picco)
 	return onda.astype(np.float32)
 
 def _sintetizza(score, kind=1, adsr=None, fs=44100):
@@ -1834,7 +1854,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V7.2 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+    """V7.2.1 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -1877,9 +1897,16 @@ class _Acusticator:
     sanno l'uno dell'altro. Nel campo della banda il punto significa sempre
     portamento e mai decimale, perche' su una frequenza di taglio i
     decimali non servono. Durata, panning, volume e inviluppo si comportano
-    esattamente come per le note. Il rumore esce sempre normalizzato, cosi'
-    lo stesso volume da' suoni di forza confrontabile fra un colore e
-    l'altro e fra una banda e l'altra.
+    esattamente come per le note.
+
+    Due cose accadono al rumore senza che si debba chiederle. Sotto i 30 Hz
+    non si scende mai, nemmeno chiedendo una banda piu' bassa: li' sotto
+    c'e' solo energia che nessun altoparlante riproduce, e nel marrone era
+    il 97 per cento del totale, tanto da farlo sentire debolissimo pur
+    essendo il piu' forte, e da fargli produrre uno schiocco all'attacco.
+    E la normalizzazione e' sul valore efficace, non sul picco, perche' e'
+    quello a corrispondere a quanto forte si sente un suono: cosi' i quattro
+    colori, a parita' di volume chiesto, arrivano all'orecchio uguali.
 
     Secondo modo, attingere alla collezione condivisa Acu_Collection.json,
     che e' la libreria dei suoni gia' pronti, curata con Acu_Maker:
