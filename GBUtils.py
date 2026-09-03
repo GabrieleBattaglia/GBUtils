@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V96 di mercoledì 2 settembre 2026
+	V97 di giovedì 3 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
-	Acusticator V7.1 di mercoledì 2 settembre 2026. Oggetto chiamabile, collezione dei suoni e mixer a 16 voci. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	Acusticator V7.2 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "96"
+VERSION = "97"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1427,6 +1427,193 @@ def parse_vol_values(vol_param):
 			pass
 	return 0.5
 
+
+# Il rumore come forma d'onda: il colore e' la pendenza dello spettro.
+# L'esponente si applica allo spettro di ampiezza, cioe' meta' di quello
+# della densita' di potenza: bianco piatto, rosa meno 3 dB per ottava,
+# marrone meno 6, azzurro piu' 3.
+_RUMORE_ESPONENTE = {5: 0.0, 6: -0.5, 7: -1.0, 8: 0.5}
+_RUMORE_NOMI = {5: "bianco", 6: "rosa", 7: "marrone", 8: "azzurro"}
+_SENZA_BANDA = (None, None, None, None)
+# Segnaposto al posto della frequenza quando la quartina e' di rumore: basta
+# che non sia None, che vuol dire pausa, e che non sia una coppia, che vuol
+# dire portamento.
+_E_RUMORE = "rumore"
+
+
+def parse_banda(val):
+	"""Legge la banda del rumore dal campo che per le note contiene la nota.
+
+	Forme accettate:
+	  "p"                pausa, non suona niente
+	  "n"                nessuna banda, il colore puro senza filtro
+	  "200-2000"         passabanda fisso fra 200 e 2000 Hz
+	  "200-2000.400"     il taglio alto scende da 2000 a 400 mentre suona
+	  "100.400-3000"     si muove solo il taglio basso, da 100 a 400
+	  "100.400-3000.900" si muovono tutti e due, ognuno per conto suo
+	Il trattino separa i due tagli, il punto indica il portamento di un
+	taglio. Nel campo della banda il punto significa sempre portamento e mai
+	decimale: su una frequenza di taglio i decimali non servono.
+	Si accettano anche le forme a lista, [200, 2000] oppure
+	[[100, 400], [3000, 900]], comode da scrivere in un programma.
+	Restituisce None per la pausa, altrimenti la quadrupla
+	(basso_inizio, basso_fine, alto_inizio, alto_fine), dove None significa
+	nessun limite da quel lato.
+	Solleva ValueError se la banda e' scritta male.
+	"""
+	def estremi(pezzo, etichetta):
+		"""Un taglio, fisso o in portamento, come coppia di frequenze."""
+		if isinstance(pezzo, (list, tuple)):
+			if len(pezzo) != 2:
+				raise ValueError(f"Taglio {etichetta} non valido: {pezzo!r}")
+			return float(pezzo[0]), float(pezzo[1])
+		testo = str(pezzo).strip().lower()
+		if testo in ("", "n", "none"):
+			return None, None
+		parti = testo.split('.')
+		if len(parti) == 1:
+			v = float(parti[0])
+			return v, v
+		if len(parti) == 2:
+			return float(parti[0]), float(parti[1])
+		raise ValueError(f"Taglio {etichetta} non valido: '{pezzo}'")
+
+	if isinstance(val, (list, tuple)):
+		if len(val) != 2:
+			raise ValueError(f"Banda non valida: {val!r}")
+		b0, b1 = estremi(val[0], "basso")
+		a0, a1 = estremi(val[1], "alto")
+	else:
+		testo = str(val).strip().lower()
+		if testo == 'p':
+			return None
+		if testo in ("", "n"):
+			return _SENZA_BANDA
+		if '-' not in testo:
+			raise ValueError(
+				f"Banda non valida: '{val}'. Serve taglio basso, trattino, taglio alto, "
+				"per esempio 200-2000, oppure n per nessuna banda")
+		sinistra, _, destra = testo.partition('-')
+		b0, b1 = estremi(sinistra, "basso")
+		a0, a1 = estremi(destra, "alto")
+
+	for v in (b0, b1, a0, a1):
+		if v is not None and v <= 0:
+			raise ValueError(f"Frequenza di taglio non positiva in '{val}'")
+	return (b0, b1, a0, a1)
+
+
+def _maschera_banda(frequenze, basso, alto, morbidezza=1.35):
+	"""Il guadagno da applicare a ogni frequenza, con i bordi sfumati.
+
+	Un taglio netto suonerebbe di campana, quindi i bordi sfumano con un
+	coseno rialzato che copre poco piu' di un terzo di ottava attorno a
+	ciascun taglio. Su una banda stretta, pero', due sfumature cosi' larghe
+	sarebbero piu' larghe della banda e il filtro non chiuderebbe: quando i
+	due tagli sono vicini la sfumatura si stringe insieme a loro.
+	"""
+	import numpy as np
+	maschera = np.ones_like(frequenze)
+	if basso is not None and alto is not None and alto > basso:
+		morbidezza = max(1.02, min(morbidezza, (alto / basso) ** 0.25))
+	if basso is not None:
+		piede = basso / morbidezza
+		maschera[frequenze < piede] = 0.0
+		rampa = (frequenze >= piede) & (frequenze < basso)
+		if rampa.any():
+			x = (frequenze[rampa] - piede) / (basso - piede)
+			maschera[rampa] = 0.5 - 0.5 * np.cos(np.pi * x)
+	if alto is not None:
+		tetto = alto * morbidezza
+		maschera[frequenze > tetto] = 0.0
+		rampa = (frequenze > alto) & (frequenze <= tetto)
+		if rampa.any():
+			x = (frequenze[rampa] - alto) / (tetto - alto)
+			maschera[rampa] = 0.5 + 0.5 * np.cos(np.pi * x)
+	return maschera
+
+
+def _filtra_banda_fissa(onda, basso, alto, fs):
+	"""Passabanda con i tagli fermi: una sola trasformata su tutto il segmento."""
+	import numpy as np
+	frequenze = np.fft.rfftfreq(len(onda), 1.0 / fs)
+	return np.fft.irfft(np.fft.rfft(onda) * _maschera_banda(frequenze, basso, alto), len(onda))
+
+
+def _filtra_banda_mobile(onda, b0, b1, a0, a1, fs):
+	"""Passabanda con i tagli che scorrono, ciascuno per conto suo.
+
+	Il segnale viene lavorato a blocchi che si sovrappongono a meta', ognuno
+	con la banda che compete al suo istante, e poi ricucito. Le finestre di
+	Hann sommate a passo dimezzato danno uno, quindi ricucire non altera il
+	livello.
+	Il segnale viene imbottito di silenzio davanti e dietro, e l'imbottitura
+	poi si butta: senza, i campioni ai due capi sarebbero coperti da una sola
+	finestra, il cui peso agli estremi tende a zero, e dividere per quel peso
+	faceva uscire un campione enorme, cioe' uno schiocco.
+	"""
+	import numpy as np
+	n = len(onda)
+	blocco = 1024
+	while blocco > 64 and blocco > n:
+		blocco //= 2
+	passo = max(1, blocco // 2)
+	finestra = np.hanning(blocco)
+	frequenze = np.fft.rfftfreq(blocco, 1.0 / fs)
+	imbottita = np.concatenate([np.zeros(passo), onda, np.zeros(blocco + passo)])
+	uscita = np.zeros(len(imbottita))
+	pesi = np.zeros(len(imbottita))
+	for inizio in range(0, n + passo, passo):
+		# Il blocco che parte qui e' centrato sul campione utile di indice
+		# inizio, perche' il passo e' meta' blocco quanto l'imbottitura.
+		quando = min(1.0, inizio / max(n - 1, 1))
+		basso = None if b0 is None else b0 + (b1 - b0) * quando
+		alto = None if a0 is None else a0 + (a1 - a0) * quando
+		pezzo = imbottita[inizio:inizio + blocco] * finestra
+		maschera = _maschera_banda(frequenze, basso, alto)
+		uscita[inizio:inizio + blocco] += np.fft.irfft(np.fft.rfft(pezzo) * maschera, blocco)
+		pesi[inizio:inizio + blocco] += finestra
+	utile = slice(passo, passo + n)
+	peso = pesi[utile].copy()
+	peso[peso < 1e-3] = 1.0
+	return uscita[utile] / peso
+
+
+def _genera_rumore(kind, banda, campioni, fs):
+	"""Il rumore del colore chiesto, filtrato dalla banda, normalizzato a uno.
+
+	La normalizzazione finale serve perche' colori e bande hanno ampiezze
+	molto diverse fra loro: senza, lo stesso volume darebbe suoni di forza
+	molto diversa a seconda del filtro.
+	"""
+	import numpy as np
+	generatore = np.random.default_rng()
+	bianco = generatore.standard_normal(campioni)
+	esponente = _RUMORE_ESPONENTE[kind]
+	if esponente == 0.0:
+		onda = bianco
+	else:
+		spettro = np.fft.rfft(bianco)
+		f = np.fft.rfftfreq(campioni)
+		scala = np.zeros_like(f)
+		scala[1:] = f[1:] ** esponente
+		onda = np.fft.irfft(spettro * scala, campioni)
+	b0, b1, a0, a1 = banda
+	nyquist = fs / 2.0
+	if b0 is not None:
+		b0, b1 = min(b0, nyquist), min(b1, nyquist)
+	if a0 is not None:
+		a0, a1 = min(a0, nyquist), min(a1, nyquist)
+	if b0 is not None or a0 is not None:
+		if b0 == b1 and a0 == a1:
+			onda = _filtra_banda_fissa(onda, b0, a0, fs)
+		else:
+			onda = _filtra_banda_mobile(onda, b0, b1, a0, a1, fs)
+	picco = np.max(np.abs(onda))
+	if picco > 0:
+		onda = onda / picco
+	return onda.astype(np.float32)
+
 def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	"""
 	Motore di sintesi di Acusticator, gia' V6.5, ora interno.
@@ -1439,11 +1626,13 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	di percentuali della durata della nota.
 	Parametri:
 	 - score: lista di valori in multipli di 4, in cui ogni gruppo rappresenta:
-	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un portamento separato da punto (es. "c4.e4", "880.920"), un valore in Hz, oppure "p" per pausa.
+	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un portamento separato da punto (es. "c4.e4", "880.920"), un valore in Hz, oppure "p" per pausa. Con i kind di rumore, da 5 a 8, questo campo contiene invece la banda del passabanda, per esempio "200-2000" o "200-2000.400".
 	     * dur (float): durata in secondi.
 	     * pan (float|str|tuple): panning stereo da -1 (sinistra) a 1 (destra), oppure portamento panning con due valori (es. "-1.1", "-0.5.0.5").
 	     * vol (float|str|tuple): volume da 0 a 1, oppure portamento volume con due valori.
-	 - kind (int): tipo di onda (1=sinusoide, 2=quadra, 3=triangolare, 4=dente di sega).
+	 - kind (int): tipo di onda (1=sinusoide, 2=quadra, 3=triangolare, 4=dente di sega,
+	     5=rumore bianco, 6=rosa, 7=marrone, 8=azzurro). Con i kind di rumore il primo
+	     campo della quartina non e' una nota ma la banda, vedi parse_banda.
 	 - adsr: lista di quattro valori [a, d, s, r] in percentuali (0 a 100).
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
 	Se sync è False la riproduzione avviene in background, restituendo subito il controllo al chiamante.
@@ -1492,6 +1681,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	sustain_level = s_level_pct / 100.0
 	release_frac = r_pct / 100.0
 	segments = []
+	rumore = kind in _RUMORE_ESPONENTE
 	for i in range(0, len(score), 4):
 		# La conversione della nota sta dentro il try insieme al resto della
 		# quartina: un nome di nota sbagliato deve far saltare quella quartina
@@ -1501,7 +1691,13 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 			dur = float(dur)
 			pan = parse_pan_values(pan_param)
 			vol = parse_vol_values(vol_param)
-			freq = note_to_freq(note_param)
+			if rumore:
+				# Per il rumore il primo campo non e' una nota ma la banda.
+				banda = parse_banda(note_param)
+				freq = None if banda is None else _E_RUMORE
+			else:
+				banda = None
+				freq = note_to_freq(note_param)
 		except (IndexError, ValueError, TypeError) as e:
 			print(f"Acusticator Warn: Parametri {i} errati. Ignoro. {e}", file=sys.stderr)
 			continue
@@ -1523,8 +1719,10 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 		
 		if freq is None: # Pausa
 			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
-		else: # Nota o Portamento
-			if kind == 1:
+		else: # Nota, portamento o rumore
+			if rumore:
+				wave = _genera_rumore(kind, banda, total_note_samples, fs)
+			elif kind == 1:
 				if isinstance(freq, tuple):
 					f_start, f_end = freq
 					freq_array = np.linspace(f_start, f_end, total_note_samples, endpoint=False)
@@ -1636,7 +1834,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V7.1 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+    """V7.2 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -1657,8 +1855,31 @@ class _Acusticator:
               portamento, come "-1.1".
       volume  da 0 a 1; anche in portamento.
     kind sceglie l'onda: 1 sinusoide, 2 quadra, 3 triangolare, 4 dente di
-    sega. adsr sono quattro percentuali [attacco, decadimento, sostegno,
-    rilascio]. Con sync a False il suono parte e il controllo torna subito.
+    sega, e da 5 a 8 il rumore, vedi piu' sotto. adsr sono quattro
+    percentuali [attacco, decadimento, sostegno, rilascio]. Con sync a False
+    il suono parte e il controllo torna subito.
+
+    Con i kind da 5 a 8 si sintetizza rumore, e il colore e' la forma
+    d'onda: 5 bianco, 6 rosa, 7 marrone, 8 azzurro. Il colore e' la
+    pendenza dello spettro, rispettivamente piatta, meno 3, meno 6 e piu' 3
+    dB per ottava. In quel caso il primo campo della quartina non contiene
+    una nota ma la banda del filtro passabanda, con il trattino fra i due
+    tagli e il punto per il portamento di ciascuno:
+
+        ["200-2000", 2.0, 0, 0.4]       banda ferma fra 200 e 2000 Hz
+        ["200-2000.400", 3.0, 0, 0.4]   il taglio alto scende: vento che cala
+        ["100.400-3000", 3.0, 0, 0.4]   si muove solo il taglio basso
+        ["100.400-3000.900", 3, 0, 0.4] si muovono tutti e due
+        ["n", 1.0, 0, 0.4]              nessuna banda, il colore puro
+        ["p", 0.5, 0, 0.4]              pausa, come per le note
+
+    I due tagli sono indipendenti: ciascuno ha il suo portamento e non
+    sanno l'uno dell'altro. Nel campo della banda il punto significa sempre
+    portamento e mai decimale, perche' su una frequenza di taglio i
+    decimali non servono. Durata, panning, volume e inviluppo si comportano
+    esattamente come per le note. Il rumore esce sempre normalizzato, cosi'
+    lo stesso volume da' suoni di forza confrontabile fra un colore e
+    l'altro e fra una banda e l'altra.
 
     Secondo modo, attingere alla collezione condivisa Acu_Collection.json,
     che e' la libreria dei suoni gia' pronti, curata con Acu_Maker:
