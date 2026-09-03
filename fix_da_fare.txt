@@ -263,7 +263,7 @@ PUNTO 7 [RISOLTO il 2026-09-02] - zip_maker vive in quattro copie diverse, e due
       Le versioni delle quattro applicazioni non sono state alzate, perche' e' cambiato
       solo lo script di preparazione dell'archivio e non il codice che finisce
       nell'eseguibile.
-PUNTO 8 [DA FARE] - Il rumore come forma d'onda, deciso il 2026-09-02
+PUNTO 8 [RISOLTO il 2026-09-03] - Il rumore come forma d'onda
   COSA SERVE A GABRIELE:
     Una forma d'onda di rumore con due frequenze di taglio che definiscono un passabanda,
     per ottenere il vento e simili. ADSR e panning restano come sono; i due tagli devono
@@ -285,9 +285,48 @@ PUNTO 8 [DA FARE] - Il rumore come forma d'onda, deciso il 2026-09-02
       ["n", 1.0, 0, 0.4]             nessuna banda, il colore puro
     I due tagli restano indipendenti, ciascuno con il suo portamento, e in Acu_Maker
     diventano due valori separati da regolare con gli slider.
-  DA RICORDARE QUANDO SI FARA':
-    Acu_Maker va aggiornato per modificare i due tagli, e la trasposizione per semitoni non
-    ha senso su una banda: va decisa una regola sua, per esempio spostare i tagli in
+  COME E' STATO RISOLTO, il 2026-09-03:
+    Fatto come deciso: kind da 5 a 8 per i colori, banda nel campo della nota con il
+    trattino fra i due tagli e il punto per il portamento di ciascuno. I tagli fermi si
+    fanno con una sola trasformata sul segmento, quelli che scorrono a blocchi
+    sovrapposti a meta' ricuciti con finestre di Hann. Le pendenze misurate sono 0, -3,
+    -6 e +3 dB per ottava come devono.
+    Quattro difetti trovati strada facendo, due dalle misure e due dall'orecchio di
+    Gabriele, che ha ascoltato quattro volte:
+    1. Il filtro mobile esplodeva ai capi del segmento, picco 1093 invece di 1, cioe' uno
+       schiocco fortissimo: le finestre di Hann valgono zero agli estremi e i campioni ai
+       bordi erano coperti da una sola finestra. Ora il segnale si imbottisce di silenzio
+       davanti e dietro e l'imbottitura si butta.
+    2. La sfumatura ai bordi della banda era una frazione fissa del taglio: su una banda
+       stretta era piu' larga della banda e il filtro non chiudeva. Ora si stringe con la
+       banda.
+    3. Il marrone si sentiva debolissimo e schioccava. Non era debole: teneva il 98,8 per
+       cento della sua energia sotto i 40 Hz, dove nulla riproduce, e quella componente
+       quasi continua lo faceva partire dal campione -0,570. Rimedio: una soglia bassa
+       sotto la quale non si scende.
+    4. Anche dopo, il marrone restava piu' piano e l'azzurro pure. Qui l'errore era
+       concettuale, mio: pareggiavo l'energia invece di quanto un suono si sente, che
+       sono due cose diverse perche' l'orecchio pesa le frequenze. A parita' di energia
+       il marrone stava 8,9 dB sotto il bianco in livello ponderato A. Rimedio: si
+       pareggia il livello ponderato, e un limitatore morbido a tangente iperbolica
+       regge l'aumento senza tagliare. Verificato che il limitatore non snatura i colori,
+       le pendenze restano quelle anche lavorando su un quinto dei campioni.
+    Le due soglie le ha scelte Gabriele all'ascolto, confrontando piu' valori: 40 Hz in
+    basso, dove il marrone gli piace un filo piu' cupo, e 12 kHz in alto, perche'
+    l'azzurro spendeva il 59,9 per cento della sua energia sopra i 14 kHz, dove il suo
+    orecchio e le sue casse non arrivano. Sopra i 12 kHz l'azzurro restava indietro, sotto
+    si perdeva troppa differenza fra i colori.
+    Aggiunto infine uno smorzamento di quattro millisecondi ai due capi di ogni rumore,
+    perche' comincia e finisce su un valore casuale: senza, resta uno scalino dal
+    silenzio qualunque ADSR gli passi il chiamante.
+    L'azzurro resta un filo meno potente degli altri. Gabriele ha deciso di tenerlo cosi',
+    perche' fra il suo orecchio e delle casse economiche le incognite sono troppe, e
+    perche' chi vuole piu' presenza puo' comunque restringere la banda dal campo della
+    nota. Il margine c'e': a volume di quartina 1.0 il picco arriva a 0,55 e restano 5,2
+    dB liberi.
+  RESTA DA FARE:
+    Acu_Maker non sa ancora modificare i due tagli, e la trasposizione per semitoni non ha
+    senso su una banda: va decisa una regola sua, per esempio spostare i tagli in
     proporzione.
-    Serve una sessione di ascolto dedicata, separata da quella del mixer.
+    Nessuna applicazione usa ancora il rumore.
 FINE ELENCO

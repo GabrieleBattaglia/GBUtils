@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V99 di giovedì 3 settembre 2026
+	V100 di giovedì 3 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.3.0 di mercoledì 5 agosto 2026. Utilità CLI per preset Acusticator
-	Acusticator V7.2.2 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	Acusticator V7.2.3 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4 di martedì 28 luglio 2026 by Gabriele Battaglia & Stella
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "99"
+VERSION = "100"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1440,9 +1440,15 @@ _SENZA_BANDA = (None, None, None, None)
 # riproduce nulla: quell'energia non si sentiva ma pesava sulla
 # normalizzazione, e la sua componente quasi continua faceva partire il
 # segnale da un valore alto, cioe' uno schiocco all'attacco.
-# Portato da 30 a 50 Hz dopo il secondo ascolto: sotto, il marrone spendeva
-# meta' della sua energia dove gli altoparlanti comuni non arrivano.
-_MINIMO_UDIBILE = 50.0
+# Portato da 30 a 50 e poi a 40 Hz negli ascolti del 2026-09-03: sotto,
+# il marrone spendeva meta' della sua energia dove gli altoparlanti comuni
+# non arrivano, ma a 40 Hz Gabriele lo preferisce, un filo piu' cupo.
+_MINIMO_UDIBILE = 40.0
+# Il tetto e' il difetto speculare della soglia. L'azzurro teneva il 59,9 per
+# cento della sua energia sopra i 14 kHz, dove l'orecchio adulto sente poco e
+# molti altoparlanti niente: la ponderazione A lassu' attenua appena 7 dB e
+# quindi lo dichiarava pari agli altri, mentre all'ascolto arrivava piu' piano.
+_MASSIMO_UDIBILE = 12000.0
 # Il livello ponderato A a cui si porta ogni rumore. Si pareggia questo e non
 # il valore efficace, perche' l'orecchio pesa le frequenze: a parita' di
 # energia il marrone si sentiva 8,9 dB piu' piano del bianco e l'azzurro 2.
@@ -1669,8 +1675,9 @@ def _genera_rumore(kind, banda, campioni, fs):
 	b0 = _MINIMO_UDIBILE if b0 is None else max(b0, _MINIMO_UDIBILE)
 	b1 = _MINIMO_UDIBILE if b1 is None else max(b1, _MINIMO_UDIBILE)
 	b0, b1 = min(b0, nyquist), min(b1, nyquist)
-	if a0 is not None:
-		a0, a1 = min(a0, nyquist), min(a1, nyquist)
+	tetto = min(_MASSIMO_UDIBILE, nyquist)
+	a0 = tetto if a0 is None else min(a0, tetto)
+	a1 = tetto if a1 is None else min(a1, tetto)
 	if b0 == b1 and a0 == a1:
 		onda = _filtra_banda_fissa(onda, b0, a0, fs)
 	else:
@@ -1684,6 +1691,16 @@ def _genera_rumore(kind, banda, campioni, fs):
 	if livello > 0:
 		onda = onda * (_LIVELLO_RUMORE / livello)
 	onda = _limita_morbido(onda)
+	# Un breve smorzamento ai due capi. Il rumore comincia e finisce su un
+	# valore casuale qualsiasi: senza, sarebbe uno scalino dal silenzio, cioe'
+	# un clic. Non basta l'inviluppo ADSR, perche' il suo attacco predefinito
+	# vale lo 0,002 per cento della durata, che su un suono di un secondo e
+	# mezzo fa un solo campione.
+	sfumatura = min(int(fs * 0.004), campioni // 4)
+	if sfumatura > 1:
+		rampa = np.linspace(0.0, 1.0, sfumatura)
+		onda[:sfumatura] = onda[:sfumatura] * rampa
+		onda[-sfumatura:] = onda[-sfumatura:] * rampa[::-1]
 	return onda.astype(np.float32)
 
 def _sintetizza(score, kind=1, adsr=None, fs=44100):
@@ -1906,7 +1923,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V7.2.2 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+    """V7.2.3 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -1951,11 +1968,19 @@ class _Acusticator:
     decimali non servono. Durata, panning, volume e inviluppo si comportano
     esattamente come per le note.
 
-    Due cose accadono al rumore senza che si debba chiederle. Sotto i 30 Hz
-    non si scende mai, nemmeno chiedendo una banda piu' bassa: li' sotto
-    c'e' solo energia che nessun altoparlante riproduce, e nel marrone era
-    il 97 per cento del totale, tanto da farlo sentire debolissimo pur
-    essendo il piu' forte, e da fargli produrre uno schiocco all'attacco.
+    Tre cose accadono al rumore senza che si debba chiederle. La banda non
+    esce mai dai 40 Hz e dai 12 kHz, nemmeno chiedendola piu' larga: fuori
+    di li' c'e' solo energia che l'orecchio non sente e gli altoparlanti non
+    riproducono, e non e' poca. Il marrone ne spendeva il 97 per cento sotto
+    i 20 Hz, tanto da sentirsi debolissimo pur essendo il piu' forte, e da
+    schioccare all'attacco; l'azzurro il 59,9 per cento sopra i 14 kHz, che
+    lo faceva arrivare piu' piano degli altri. Le due soglie sono state
+    scelte da Gabriele all'ascolto, confrontando piu' valori.
+    E ai due capi di ogni suono c'e' un breve smorzamento di quattro
+    millisecondi: il rumore comincia e finisce su un valore casuale
+    qualsiasi, che senza sarebbe uno scalino dal silenzio, cioe' un clic.
+    Non basterebbe l'inviluppo ADSR, il cui attacco predefinito vale lo
+    0,002 per cento della durata, un campione solo su un suono lungo.
     E il livello viene pareggiato su quanto un suono si sente, non su quanta
     energia ha: l'orecchio e' molto meno sensibile ai bassi, e a parita' di
     energia il marrone arrivava 8,9 dB piu' piano del bianco. Il pareggio usa
