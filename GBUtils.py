@@ -3,13 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V103 di venerdì 4 settembre 2026
+	V104 di venerdì 4 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
-	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0 del 12 luglio 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4.1 di giovedì 3 settembre 2026 by Gabriele Battaglia & ClaudIA (Claude Sonnet 5, modalità auto)
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "103"
+VERSION = "104"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -205,7 +205,7 @@ del /Q "{zip_path}"
 
 
 def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=None, silenzioso=False):
-    """V1.0 di mercoledì 2 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+    """V1.0.1 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
     Comprime in un solo archivio la cartella prodotta da PyInstaller.
     I file finiscono alla radice dell'archivio, senza cartelle intermedie: e' il
     solo formato che perform_update sa gestire, e che gli strumenti di
@@ -225,12 +225,15 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
             all'eseguibile.
         silenzioso: se vero non stampa nulla e si limita a restituire il conto.
     Le cartelle dei dati dell'utente, cioe' log, settings, pgn, txt e images, si
-    saltano dovunque si trovino, perche' nascono provando l'eseguibile prima di
-    comprimere e conterrebbero i dati di chi ha compilato.
-    Il filtro sulle estensioni vale invece soltanto per i file accanto
-    all'eseguibile, mai dentro _internal, dove sta quello che ha messo
-    PyInstaller: li' un base_library.zip o un membrane.dat servono davvero e
-    senza di loro il pacchetto non parte nemmeno.
+    saltano a qualunque profondita', perche' nascono provando l'eseguibile prima
+    di comprimere e conterrebbero i dati di chi ha compilato.
+    Niente di tutto questo entra pero' dentro _internal, dove sta quello che ha
+    messo PyInstaller: li' una cartella images e' _tk_data/images di tkinter, e
+    un base_library.zip o un membrane.dat servono davvero, tanto che senza di
+    loro il pacchetto non parte nemmeno. In _internal restano fuori soltanto le
+    cartelle di lavoro, cioe' __pycache__ e simili, che non sono mai legittime.
+    Il filtro sulle estensioni e i motivi passati in escludi valgono soltanto per
+    i file accanto all'eseguibile.
     Restituisce la coppia (quanti, lasciati), cioe' il numero di file scritti
     nell'archivio e l'elenco ordinato di quelli lasciati fuori.
     Solleva FileNotFoundError se la cartella da comprimere non esiste.
@@ -282,11 +285,19 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
         with zipfile.ZipFile(archivio, "w", zipfile.ZIP_DEFLATED) as zip_out:
             for radice, cartelle, file in os.walk(cartella_dist):
                 dentro = os.path.relpath(radice, cartella_dist)
+                pezzi = [] if dentro == "." else dentro.replace("\\", "/").split("/")
+                # Dentro _internal comanda PyInstaller: li' un nome come images o
+                # txt e' una risorsa che serve, non una cartella di dati altrui.
+                # Restano fuori solo le cartelle di lavoro, che non sono mai
+                # legittime. E' la stessa protezione che ha il filtro sulle
+                # estensioni, e senza di lei tkinter perdeva _tk_data/images.
+                dentro_internal = bool(pezzi) and pezzi[0].lower() == "_internal"
+                salta_qui = cartelle_di_lavoro if dentro_internal else salta_sempre
                 for c in cartelle:
-                    if c.lower() in salta_sempre:
+                    if c.lower() in salta_qui:
                         ramo = c if dentro == "." else os.path.join(dentro, c)
                         lasciati.append(f"{ramo} e quel che contiene")
-                cartelle[:] = [c for c in cartelle if c.lower() not in salta_sempre]
+                cartelle[:] = [c for c in cartelle if c.lower() not in salta_qui]
                 accanto_all_exe = os.path.abspath(radice) == radice_assoluta
                 for nome in sorted(file):
                     minuscolo = nome.lower()
