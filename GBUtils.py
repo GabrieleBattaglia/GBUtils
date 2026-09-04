@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V109 di venerdì 4 settembre 2026
+	V110 di venerdì 4 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -13,6 +13,7 @@ Lista utilità contenute in questo pacchetto
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0.1 del 4 settembre 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
+	gestisci_aggiornamento V1.0.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	manuale 1.0.1 di domenica 5 maggio 2024
@@ -23,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "109"
+VERSION = "110"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -463,6 +464,97 @@ def perform_update(download_url: str, app_name: str = "App", avanzamento=None, t
         _write_update_log(f"Errore durante l'esecuzione dell'aggiornamento: {e}", cartella_log, app_name)
         return False
 
+
+def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
+                           timeout: int = 10, chiedi=None, avvisa=None, traduci=None,
+                           solo_se_compilato: bool = True) -> bool:
+    """
+    V1.0.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    Conduce da sola tutta la conversazione dell'aggiornamento: controlla se ce
+    n'e' uno, lo riferisce, chiede se applicarlo, lo scarica annunciando a che
+    punto e' e avvia la sostituzione.
+    Restituisce True soltanto quando il programma deve chiudersi perche'
+    l'aggiornamento sta per essere applicato; in ogni altro caso False, e il
+    programma prosegue.
+    Nasce perche' le sette applicazioni che usano l'aggiornamento automatico
+    ripetevano ognuna le stesse trenta o cinquanta righe, ed erano gia'
+    diventate diverse fra loro: una sola mostrava all'utente le novita' della
+    versione nuova, che update_checker restituisce da sempre.
+    Le applicazioni con interfaccia grafica passano chiedi e avvisa, cioe' le
+    proprie finestre: chiedi riceve un testo e risponde vero o falso, avvisa
+    riceve un testo e lo mostra. Chi non le passa ottiene la conversazione da
+    console, con enter_escape per la domanda e print per il resto.
+    traduci, se indicata, riceve ogni testo prima che venga mostrato: le
+    applicazioni tradotte le passano la propria funzione di gettext. Le frasi
+    predefinite sono in italiano, quindi finche' non entrano nei cataloghi
+    restano tali, senza che niente si rompa.
+    solo_se_compilato lascia perdere quando si gira da sorgente, che e' il caso
+    in cui l'aggiornamento non potrebbe comunque essere applicato.
+    """
+    import sys
+
+    def tr(testo):
+        return traduci(testo) if traduci else testo
+
+    def dillo(testo):
+        if avvisa:
+            avvisa(testo)
+        else:
+            print(testo)
+
+    def domanda(testo):
+        if chiedi:
+            return bool(chiedi(testo))
+        return enter_escape(testo)
+
+    if solo_se_compilato and not getattr(sys, 'frozen', False):
+        return False
+
+    dillo(tr("Controllo aggiornamenti."))
+    disponibile, versione, indirizzo, changelog = update_checker(current_version, api_url, timeout)
+    if not disponibile:
+        if versione:
+            dillo(tr("Hai gia' l'ultima versione,") + f" {versione}.")
+        else:
+            dillo(tr("Controllo non riuscito, si prosegue."))
+        return False
+    if not indirizzo:
+        dillo(tr("Disponibile la versione") + f" {versione}, "
+              + tr("ma il pacchetto non e' ancora pronto."))
+        return False
+    dillo(tr("Disponibile la versione") + f" {versione}.")
+    dillo(tr("Tu hai la") + f" {current_version}.")
+    if changelog:
+        dillo(tr("Novita' di questa versione:"))
+        dillo(changelog.strip())
+    if not domanda(tr("Vuoi aggiornare adesso?")):
+        dillo(tr("Aggiornamento rimandato."))
+        return False
+
+    # L'avanzamento arriva un punto percentuale alla volta, cioe' centouno
+    # volte: annunciarli tutti sarebbe un muro di parole sullo screen reader,
+    # quindi se ne dice uno ogni dieci, in righe corte da leggere anche sul
+    # display braille. Si parte dal dieci: annunciare lo zero ripeterebbe
+    # soltanto la riga che dice che lo scaricamento e' cominciato.
+    ultimo = [0]
+
+    def segnala(preso, totale):
+        if not totale:
+            return
+        percento = int(preso * 100 / totale)
+        blocco = percento - percento % 10
+        if blocco > ultimo[0]:
+            ultimo[0] = blocco
+            fatti = f"{preso / 1048576:.1f}".replace(".", ",")
+            tutti = f"{totale / 1048576:.1f}".replace(".", ",")
+            dillo(f"{percento}%, {fatti} MB su {tutti}.")
+
+    dillo(tr("Scarico l'aggiornamento."))
+    if perform_update(indirizzo, app_name, avanzamento=segnala):
+        dillo(tr("Aggiornamento pronto, il programma si chiude per applicarlo."))
+        return True
+    dillo(tr("Aggiornamento non riuscito, si prosegue con questa versione."))
+    return False
 
 def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=None, silenzioso=False):
     """V1.0.1 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)

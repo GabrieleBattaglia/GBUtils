@@ -153,3 +153,20 @@ Se non va: guarda se accanto all'eseguibile e' comparso auto_updater_error.log
 e dimmi cosa c'e' scritto, perche' adesso quel file dice anche quale programma
 lo ha scritto e se l'archivio scaricato e' stato conservato.
 Esito:
+
+PROVA 11: LA CONVERSAZIONE DELL'AGGIORNAMENTO DA CONSOLE
+Perche': c'e' una funzione nuova, gestisci_aggiornamento, che fa da sola tutto
+il dialogo che finora ogni applicazione si scriveva per conto suo. L'ho provata
+a fondo passandole finte finestre, ma il ramo da console usa enter_escape e la
+tastiera, e quello posso provarlo solo io a occhi chiusi, non con le dita tue.
+Questa prova ha senso solo dopo che avremo convertito almeno una applicazione,
+quindi non farla adesso: la lascio scritta perche' non vada persa.
+Cosa fare: avviare l'applicazione convertita in una versione vecchia, cosi' che
+proponga l'aggiornamento, e rispondere prima con ESC e poi, riavviandola, con
+INVIO.
+Cosa osservare: che con ESC il programma prosegua dicendo che l'aggiornamento e'
+rimandato, e che con INVIO annunci lo scaricamento e poi gli avanzamenti, che
+sono dieci, uno ogni dieci per cento, in righe corte come "30%, 26,2 MB su 87,5."
+Dimmi se dieci annunci sono troppi o troppo pochi per il tuo ascolto: e' l'unica
+cosa che non posso decidere da sola.
+Esito:

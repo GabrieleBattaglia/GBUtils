@@ -8,7 +8,7 @@ Analisi eseguita da: ClaudIA, Claude Opus 5 in modalita' auto
 Autori del progetto: Gabriele Battaglia (IZ4APU) & ClaudIA
 Perimetro: questo rapporto riguarda soltanto le cinque funzioni elencate sopra. Le altre utilita' di GBUtils hanno righe proprie nella tabella del documento di refactoring e verranno esaminate a parte. Le correzioni si applicano dopo approvazione esplicita, un intervento alla volta, e ogni rilievo risolto viene tolto da questo rapporto secondo il punto 4.1.1 del documento di refactoring.
 1. File e funzioni esaminate
-GBUtils.py, 3426 righe in tutto. Le porzioni lette riga per riga sono queste.
+GBUtils.py, 3518 righe in tutto. Le porzioni lette riga per riga sono queste.
 _parse_version, righe da 27 a 35, 9 righe, confronto semantico fra numeri di versione.
 _write_update_log, righe da 113 a 153, 41 righe, scrittura del file auto_updater_error.log, piu' gli aiutanti nati dalle correzioni: _cartella_chiamante, _nome_da_api e _lingua_di_sistema, righe da 36 a 111, _scarica, righe da 243 a 278, e _script_aggiornamento, righe da 280 a 356.
 update_checker, righe da 155 a 241, 87 righe, interrogazione dell'API GitHub e confronto di versione.
@@ -33,14 +33,6 @@ Tornello, src/config.py righe da 40 a 68, percorsi assoluti, ma con un aggiramen
 Tornello, Players_DB.py riga 17 e Sync_DB.py riga 17, chiamate con i soli valori predefiniti, come cwapu.
 Le sole tre applicazioni che usano polipo hanno la cartella locales: cwapu, orologic e Tornello. Nei tre file spec la cartella e' dichiarata fra i dati inclusi, quindi da eseguibile compilato le traduzioni si trovano.
 3. Rilievi in ordine di gravita' decrescente
-3.1 Rilievi medi
-Rilievo 16
-Gravita': medio
-Categoria: DRY
-File e riga: nessuna riga di GBUtils; riguarda i sette punti di chiamata elencati alla sezione 2
-Problema: e' il caso inverso previsto dal punto 3.2 del documento di refactoring. Le sette applicazioni ripetono lo stesso blocco: guardia su sys.frozen, chiamata a update_checker, tre rami di risposta, domanda con enter_escape o con una finestra, chiamata a perform_update, uscita. Sono fra le trenta e le cinquanta righe ciascuna, con le stesse identiche frasi italiane, tradotte in tre progetti e non tradotte negli altri quattro.
-Impatto per l'utente: ogni miglioramento al dialogo dell'aggiornamento va rifatto sette volte, e infatti oggi le sette copie sono gia' diverse fra loro. Solo Terminal Beast mostra all'utente il changelog che update_checker restituisce; negli altri sei la variabile viene assegnata e mai usata, quindi l'utente decide se aggiornare senza sapere che cosa cambia.
-Correzione proposta: aggiungere a GBUtils una funzione di alto livello per le applicazioni console, per esempio gestisci_aggiornamento con nome dell'applicazione, versione corrente e indirizzo dell'API, che faccia da sola le tre domande e restituisca se il programma deve chiudersi. Le tre applicazioni grafiche continuerebbero a usare le due funzioni di base, perche' devono passare per la propria finestra. Va deciso prima come trattare le traduzioni, dato che i testi oggi vivono nei cataloghi dei singoli progetti.
 3.2 Rilievi bassi
 3.2 Rilievi bassi
 Rilievo 28
@@ -63,7 +55,7 @@ Vanno decise da Gabriele, perche' comportano azioni che questa analisi non compi
 5.3 I tre punti di chiamata che si affidavano ai valori predefiniti di polipo stanno in altri repository, quindi secondo il punto 2.7.2 non appartengono a questo rapporto. Per Tornello la cosa e' gia' registrata come rilievo C3 della sua fase 1. Per cwapu, deciso con Gabriele il 2026-09-04, non si apre nessuna issue: la correzione verra' colta dalla sua analisi quando arrivera' il suo turno. In entrambi i casi i programmi funzionano gia' oggi, perche' la correzione applicata a polipo li mette al riparo comunque.
 5.4 Le lingue proposte sono ora soltanto quelle che hanno davvero il catalogo compilato. Verificato che questo non toglie niente a nessuno: cwapu, orologic e Tornello hanno il file messages.mo per ognuna delle lingue che offrono, e tutti e tre usano il dominio predefinito.
 6. Riepilogo
-Rilievi totali: 2. Nessun critico e nessun rilievo alto, un medio e un basso.
-Restano soltanto i due rilievi trasversali: il 16, che riguarda le sette applicazioni chiamanti, e il 28, che riguarda la tabella del documento di refactoring. Gli identificativi sono quelli assegnati alla stesura, quindi la numerazione ha dei vuoti dove un rilievo e' stato risolto e tolto.
+Rilievi totali: 1, di gravita' bassa.
+Resta soltanto il rilievo 28, che riguarda la tabella del documento di refactoring e si chiude a fase completata. L'identificativo e' quello assegnato alla stesura, quando i rilievi erano ventotto.
 Cosa e' risultato solido e non va toccato. La gestione silenziosa dell'assenza di rete e del timeout, righe da 162 a 164, e' corretta e risolve davvero il problema che aveva prodotto la issue 34 di Tornello. La protezione dell'import di requests, righe da 121 a 125, e' una precauzione ben pensata, che evita di far cadere il programma all'avvio per un guasto del solo controllo aggiornamenti. Il confronto fra versioni per tuple di interi, righe da 32 a 34, e' giusto e non ha il difetto classico del confronto fra stringhe. La rinuncia esplicita quando il programma gira da sorgente, righe da 278 a 281, e' giusta e ben spiegata. In polipo, l'aggiornamento silenzioso dell'elenco delle lingue quando la scelta dell'utente resta valida, righe da 3231 a 3242, e' una attenzione fine e va conservata; cosi' pure la cattura di EOFError e KeyboardInterrupt, che manca solo del terzo caso descritto nel rilievo 4. Tutte le aperture di file dichiarano la codifica.
-Ordine di lavorazione: resta il rilievo 16, la funzione di alto livello per il controllo aggiornamenti, che e' il piu' vicino all'orizzonte descritto al punto 3.8 del documento di refactoring, cioe' utilita' che le applicazioni importano invece di riscriversi. Il rilievo 28 si chiude per ultimo, a fase completata, aggiornando la tabella.
+Ordine di lavorazione: non resta niente da correggere dentro GBUtils. Il rilievo 28 si chiude aggiornando la tabella del documento di refactoring, cosa che il punto 5.2 vuole fatta a fase completata, cioe' dopo il collaudo e la pubblicazione.
