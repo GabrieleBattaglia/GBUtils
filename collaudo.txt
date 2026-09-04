@@ -1,172 +1,102 @@
-COLLAUDO A MANO DEL COMPARTO AUDIO
-Cosa deve provare Gabriele, perche' sono prove che l'AI non puo' fare
-Creato il 3 settembre 2026 da ClaudIA (Claude Opus 5, modalita' auto)
-Riferimento: punto 3.7 di docs/Refactoring_generale_tutti_i_repo_ClaudIA.txt
+PROVE A MANO, QUELLE CHE L'AI NON PUO' FARE
+Se una prova va male scrivi cosa hai sentito nella riga Esito. Se va bene,
+cancella la prova. Quando il file resta vuoto si cancella anche lui.
 
-A COSA SERVE QUESTO FILE
-Le 95 prove automatiche scritte finora verificano numeri e strutture: che lo spettro
-abbia la pendenza giusta, che l'energia stia dove deve, che nessun nome di suono resti
-senza risposta. Non possono verificare due cose: come suona davvero una applicazione
-mentre la si usa, e se un pacchetto compilato si comporta come quello lanciato da
-sorgente. Quelle restano a te.
-Se una prova non va, scrivi qui sotto cosa hai sentito: alla prossima sessione lo
-leggo e ne ricavo cosa correggere. Se invece va bene, cancella la prova. Questo file
-deve svuotarsi, e quando e' vuoto va cancellato anche lui: il suo svuotamento vuol
-dire che il lavoro e' finito. Quello che funziona non serve tenerlo scritto, e se un
-giorno servisse sta nella cronologia di GitHub.
-Le segnalazioni, le proposte e i promemoria non stanno qui: vanno fra le issue del
-progetto a cui si riferiscono.
-
-STATO DEL LAVORO AL 3 SETTEMBRE 2026
-GBUtils V100, Acusticator V7.2.3, Acu_Maker 1.4.0.
-Hanno cambiato motore audio: gabryscola 3.1.1, batnav 2.4.1, Terminal Beast 4.2.4
-Tornello 9.3.16 e QuinQu 4.4.1.
-
-PROVA 1, LA PIU' IMPORTANTE: BATNAV COMPILATO
-Perche': fino alla 2.4.0 batnav compilato era senza i suoni presi dalla collezione, e
-nessuno se ne era accorto perche' il difetto era silenzioso. Sono state riparate tutte
-e due le meta' del guasto, il codice e il file .spec, ma la prova vale solo sul
-pacchetto.
-Cosa fare: ricompilare batnav, lanciare l'eseguibile e giocare una partita fino in
+PROVA 1: BATNAV COMPILATO
+Cosa fare: ricompila batnav, lancia l'eseguibile e gioca una partita fino in
 fondo, colpendo, mancando, affondando e arrivando alla vittoria o alla sconfitta.
-Cosa osservare: i sei suoni devono esserci tutti, cioe' arrivo del missile, discesa,
-colpo a segno, sirena di allarme, e i due jingle di vittoria e sconfitta.
-Se non si sentono: dire quale manca, e se manca anche lanciando batnav.py da sorgente.
+Cosa osservare: i sei suoni devono esserci tutti, cioe' arrivo del missile,
+discesa, colpo a segno, sirena di allarme, e i due jingle di vittoria e sconfitta.
+Se manca qualcosa, dimmi quale e se manca anche lanciando batnav.py da sorgente.
 Esito:
 
 PROVA 2: TERMINAL BEAST COMPILATO
-Perche': il gioco ha lasciato il suo motore audio per quello condiviso, e nel pacchetto
-sono state aggiunte entrambe le collezioni, la sua e quella comune.
-Cosa fare: ricompilare, lanciare l'eseguibile, fare una battaglia intera, entrare nelle
-impostazioni e muovere il cursore del volume, spegnere e riaccendere l'audio.
-Cosa osservare: che i suoni ci siano tutti, che il volume risponda come prima e che
-spegnendo l'audio si faccia davvero silenzio.
+Cosa fare: ricompila, lancia l'eseguibile, fai una battaglia intera, entra nelle
+impostazioni e muovi il cursore del volume, spegni e riaccendi l'audio.
+Cosa osservare: che i suoni ci siano tutti, che il volume risponda come prima e
+che spegnendo l'audio si faccia davvero silenzio.
 Esito:
 
 PROVA 3: IL RITMO DEI SUONI DI TERMINAL BEAST
-Perche': e' la prova piu' delicata di tutte. Il motore di prima era tuo e lo hai
-regolato all'orecchio; ora sotto c'e' il mixer condiviso a sedici voci, con il furto
-della voce piu' vecchia quando sono tutte occupate. Il ritmo puo' essere cambiato.
 Cosa fare: una battaglia con molti effetti ravvicinati, e una sfida mortale.
-Cosa osservare: se i suoni si accavallano come prima, se qualcuno viene troncato, se
-nei momenti concitati qualche effetto sparisce, e se la collocazione a destra e a
-sinistra dei due lottatori si sente come prima.
+Cosa osservare: se i suoni si accavallano come prima, se qualcuno viene troncato,
+se nei momenti concitati qualche effetto sparisce, e se la collocazione a destra
+e a sinistra dei due lottatori si sente come prima. Sotto c'e' un mixer a sedici
+voci che ruba la piu' vecchia quando sono tutte occupate, quindi il ritmo puo'
+essere cambiato.
 Esito:
 
 PROVA 4: GABRYSCOLA
 Cosa fare: una partita intera, dall'avvio alla chiusura, passando dalla classifica.
 Cosa osservare: che i dodici suoni della mappa eventi si sentano tutti al momento
-giusto. Gabryscola non e' compilato, quindi qui si prova solo il cambio di motore.
+giusto.
 Esito:
 
-PROVA 5: TORNELLO, ED E' QUELLA CHE TI SERVE ADESSO
-Perche': Tornello aveva il quarto lettore della collezione, ed era il solo che
-scrivesse dentro il file condiviso mentre il programma girava. E' stato tolto insieme
-ad audio_presets.py, i cui 31 preset non venivano mai usati perche' il codice leggeva
-prima la collezione condivisa. Le prove automatiche dicono che i 32 nomi di evento
-danno tutti un suono, ma non che il suono giusto arrivi al momento giusto.
-Cosa fare: usare Tornello normalmente, e in particolare creare un torneo, aggiungere e
-ritirare giocatori, generare gli abbinamenti, inserire i sei tipi di risultato, chiudere
-un turno e chiudere il torneo. Poi entrare nelle impostazioni e muovere il cursore del
-volume.
-Cosa osservare in particolare: che ogni evento suoni come prima, che il volume cambi
-davvero appena si muove il cursore e non dal riavvio successivo, perche' ora il volume
-viene tenuto in memoria e c'e' un aggancio apposta per aggiornarlo. Attenzione al suono
-chiamato successivo: la versione locale che Tornello si portava dietro era diversa, ma
-non veniva usata, quindi non dovrebbe cambiare niente; se ti sembra cambiato, dimmelo.
-Da provare anche sul pacchetto compilato, perche' tornello.spec ora porta dentro la
-collezione condivisa.
+PROVA 5: TORNELLO
+Cosa fare: usa Tornello normalmente, e in particolare crea un torneo, aggiungi e
+ritira giocatori, genera gli abbinamenti, inserisci i sei tipi di risultato,
+chiudi un turno e chiudi il torneo. Poi entra nelle impostazioni e muovi il
+cursore del volume. Ripeti sul pacchetto compilato.
+Cosa osservare: che ogni evento suoni come prima e che il volume cambi appena si
+muove il cursore, non dal riavvio successivo. Attenzione al suono chiamato
+successivo: non dovrebbe essere cambiato, ma se ti sembra diverso dimmelo.
 Esito:
 
 PROVA 6: QUINQU
-Perche': anche QuinQu aveva il suo lettore della collezione, il quinto, ed e' saltato
-fuori solo da un censimento su tutto il parco. Sono stati tolti anche i quindici score
-di scorta che si portava dietro, che pero' non venivano mai usati.
-Cosa fare: usare QuinQu normalmente, dall'avvio alla chiusura, registrando qualche
+Cosa fare: usa QuinQu normalmente, dall'avvio alla chiusura, registrando qualche
 valore, aprendo un obiettivo e facendo comparire le liste.
-Cosa osservare: che i sedici effetti si sentano tutti e come prima. QuinQu non e'
-compilato, quindi qui si prova solo il cambio di motore.
+Cosa osservare: che i sedici effetti si sentano tutti e come prima.
 Esito:
 
 PROVA 7: IL RUMORE IN ACU_MAKER
-Perche': l'editor ora sa modificare le bande, ma l'ho provato solo per via logica.
-Cosa fare: aprire Acu_Maker, creare un preset nuovo, premere w fino a un rumore, e con
-i tasti 1, 2 e 3 scegliere il taglio basso, l'alto o entrambi, spostandoli con c e v.
-Provare anche a scrivere una banda a mano con invio, per esempio 200-3000.400.
-Cosa osservare: che la riga di stato dica Banda e mostri quale taglio e' scelto, che i
-tagli si muovano per rapporto e non a scatti irregolari, che il suono segua quello che
-si vede scritto, e che passando da un rumore a una nota il primo campo si converta
-senza lasciare valori senza senso.
+Cosa fare: apri Acu_Maker, crea un preset nuovo, premi w fino a un rumore, e con
+i tasti 1, 2 e 3 scegli il taglio basso, l'alto o entrambi, spostandoli con c e
+v. Prova anche a scrivere una banda a mano con invio, per esempio 200-3000.400.
+Cosa osservare: che la riga di stato dica Banda e mostri quale taglio e' scelto,
+che i tagli si muovano per rapporto e non a scatti irregolari, che il suono segua
+quello che si vede scritto, e che passando da un rumore a una nota il primo campo
+si converta senza lasciare valori senza senso.
 Esito:
 
 PROVA 8: NESSUNO SCHIOCCO, IN GENERALE
-Perche': gli schiocchi sono stati la cosa piu' insidiosa di tutto il lavoro e sono
-saltati fuori tre volte, ogni volta per una ragione diversa.
-Cosa fare: usare normalmente una qualsiasi delle applicazioni per un po'.
-Cosa osservare: qualunque clic, scoppio o tonfo all'inizio o alla fine di un suono, e
-soprattutto il primo suono dopo un lungo silenzio, perche' li' il mixer riapre lo
-stream dopo i due minuti di attesa.
+Cosa fare: usa normalmente una qualsiasi delle applicazioni per un po'.
+Cosa osservare: qualunque clic, scoppio o tonfo all'inizio o alla fine di un
+suono, e soprattutto il primo suono dopo un lungo silenzio, perche' li' il mixer
+riapre lo stream dopo i due minuti di attesa.
 Esito:
 
 PROVA 9: LA LINGUA DI CWAPU E DEI DUE STRUMENTI DI TORNELLO
-Perche': polipo non risolve piu' i percorsi sulla directory di lavoro ma sulla
-cartella del file che lo chiama. Cwapu, Players_DB.py e Sync_DB.py sono i tre
-punti che si affidavano ai valori predefiniti, quindi sono i soli il cui
-comportamento cambia. Le prove automatiche dicono che il file della lingua viene
-letto e scritto nel posto giusto anche lanciando il programma da un'altra
-cartella, ma non che i tre programmi veri partano come prima.
 Cosa fare: avvia cwapu e guarda che parta in italiano senza chiederti la lingua.
 Poi, da una cartella qualsiasi che non sia quella del progetto, per esempio dal
 desktop, lancia python E:\git\mine\cwapu\cwapu.py e guarda che faccia lo stesso.
-Ripeti le due prove con Tornello\Players_DB.py.
-Poi avvia una volta sola anche orologic e Tornello, restando nella loro cartella:
-li' non e' cambiato niente sui percorsi, ma polipo ora propone soltanto le lingue
-che hanno davvero il catalogo tradotto, e voglio la conferma che le tue restino
-tutte al loro posto.
+Ripeti le due prove con Tornello\Players_DB.py. Poi avvia una volta sola anche
+orologic e Tornello, restando nella loro cartella.
 Cosa osservare: che il menu della lingua non compaia mai, perche' la scelta di
 prima deve essere ritrovata, e che non nascano cartelle o file selected_language
-in giro per il disco. Prima di questa correzione il secondo avvio, quello da
-un'altra cartella, riproponeva il menu.
-Se qualcosa non va: dimmi quale programma, da quale cartella lo hai lanciato e
-se il menu e' comparso.
+in giro per il disco.
+Se qualcosa non va: dimmi quale programma, da quale cartella lo hai lanciato e se
+il menu e' comparso.
 Esito:
 
 PROVA 10: UN AGGIORNAMENTO VERO, ALLA PRIMA RELEASE UTILE
-Perche': lo script che sostituisce l'installazione e' stato riscritto. Ora
-aspetta che il programma si sia chiuso davvero invece di contare tre secondi,
-controlla se la copia e' riuscita, svuota la sola cartella _internal per non
-lasciarsi dietro i moduli spariti, e se qualcosa va storto rimette a posto la
-versione precedente e scrive perche' nel log. Ho collaudato lo script su una
-installazione finta, con cinque prove: copia riuscita, copia fallita con
-ritorno indietro, pacchetto senza _internal, percorsi con lettere accentate e
-applicazione che non si chiude. Quello che non posso provare io e' un
-aggiornamento vero, con l'eseguibile davvero in uso che si chiude mentre lo
-script attende.
-Cosa fare: alla prossima release di un progetto compilato, invece di scaricare
-il pacchetto a mano, tieni una copia della versione precedente e lascia che sia
-lei a proporti l'aggiornamento e ad applicarlo.
-Cosa osservare: che la finestra dell'aggiornamento dica di attendere la
-chiusura e poi che ha applicato l'aggiornamento, che il programma si riavvii
-nella versione nuova, e che i tuoi dati accanto all'eseguibile, cioe'
-salvataggi, impostazioni, log e pgn, siano ancora tutti al loro posto.
-Se non va: guarda se accanto all'eseguibile e' comparso auto_updater_error.log
-e dimmi cosa c'e' scritto, perche' adesso quel file dice anche quale programma
-lo ha scritto e se l'archivio scaricato e' stato conservato.
+Cosa fare: alla prossima release di un progetto compilato, invece di scaricare il
+pacchetto a mano, tieni una copia della versione precedente e lascia che sia lei
+a proporti l'aggiornamento e ad applicarlo.
+Cosa osservare: che la finestra dell'aggiornamento dica di attendere la chiusura
+e poi che ha applicato l'aggiornamento, che il programma si riavvii nella
+versione nuova, e che i tuoi dati accanto all'eseguibile, cioe' salvataggi,
+impostazioni, log e pgn, siano ancora tutti al loro posto.
+Se non va: guarda se accanto all'eseguibile e' comparso auto_updater_error.log e
+dimmi cosa c'e' scritto.
 Esito:
 
 PROVA 11: LA CONVERSAZIONE DELL'AGGIORNAMENTO DA CONSOLE
-Perche': c'e' una funzione nuova, gestisci_aggiornamento, che fa da sola tutto
-il dialogo che finora ogni applicazione si scriveva per conto suo. L'ho provata
-a fondo passandole finte finestre, ma il ramo da console usa enter_escape e la
-tastiera, e quello posso provarlo solo io a occhi chiusi, non con le dita tue.
-Questa prova ha senso solo dopo che avremo convertito almeno una applicazione,
-quindi non farla adesso: la lascio scritta perche' non vada persa.
-Cosa fare: avviare l'applicazione convertita in una versione vecchia, cosi' che
-proponga l'aggiornamento, e rispondere prima con ESC e poi, riavviandola, con
-INVIO.
+Da fare solo dopo che avremo convertito almeno una applicazione a
+gestisci_aggiornamento.
+Cosa fare: avvia l'applicazione convertita in una versione vecchia, cosi' che
+proponga l'aggiornamento, e rispondi prima con ESC e poi, riavviandola, con INVIO.
 Cosa osservare: che con ESC il programma prosegua dicendo che l'aggiornamento e'
 rimandato, e che con INVIO annunci lo scaricamento e poi gli avanzamenti, che
 sono dieci, uno ogni dieci per cento, in righe corte come "30%, 26,2 MB su 87,5."
-Dimmi se dieci annunci sono troppi o troppo pochi per il tuo ascolto: e' l'unica
-cosa che non posso decidere da sola.
+Dimmi se dieci annunci sono troppi o troppo pochi per il tuo ascolto.
 Esito:
