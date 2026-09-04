@@ -153,7 +153,7 @@ def _write_update_log(message: str, cartella: str | None = None, app: str | None
         except Exception:  # noqa: BLE001, S110 - senza stderr non resta niente da fare
             pass
 
-def update_checker(current_version: str, api_url: str, timeout: int = 10) -> tuple[bool, str | None, str | None, str | None]:
+def update_checker(current_version: str, api_url: str, timeout: int = 10, cartella_log: str | None = None) -> tuple[bool, str | None, str | None, str | None]:
     """
     V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
@@ -168,7 +168,11 @@ def update_checker(current_version: str, api_url: str, timeout: int = 10) -> tup
     silenzio in cui l'utente non sa se il programma stia lavorando o sia fermo.
     """
     # Ricavati subito, perche' servono anche se l'import di requests fallisce.
-    cartella_log = _cartella_chiamante(1)
+    # cartella_log arriva da chi chiama quando la catena passa per un'altra
+    # utilita' di GBUtils: risalire di un livello solo, in quel caso,
+    # scriverebbe il log nella cartella della libreria invece che in quella
+    # dell'applicazione.
+    cartella_log = cartella_log or _cartella_chiamante(1)
     nome_app = _nome_da_api(api_url)
     try:
         # Fuori da questo try, un import rotto (es. una dipendenza di
@@ -356,7 +360,8 @@ start "" /D "{current_dir}" "{current_exe}"
 (goto) 2>nul & del "%~f0"
 """
 
-def perform_update(download_url: str, app_name: str = "App", avanzamento=None, timeout: int = 30) -> bool:
+def perform_update(download_url: str, app_name: str = "App", avanzamento=None, timeout: int = 30,
+                   cartella_log: str | None = None) -> bool:
     """
     V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
     Scarica l'aggiornamento, lo estrae e avvia lo script che sostituisce
@@ -383,8 +388,9 @@ def perform_update(download_url: str, app_name: str = "App", avanzamento=None, t
     import zipfile
 
     # Serve prima del controllo su frozen, perche' anche la rinuncia va
-    # registrata accanto a chi ha chiamato.
-    cartella_log = _cartella_chiamante(1)
+    # registrata accanto a chi ha chiamato. Vale qui la stessa nota di
+    # update_checker sul perche' chi chiama possa indicarla.
+    cartella_log = cartella_log or _cartella_chiamante(1)
 
     if not sys.platform.startswith('win'):
         return False
@@ -510,8 +516,14 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     if solo_se_compilato and not getattr(sys, 'frozen', False):
         return False
 
+    # La cartella del log si ricava qui, dove il chiamante e' l'applicazione:
+    # lasciandola ricavare alle due funzioni sottostanti, che a quel punto
+    # vedrebbero come chiamante questa stessa libreria, il file finirebbe
+    # accanto a GBUtils.py invece che accanto al programma.
+    cartella_log = _cartella_chiamante(1)
     dillo(tr("Controllo aggiornamenti."))
-    disponibile, versione, indirizzo, changelog = update_checker(current_version, api_url, timeout)
+    disponibile, versione, indirizzo, changelog = update_checker(
+        current_version, api_url, timeout, cartella_log)
     if not disponibile:
         if versione:
             dillo(tr("Hai gia' l'ultima versione,") + f" {versione}.")
@@ -550,7 +562,7 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
             dillo(f"{percento}%, {fatti} MB su {tutti}.")
 
     dillo(tr("Scarico l'aggiornamento."))
-    if perform_update(indirizzo, app_name, avanzamento=segnala):
+    if perform_update(indirizzo, app_name, avanzamento=segnala, cartella_log=cartella_log):
         dillo(tr("Aggiornamento pronto, il programma si chiude per applicarlo."))
         return True
     dillo(tr("Aggiornamento non riuscito, si prosegue con questa versione."))
