@@ -126,3 +126,26 @@ un'altra cartella, riproponeva il menu.
 Se qualcosa non va: dimmi quale programma, da quale cartella lo hai lanciato e
 se il menu e' comparso.
 Esito:
+
+PROVA 10: UN AGGIORNAMENTO VERO, ALLA PRIMA RELEASE UTILE
+Perche': lo script che sostituisce l'installazione e' stato riscritto. Ora
+aspetta che il programma si sia chiuso davvero invece di contare tre secondi,
+controlla se la copia e' riuscita, svuota la sola cartella _internal per non
+lasciarsi dietro i moduli spariti, e se qualcosa va storto rimette a posto la
+versione precedente e scrive perche' nel log. Ho collaudato lo script su una
+installazione finta, con cinque prove: copia riuscita, copia fallita con
+ritorno indietro, pacchetto senza _internal, percorsi con lettere accentate e
+applicazione che non si chiude. Quello che non posso provare io e' un
+aggiornamento vero, con l'eseguibile davvero in uso che si chiude mentre lo
+script attende.
+Cosa fare: alla prossima release di un progetto compilato, invece di scaricare
+il pacchetto a mano, tieni una copia della versione precedente e lascia che sia
+lei a proporti l'aggiornamento e ad applicarlo.
+Cosa osservare: che la finestra dell'aggiornamento dica di attendere la
+chiusura e poi che ha applicato l'aggiornamento, che il programma si riavvii
+nella versione nuova, e che i tuoi dati accanto all'eseguibile, cioe'
+salvataggi, impostazioni, log e pgn, siano ancora tutti al loro posto.
+Se non va: guarda se accanto all'eseguibile e' comparso auto_updater_error.log
+e dimmi cosa c'e' scritto, perche' adesso quel file dice anche quale programma
+lo ha scritto e se l'archivio scaricato e' stato conservato.
+Esito:

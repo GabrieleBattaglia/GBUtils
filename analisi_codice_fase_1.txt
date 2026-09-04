@@ -8,14 +8,14 @@ Analisi eseguita da: ClaudIA, Claude Opus 5 in modalita' auto
 Autori del progetto: Gabriele Battaglia (IZ4APU) & ClaudIA
 Perimetro: questo rapporto riguarda soltanto le cinque funzioni elencate sopra. Le altre utilita' di GBUtils hanno righe proprie nella tabella del documento di refactoring e verranno esaminate a parte. Le correzioni si applicano dopo approvazione esplicita, un intervento alla volta, e ogni rilievo risolto viene tolto da questo rapporto secondo il punto 4.1.1 del documento di refactoring.
 1. File e funzioni esaminate
-GBUtils.py, 3207 righe in tutto. Le porzioni lette riga per riga sono queste.
+GBUtils.py, 3298 righe in tutto. Le porzioni lette riga per riga sono queste.
 _parse_version, righe da 27 a 35, 9 righe, confronto semantico fra numeri di versione.
-_write_update_log, righe da 64 a 105, 42 righe, scrittura del file auto_updater_error.log, piu' i due aiutanti _cartella_chiamante e _nome_da_api nati dalle correzioni, righe da 36 a 62.
+_write_update_log, righe da 64 a 105, 42 righe, scrittura del file auto_updater_error.log, piu' gli aiutanti nati dalle correzioni: _cartella_chiamante e _nome_da_api, righe da 36 a 62, e _script_aggiornamento, righe da 169 a 245.
 update_checker, righe da 106 a 167, 62 righe, interrogazione dell'API GitHub e confronto di versione.
-perform_update, righe da 169 a 261, 93 righe, scaricamento, estrazione e sostituzione dell'installazione tramite script batch.
-polipo, righe da 3058 a 3207, 150 righe, rilevamento della lingua, menu di scelta e caricamento delle traduzioni gettext.
-Totale righe analizzate: 356. I numeri di riga citati piu' avanti sono aggiornati alla V105, cioe' al codice come si presenta dopo le correzioni gia' applicate.
-Letto anche per confronto, senza farne oggetto di rilievo: Donazione, righe da 2934 a 3056, che contiene la catena di rilevamento della lingua di sistema citata nel rilievo 7, e crea_archivio_release, riga 308, da cui e' stato ripreso il modello di risoluzione dei percorsi.
+perform_update, righe da 247 a 352, 106 righe, scaricamento, estrazione e sostituzione dell'installazione tramite script batch.
+polipo, righe da 3149 a 3298, 150 righe, rilevamento della lingua, menu di scelta e caricamento delle traduzioni gettext.
+Totale righe analizzate: 446. I numeri di riga citati piu' avanti sono aggiornati alla V105, cioe' al codice come si presenta dopo le correzioni gia' applicate.
+Letto anche per confronto, senza farne oggetto di rilievo: Donazione, righe da 3025 a 3147, che contiene la catena di rilevamento della lingua di sistema citata nel rilievo 7, e crea_archivio_release, riga 399, da cui e' stato ripreso il modello di risoluzione dei percorsi.
 2. Ricognizione dell'uso nelle applicazioni
 Il controllo aggiornamenti e' usato da sette applicazioni, tutte con lo stesso schema: verifica di sys.frozen, chiamata a update_checker, domanda all'utente, chiamata a perform_update, uscita dal programma.
 Cartella, cartella.py righe da 370 a 398, interfaccia wxPython, controllo in un thread separato, nessuna cattura di eccezioni attorno al thread.
@@ -33,66 +33,36 @@ Tornello, src/config.py righe da 40 a 68, percorsi assoluti, ma con un aggiramen
 Tornello, Players_DB.py riga 17 e Sync_DB.py riga 17, chiamate con i soli valori predefiniti, come cwapu.
 Le sole tre applicazioni che usano polipo hanno la cartella locales: cwapu, orologic e Tornello. Nei tre file spec la cartella e' dichiarata fra i dati inclusi, quindi da eseguibile compilato le traduzioni si trovano.
 3. Rilievi in ordine di gravita' decrescente
-3.1 Rilievi critici
-Rilievo 2
-Gravita': critico
-Categoria: fragilita'
-File e riga: GBUtils.py:234-253, lo script batch generato
-Problema: lo script che applica l'aggiornamento attende tre secondi fissi con timeout /t 3, poi lancia xcopy sopra la cartella dell'applicazione, poi riavvia l'eseguibile e cancella i file temporanei. Non verifica mai che il programma si sia davvero chiuso, non controlla il codice di uscita di xcopy, non ha un modo per tornare indietro e non lascia traccia di cosa sia successo.
-Verifica: lettura dello script generato. La sequenza e' incondizionata dall'inizio alla fine.
-Impatto per l'utente: se l'applicazione impiega piu' di tre secondi a chiudersi, e' il caso normale quando deve salvare, xcopy trova l'eseguibile ancora bloccato dal sistema e fallisce sui file in uso. Lo script prosegue lo stesso, riavvia la vecchia versione e cancella l'archivio scaricato: l'utente vede il programma chiudersi, riaprirsi identico, e non riceve nessun messaggio. Al controllo successivo l'aggiornamento verra' riproposto, e cosi' ogni volta. Nel caso peggiore la copia riesce a meta', l'installazione resta mescolata fra vecchio e nuovo e il programma non riparte affatto, senza che l'utente abbia modo di sapere perche'. Per un utente non vedente la cosa e' aggravata dal fatto che l'unica traccia dell'operazione e' una finestra di console che si apre e si chiude da sola.
-Correzione proposta: sostituire l'attesa fissa con un ciclo che aspetti la scomparsa del processo, per esempio con tasklist e un numero massimo di tentativi, e ritenti la copia finche' i file non sono piu' bloccati. Controllare errorlevel dopo xcopy: se e' diverso da zero, non cancellare l'archivio, scrivere l'esito in auto_updater_error.log accanto all'applicazione e riavviare comunque la versione vecchia, che a quel punto e' ancora integra. Valutare come passo successivo la sostituzione in due tempi, cioe' scrivere la nuova versione accanto alla vecchia e scambiare le cartelle solo a copia completata, che e' l'unico modo per avere un ritorno indietro vero.
-3.2 Rilievi alti
+3.1 Rilievi alti
 Rilievo 4
 Gravita': alto
 Categoria: fragilita'
-File e riga: GBUtils.py:3173-3180
+File e riga: GBUtils.py:3264-3271
 Problema: il menu di scelta della lingua chiama input dentro un ciclo while True e intercetta soltanto EOFError e KeyboardInterrupt. Quando il programma non ha uno standard input, cioe' in un eseguibile compilato senza console, input non solleva EOFError ma RuntimeError con il messaggio lost sys.stdin, che non viene catturato e sale fino al chiamante.
 Verifica: provato sull'interprete in uso, Python 3.14.5. Con sys.stdin a None, input solleva RuntimeError: lost sys.stdin. Verificato anche che print con sys.stdout a None non solleva nulla e semplicemente non scrive, quindi i messaggi informativi della funzione sono innocui: il problema riguarda soltanto la lettura.
 Impatto per l'utente: oggi il difetto e' latente, perche' le tre applicazioni che usano polipo sono tutte compilate con la console attiva, e Tornello per di piu' evita il menu scrivendo a mano il file della lingua. Diventa immediato il giorno in cui una applicazione con interfaccia grafica userra' polipo, e Cartella e Dadillo sono gia' compilate senza console: al primo avvio, quando il file della lingua non esiste ancora, il programma terminerebbe durante l'import del proprio modulo di configurazione, senza finestra e senza messaggio. E' il tipo di guasto che si manifesta solo nella versione compilata, quindi solo dall'utente finale.
-Correzione proposta: aggiungere RuntimeError alla tupla catturata alla riga 3179, in modo che l'assenza di terminale porti alla lingua di ripiego come gia' avviene per la pressione di Ctrl C. Insieme al rilievo 18 la soluzione completa e' un parametro che permetta al chiamante di dire che il menu non deve comparire.
+Correzione proposta: aggiungere RuntimeError alla tupla catturata alla riga 3270, in modo che l'assenza di terminale porti alla lingua di ripiego come gia' avviene per la pressione di Ctrl C. Insieme al rilievo 18 la soluzione completa e' un parametro che permetta al chiamante di dire che il menu non deve comparire.
 Rilievo 7
 Gravita': alto
 Categoria: DRY
-File e riga: GBUtils.py:3118, da confrontare con GBUtils.py:3021-3029
+File e riga: GBUtils.py:3209, da confrontare con GBUtils.py:3112-3120
 Problema: polipo riconosce la lingua del sistema con la sola chiamata locale.getdefaultlocale, deprecata da Python 3.11 e destinata alla rimozione nella 3.15. La chiamata e' nuda, senza guardia e senza alternative. Nello stesso file, dentro Donazione, esiste gia' una catena di rilevamento a sette livelli che prova nell'ordine la scelta esplicita, la traduzione installata, le variabili d'ambiente, l'API di Windows e infine i due meccanismi di locale: quella catena e' scritta bene, e' collaudata e polipo la ignora.
-Verifica: provato sull'interprete in uso. locale.getdefaultlocale restituisce ancora it_IT ma emette DeprecationWarning con il testo che ne annuncia la rimozione nella 3.15. Questa analisi supera la issue aperta numero 3 su due punti. Primo: la issue indica la riga 2988, che sta dentro Donazione, dove pero' la chiamata e' l'ultimo di sette ripieghi ed e' protetta da hasattr, quindi il giorno della rimozione non succedera' nulla; il punto davvero esposto e' la riga 3118 di polipo, che la issue non nomina. Secondo: la correzione proposta dalla issue, cioe' locale.getlocale preceduto da setlocale, su Windows non funziona. Provato: getlocale restituisce Italian_Italy, non it_IT, e locale.normalize non lo converte; il codice di polipo, che taglia la stringa al primo trattino basso, otterrebbe Italian invece di it e nessuna traduzione verrebbe piu' trovata. La strada giusta e' gia' scritta alle righe da 3021 a 3029: GetUserDefaultUILanguage passato per locale.windows_locale, provato qui e verificato, restituisce esattamente it_IT.
+Verifica: provato sull'interprete in uso. locale.getdefaultlocale restituisce ancora it_IT ma emette DeprecationWarning con il testo che ne annuncia la rimozione nella 3.15. Questa analisi supera la issue aperta numero 3 su due punti. Primo: la issue indica la riga 2988, che sta dentro Donazione, dove pero' la chiamata e' l'ultimo di sette ripieghi ed e' protetta da hasattr, quindi il giorno della rimozione non succedera' nulla; il punto davvero esposto e' la riga 3209 di polipo, che la issue non nomina. Secondo: la correzione proposta dalla issue, cioe' locale.getlocale preceduto da setlocale, su Windows non funziona. Provato: getlocale restituisce Italian_Italy, non it_IT, e locale.normalize non lo converte; il codice di polipo, che taglia la stringa al primo trattino basso, otterrebbe Italian invece di it e nessuna traduzione verrebbe piu' trovata. La strada giusta e' gia' scritta alle righe da 3112 a 3120: GetUserDefaultUILanguage passato per locale.windows_locale, provato qui e verificato, restituisce esattamente it_IT.
 Impatto per l'utente: finche' si resta sotto la 3.15 non cambia niente, tranne l'avviso che compare nelle suite di test. Alla prima compilazione con la 3.15 il rilevamento automatico della lingua sparisce in tutte le applicazioni insieme, e ognuna ripropone il menu della lingua come se fosse la prima volta. Se invece si applicasse la correzione proposta nella issue, il guasto arriverebbe subito e sarebbe silenzioso.
 Correzione proposta: estrarre la catena di Donazione in un aiutante interno, per esempio _rileva_lingua_sistema, e farla chiamare sia da Donazione sia da polipo. E' insieme la correzione del difetto e la rimozione di una duplicazione, ed e' la ragione per cui questo rilievo e' classificato come violazione DRY e non come semplice fragilita'. Da fare in un intervento suo, perche' tocca una funzione che in questa fase non e' sotto analisi.
 Rilievo 8
 Gravita': alto
 Categoria: fragilita'
-File e riga: GBUtils.py:3134-3152
-Problema: il file selected_language.json viene riletto senza validazione. Il blocco intercetta FileNotFoundError e json.JSONDecodeError, ma non il caso in cui il file contenga JSON valido che non sia un dizionario: con una lista o con null, la chiamata data.get alla riga 3136 solleva AttributeError e la funzione muore. Non e' intercettato nemmeno PermissionError, che su Windows si presenta quando il file e' aperto da un'altra applicazione o e' di sola lettura.
+File e riga: GBUtils.py:3225-3243
+Problema: il file selected_language.json viene riletto senza validazione. Il blocco intercetta FileNotFoundError e json.JSONDecodeError, ma non il caso in cui il file contenga JSON valido che non sia un dizionario: con una lista o con null, la chiamata data.get alla riga 3227 solleva AttributeError e la funzione muore. Non e' intercettato nemmeno PermissionError, che su Windows si presenta quando il file e' aperto da un'altra applicazione o e' di sola lettura.
 Verifica: lettura del codice e della tupla di eccezioni catturate.
 Impatto per l'utente: un file di configurazione troncato da un arresto improvviso, o riscritto male da un altro programma, impedisce l'avvio dell'applicazione invece di essere semplicemente ignorato e rifatto. E' esattamente il caso che il resto della funzione gia' gestisce bene quando il file manca del tutto, quindi il rimedio esiste ed e' solo mal collegato.
 Correzione proposta: allargare la cattura a OSError e ValueError e verificare esplicitamente che l'oggetto letto sia un dizionario, ricadendo altrimenti sul percorso che gia' esiste, cioe' mostrare il menu e riscrivere il file.
-3.3 Rilievi medi
-Rilievo 9
-Gravita': medio
-Categoria: fragilita'
-File e riga: GBUtils.py:205-207
-Problema: la cartella temporanea _update_temp_dir viene creata dentro la cartella dell'applicazione, e se esiste gia' viene riusata cosi' com'e'. Il commento alla riga 204 dichiara il contrario, cioe' che le cartelle temporanee sono esterne alla destinazione.
-Impatto per l'utente: dopo un aggiornamento fallito la cartella resta piena dei file della versione scaricata. Al tentativo successivo l'estrazione sovrascrive i file omonimi ma lascia gli altri, e xcopy li riversa poi nell'installazione: file di una versione intermedia mai voluta finiscono accanto all'eseguibile. La cartella resta inoltre visibile dentro l'installazione dell'utente anche quando tutto e' andato bene, se il batch non arriva in fondo.
-Correzione proposta: cancellare la cartella prima di ricrearla, con shutil.rmtree e ignore_errors, oppure spostarla del tutto nella cartella temporanea di sistema accanto all'archivio e al batch, come il commento gia' promette.
-Rilievo 10
-Gravita': medio
-Categoria: logica
-File e riga: GBUtils.py:240
-Problema: xcopy con /S /Y /E /Q aggiunge e sovrascrive, ma non rimuove nulla. I file che nella nuova versione non esistono piu' restano nell'installazione.
-Impatto per l'utente: nelle applicazioni impacchettate con PyInstaller la cartella _internal cambia contenuto a ogni ricompilazione, e i moduli rimasti dalla versione precedente restano li' a caricarsi. Nella maggior parte dei casi non succede niente, ma un modulo vecchio che sopravvive accanto a uno nuovo produce guasti difficilissimi da capire, che compaiono solo sulle installazioni aggiornate e mai su quelle nuove. E' anche il motivo per cui una installazione aggiornata molte volte diventa via via piu' grande.
-Correzione proposta: valutare robocopy con l'opzione /MIR al posto di xcopy, che rende la destinazione identica alla sorgente, oppure adottare la sostituzione in due tempi gia' proposta nel rilievo 2, che risolve questo punto per costruzione. Attenzione: /MIR cancella dalla destinazione tutto cio' che non e' nella sorgente, quindi va usata solo dopo aver verificato che i dati dell'utente stiano fuori dalla cartella dell'applicazione, cosa che oggi non e' vera per tutti i progetti.
-Rilievo 11
-Gravita': medio
-Categoria: fragilita'
-File e riga: GBUtils.py:250
-Problema: lo script batch viene scritto con encoding utf-8, ma cmd.exe interpreta i file .bat nella codepage OEM del sistema, che in Italia e' la 850. I caratteri non ASCII presenti nei percorsi vengono quindi letti in modo sbagliato.
-Impatto per l'utente: l'aggiornamento fallisce, senza spiegazione, per chiunque abbia un nome utente o un percorso di installazione con lettere accentate, per esempio C:\Users\Nicolo'\... . Non riguarda le macchine di Gabriele ma riguarda gli utenti delle applicazioni, ed e' un guasto che nessuna prova interna puo' far emergere.
-Correzione proposta: scrivere il file con la codifica della console, per esempio encoding="oem" oppure "mbcs", oppure lasciare utf-8 e aggiungere chcp 65001 > nul come prima riga dello script. La seconda strada e' preferibile perche' non dipende dalla lingua della macchina.
+3.2 Rilievi medi
 Rilievo 12
 Gravita': medio
 Categoria: regole generali
-File e riga: GBUtils.py:217
+File e riga: GBUtils.py:305
 Problema: lo scaricamento avviene con urllib.request.urlretrieve, che non accetta un timeout e non riferisce nulla sull'avanzamento. La funzione accetta pero' gia' un parametro reporthook, oggi inutilizzato.
 Impatto per l'utente: l'archivio di Terminal Beast pesa quasi 62 megabyte. Chi ha una connessione lenta resta per minuti davanti a un programma che ha stampato Attendere prego e poi non dice piu' niente: con uno screen reader non c'e' modo di distinguere un download in corso da un programma bloccato. Se poi la connessione si interrompe a meta' senza chiudersi, la chiamata resta appesa per sempre e l'unica via d'uscita e' terminare il processo.
 Correzione proposta: accettare una funzione di richiamo facoltativa e passarla come reporthook, cosi' che le applicazioni console possano annunciare l'avanzamento a blocchi di circa quaranta caratteri come chiede CLAUDE.md, per esempio "Scaricati 12,4 MB su 61,7." Per il tempo massimo, poiche' urlretrieve non lo prevede, usare socket.setdefaulttimeout attorno alla chiamata oppure passare a urlopen con timeout esplicito e copia a blocchi, che e' anche il modo naturale per calcolare l'avanzamento.
@@ -128,52 +98,52 @@ Correzione proposta: aggiungere a GBUtils una funzione di alto livello per le ap
 Rilievo 17
 Gravita': medio
 Categoria: logica
-File e riga: GBUtils.py:3121 e 3194-3204
+File e riga: GBUtils.py:3212 e 3285-3295
 Problema: l'elenco delle lingue disponibili si costruisce prendendo tutte le sottocartelle di locales, senza verificare che contengano davvero il catalogo LC_MESSAGES con il file .mo del dominio richiesto. Alla fine, la chiamata a gettext.translation viene fatta con fallback=True, che in caso di catalogo mancante non solleva niente e restituisce un traduttore che lascia i testi come sono.
 Verifica: provato sull'interprete in uso. Con una cartella vuota, gettext.translation con fallback=True restituisce un oggetto NullTranslations senza sollevare eccezioni.
-Impatto per l'utente: si puo' scegliere dal menu una lingua che non esiste, e il programma prosegue interamente nella lingua sorgente senza dire perche'. Chi sceglie e' convinto di aver sbagliato qualcosa. Lo stesso vale per la lingua del sistema, che viene aggiunta all'elenco alla riga 3128 anche quando nessuno l'ha mai tradotta.
+Impatto per l'utente: si puo' scegliere dal menu una lingua che non esiste, e il programma prosegue interamente nella lingua sorgente senza dire perche'. Chi sceglie e' convinto di aver sbagliato qualcosa. Lo stesso vale per la lingua del sistema, che viene aggiunta all'elenco alla riga 3219 anche quando nessuno l'ha mai tradotta.
 Correzione proposta: filtrare le sottocartelle tenendo solo quelle che contengono LC_MESSAGES con il file del dominio, e aggiungere la lingua di sistema all'elenco solo se supera lo stesso controllo. Se dopo il filtro resta solo la lingua sorgente, non mostrare affatto il menu.
 Rilievo 18
 Gravita': medio
 Categoria: ottimizzazione
-File e riga: GBUtils.py:3154-3192
+File e riga: GBUtils.py:3245-3283
 Problema: quando manca il file della lingua, polipo mostra sempre il menu e non offre alcun modo per impedirlo. Non esiste un parametro per dire quale lingua usare senza chiedere.
 Verifica: la prova sta nel codice di Tornello. src/config.py, righe da 40 a 62, scrive a mano selected_language.json con la lingua predefinita e l'elenco delle lingue attese, solo per far trovare a polipo un file gia' pronto e non far comparire il menu. E' un aggiramento scritto fuori dalla libreria per rimediare a qualcosa che manca dentro.
 Impatto per l'utente: nessuno diretto oggi. L'impatto e' su chi scrive i programmi, che deve ricostruire il formato interno del file di polipo, e quel formato non e' documentato: se un giorno cambiasse, Tornello scriverebbe un file che polipo non riconosce piu'. Insieme al rilievo 4 e' il motivo per cui polipo oggi non e' usabile in una applicazione grafica.
 Correzione proposta: aggiungere un parametro, per esempio interattivo con valore predefinito True, e un parametro con la lingua da usare quando non si chiede niente. Quando il menu e' escluso, scegliere la lingua del sistema se e' disponibile e la lingua sorgente altrimenti, e salvare comunque il file. Fatto questo, l'aggiramento dentro Tornello si puo' togliere.
-3.4 Rilievi bassi
+3.3 Rilievi bassi
 Rilievo 20
 Gravita': basso
 Categoria: logica
-File e riga: GBUtils.py:3205-3207
+File e riga: GBUtils.py:3296-3298
 Problema: il blocco except FileNotFoundError che chiude la funzione e' irraggiungibile, perche' gettext.translation e' chiamata con fallback=True e in quel caso non solleva mai quell'eccezione, come verificato per il rilievo 17.
 Impatto per l'utente: nessuno. E' il messaggio d'errore che non comparira' mai, mentre il caso che dovrebbe segnalare, cioe' la traduzione mancante, avviene davvero e passa in silenzio.
 Correzione proposta: togliere il blocco morto e dare il suo compito al filtro proposto nel rilievo 17, che il problema lo intercetta prima e per davvero.
 Rilievo 21
 Gravita': basso
 Categoria: logica
-File e riga: GBUtils.py:3121
+File e riga: GBUtils.py:3212
 Problema: viene considerata una lingua qualunque sottocartella di locales, compresi __pycache__, .git o una cartella di appunti lasciata li' per sbaglio.
 Impatto per l'utente: il menu della lingua puo' proporre voci senza senso.
 Correzione proposta: e' risolto dal filtro del rilievo 17; in aggiunta ignorare i nomi che cominciano con punto o con trattino basso.
 Rilievo 22
 Gravita': basso
 Categoria: fragilita'
-File e riga: GBUtils.py:3106-3107
+File e riga: GBUtils.py:3197-3198
 Problema: la cartella di configurazione viene creata con os.makedirs dopo aver controllato che non esista. Fra il controllo e la creazione un'altra istanza puo' essersi inserita, e in quel caso makedirs solleva FileExistsError, che essendo una OSError viene catturata dal blocco sottostante.
 Impatto per l'utente: chi apre due volte lo stesso programma nello stesso momento puo' vedere la seconda istanza partire in lingua sorgente, con un messaggio d'errore sulla creazione della cartella, benche' la cartella ci sia.
 Correzione proposta: os.makedirs con exist_ok=True, che rende superfluo anche il controllo precedente.
 Rilievo 23
 Gravita': basso
 Categoria: regole generali
-File e riga: GBUtils.py:3108, 3161, 3191 e 3198
-Problema: la funzione stampa una riga vuota prima del menu, alla riga 3161, contro la regola che vieta le righe vuote di separazione non necessarie, e usa messaggi in inglese con i prefissi Info, WARNING ed ERROR. I messaggi informativi delle righe 3108 e 3191 annunciano operazioni riuscite e riportano percorsi interi, che con lo screen reader vengono letti carattere per carattere quando contengono parti non pronunciabili.
+File e riga: GBUtils.py:3199, 3252, 3282 e 3289
+Problema: la funzione stampa una riga vuota prima del menu, alla riga 3252, contro la regola che vieta le righe vuote di separazione non necessarie, e usa messaggi in inglese con i prefissi Info, WARNING ed ERROR. I messaggi informativi delle righe 3199 e 3282 annunciano operazioni riuscite e riportano percorsi interi, che con lo screen reader vengono letti carattere per carattere quando contengono parti non pronunciabili.
 Impatto per l'utente: verbosita' non necessaria all'avvio, in una lingua che non e' quella dell'applicazione. Va detto che il menu della lingua deve per forza essere in inglese, perche' compare prima che una lingua sia stata scelta; il rilievo riguarda i messaggi che vengono dopo.
 Correzione proposta: togliere la riga vuota, ridurre i due messaggi informativi a una frase breve senza percorso, o eliminarli, e conservare il percorso soltanto nei messaggi di errore, dove serve davvero.
 Rilievo 24
 Gravita': basso
 Categoria: logica
-File e riga: GBUtils.py:3091
+File e riga: GBUtils.py:3182
 Problema: quando il chiamante non passa config_path, il file selected_language.json viene creato direttamente nella cartella di base. Due applicazioni diverse avviate dalla stessa cartella condividono quindi lo stesso file.
 Impatto per l'utente: se le due applicazioni offrono lingue diverse, ognuna al proprio avvio riscrive l'elenco delle lingue disponibili con il proprio. La lingua scelta sopravvive, quindi il danno visibile e' nullo, ma il file non descrive piu' lo stato di nessuna delle due. Il difetto e' della stessa famiglia di quello dei percorsi, gia' corretto.
 Correzione proposta: dare al file un nome che comprenda il dominio, oppure documentare che config_path e' il modo giusto di tenere separate le applicazioni. La prima strada richiede di prevedere la lettura del vecchio nome, per non far ricomparire il menu a chi aggiorna.
@@ -188,10 +158,10 @@ Correzione proposta: quando la versione corrente non contiene cifre, rinunciare 
 Rilievo 27
 Gravita': basso
 Categoria: regole generali
-File e riga: GBUtils.py:86, 98, 165, 259 e 3130
-Problema: ruff 0.16.6, con la configurazione del parco software, segnala cinque rilievi nelle righe esaminate. DTZ005 alla riga 86, datetime.now senza fuso orario. BLE001 alle righe 98, 165 e 259, cattura di Exception generica. C414 alla riga 3130, chiamata a list dentro sorted, inutile.
+File e riga: GBUtils.py:86, 98, 165, 350 e 3221
+Problema: ruff 0.16.6, con la configurazione del parco software, segnala cinque rilievi nelle righe esaminate. DTZ005 alla riga 86, datetime.now senza fuso orario. BLE001 alle righe 98, 165 e 350, cattura di Exception generica. C414 alla riga 3221, chiamata a list dentro sorted, inutile.
 Impatto per l'utente: nessuno. Le tre catture generiche sono per di piu' volute e giuste, perche' proteggono l'avvio del programma da qualunque guasto del controllo aggiornamenti, e vanno conservate.
-Correzione proposta: togliere la chiamata a list alla riga 3130, che e' un rilievo vero e a costo nullo. Per gli altri quattro, non modificare il comportamento e valutare se aggiungere le regole DTZ005 e BLE001 all'elenco ignore del pyproject, oppure zittirle sulla singola riga con noqa e un commento che spieghi perche' la cattura larga e' voluta. La seconda strada e' preferibile: lascia la regola attiva per il resto del parco software.
+Correzione proposta: togliere la chiamata a list alla riga 3221, che e' un rilievo vero e a costo nullo. Per gli altri quattro, non modificare il comportamento e valutare se aggiungere le regole DTZ005 e BLE001 all'elenco ignore del pyproject, oppure zittirle sulla singola riga con noqa e un commento che spieghi perche' la cattura larga e' voluta. La seconda strada e' preferibile: lascia la regola attiva per il resto del parco software.
 Rilievo 28
 Gravita': basso
 Categoria: regole generali
@@ -202,20 +172,19 @@ Correzione proposta: allineare le tre righe della tabella al momento della chius
 4. Rapporto con le issue aperte del repository
 Le issue aperte di GBUtils alla stesura erano quattro, tre delle quali dentro il perimetro di questa analisi. La 2 e la 4 sono state chiuse dalle correzioni gia' applicate; resta aperta la 3.
 Issue numero 2, polipo risolve i percorsi relativi sulla directory di lavoro: confermata dall'analisi e chiusa il 2026-09-04 con la correzione. L'analisi aveva aggiunto che la docstring dichiarava il comportamento opposto a quello reale, e che i punti di chiamata esposti erano tre e non uno, cioe' cwapu, Players_DB.py e Sync_DB.py.
-Issue numero 3, locale.getdefaultlocale deprecata: superata dal rilievo 7 su due punti. La riga indicata dalla issue, la 2988, che nel codice di oggi e' la 3045, e' quella meno esposta, perche' li' la chiamata e' protetta e ha sei alternative prima di se'; la riga davvero a rischio e' la 3118, dentro polipo, che la issue non nomina. Soprattutto, la correzione proposta dalla issue non funziona su Windows, come verificato provandola: getlocale restituisce Italian_Italy e non it_IT. La strada giusta e' gia' scritta dentro GBUtils, alle righe da 3021 a 3029.
+Issue numero 3, locale.getdefaultlocale deprecata: superata dal rilievo 7 su due punti. La riga indicata dalla issue, la 2988, che nel codice di oggi e' la 3136, e' quella meno esposta, perche' li' la chiamata e' protetta e ha sei alternative prima di se'; la riga davvero a rischio e' la 3209, dentro polipo, che la issue non nomina. Soprattutto, la correzione proposta dalla issue non funziona su Windows, come verificato provandola: getlocale restituisce Italian_Italy e non it_IT. La strada giusta e' gia' scritta dentro GBUtils, alle righe da 3112 a 3120.
 Issue numero 4, il log dell'auto updater finisce nella directory di lavoro: confermata dall'analisi e chiusa il 2026-09-04 con la correzione, che ha tolto anche la riga morta e ha aggiunto al log il nome dell'applicazione.
 Issue numero 1, Acusticator e sounddevice su NumPy 2.5: fuori perimetro, non toccata da questa analisi.
 5. Questioni emerse fuori dal perimetro
 Vanno decise da Gabriele, perche' comportano azioni che questa analisi non compie di propria iniziativa.
 5.1 Il file note_per_refactoring.txt, in questa stessa cartella, e' un file di appunti, e il punto 2.7.1 del documento di refactoring li vieta. Tre delle sue otto voci, cioe' E, G e H, sono gia' diventate le issue numero 2, 3 e 4. Restano dentro il file le voci A, B, C, D e F, che riguardano Acu_Collection.json, il lettore condiviso dei preset e le due implementazioni di enter_escape: nessuna di queste e' oggi una issue, quindi cancellare il file adesso significherebbe perderle. Il file cita inoltre fix_da_fare.txt, che non esiste piu'. Proposta: trasformare le cinque voci rimaste in altrettante issue su GBUtils e poi eliminare il file. Sono voci che riguardano utilita' non comprese in questa fase, quindi la issue e' la loro sede naturale.
-5.2 Dentro Donazione, la catena di rilevamento della lingua ha al punto 6, righe da 3032 a 3039, un passaggio che su Windows produrrebbe italian invece di it, per la stessa ragione spiegata nel rilievo 7. Non e' un guasto attivo, perche' su Windows il punto 5 riesce sempre e i punti 6 e 7 non vengono mai raggiunti: sono, di fatto, codice morto sulla piattaforma di riferimento. La cosa va tenuta presente quando arrivera' il turno di Donazione, e si risolve da sola se si adotta l'aiutante comune proposto nel rilievo 7.
+5.2 Dentro Donazione, la catena di rilevamento della lingua ha al punto 6, righe da 3123 a 3130, un passaggio che su Windows produrrebbe italian invece di it, per la stessa ragione spiegata nel rilievo 7. Non e' un guasto attivo, perche' su Windows il punto 5 riesce sempre e i punti 6 e 7 non vengono mai raggiunti: sono, di fatto, codice morto sulla piattaforma di riferimento. La cosa va tenuta presente quando arrivera' il turno di Donazione, e si risolve da sola se si adotta l'aiutante comune proposto nel rilievo 7.
 5.3 I tre punti di chiamata che soffrono del rilievo 5 stanno in altri repository, quindi secondo il punto 2.7.2 non appartengono a questo rapporto. Per Tornello la cosa e' gia' registrata come rilievo C3 della sua fase 1, quindi non serve altro. Per cwapu, che e' ancora in fase 0, la correzione dei percorsi verra' colta dalla sua analisi quando arrivera' il suo turno: aprire una issue adesso sarebbe utile solo se il turno di cwapu fosse lontano. Attendo indicazioni.
 5.4 Se si accoglie il rilievo 5, cioe' se polipo comincia a risolvere i percorsi sulla cartella del chiamante, il comportamento di cwapu, Players_DB.py e Sync_DB.py cambia: oggi trovano le traduzioni solo se avviati dalla propria cartella, domani le troverebbero sempre. E' un miglioramento, ma va provato uno per uno prima di pubblicare, perche' e' comunque un cambio di comportamento in tre programmi che oggi funzionano.
 6. Riepilogo
-Rilievi totali: 22. Critici 1, alti 3, medi 10, bassi 8.
-Per utilita': polipo 10 rilievi, perform_update 5, update_checker 3, _parse_version 1, piu' tre rilievi trasversali, cioe' il 16 sui chiamanti, il 27 su ruff e il 28 sul versioning. Gli identificativi restano quelli assegnati alla stesura, quindi la numerazione ha dei vuoti dove un rilievo e' stato risolto e tolto.
-Cosa e' risultato solido e non va toccato. La gestione silenziosa dell'assenza di rete e del timeout, righe da 162 a 164, e' corretta e risolve davvero il problema che aveva prodotto la issue 34 di Tornello. La protezione dell'import di requests, righe da 121 a 125, e' una precauzione ben pensata, che evita di far cadere il programma all'avvio per un guasto del solo controllo aggiornamenti. Il confronto fra versioni per tuple di interi, righe da 32 a 34, e' giusto e non ha il difetto classico del confronto fra stringhe. La rinuncia esplicita quando il programma gira da sorgente, righe da 195 a 198, e' giusta e ben spiegata. In polipo, l'aggiornamento silenzioso dell'elenco delle lingue quando la scelta dell'utente resta valida, righe da 3140 a 3151, e' una attenzione fine e va conservata; cosi' pure la cattura di EOFError e KeyboardInterrupt, che manca solo del terzo caso descritto nel rilievo 4. Tutte le aperture di file dichiarano la codifica.
-Ordine di lavorazione proposto, in quattro interventi separati.
-Primo intervento, l'affidabilita' dell'aggiornamento: rilievi 2, 9, 10 e 11. E' il piu' delicato, tocca lo script batch e si puo' collaudare soltanto su una release vera. Va preparata una prova nel file collaudo.txt.
-Secondo intervento, la lingua: rilievi 7, 4, 8, 17, 18, 20, 21 e 22. E' il blocco che rende polipo usabile anche in una applicazione grafica e che chiude la issue 3. Va deciso prima se estrarre l'aiutante comune con Donazione, perche' quella scelta tocca una funzione fuori da questa fase.
-Terzo intervento, rifiniture e regole: rilievi 12, 13, 14, 15, 23, 24, 26, 27 e 28. Nessuno urgente, tutti a basso rischio. Il rilievo 16, la funzione di alto livello per il controllo aggiornamenti, e' il piu' grosso dei cinque interventi come mole di lavoro e conviene trattarlo a parte, dopo che gli altri hanno stabilizzato le due funzioni di base.
+Rilievi totali: 18. Nessun critico, alti 3, medi 7, bassi 8.
+Per utilita': polipo 10 rilievi, update_checker 3, perform_update 1, _parse_version 1, piu' tre rilievi trasversali, cioe' il 16 sui chiamanti, il 27 su ruff e il 28 sul versioning. Gli identificativi restano quelli assegnati alla stesura, quindi la numerazione ha dei vuoti dove un rilievo e' stato risolto e tolto.
+Cosa e' risultato solido e non va toccato. La gestione silenziosa dell'assenza di rete e del timeout, righe da 162 a 164, e' corretta e risolve davvero il problema che aveva prodotto la issue 34 di Tornello. La protezione dell'import di requests, righe da 121 a 125, e' una precauzione ben pensata, che evita di far cadere il programma all'avvio per un guasto del solo controllo aggiornamenti. Il confronto fra versioni per tuple di interi, righe da 32 a 34, e' giusto e non ha il difetto classico del confronto fra stringhe. La rinuncia esplicita quando il programma gira da sorgente, righe da 278 a 281, e' giusta e ben spiegata. In polipo, l'aggiornamento silenzioso dell'elenco delle lingue quando la scelta dell'utente resta valida, righe da 3231 a 3242, e' una attenzione fine e va conservata; cosi' pure la cattura di EOFError e KeyboardInterrupt, che manca solo del terzo caso descritto nel rilievo 4. Tutte le aperture di file dichiarano la codifica.
+Ordine di lavorazione proposto, in due interventi separati piu' uno da trattare a parte.
+Primo intervento, la lingua: rilievi 7, 4, 8, 17, 18, 20, 21 e 22. E' il blocco che rende polipo usabile anche in una applicazione grafica e che chiude la issue 3. Va deciso prima se estrarre l'aiutante comune con Donazione, perche' quella scelta tocca una funzione fuori da questa fase.
+Secondo intervento, rifiniture e regole: rilievi 12, 13, 14, 15, 23, 24, 26, 27 e 28. Nessuno urgente, tutti a basso rischio. Il rilievo 16, la funzione di alto livello per il controllo aggiornamenti, e' il piu' grosso dei cinque interventi come mole di lavoro e conviene trattarlo a parte, dopo che gli altri hanno stabilizzato le due funzioni di base. E' anche il rilievo piu' vicino all'orizzonte descritto al punto 3.8 del documento di refactoring, cioe' utilita' che le applicazioni importano invece di riscriversi.

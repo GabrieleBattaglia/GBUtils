@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V106 di venerdì 4 settembre 2026
+	V107 di venerdì 4 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -21,9 +21,9 @@ Lista utilità contenute in questo pacchetto
 	polipo V6.0.1 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	update_checker V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	perform_update V1.4.2 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
+	perform_update V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "106"
+VERSION = "107"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -166,16 +166,99 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
         _write_update_log(f"Errore durante il controllo aggiornamenti: {e}", cartella_log, nome_app)
         return False, None, None, None
 
+def _script_aggiornamento(app_name, exe_name, current_exe, current_dir, source_dir,
+                          temp_dir, zip_path, log_path, pulisci_internal=False,
+                          attesa_massima=30) -> str:
+    """Compone lo script batch che sostituisce l'installazione.
+    Sta fuori da perform_update perche' cosi' si puo' provare senza dover
+    aggiornare davvero un programma.
+    Lo script aspetta che l'applicazione si sia chiusa per davvero, invece di
+    contare tre secondi e sperare; controlla l'esito della copia; se qualcosa
+    va storto non cancella l'archivio scaricato, rimette a posto la cartella
+    _internal e lascia scritto nel log perche' l'aggiornamento non e' arrivato.
+    In ogni caso riavvia l'applicazione, che dopo un fallimento e' ancora
+    quella integra di prima.
+    Quando pulisci_internal e' vero la vecchia _internal viene messa da parte
+    prima della copia e cancellata solo a copia riuscita: e' l'unica cartella
+    prodotta interamente da PyInstaller, quindi l'unica che si possa svuotare
+    senza toccare salvataggi, log e impostazioni dell'utente, che vivono
+    accanto all'eseguibile.
+    tasklist, findstr e ping sono chiamati con il percorso assoluto perche' il
+    PATH dell'utente puo' contenere programmi con lo stesso nome: con Git Bash
+    installato, per dirne una, find e' quello di Unix e il controllo sulla
+    chiusura dell'applicazione fallirebbe in silenzio.
+    La pausa fra un controllo e l'altro si fa con ping e non con timeout,
+    perche' timeout rinuncia quando lo standard input e' ridiretto e il ciclo
+    di attesa girerebbe a vuoto in un lampo."""
+    if pulisci_internal:
+        metti_da_parte = (
+            f'if exist "{current_dir}\\_internal_vecchio" rmdir /S /Q "{current_dir}\\_internal_vecchio"\n'
+            f'if exist "{current_dir}\\_internal" ren "{current_dir}\\_internal" "_internal_vecchio"'
+        )
+        conferma = f'if exist "{current_dir}\\_internal_vecchio" rmdir /S /Q "{current_dir}\\_internal_vecchio"'
+        ripristino = (
+            f'if not exist "{current_dir}\\_internal_vecchio" goto fallito_log\n'
+            f'if exist "{current_dir}\\_internal" rmdir /S /Q "{current_dir}\\_internal"\n'
+            f'ren "{current_dir}\\_internal_vecchio" "_internal"'
+        )
+    else:
+        fermo = "rem La nuova versione non porta una cartella _internal: non si tocca niente."
+        metti_da_parte = conferma = ripristino = fermo
+    return f"""@echo off
+chcp 65001 > nul
+title Aggiornamento {app_name}
+echo Attendo la chiusura di {app_name}. Non chiudere questa finestra.
+set /a TENTATIVI=0
+:attesa
+"%SystemRoot%\\System32\\tasklist.exe" /FI "IMAGENAME eq {exe_name}" /NH 2>nul | "%SystemRoot%\\System32\\findstr.exe" /I /C:"{exe_name}" >nul
+if errorlevel 1 goto chiuso
+set /a TENTATIVI+=1
+if %TENTATIVI% GEQ {attesa_massima} goto scaduto
+"%SystemRoot%\\System32\\ping.exe" -n 2 127.0.0.1 >nul
+goto attesa
+:scaduto
+echo Aggiornamento non applicato: {app_name} risulta ancora in esecuzione.
+>>"{log_path}" echo Aggiornamento non applicato il %DATE% alle %TIME%, applicazione {app_name}.
+>>"{log_path}" echo L'applicazione era ancora in esecuzione dopo {attesa_massima} secondi, quindi non e' stato toccato niente. L'archivio scaricato resta in {zip_path}.
+goto fine
+:chiuso
+echo Applico l'aggiornamento.
+{metti_da_parte}
+xcopy "{source_dir}\\*" "{current_dir}\\" /S /Y /E /Q
+if errorlevel 1 goto fallito
+{conferma}
+echo Aggiornamento applicato. Riavvio {app_name}.
+del /Q "{zip_path}"
+rmdir /S /Q "{temp_dir}"
+goto riavvio
+:fallito
+echo Aggiornamento non riuscito. Riavvio la versione precedente.
+{ripristino}
+:fallito_log
+>>"{log_path}" echo Aggiornamento non riuscito il %DATE% alle %TIME%, applicazione {app_name}.
+>>"{log_path}" echo La copia dei file non e' andata a buon fine. L'installazione precedente e' rimasta al suo posto e l'archivio scaricato resta in {zip_path}.
+goto riavvio
+:riavvio
+start "" /D "{current_dir}" "{current_exe}"
+:fine
+(goto) 2>nul & del "%~f0"
+"""
+
 def perform_update(download_url: str, app_name: str = "App") -> bool:
     """
-    V1.4.2 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
-    Scarica l'aggiornamento, lo estrae ed esegue uno script batch.
-    Risolve conflitti cartelle temp e script batch bloccati.
+    V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
+    Scarica l'aggiornamento, lo estrae e avvia lo script che sostituisce
+    l'installazione, poi restituisce True perche' il chiamante possa chiudersi.
     Il download avviene con la verifica dei certificati attiva.
     Gli errori vengono registrati accanto all'applicazione, non nella directory
     di lavoro, e firmati con il nome passato in app_name.
+    True significa che lo script e' stato avviato, non che l'aggiornamento sia
+    riuscito: quello lo si sapra' solo dopo la chiusura del programma, e in caso
+    di fallimento lo script lo scrive nel log e riavvia la versione precedente,
+    che resta integra.
     """
     import os
+    import shutil
     import subprocess
     import sys
     import tempfile
@@ -201,11 +284,16 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         exe_name = os.path.basename(current_exe)
         sys_temp = tempfile.gettempdir()
         
-        # 2. Crea cartelle e path temporanei esterni alla dir di destinazione
-        temp_dir = os.path.join(current_dir, "_update_temp_dir")
-        if not os.path.exists(temp_dir):
-            os.makedirs(temp_dir)
-            
+        # 2. Cartelle e file temporanei, tutti fuori dall'installazione. Prima
+        # la cartella di estrazione stava dentro, nonostante il commento
+        # dichiarasse il contrario: restava li' quando l'aggiornamento non
+        # arrivava in fondo, e i suoi avanzi finivano poi copiati sopra la
+        # versione nuova. Ora si ricomincia sempre da una cartella vuota.
+        temp_dir = os.path.join(sys_temp, f"update_{app_name}_estratto")
+        if os.path.isdir(temp_dir):
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        os.makedirs(temp_dir, exist_ok=True)
+
         zip_path = os.path.join(sys_temp, f"update_{app_name}.zip")
         bat_path = os.path.join(sys_temp, f"updater_{app_name}.bat")
         
@@ -220,7 +308,7 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(temp_dir)
             
-        # 5. Genera script batch
+        # 5. Genera lo script che sostituisce l'installazione.
         # Troviamo la cartella che contiene l'eseguibile appena estratto
         source_dir = temp_dir
         exe_name_lower = exe_name.lower()
@@ -228,25 +316,28 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
             if any(f.lower() == exe_name_lower for f in files):
                 source_dir = root
                 break
-                
-        # Lo script batch è fuori dalla current_dir e dalla temp_dir (è in sys_temp)
-        # Si auto-eliminerà alla fine
-        bat_content = f"""@echo off
-title Aggiornamento {app_name}...
-echo Attendo la chiusura di {app_name}...
-timeout /t 3 /nobreak > nul
 
-echo Applicazione aggiornamento...
-xcopy "{source_dir}\\*" "{current_dir}\\" /S /Y /E /Q
-
-echo Riavvio {app_name}...
-start "" /D "{current_dir}" "{current_exe}"
-
-echo Pulizia file temporanei...
-rmdir /S /Q "{temp_dir}"
-del /Q "{zip_path}"
-(goto) 2>nul & del "%~f0"
-"""
+        # La vecchia _internal si svuota solo se anche la nuova versione ne
+        # porta una: se il pacchetto e' in un pezzo solo non c'e' niente da
+        # ripulire.
+        pulisci_internal = (os.path.isdir(os.path.join(source_dir, "_internal"))
+                            and os.path.isdir(os.path.join(current_dir, "_internal")))
+        # Lo script batch sta in sys_temp, quindi fuori dall'installazione, e
+        # si auto-elimina alla fine.
+        bat_content = _script_aggiornamento(
+            app_name=app_name,
+            exe_name=exe_name,
+            current_exe=current_exe,
+            current_dir=current_dir,
+            source_dir=source_dir,
+            temp_dir=temp_dir,
+            zip_path=zip_path,
+            log_path=os.path.join(cartella_log, "auto_updater_error.log"),
+            pulisci_internal=pulisci_internal,
+        )
+        # In UTF-8 con chcp 65001 dichiarato nello script: cmd.exe legge i .bat
+        # nella codepage OEM, e senza quella riga i percorsi con lettere
+        # accentate arrivavano storpiati e la copia falliva.
         with open(bat_path, "w", encoding="utf-8") as f:
             f.write(bat_content)
             
