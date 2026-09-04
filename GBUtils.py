@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V104 di venerdì 4 settembre 2026
+	V105 di venerdì 4 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -20,10 +20,10 @@ Lista utilità contenute in questo pacchetto
 	menu V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
 	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
-	update_checker V1.4.1 di giovedì 3 settembre 2026 by Gabriele Battaglia & ClaudIA (Claude Sonnet 5, modalità auto)
-	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
+	update_checker V1.4.2 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	perform_update V1.4.1 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "104"
+VERSION = "105"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -63,10 +63,12 @@ def _write_update_log(message: str):
 
 def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.4.1 di giovedì 3 settembre 2026 by Gabriele Battaglia & ClaudIA (Claude Sonnet 5, modalità auto)
+    V1.4.2 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
-    Include logging degli errori su file e retry in caso di errori SSL.
-    Gestisce in modo silenzioso la mancanza di connessione internet senza generare file di log allarmanti.
+    Registra gli errori su file, tranne l'assenza di connessione, che e' un evento
+    normale e non un guasto del programma.
+    La verifica dei certificati non viene mai disattivata: se il certificato non e'
+    accettato, il controllo rinuncia e lo scrive nel log.
     """
     try:
         # Fuori da questo try, un import rotto (es. una dipendenza di
@@ -80,12 +82,15 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
     try:
         try:
             response = requests.get(api_url, timeout=10)
-        except requests.exceptions.SSLError:
-            _write_update_log("Errore SSL con requests. Ritento disabilitando la verifica SSL (verify=False).")
-            import urllib3
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-            response = requests.get(api_url, timeout=10, verify=False)
-            
+        except requests.exceptions.SSLError as e:
+            # Nessun ritento senza verifica: questa risposta stabilisce da
+            # quale indirizzo perform_update scarichera' l'eseguibile, quindi
+            # accettare un certificato qualunque lascerebbe scegliere quel
+            # file a chi sappia interporsi sulla connessione. Un errore SSL,
+            # oggi, quasi sempre non e' un guasto ma un antivirus o un proxy
+            # che ispeziona il traffico: va segnalato, non aggirato.
+            _write_update_log(f"Certificato non accettato dal controllo aggiornamenti: {e}")
+            return False, None, None, None
         response.raise_for_status()
         data = response.json()
         latest_version = data.get("tag_name")
@@ -116,9 +121,10 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
 
 def perform_update(download_url: str, app_name: str = "App") -> bool:
     """
-    V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
+    V1.4.1 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
     Scarica l'aggiornamento, lo estrae ed esegue uno script batch.
     Risolve conflitti cartelle temp e script batch bloccati.
+    Il download avviene con la verifica dei certificati attiva.
     """
     import os
     import subprocess
@@ -150,13 +156,11 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         zip_path = os.path.join(sys_temp, f"update_{app_name}.zip")
         bat_path = os.path.join(sys_temp, f"updater_{app_name}.bat")
         
-        # 3. Download
-        try:
-            import ssl
-            ssl._create_default_https_context = ssl._create_unverified_context
-        except AttributeError:
-            pass
-            
+        # 3. Download. La verifica dei certificati resta attiva: questo e'
+        # l'unico punto in cui il parco software esegue codice preso dalla
+        # rete, e la vecchia disattivazione, essendo un'assegnazione al
+        # modulo ssl, valeva per tutte le connessioni del processo e non
+        # veniva mai annullata.
         urllib.request.urlretrieve(download_url, zip_path)
         
         # 4. Estrazione
