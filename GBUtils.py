@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V107 di venerdì 4 settembre 2026
+	V108 di venerdì 4 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -11,19 +11,19 @@ Lista utilità contenute in questo pacchetto
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
-	Donazione V2.0 del 12 luglio 2026
+	Donazione V2.0.1 del 4 settembre 2026
 	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
-	polipo V6.0.1 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
+	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	update_checker V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "107"
+VERSION = "108"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -60,6 +60,51 @@ def _nome_da_api(api_url: str) -> str:
         if len(parti) > i + 2:
             return parti[i + 2]
     return "applicazione sconosciuta"
+
+def _lingua_di_sistema() -> str | None:
+    """Codice a due o tre lettere della lingua dell'utente, None se non si capisce.
+    Prova nell'ordine le variabili d'ambiente, che sono una scelta esplicita di
+    chi usa il programma, poi l'API di Windows, poi locale.getlocale.
+    Non chiama locale.getdefaultlocale, deprecata e in uscita con Python 3.15:
+    non serve piu' perche' ripete quello che gia' fanno i due passaggi
+    precedenti, cioe' leggere le variabili d'ambiente su Unix e interrogare
+    Windows sulle altre macchine."""
+    import locale
+    import os
+    import sys
+
+    def pulisci(valore):
+        """Da it_IT.UTF-8, it-IT o it si arriva sempre a it.
+        Italian_Italy, che e' cio' che locale.getlocale restituisce su Windows,
+        non e' un codice di lingua e viene scartato: chi lo tagliasse al primo
+        trattino basso otterrebbe italian, e con quello nessuna traduzione
+        verrebbe piu' trovata."""
+        if not valore:
+            return None
+        codice = str(valore).split(':')[0].split('.')[0].split('_')[0].split('-')[0].strip().lower()
+        return codice if codice.isalpha() and 2 <= len(codice) <= 3 else None
+
+    for var in ('LANGUAGE', 'LC_ALL', 'LC_MESSAGES', 'LANG'):
+        codice = pulisci(os.environ.get(var))
+        if codice:
+            return codice
+    if sys.platform == 'win32':
+        try:
+            import ctypes
+            nome = locale.windows_locale.get(ctypes.windll.kernel32.GetUserDefaultUILanguage())
+            codice = pulisci(nome)
+            if codice:
+                return codice
+        except Exception:  # noqa: BLE001, S110 - se l'API di Windows non risponde si prova il resto
+            pass
+    try:
+        coppia = locale.getlocale()
+        codice = pulisci(coppia[0] if coppia else None)
+        if codice:
+            return codice
+    except (TypeError, ValueError):
+        pass
+    return None
 
 def _write_update_log(message: str, cartella: str | None = None, app: str | None = None):
     """Registra un errore dell'aggiornamento accanto all'applicazione.
@@ -3024,14 +3069,13 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
 
 def Donazione(lang=None):
     """
-    V2.0 del 12 luglio 2026
+    V2.0.1 del 4 settembre 2026
     Mostra un messaggio di donazione con una probabilità del 20%
     nella lingua specificata o rilevata dal sistema/configurazione.
     Lingue supportate: Italiano, Portoghese, Inglese, Francese, Spagnolo, Tedesco, Russo, Cinese (semplificato), Giapponese, Arabo.
     """
     import builtins
     import json
-    import locale
     import os
     import random
     import sys
@@ -3099,45 +3143,12 @@ def Donazione(lang=None):
             except Exception:
                 pass
 
-        # 4. Priorità: Variabili d'ambiente standard
+        # 4. Priorità: la lingua dell'utente, ricavata da ambiente e sistema.
+        # I tre ripieghi che stavano qui, cioè variabili d'ambiente, API di
+        # Windows e locale.getlocale, sono ora in _lingua_di_sistema, che li
+        # condivide con polipo invece di tenerne due copie.
         if not lingua_rilevata:
-            for var in ('LANGUAGE', 'LC_ALL', 'LC_MESSAGES', 'LANG'):
-                valore = os.environ.get(var)
-                if valore:
-                    valore_pulito = valore.split(':')[0].split('_')[0].split('-')[0].strip().lower()
-                    if valore_pulito:
-                        lingua_rilevata = valore_pulito
-                        break
-
-        # 5. Priorità: Windows UI Language via ctypes
-        if not lingua_rilevata and sys.platform == 'win32':
-            try:
-                import ctypes
-                lang_id = ctypes.windll.kernel32.GetUserDefaultUILanguage()
-                locale_name = locale.windows_locale.get(lang_id)
-                if locale_name:
-                    lingua_rilevata = locale_name.split('_')[0].lower()
-            except Exception:
-                pass
-
-        # 6. Priorità: Unix/Mac fallback locale.getlocale()
-        if not lingua_rilevata:
-            try:
-                locale_tuple = locale.getlocale()
-                if locale_tuple and locale_tuple[0]:
-                    lingua_rilevata = locale_tuple[0].split('_')[0].lower()
-            except Exception:
-                pass
-
-        # 7. Priorità: locale.getdefaultlocale() (ultimo fallback deprecato prima della rimozione)
-        if not lingua_rilevata:
-            try:
-                if hasattr(locale, 'getdefaultlocale'):
-                    lingua_os_completa, _ = locale.getdefaultlocale()
-                    if lingua_os_completa:
-                        lingua_rilevata = lingua_os_completa.split('_')[0].lower()
-            except Exception:
-                pass
+            lingua_rilevata = _lingua_di_sistema()
 
         # Fallback finale: inglese
         if not lingua_rilevata:
@@ -3146,9 +3157,11 @@ def Donazione(lang=None):
         messaggio_da_mostrare = messaggi.get(lingua_rilevata, messaggi['en'])
         print(messaggio_da_mostrare)
 
-def polipo(domain='messages', localedir='locales', source_language='en', config_path=None):
+def polipo(domain='messages', localedir='locales', source_language='en', config_path=None,
+           interattivo=True, lingua_predefinita=None):
     """
-    polipo V6.0.1 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
+    polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
+    Restituisce la coppia (codice della lingua, funzione di traduzione).
     Versione autonoma e compatibile con PyInstaller.
     - Trova autonomamente le risorse (es. cartella 'locales').
     - Salva il file di configurazione della lingua accanto all'eseguibile o al
@@ -3156,13 +3169,24 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
     - I percorsi relativi passati in localedir e config_path si intendono
       relativi a quella stessa cartella; i percorsi assoluti vengono usati
       cosi' come sono.
+    - Propone soltanto le lingue che hanno davvero il catalogo tradotto, cioe'
+      LC_MESSAGES con dentro il file del dominio richiesto: prima bastava una
+      sottocartella qualsiasi, e si poteva scegliere una lingua che poi non
+      traduceva niente.
     - Salva l'elenco delle lingue disponibili e mostra il menu se cambiano.
+    - interattivo=False non mostra mai il menu e sceglie da solo: serve alle
+      applicazioni con interfaccia grafica, che non hanno un terminale su cui
+      chiedere. Anche in modalita' interattiva, se il terminale manca del
+      tutto, polipo sceglie da solo invece di fallire.
+    - lingua_predefinita e' la lingua da usare quando la scelta non viene
+      chiesta o viene annullata; se non e' indicata o non e' disponibile, si
+      usa quella di sistema, e in mancanza di quella la lingua sorgente.
     - Non richiede funzioni esterne di supporto.
     """
     import gettext
     import json
-    import locale
     import os
+    import struct
     import sys
     # Rileva se l'app è "congelata" (compilata con PyInstaller)
     is_frozen = getattr(sys, 'frozen', False)
@@ -3192,84 +3216,113 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
     else:
         # Se non è stato fornito nessun config_path, usa semplicemente il percorso di base
         config_save_path = base_save_path
-    # Assicuriamoci che la cartella di configurazione esista, altrimenti la creiamo
-    if not os.path.exists(config_save_path):
-        try:
-            os.makedirs(config_save_path)
-            print(f"Info: Created configuration directory at '{config_save_path}'")
-        except OSError as e:
-            print(f"ERROR: Could not create configuration directory: {e}")
-            # Se non possiamo creare la cartella, non possiamo procedere con il salvataggio
-            # Potremmo voler gestire questo errore in modo più robusto
-            # Per ora, terminiamo la parte di configurazione e usiamo la lingua di default
-            return source_language, lambda text: text
+    # Assicuriamoci che la cartella di configurazione esista, altrimenti la
+    # creiamo. exist_ok evita che due istanze avviate insieme si tolgano la
+    # lingua a vicenda: prima, chi arrivava secondo trovava la cartella appena
+    # creata dall'altro e ripiegava sulla lingua sorgente.
+    try:
+        os.makedirs(config_save_path, exist_ok=True)
+    except OSError as e:
+        print(f"Warning: could not create the configuration directory: {e}")
+        # Senza quella cartella la scelta non si puo' salvare: si prosegue
+        # nella lingua sorgente invece di fermare il programma.
+        return source_language, lambda text: text
     # Costruisce i percorsi completi
     localedir_abs = os.path.join(resources_base_path, localedir)
     selected_lang_file = os.path.join(config_save_path, 'selected_language.json')
-    system_lang, _ = locale.getdefaultlocale()
-    system_lang_code = system_lang.split('_')[0] if system_lang else source_language
+    system_lang_code = _lingua_di_sistema()
+
+    def ha_catalogo(lingua):
+        """Vera solo se quella lingua ha davvero il file tradotto del dominio."""
+        return os.path.isfile(os.path.join(localedir_abs, lingua, 'LC_MESSAGES', f'{domain}.mo'))
+
     try:
-        available_translations = [d for d in os.listdir(localedir_abs) if os.path.isdir(os.path.join(localedir_abs, d))]
-    except FileNotFoundError:
-        print(f"WARNING: Translations folder '{localedir_abs}' not found.")
+        available_translations = [d for d in os.listdir(localedir_abs)
+                                  if os.path.isdir(os.path.join(localedir_abs, d)) and ha_catalogo(d)]
+    except OSError:
+        print(f"Warning: translations folder '{localedir_abs}' not found.")
         print(f"The application will use the source language ('{source_language}').")
         return source_language, lambda text: text
     current_choices_set = {source_language}
-    if system_lang_code:
+    # La lingua di sistema si propone solo se qualcuno l'ha davvero tradotta,
+    # altrimenti si offriva una scelta che lasciava i testi come prima.
+    if system_lang_code and (system_lang_code == source_language or ha_catalogo(system_lang_code)):
         current_choices_set.add(system_lang_code)
     current_choices_set.update(available_translations)
-    current_available_languages = sorted(list(current_choices_set))
+    current_available_languages = sorted(current_choices_set)
+    if len(current_available_languages) < 2:
+        # C'e' solo la lingua sorgente: non ha senso chiedere niente.
+        return source_language, lambda text: text
     language_code = None
     show_menu = False
+    # La rilettura non si fida di cio' che trova: un file troncato da un
+    # arresto improvviso, o che contenga JSON valido ma non un oggetto,
+    # faceva morire il programma all'avvio invece di far ricomparire il menu.
     try:
         with open(selected_lang_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
-            language_code = data.get('language_code')
-            saved_available_languages = data.get('available_languages', [])
-            if language_code not in current_available_languages:
-                show_menu = True
-            elif set(saved_available_languages) != set(current_available_languages):
-                # Se la lingua salvata è già valida ma la lista di lingue disponibili è cambiata,
-                # aggiorna il file in modo silente senza interrompere l'utente con il menu.
-                try:
-                    with open(selected_lang_file, 'w', encoding='utf-8') as sf:
-                        config_data = {
-                            'language_code': language_code,
-                            'available_languages': current_available_languages
-                        }
-                        json.dump(config_data, sf, indent=4)
-                except OSError:
-                    pass
-    except (FileNotFoundError, json.JSONDecodeError):
+    except (OSError, ValueError):
+        # OSError copre il file che manca e quello che non si puo' leggere,
+        # ValueError il JSON malformato: in tutti i casi si richiede la scelta.
+        data = None
+    if not isinstance(data, dict):
         show_menu = True
+    else:
+        language_code = data.get('language_code')
+        saved_available_languages = data.get('available_languages', [])
+        if not isinstance(saved_available_languages, list):
+            saved_available_languages = []
+        if language_code not in current_available_languages:
+            show_menu = True
+        elif set(saved_available_languages) != set(current_available_languages):
+            # Se la lingua salvata è già valida ma la lista di lingue disponibili è cambiata,
+            # aggiorna il file in modo silente senza interrompere l'utente con il menu.
+            try:
+                with open(selected_lang_file, 'w', encoding='utf-8') as sf:
+                    config_data = {
+                        'language_code': language_code,
+                        'available_languages': current_available_languages
+                    }
+                    json.dump(config_data, sf, indent=4)
+            except OSError:
+                pass
 
     if show_menu:
-        if system_lang_code in current_available_languages:
+        if lingua_predefinita in current_available_languages:
+            default_fallback = lingua_predefinita
+        elif system_lang_code in current_available_languages:
             default_fallback = system_lang_code
         else:
             default_fallback = source_language
-
-        print("\nSelect your language:")
-        menu_options = {}
-        for i, lang in enumerate(current_available_languages, 1):
-            label = lang
-            details = []
-            if lang == source_language: details.append("Source")
-            if lang == system_lang_code: details.append("System")
-            if details: label += f" ({', '.join(details)})"
-            print(f"{i}. {label}")
-            menu_options[str(i)] = lang
-        while True:
-            try:
-                choice = input(f"Enter selection (1-{len(menu_options)}): ")
-                if choice in menu_options:
-                    language_code = menu_options[choice]
+        if not interattivo:
+            # Nessun terminale su cui chiedere: si sceglie e si tira dritto.
+            language_code = default_fallback
+        else:
+            print("Select your language:")
+            menu_options = {}
+            for i, lang in enumerate(current_available_languages, 1):
+                label = lang
+                details = []
+                if lang == source_language: details.append("Source")
+                if lang == system_lang_code: details.append("System")
+                if details: label += f" ({', '.join(details)})"
+                print(f"{i}. {label}")
+                menu_options[str(i)] = lang
+            while True:
+                try:
+                    choice = input(f"Enter selection (1-{len(menu_options)}): ")
+                    if choice in menu_options:
+                        language_code = menu_options[choice]
+                        break
+                    else:
+                        print("Invalid choice. Please try again.")
+                except (EOFError, KeyboardInterrupt, RuntimeError):
+                    # RuntimeError e' quello che Python solleva quando lo
+                    # standard input non esiste, cioe' in un eseguibile
+                    # compilato senza console: prima non era intercettato e il
+                    # programma moriva li', senza finestra e senza messaggio.
+                    language_code = default_fallback
                     break
-                else:
-                    print("Invalid choice. Please try again.")
-            except (EOFError, KeyboardInterrupt):
-                language_code = default_fallback
-                break
 
         try:
             with open(selected_lang_file, 'w', encoding='utf-8') as f:
@@ -3279,12 +3332,20 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
                     'available_languages': current_available_languages
                 }
                 json.dump(config_data, f, indent=4)
-            print(f"Info: Language '{language_code}' saved to '{selected_lang_file}' for future use.")
+            if interattivo:
+                print(f"Language set to '{language_code}'.")
         except OSError as e:
-            print(f"WARNING: Could not save the selected language. Error: {e}")
+            print(f"Warning: could not save the selected language: {e}")
     if language_code == source_language:
         return source_language, lambda text: text
     else:
+        # fallback=True copre il catalogo mancante, che qui non puo' comunque
+        # accadere perche' si propongono solo le lingue che il catalogo ce
+        # l'hanno. Non copre pero' il catalogo illeggibile o troncato, per
+        # esempio da un aggiornamento interrotto: gettext solleva OSError se
+        # il file non ha il numero magico giusto e struct.error se e' troppo
+        # corto perche' lo si possa leggere. Senza questa rete il programma
+        # non partirebbe affatto.
         try:
             translation = gettext.translation(
                 domain,
@@ -3292,7 +3353,7 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
                 languages=[language_code],
                 fallback=True
             )
-            return language_code, translation.gettext
-        except FileNotFoundError:
-            print(f"ERROR: Translation file for '{language_code}' not found in '{localedir_abs}'.")
+        except (OSError, struct.error) as e:
+            print(f"Warning: the '{language_code}' catalogue could not be read: {e}")
             return source_language, lambda text: text
+        return language_code, translation.gettext

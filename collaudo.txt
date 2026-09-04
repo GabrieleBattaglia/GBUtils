@@ -119,6 +119,10 @@ Cosa fare: avvia cwapu e guarda che parta in italiano senza chiederti la lingua.
 Poi, da una cartella qualsiasi che non sia quella del progetto, per esempio dal
 desktop, lancia python E:\git\mine\cwapu\cwapu.py e guarda che faccia lo stesso.
 Ripeti le due prove con Tornello\Players_DB.py.
+Poi avvia una volta sola anche orologic e Tornello, restando nella loro cartella:
+li' non e' cambiato niente sui percorsi, ma polipo ora propone soltanto le lingue
+che hanno davvero il catalogo tradotto, e voglio la conferma che le tue restino
+tutte al loro posto.
 Cosa osservare: che il menu della lingua non compaia mai, perche' la scelta di
 prima deve essere ritrovata, e che non nascano cartelle o file selected_language
 in giro per il disco. Prima di questa correzione il secondo avvio, quello da

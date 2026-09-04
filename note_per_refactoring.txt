@@ -37,9 +37,3 @@ Voce F, enter_escape reimplementata dentro i progetti.
 Origine: Tornello, analisi fase 1 del 2026-08-31, rilievo A3.
 Situazione: Tornello ha una propria copia di enter_escape, usata in quindici punti, mentre il suo punto di ingresso importa quella di GBUtils: le due convivono nello stesso programma. Non e' un difetto di GBUtils, ma e' il segnale che la funzione o non e' abbastanza nota o non copre un caso d'uso.
 Proposta: al momento del refactoring, confrontare le due implementazioni prima di eliminare quella locale, per capire se la versione di Tornello faccia qualcosa che merita di risalire nella libreria.
-
-Voce G, locale.getdefaultlocale deprecata.
-Origine: Tornello, esecuzione della suite di test del 2026-09-01.
-Situazione: GBUtils.py riga 2377 chiama locale.getdefaultlocale, funzione deprecata da Python 3.11 e destinata alla rimozione nella 3.15. L'avviso e' emerso eseguendo pytest su Tornello, dove compare come unico warning della suite; nell'uso normale non si vede perche' le applicazioni filtrano i DeprecationWarning all'avvio.
-Perche' conta: quando Gabriele passera' a Python 3.15 la chiamata sparira' e il rilevamento automatico della lingua smettera' di funzionare in tutti i progetti insieme, non in uno solo. La stessa chiamata deprecata e' presente anche in Tornello, config.py riga 47, dove e' gia' registrata come rilievo A8 della sua fase 1.
-Proposta: sostituire con locale.getlocale preceduto da setlocale, oppure con la lettura diretta delle variabili d'ambiente, valutando che il valore restituito resti compatibile con quello che polipo si aspetta.
