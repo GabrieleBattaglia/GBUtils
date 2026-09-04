@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V108 di venerdì 4 settembre 2026
+	V109 di venerdì 4 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -20,17 +20,21 @@ Lista utilità contenute in questo pacchetto
 	menu V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
 	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
-	update_checker V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	perform_update V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
+	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "108"
-def _parse_version(version_str: str) -> tuple:
-    """Helper interno per il parsing semantico della versione."""
+VERSION = "109"
+def _parse_version(version_str: str) -> tuple | None:
+    """Helper interno per il parsing semantico della versione.
+    Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
+    caso rispondeva (0,), che paragonata a qualunque release la faceva sembrare
+    piu' recente: una versione scritta male avrebbe fatto proporre
+    l'aggiornamento a ogni avvio, senza modo di farlo smettere."""
     import re
     # Estrae solo i numeri separati da punti, ignorando prefissi come 'v'
-    match = re.search(r'(\d+(?:\.\d+)*)', version_str)
+    match = re.search(r'(\d+(?:\.\d+)*)', version_str or "")
     if not match:
-        return (0,)
+        return None
     return tuple(map(int, match.group(1).split('.')))
 
 def _cartella_chiamante(risalita: int = 1) -> str:
@@ -128,7 +132,7 @@ def _write_update_log(message: str, cartella: str | None = None, app: str | None
                 modo = "w"
         except OSError:
             pass
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # noqa: DTZ005 - ora locale: il log lo legge chi sta davanti alla macchina
         nome = app if app else "applicazione non dichiarata"
         # Il traceback si scrive solo se c'e' davvero un'eccezione in corso,
         # altrimenti format_exc riempirebbe il log di righe NoneType: None.
@@ -140,7 +144,7 @@ def _write_update_log(message: str, cartella: str | None = None, app: str | None
             f.write(f"{message}\n")
             if traccia:
                 f.write(f"{traccia}\n")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - un log che non si scrive non deve fermare il programma
         # Nelle applicazioni compilate senza console stdout non esiste e print
         # non scriverebbe da nessuna parte; stderr puo' mancare a sua volta.
         try:
@@ -148,9 +152,9 @@ def _write_update_log(message: str, cartella: str | None = None, app: str | None
         except Exception:  # noqa: BLE001, S110 - senza stderr non resta niente da fare
             pass
 
-def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None, str | None, str | None]:
+def update_checker(current_version: str, api_url: str, timeout: int = 10) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
     Registra gli errori su file, tranne l'assenza di connessione, che e' un evento
     normale e non un guasto del programma.
@@ -158,6 +162,9 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
     accettato, il controllo rinuncia e lo scrive nel log.
     Il log nasce accanto all'applicazione che ha chiamato, non nella directory di
     lavoro, ed e' firmato con il nome del repository interrogato.
+    timeout e' il tempo massimo di attesa in secondi. Chi fa il controllo in linea
+    prima di avviarsi, e non in un thread, puo' abbassarlo: quei secondi sono un
+    silenzio in cui l'utente non sa se il programma stia lavorando o sia fermo.
     """
     # Ricavati subito, perche' servono anche se l'import di requests fallisce.
     cartella_log = _cartella_chiamante(1)
@@ -173,7 +180,7 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
     current_version = current_version.split(' ')[0]
     try:
         try:
-            response = requests.get(api_url, timeout=10)
+            response = requests.get(api_url, timeout=timeout)
         except requests.exceptions.SSLError as e:
             # Nessun ritento senza verifica: questa risposta stabilisce da
             # quale indirizzo perform_update scarichera' l'eseguibile, quindi
@@ -191,25 +198,84 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
             return False, None, None, None
         
         changelog = data.get("body")
-        
+
         current_tuple = _parse_version(current_version)
         latest_tuple = _parse_version(latest_version)
-        
-        update_available = latest_tuple > current_tuple
-        if update_available:
-            download_url = None
-            assets = data.get("assets")
-            if assets:
-                download_url = assets[0].get("browser_download_url")
+        if current_tuple is None or latest_tuple is None:
+            # Senza due numeri da confrontare non si dichiara nessun
+            # aggiornamento: dirlo lo stesso significherebbe riproporlo a ogni
+            # avvio, e chi lo riceve non avrebbe modo di farlo smettere.
+            _write_update_log(
+                f"Versione non riconosciuta, confronto saltato. Corrente: {current_version!r}, pubblicata: {latest_version!r}.",
+                cartella_log, nome_app)
+            return False, latest_version, None, None
+
+        if latest_tuple > current_tuple:
+            # L'allegato si sceglie per nome e non per posizione: se un giorno
+            # una release avesse due file, prendere il primo caricato
+            # significherebbe scaricare a caso.
+            assets = data.get("assets") or []
+            scelto = next((a for a in assets if str(a.get("name", "")).lower().endswith(".zip")), None)
+            if scelto is None and assets:
+                scelto = assets[0]
+            download_url = scelto.get("browser_download_url") if scelto else None
             return True, latest_version, download_url, changelog
         else:
             return False, latest_version, None, None
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         # Assenza di rete / DNS fallito: evento di rete fisiologico, non scriviamo il traceback nel file di log.
         return False, None, None, None
-    except Exception as e:
+    except requests.exceptions.HTTPError as e:
+        stato = e.response.status_code if e.response is not None else None
+        if stato in (403, 404, 429):
+            # 403 e 429 sono il limite di chiamate all'ora di GitHub, che si
+            # incontra avviando piu' applicazioni di seguito sulla stessa
+            # connessione; 404 e' il repository che non ha ancora nessuna
+            # release. Sono eventi normali quanto l'assenza di rete, e come
+            # quella non meritano un file di errore dall'aria allarmante.
+            return False, None, None, None
+        _write_update_log(f"Risposta di errore da GitHub: {e}", cartella_log, nome_app)
+        return False, None, None, None
+    except Exception as e:  # noqa: BLE001 - qualunque guasto del controllo aggiornamenti deve restare confinato qui
         _write_update_log(f"Errore durante il controllo aggiornamenti: {e}", cartella_log, nome_app)
         return False, None, None, None
+
+def _scarica(url: str, destinazione: str, avanzamento=None, timeout: int = 30) -> int:
+    """Scarica un file e restituisce i byte presi, avvisando man mano.
+    Sta fuori da perform_update perche' cosi' si puo' provare senza dover
+    aggiornare davvero un programma.
+    Legge a blocchi invece di usare urlretrieve, che non accetta un tempo
+    massimo: una connessione che si impianta senza chiudersi lasciava il
+    programma appeso per sempre. La verifica dei certificati resta attiva:
+    questo e' l'unico punto in cui il parco software prende dalla rete codice
+    che poi verra' eseguito."""
+    import urllib.request
+
+    scaricato = 0
+    ultima_percentuale = -1
+    with urllib.request.urlopen(url, timeout=timeout) as risposta:
+        try:
+            totale = int(risposta.headers.get("Content-Length") or 0)
+        except (TypeError, ValueError):
+            totale = 0
+        with open(destinazione, "wb") as f:
+            while True:
+                blocco = risposta.read(65536)
+                if not blocco:
+                    break
+                f.write(blocco)
+                scaricato += len(blocco)
+                if avanzamento:
+                    # Si avvisa al cambio di punto percentuale, non a ogni
+                    # blocco: mille annunci al secondo non li ascolta nessuno,
+                    # e con lo screen reader sarebbero un muro di parole.
+                    percentuale = int(scaricato * 100 / totale) if totale else -1
+                    if percentuale != ultima_percentuale:
+                        ultima_percentuale = percentuale
+                        avanzamento(scaricato, totale)
+    if totale and scaricato != totale:
+        raise OSError(f"scaricati {scaricato} byte invece di {totale}, download incompleto")
+    return scaricato
 
 def _script_aggiornamento(app_name, exe_name, current_exe, current_dir, source_dir,
                           temp_dir, zip_path, log_path, pulisci_internal=False,
@@ -289,9 +355,9 @@ start "" /D "{current_dir}" "{current_exe}"
 (goto) 2>nul & del "%~f0"
 """
 
-def perform_update(download_url: str, app_name: str = "App") -> bool:
+def perform_update(download_url: str, app_name: str = "App", avanzamento=None, timeout: int = 30) -> bool:
     """
-    V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
+    V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
     Scarica l'aggiornamento, lo estrae e avvia lo script che sostituisce
     l'installazione, poi restituisce True perche' il chiamante possa chiudersi.
     Il download avviene con la verifica dei certificati attiva.
@@ -301,13 +367,18 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
     riuscito: quello lo si sapra' solo dopo la chiusura del programma, e in caso
     di fallimento lo script lo scrive nel log e riavvia la versione precedente,
     che resta integra.
+    avanzamento, se indicata, viene chiamata durante lo scaricamento con i byte
+    presi finora e il totale atteso, che vale zero quando il server non lo
+    dichiara. Serve a non lasciare l'utente in silenzio per minuti: chi la passa
+    decide come annunciarlo.
+    timeout e' il tempo massimo in secondi di attesa di una risposta durante lo
+    scaricamento, non la durata complessiva.
     """
     import os
     import shutil
     import subprocess
     import sys
     import tempfile
-    import urllib.request
     import zipfile
 
     # Serve prima del controllo su frozen, perche' anche la rinuncia va
@@ -342,12 +413,8 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         zip_path = os.path.join(sys_temp, f"update_{app_name}.zip")
         bat_path = os.path.join(sys_temp, f"updater_{app_name}.bat")
         
-        # 3. Download. La verifica dei certificati resta attiva: questo e'
-        # l'unico punto in cui il parco software esegue codice preso dalla
-        # rete, e la vecchia disattivazione, essendo un'assegnazione al
-        # modulo ssl, valeva per tutte le connessioni del processo e non
-        # veniva mai annullata.
-        urllib.request.urlretrieve(download_url, zip_path)
+        # 3. Download.
+        _scarica(download_url, zip_path, avanzamento, timeout)
         
         # 4. Estrazione
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
@@ -392,7 +459,7 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
         
         return True
         
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - un aggiornamento fallito si riferisce, non fa cadere il programma
         _write_update_log(f"Errore durante l'esecuzione dell'aggiornamento: {e}", cartella_log, app_name)
         return False
 
