@@ -107,3 +107,22 @@ Cosa osservare: qualunque clic, scoppio o tonfo all'inizio o alla fine di un suo
 soprattutto il primo suono dopo un lungo silenzio, perche' li' il mixer riapre lo
 stream dopo i due minuti di attesa.
 Esito:
+
+PROVA 9: LA LINGUA DI CWAPU E DEI DUE STRUMENTI DI TORNELLO
+Perche': polipo non risolve piu' i percorsi sulla directory di lavoro ma sulla
+cartella del file che lo chiama. Cwapu, Players_DB.py e Sync_DB.py sono i tre
+punti che si affidavano ai valori predefiniti, quindi sono i soli il cui
+comportamento cambia. Le prove automatiche dicono che il file della lingua viene
+letto e scritto nel posto giusto anche lanciando il programma da un'altra
+cartella, ma non che i tre programmi veri partano come prima.
+Cosa fare: avvia cwapu e guarda che parta in italiano senza chiederti la lingua.
+Poi, da una cartella qualsiasi che non sia quella del progetto, per esempio dal
+desktop, lancia python E:\git\mine\cwapu\cwapu.py e guarda che faccia lo stesso.
+Ripeti le due prove con Tornello\Players_DB.py.
+Cosa osservare: che il menu della lingua non compaia mai, perche' la scelta di
+prima deve essere ritrovata, e che non nascano cartelle o file selected_language
+in giro per il disco. Prima di questa correzione il secondo avvio, quello da
+un'altra cartella, riproponeva il menu.
+Se qualcosa non va: dimmi quale programma, da quale cartella lo hai lanciato e
+se il menu e' comparso.
+Esito:

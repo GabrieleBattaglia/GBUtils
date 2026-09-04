@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V105 di venerdì 4 settembre 2026
+	V106 di venerdì 4 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -18,12 +18,12 @@ Lista utilità contenute in questo pacchetto
 	manuale 1.0.1 di domenica 5 maggio 2024
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
-	polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
+	polipo V6.0.1 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
-	update_checker V1.4.2 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	perform_update V1.4.1 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
+	update_checker V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	perform_update V1.4.2 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "105"
+VERSION = "106"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -33,50 +33,97 @@ def _parse_version(version_str: str) -> tuple:
         return (0,)
     return tuple(map(int, match.group(1).split('.')))
 
-def _write_update_log(message: str):
-    """Scrive un messaggio di errore e il traceback in un file di log locale."""
+def _cartella_chiamante(risalita: int = 1) -> str:
+    """Cartella su cui un'utilita' deve risolvere i propri percorsi relativi.
+    Se il programma e' congelato con PyInstaller e' quella dell'eseguibile;
+    altrimenti e' quella del file che ha chiamato l'utilita', ricavata
+    risalendo di risalita livelli nella pila delle chiamate: risalita vale 1
+    per chi la invoca direttamente dal corpo di una utilita' pubblica.
+    La directory di lavoro corrente resta soltanto come ultima risorsa,
+    perche' non ha alcun rapporto con la posizione dell'applicazione."""
+    import os
+    import sys
+
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)
+    try:
+        return os.path.dirname(os.path.abspath(sys._getframe(risalita + 1).f_globals["__file__"]))
+    except (AttributeError, KeyError, ValueError):
+        return os.getcwd()
+
+def _nome_da_api(api_url: str) -> str:
+    """Ricava il nome del repository da un indirizzo dell'API di GitHub.
+    Serve solo a firmare le righe del log: se non lo riconosce non insiste."""
+    parti = [p for p in str(api_url).split('/') if p]
+    if 'repos' in parti:
+        i = parti.index('repos')
+        if len(parti) > i + 2:
+            return parti[i + 2]
+    return "applicazione sconosciuta"
+
+def _write_update_log(message: str, cartella: str | None = None, app: str | None = None):
+    """Registra un errore dell'aggiornamento accanto all'applicazione.
+    La cartella e il nome vengono passati da chi chiama, che li conosce: se
+    mancano si ripiega sulla directory di lavoro, che e' il vecchio
+    comportamento e non dice a quale programma appartenga il guasto."""
     import os
     import sys
     import traceback
     from datetime import datetime
-    
-    try:
-        # Determina la cartella dell'eseguibile o dello script
-        if getattr(sys, 'frozen', False):
-            base_dir = os.path.dirname(sys.executable)
-        else:
-            base_dir = os.path.dirname(os.path.abspath(locals().get('__sys_module_file__', __file__)))
-            # Se siamo in un pacchetto/submodule, meglio usare la cartella di lavoro corrente per i log
-            base_dir = os.getcwd()
 
+    LIMITE_LOG = 100_000
+    try:
+        base_dir = cartella if cartella else _cartella_chiamante(2)
         log_path = os.path.join(base_dir, "auto_updater_error.log")
+        # Il file non deve crescere senza fine su un'installazione che
+        # incontri spesso l'errore: oltre il limite si riparte da capo.
+        modo = "a"
+        try:
+            if os.path.getsize(log_path) > LIMITE_LOG:
+                modo = "w"
+        except OSError:
+            pass
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
-        with open(log_path, "a", encoding="utf-8") as f:
-            f.write(f"\n{'='*50}\n")
-            f.write(f"DATA: {timestamp}\n")
-            f.write(f"ERRORE: {message}\n")
-            f.write(f"TRACEBACK:\n{traceback.format_exc()}\n")
-            f.write(f"{'='*50}\n")
+        nome = app if app else "applicazione non dichiarata"
+        # Il traceback si scrive solo se c'e' davvero un'eccezione in corso,
+        # altrimenti format_exc riempirebbe il log di righe NoneType: None.
+        traccia = traceback.format_exc() if sys.exc_info()[0] is not None else ""
+        with open(log_path, modo, encoding="utf-8") as f:
+            if modo == "w":
+                f.write("Log ripartito da capo perche' aveva superato i cento kilobyte.\n")
+            f.write(f"Errore del {timestamp}, applicazione {nome}.\n")
+            f.write(f"{message}\n")
+            if traccia:
+                f.write(f"{traccia}\n")
     except Exception as e:
-        print(f"Impossibile scrivere il file di log: {e}")
+        # Nelle applicazioni compilate senza console stdout non esiste e print
+        # non scriverebbe da nessuna parte; stderr puo' mancare a sua volta.
+        try:
+            sys.stderr.write(f"Impossibile scrivere il log dell'aggiornamento: {e}\n")
+        except Exception:  # noqa: BLE001, S110 - senza stderr non resta niente da fare
+            pass
 
 def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.4.2 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    V1.5.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
     Registra gli errori su file, tranne l'assenza di connessione, che e' un evento
     normale e non un guasto del programma.
     La verifica dei certificati non viene mai disattivata: se il certificato non e'
     accettato, il controllo rinuncia e lo scrive nel log.
+    Il log nasce accanto all'applicazione che ha chiamato, non nella directory di
+    lavoro, ed e' firmato con il nome del repository interrogato.
     """
+    # Ricavati subito, perche' servono anche se l'import di requests fallisce.
+    cartella_log = _cartella_chiamante(1)
+    nome_app = _nome_da_api(api_url)
     try:
         # Fuori da questo try, un import rotto (es. una dipendenza di
         # requests compilata male) farebbe cadere tutto il programma a
         # ogni avvio invece di limitarsi a saltare il controllo aggiornamenti.
         import requests
     except ImportError as e:
-        _write_update_log(f"Impossibile importare requests: {e}")
+        _write_update_log(f"Impossibile importare requests: {e}", cartella_log, nome_app)
         return False, None, None, None
     current_version = current_version.split(' ')[0]
     try:
@@ -89,13 +136,13 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
             # file a chi sappia interporsi sulla connessione. Un errore SSL,
             # oggi, quasi sempre non e' un guasto ma un antivirus o un proxy
             # che ispeziona il traffico: va segnalato, non aggirato.
-            _write_update_log(f"Certificato non accettato dal controllo aggiornamenti: {e}")
+            _write_update_log(f"Certificato non accettato dal controllo aggiornamenti: {e}", cartella_log, nome_app)
             return False, None, None, None
         response.raise_for_status()
         data = response.json()
         latest_version = data.get("tag_name")
         if not latest_version:
-            _write_update_log("Nessun tag_name trovato nella risposta JSON di GitHub.")
+            _write_update_log("Nessun tag_name trovato nella risposta JSON di GitHub.", cartella_log, nome_app)
             return False, None, None, None
         
         changelog = data.get("body")
@@ -116,15 +163,17 @@ def update_checker(current_version: str, api_url: str) -> tuple[bool, str | None
         # Assenza di rete / DNS fallito: evento di rete fisiologico, non scriviamo il traceback nel file di log.
         return False, None, None, None
     except Exception as e:
-        _write_update_log(f"Errore durante il controllo aggiornamenti: {e}")
+        _write_update_log(f"Errore durante il controllo aggiornamenti: {e}", cartella_log, nome_app)
         return False, None, None, None
 
 def perform_update(download_url: str, app_name: str = "App") -> bool:
     """
-    V1.4.1 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
+    V1.4.2 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
     Scarica l'aggiornamento, lo estrae ed esegue uno script batch.
     Risolve conflitti cartelle temp e script batch bloccati.
     Il download avviene con la verifica dei certificati attiva.
+    Gli errori vengono registrati accanto all'applicazione, non nella directory
+    di lavoro, e firmati con il nome passato in app_name.
     """
     import os
     import subprocess
@@ -132,16 +181,20 @@ def perform_update(download_url: str, app_name: str = "App") -> bool:
     import tempfile
     import urllib.request
     import zipfile
-    
+
+    # Serve prima del controllo su frozen, perche' anche la rinuncia va
+    # registrata accanto a chi ha chiamato.
+    cartella_log = _cartella_chiamante(1)
+
     if not sys.platform.startswith('win'):
         return False
-        
+
     try:
         # 1. Determina l'eseguibile corrente
         if getattr(sys, 'frozen', False):
             current_exe = sys.executable
         else:
-            _write_update_log("Impossibile aggiornare: in esecuzione da sorgente (sys.frozen=False).")
+            _write_update_log("Impossibile aggiornare: in esecuzione da sorgente (sys.frozen=False).", cartella_log, app_name)
             return False
             
         current_dir = os.path.dirname(current_exe)
@@ -204,7 +257,7 @@ del /Q "{zip_path}"
         return True
         
     except Exception as e:
-        _write_update_log(f"Errore durante l'esecuzione dell'aggiornamento: {e}")
+        _write_update_log(f"Errore durante l'esecuzione dell'aggiornamento: {e}", cartella_log, app_name)
         return False
 
 
@@ -3004,10 +3057,14 @@ def Donazione(lang=None):
 
 def polipo(domain='messages', localedir='locales', source_language='en', config_path=None):
     """
-    polipo V6.0 by Gabriele Battaglia and Gemini - 18/07/2025
+    polipo V6.0.1 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
     Versione autonoma e compatibile con PyInstaller.
     - Trova autonomamente le risorse (es. cartella 'locales').
-    - Salva il file di configurazione della lingua accanto all'eseguibile o allo script.
+    - Salva il file di configurazione della lingua accanto all'eseguibile o al
+      file che ha chiamato polipo, mai nella directory di lavoro corrente.
+    - I percorsi relativi passati in localedir e config_path si intendono
+      relativi a quella stessa cartella; i percorsi assoluti vengono usati
+      cosi' come sono.
     - Salva l'elenco delle lingue disponibili e mostra il menu se cambiano.
     - Non richiede funzioni esterne di supporto.
     """
@@ -3018,17 +3075,20 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
     import sys
     # Rileva se l'app è "congelata" (compilata con PyInstaller)
     is_frozen = getattr(sys, 'frozen', False)
+    # Cartella dell'eseguibile se congelato, altrimenti quella del file che ha
+    # chiamato polipo. Prima si usava os.getcwd, che cambia a seconda di dove
+    # il programma viene lanciato: chi passava percorsi relativi non ritrovava
+    # ne' le traduzioni ne' la lingua gia' scelta.
+    cartella_chiamante = _cartella_chiamante(1)
     # LOGICA 1: Trovare il percorso delle RISORSE (dati come la cartella 'locales')
     if is_frozen:
         resources_base_path = sys._MEIPASS
     else:
-        resources_base_path = os.getcwd()
+        resources_base_path = cartella_chiamante
     # LOGICA 2: Trovare il percorso di SALVATAGGIO (per il file.json)
-    # 1. Determina il percorso di base di default
-    if is_frozen:
-        base_save_path = os.path.dirname(sys.executable) # Cartella dell'eseguibile
-    else:
-        base_save_path = os.getcwd() # Cartella dello script
+    # 1. Determina il percorso di base di default: cartella dell'eseguibile se
+    # congelato, altrimenti quella del file che ha chiamato polipo.
+    base_save_path = cartella_chiamante
     # 2. Decide il percorso finale in base a config_path
     if config_path:
         # Controlla se il percorso fornito è assoluto
