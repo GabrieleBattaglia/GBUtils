@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V102 di giovedì 3 settembre 2026
+	V103 di venerdì 4 settembre 2026
 Lista utilità contenute in questo pacchetto
-	Acu_Maker V1.4.1 di giovedì 3 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
-	Acusticator V7.2.5 di giovedì 3 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
+	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
+	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
 	crea_archivio_release V1.0 di mercoledì 2 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.4.1 di giovedì 3 settembre 2026 by Gabriele Battaglia & ClaudIA (Claude Sonnet 5, modalità auto)
 	perform_update V1.4 di giovedì 16 luglio 2026 by Gabriele Battaglia & Stella
 '''
-VERSION = "102"
+VERSION = "103"
 def _parse_version(version_str: str) -> tuple:
     """Helper interno per il parsing semantico della versione."""
     import re
@@ -1475,60 +1475,67 @@ def parse_banda(val):
 	"""Legge la banda del rumore dal campo che per le note contiene la nota.
 
 	Forme accettate:
-	  "p"                pausa, non suona niente
-	  "n"                nessuna banda, il colore puro senza filtro
-	  "200-2000"         passabanda fisso fra 200 e 2000 Hz
-	  "200-2000.400"     il taglio alto scende da 2000 a 400 mentre suona
-	  "100.400-3000"     si muove solo il taglio basso, da 100 a 400
-	  "100.400-3000.900" si muovono tutti e due, ognuno per conto suo
-	Il trattino separa i due tagli, il punto indica il portamento di un
-	taglio. Nel campo della banda il punto significa sempre portamento e mai
+	  "p"                  pausa, non suona niente
+	  "n"                  nessuna banda, il colore puro senza filtro
+	  "200-3000"           banda ferma fra 200 e 3000 Hz
+	  "100-1000.800-1800"  parte come banda 100-1000 e diventa 800-1800
+	Il trattino separa il taglio basso da quello alto; il punto separa la
+	banda di partenza da quella d'arrivo. I quattro valori si muovono
+	ciascuno per conto suo, quindi la banda puo' allargarsi, stringersi,
+	salire o scendere come si vuole.
+	Nel campo della banda il punto significa sempre scivolata e mai
 	decimale: su una frequenza di taglio i decimali non servono.
-	Si accettano anche le forme a lista, [200, 2000] oppure
-	[[100, 400], [3000, 900]], comode da scrivere in un programma.
+	Si accettano anche le forme a lista, comode da scrivere in un
+	programma: [200, 3000] per una banda ferma, [[100, 1000], [800, 1800]]
+	per una che scorre.
 	Restituisce None per la pausa, altrimenti la quadrupla
 	(basso_inizio, basso_fine, alto_inizio, alto_fine), dove None significa
 	nessun limite da quel lato.
 	Solleva ValueError se la banda e' scritta male.
 	"""
-	def estremi(pezzo, etichetta):
-		"""Un taglio, fisso o in portamento, come coppia di frequenze."""
+	def coppia(pezzo, quando):
+		"""I due tagli di una banda, cioe' quello basso e quello alto."""
 		if isinstance(pezzo, (list, tuple)):
 			if len(pezzo) != 2:
-				raise ValueError(f"Taglio {etichetta} non valido: {pezzo!r}")
+				raise ValueError(f"Banda {quando} non valida: {pezzo!r}")
 			return float(pezzo[0]), float(pezzo[1])
 		testo = str(pezzo).strip().lower()
-		if testo in ("", "n", "none"):
-			return None, None
-		parti = testo.split('.')
-		if len(parti) == 1:
-			v = float(parti[0])
-			return v, v
-		if len(parti) == 2:
-			return float(parti[0]), float(parti[1])
-		raise ValueError(f"Taglio {etichetta} non valido: '{pezzo}'")
+		if '-' not in testo:
+			raise ValueError(
+				f"Banda {quando} non valida: '{pezzo}'. Serve taglio basso, "
+				"trattino, taglio alto, per esempio 200-3000")
+		sinistra, _, destra = testo.partition('-')
+		return float(sinistra), float(destra)
 
 	if isinstance(val, (list, tuple)):
 		if len(val) != 2:
 			raise ValueError(f"Banda non valida: {val!r}")
-		b0, b1 = estremi(val[0], "basso")
-		a0, a1 = estremi(val[1], "alto")
+		if all(isinstance(x, (list, tuple)) for x in val):
+			b0, a0 = coppia(val[0], "di partenza")
+			b1, a1 = coppia(val[1], "d'arrivo")
+		else:
+			b0, a0 = coppia(val, "ferma")
+			b1, a1 = b0, a0
 	else:
 		testo = str(val).strip().lower()
 		if testo == 'p':
 			return None
 		if testo in ("", "n"):
 			return _SENZA_BANDA
-		if '-' not in testo:
+		pezzi = testo.split('.')
+		if len(pezzi) == 1:
+			b0, a0 = coppia(pezzi[0], "ferma")
+			b1, a1 = b0, a0
+		elif len(pezzi) == 2:
+			b0, a0 = coppia(pezzi[0], "di partenza")
+			b1, a1 = coppia(pezzi[1], "d'arrivo")
+		else:
 			raise ValueError(
-				f"Banda non valida: '{val}'. Serve taglio basso, trattino, taglio alto, "
-				"per esempio 200-2000, oppure n per nessuna banda")
-		sinistra, _, destra = testo.partition('-')
-		b0, b1 = estremi(sinistra, "basso")
-		a0, a1 = estremi(destra, "alto")
+				f"Banda non valida: '{val}'. Il punto separa la banda di "
+				"partenza da quella d'arrivo e puo' comparire una volta sola")
 
 	for v in (b0, b1, a0, a1):
-		if v is not None and v <= 0:
+		if v <= 0:
 			raise ValueError(f"Frequenza di taglio non positiva in '{val}'")
 	return (b0, b1, a0, a1)
 
@@ -1722,7 +1729,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	di percentuali della durata della nota.
 	Parametri:
 	 - score: lista di valori in multipli di 4, in cui ogni gruppo rappresenta:
-	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un portamento separato da punto (es. "c4.e4", "880.920"), un valore in Hz, oppure "p" per pausa. Con i kind di rumore, da 5 a 8, questo campo contiene invece la banda del passabanda, per esempio "200-2000" o "200-2000.400".
+	     * nota (string|float): una nota musicale (es. "c4", "c#4"), un portamento separato da punto (es. "c4.e4", "880.920"), un valore in Hz, oppure "p" per pausa. Con i kind di rumore, da 5 a 8, questo campo contiene invece la banda del passabanda, per esempio "200-2000" oppure "100-1000.800-1800" per una banda che scorre.
 	     * dur (float): durata in secondi.
 	     * pan (float|str|tuple): panning stereo da -1 (sinistra) a 1 (destra), oppure portamento panning con due valori (es. "-1.1", "-0.5.0.5").
 	     * vol (float|str|tuple): volume da 0 a 1, oppure portamento volume con due valori.
@@ -1930,7 +1937,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V7.2.5 di giovedì 3 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Sonnet 5, modalità auto)
+    """V7.3.0 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -1962,18 +1969,21 @@ class _Acusticator:
     una nota ma la banda del filtro passabanda, con il trattino fra i due
     tagli e il punto per il portamento di ciascuno:
 
-        ["200-2000", 2.0, 0, 0.4]       banda ferma fra 200 e 2000 Hz
-        ["200-2000.400", 3.0, 0, 0.4]   il taglio alto scende: vento che cala
-        ["100.400-3000", 3.0, 0, 0.4]   si muove solo il taglio basso
-        ["100.400-3000.900", 3, 0, 0.4] si muovono tutti e due
-        ["n", 1.0, 0, 0.4]              nessuna banda, il colore puro
-        ["p", 0.5, 0, 0.4]              pausa, come per le note
+        ["200-2000", 2.0, 0, 0.4]        banda ferma fra 200 e 2000 Hz
+        ["200-2000.200-400", 3, 0, 0.4]  il taglio alto scende: vento che cala
+        ["100-3000.400-3000", 3, 0, 0.4] si muove solo il taglio basso
+        ["100-1000.800-1800", 3, 0, 0.4] la banda intera sale
+        ["100-3000.900-1100", 3, 0, 0.4] la banda si stringe attorno al mille
+        ["n", 1.0, 0, 0.4]               nessuna banda, il colore puro
+        ["p", 0.5, 0, 0.4]               pausa, come per le note
 
-    I due tagli sono indipendenti: ciascuno ha il suo portamento e non
-    sanno l'uno dell'altro. Nel campo della banda il punto significa sempre
-    portamento e mai decimale, perche' su una frequenza di taglio i
-    decimali non servono. Durata, panning, volume e inviluppo si comportano
-    esattamente come per le note.
+    Il trattino separa il taglio basso da quello alto, il punto separa la
+    banda di partenza da quella d'arrivo: si legge "parte come questa banda
+    e diventa quest'altra". I quattro valori si muovono ciascuno per conto
+    suo, quindi la banda puo' allargarsi, stringersi, salire o scendere.
+    Nel campo della banda il punto significa sempre scivolata e mai
+    decimale, perche' su una frequenza di taglio i decimali non servono.
+    Durata, panning, volume e inviluppo si comportano come per le note.
 
     Tre cose accadono al rumore senza che si debba chiederle. La banda non
     esce mai dai 40 Hz e dai 12 kHz, nemmeno chiedendola piu' larga: fuori

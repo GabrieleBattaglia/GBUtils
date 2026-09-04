@@ -1,5 +1,4 @@
-Manuale Utente: Acu_Maker (v1.3.0)
-----------------------------------
+Manuale Utente: Acu_Maker (v1.5.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -14,7 +13,9 @@ I preset vengono salvati automaticamente nel file "Acu_Collection.json".
 Ogni preset è identificato da un NOME BREVE (univoco, max 50 caratteri, senza spazi) e contiene:
 - Una DESCRIZIONE libera.
 - Uno SCORE: Una sequenza di quartine (note).
-- Un KIND: Il tipo di onda (1=Sinusoide, 2=Quadra, 3=Triangolare, 4=Dente di sega).
+- Un KIND: Il tipo di onda. Le prime quattro sono intonate: 1=Sinusoide,
+  2=Quadra, 3=Triangolare, 4=Dente di sega. Le altre quattro sono rumore:
+  5=bianco, 6=rosa, 7=marrone, 8=azzurro.
 - Un inviluppo ADSR: Attacco, Decadimento, Sustain e Rilascio.
 
 # Dettaglio della quartina dello Score
@@ -22,6 +23,7 @@ Ogni preset è identificato da un NOME BREVE (univoco, max 50 caratteri, senza s
 Ogni riga di uno Score è formata da 4 parametri:
 1. Nota: Espressa in notazione anglosassone (es: c4, d#4), in Hz (es: 440), o "p" per indicare una pausa.
    Può anche essere un "portamento" (scivolata) unendo due valori con un punto (es. c4.e4 oppure 440.880).
+   Con un KIND di rumore, da 5 a 8, questo campo non contiene la nota ma la banda del filtro: vedi il capitolo dedicato.
 2. Durata: Espressa in secondi (es: 0.5 per mezzo secondo).
 3. Panning: Espresso su una scala da -100 (100% sinistra) a +100 (100% destra), con 0 al centro.
    Può anche essere un "portamento panning" unendo due valori interi con un punto (es. -100.100 o -50.50).
@@ -29,6 +31,31 @@ Ogni riga di uno Score è formata da 4 parametri:
 4. Volume: Espresso su una scala percentuale da 0 (silenzio) a 100 (volume massimo 100%), con 50 come volume base di default.
    Può anche essere un "portamento di volume" (es. 20.80 per una sfumatura/crescendo da 20% a 80%).
    Nota: Nei file salvati (JSON) il volume viene convertito in delta volume relativo al valore base 0.5 (es. Volume 50 = Delta 0.0, Volume 80 = Delta +0.3).
+
+# Il rumore e la sua banda
+
+Con un KIND da 5 a 8 il primo campo della quartina non è più la nota ma la banda del passabanda, cioè la fascia di frequenze che si lascia passare. Fuori da quella fascia il rumore viene tolto.
+
+Si scrive così:
+- "200-3000" è una banda ferma fra 200 e 3000 Hz. Il trattino separa il taglio basso da quello alto.
+- "100-1000.800-1800" è una banda che scorre: parte come 100-1000 e diventa 800-1800. Il punto separa la banda di partenza da quella d'arrivo.
+- "n" toglie il filtro e lascia il colore puro.
+- "p" è la pausa, come per le note.
+
+I quattro valori si muovono ciascuno per conto suo, quindi la banda può salire, scendere, allargarsi o stringersi. Nel campo della banda il punto significa sempre scivolata e mai decimale, perché su una frequenza di taglio i decimali non servono.
+
+Nell'editor si governano con i numeri, che scelgono che cosa sposteranno poi i tasti [c] e [v]:
+- [1] il taglio basso alla partenza.
+- [2] il taglio alto alla partenza.
+- [3] tutta la banda di partenza.
+- [4] il taglio basso all'arrivo.
+- [5] il taglio alto all'arrivo.
+- [6] tutta la banda d'arrivo.
+- [7] tutti e quattro i valori insieme, così la scivolata trasla senza cambiare forma.
+
+Da [4] in su hanno senso solo se la banda scorre davvero: su una banda ferma vengono ignorati e l'editor lo dice. Il tasto [.] sdoppia la banda ferma in partenza e arrivo, o la richiude; il tasto [i] scambia partenza e arrivo, così la scivolata va nel verso opposto.
+
+I tagli si spostano per rapporto e non per Hertz, di un semitono per volta salvo diverso passo, così un colpo di [c] pesa uguale a 100 Hz e a 10000. Restano sempre fra 20 e 20000 Hz.
 
 # Modalità Edit (Modifica Preset)
 
@@ -50,12 +77,14 @@ Usa questi tasti per interagire con i parametri:
 - [c]            : Incrementa il valore del parametro selezionato.
 - [v]            : Decrementa il valore del parametro selezionato.
 - [Invio]        : Inserimento manuale del valore (da tastiera).
-- [w]            : Cicla il tipo di onda (da 1 a 4).
-- [.]            : Aggiunge o toglie il Portamento alla nota o al panning selezionato.
+- [w]            : Cicla il tipo di onda, da 1 a 8, rumori compresi.
+- [.]            : Aggiunge o toglie il Portamento alla nota o al panning selezionato. Su una banda la sdoppia in partenza e arrivo, o la richiude.
 - [1]            : Nel Portamento (nota o pan), focalizza e modifica solo il 1° valore.
 - [2]            : Nel Portamento (nota o pan), focalizza e modifica solo il 2° valore.
 - [3]            : Nel Portamento (nota o pan), focalizza e modifica entrambi i valori contemporaneamente.
-- [4]            : Inverte la direzione del Portamento corrente.
+- [4], [5], [6], [7] : Solo sulla banda del rumore, scelgono gli altri valori. Vedi il capitolo sul rumore.
+- [i]            : Inverte la direzione del Portamento corrente, banda compresa.
+- [4]            : Sulle note fa la stessa cosa di [i], e resta per abitudine.
 
 ## Impostazioni di Step e Default
 - [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato.

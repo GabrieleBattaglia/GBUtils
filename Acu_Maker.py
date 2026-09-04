@@ -7,10 +7,10 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import menu, Acusticator, parse_pan_parts
 
-VERSION = "1.4.1" # Il tasto punto sulle bande, e la validazione di cio' che si scrive
+VERSION = "1.5.0" # La banda si scrive come banda di partenza punto banda d'arrivo
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)"
-RELEASE_DATE = "3 settembre 2026"
+RELEASE_DATE = "4 settembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -35,22 +35,75 @@ def is_rumore(kind):
     return kind in KIND_RUMORE
 
 
-def banda_parti(val):
-    """Spezza una banda nei suoi due tagli, basso e alto."""
+def banda_pezzi(val):
+    """I quattro valori di una banda, come stringhe.
+
+    Restituisce (basso_inizio, alto_inizio, basso_fine, alto_fine). Gli
+    ultimi due sono vuoti se la banda e' ferma. Per la pausa e per la banda
+    assente il primo contiene il testo e gli altri sono vuoti.
+    """
     testo = str(val).strip()
     if testo.lower() in ('p', 'n', ''):
-        return testo.lower(), ''
-    if '-' not in testo:
-        return testo, ''
-    basso, _, alto = testo.partition('-')
-    return basso.strip(), alto.strip()
+        return testo.lower(), '', '', ''
+    momenti = testo.split('.')
+    if len(momenti) > 2:
+        return testo, '', '', ''
+    tagli = []
+    for momento in momenti:
+        if '-' not in momento:
+            return testo, '', '', ''
+        basso, _, alto = momento.partition('-')
+        tagli.append((basso.strip(), alto.strip()))
+    if len(tagli) == 1:
+        return tagli[0][0], tagli[0][1], '', ''
+    return tagli[0][0], tagli[0][1], tagli[1][0], tagli[1][1]
 
 
-def banda_unisci(basso, alto):
-    """Rimette insieme i due tagli, tenendo conto di pausa e banda assente."""
-    if not alto:
-        return basso
-    return f"{basso}-{alto}"
+def banda_componi(basso_in, alto_in, basso_fi='', alto_fi=''):
+    """Rimette insieme i quattro valori, o solo i due se la banda e' ferma."""
+    if not alto_in:
+        return basso_in
+    if basso_fi and alto_fi:
+        return f"{basso_in}-{alto_in}.{basso_fi}-{alto_fi}"
+    return f"{basso_in}-{alto_in}"
+
+
+# Quale valore muove ciascun selettore. Gli indici sono nell'ordine
+# restituito da banda_pezzi: basso all'inizio, alto all'inizio, basso alla
+# fine, alto alla fine.
+SCELTA_BANDA = {
+    1: (0,),           # taglio basso, dove parte
+    2: (1,),           # taglio alto, dove parte
+    3: (0, 1),         # tutta la banda di partenza
+    4: (2,),           # taglio basso, dove arriva
+    5: (3,),           # taglio alto, dove arriva
+    6: (2, 3),         # tutta la banda d'arrivo
+    7: (0, 1, 2, 3),   # tutto insieme, trasla la scivolata intera
+}
+NOMI_SCELTA = {
+    1: "taglio basso alla partenza",
+    2: "taglio alto alla partenza",
+    3: "banda di partenza",
+    4: "taglio basso all'arrivo",
+    5: "taglio alto all'arrivo",
+    6: "banda d'arrivo",
+    7: "tutti e quattro i valori",
+}
+
+
+def alterna_scivolata(val):
+    """Accende o spegne la scivolata di una banda.
+
+    Una banda ferma, per esempio 200-3000, si sdoppia in 200-3000.200-3000 e
+    comincia a poter scorrere; una che gia' scorre torna ferma sulla sua
+    banda di partenza.
+    """
+    b_in, a_in, b_fi, _ = banda_pezzi(val)
+    if not a_in:
+        return str(val).strip()
+    if b_fi:
+        return banda_componi(b_in, a_in)
+    return banda_componi(b_in, a_in, b_in, a_in)
 
 
 # I tagli non escono da questi limiti: sotto e sopra non si sente niente e
@@ -60,26 +113,12 @@ BANDA_MINIMA = 20.0
 BANDA_MASSIMA = 20000.0
 
 
-def alterna_scivolata(taglio):
-    """Accende o spegne la scivolata su un taglio.
-
-    Un taglio fermo, per esempio 200, diventa 200.200 e comincia a scorrere;
-    uno che gia' scorre torna fermo sul suo valore di partenza.
-    """
-    testo = str(taglio).strip()
-    if not testo or testo.lower() in ('p', 'n'):
-        return testo
-    if '.' in testo:
-        return testo.split('.')[0]
-    return f"{testo}.{testo}"
-
-
 def normalizza_banda(testo):
     """Controlla e riordina una banda scritta a mano.
 
-    Restituisce la banda ripulita, con i tagli riportati dentro i limiti
-    udibili, oppure None se non e' scritta in modo leggibile. Serve a non
-    lasciare entrare nel preset una banda che poi farebbe cadere l'editor.
+    Restituisce la banda ripulita, con i valori riportati dentro i limiti
+    udibili, oppure None se non e' leggibile. Serve a non lasciare entrare
+    nel preset una banda che poi farebbe cadere l'editor.
     """
     from GBUtils import parse_banda
 
@@ -96,24 +135,15 @@ def normalizza_banda(testo):
             v = float(pezzo)
         except ValueError:
             return None
-        return str(int(round(max(BANDA_MINIMA, min(BANDA_MASSIMA, v)))))
+        return str(round(max(BANDA_MINIMA, min(BANDA_MASSIMA, v))))
 
-    def taglio(pezzo):
-        pezzi = pezzo.split('.')
-        if len(pezzi) > 2:
-            return None
-        limitati = [limita(p) for p in pezzi]
-        if any(x is None for x in limitati):
-            return None
-        return '.'.join(limitati)
-
-    basso, alto = banda_parti(grezzo)
-    if not alto:
+    pezzi = banda_pezzi(grezzo)
+    if not pezzi[1]:
         return None
-    b, a = taglio(basso), taglio(alto)
-    if b is None or a is None:
+    limitati = [limita(p) if p else '' for p in pezzi]
+    if any(x is None for x in limitati):
         return None
-    return banda_unisci(b, a)
+    return banda_componi(*limitati)
 
 
 def scala_taglio(taglio, direzione, passo=PASSO_BANDA):
@@ -130,7 +160,7 @@ def scala_taglio(taglio, direzione, passo=PASSO_BANDA):
             return testo
         nuovo = valore * (passo if direzione > 0 else 1.0 / passo)
         nuovo = max(BANDA_MINIMA, min(BANDA_MASSIMA, nuovo))
-        return str(int(round(nuovo)))
+        return str(round(nuovo))
 
     testo = str(taglio).strip()
     if not testo or testo.lower() in ('p', 'n'):
@@ -311,13 +341,17 @@ def get_status_string(state):
         quad = state.preset['score'][state.focus_idx]
         param_names = ["Nota", "Durata", "Pan", "Volume"]
         if state.focus_param == 0 and is_rumore(state.preset.get('kind', 1)):
-            basso, alto = banda_parti(quad[0])
-            if alto:
-                b = f"<{basso}>" if state.port_focus in (1, 3) else basso
-                a = f"<{alto}>" if state.port_focus in (2, 3) else alto
-                val_str = f"{b}-{a}"
+            pezzi = list(banda_pezzi(quad[0]))
+            scelti = SCELTA_BANDA.get(state.port_focus, ())
+            if pezzi[1]:
+                mostrati = [f"<{p}>" if i in scelti else p
+                            for i, p in enumerate(pezzi) if p]
+                if len(mostrati) == 4:
+                    val_str = f"{mostrati[0]}-{mostrati[1]}.{mostrati[2]}-{mostrati[3]}"
+                else:
+                    val_str = f"{mostrati[0]}-{mostrati[1]}"
             else:
-                val_str = basso
+                val_str = pezzi[0]
             s = f"Sc.{state.focus_idx+1} Banda: {val_str}"
         elif state.focus_param == 0:
             val = quad[0]
@@ -406,15 +440,14 @@ def inc_dec_value(state, direction):
         quad = state.preset['score'][state.focus_idx]
         param = state.focus_param
         if param == 0 and is_rumore(state.preset.get('kind', 1)):
-            basso, alto = banda_parti(quad[0])
-            if not alto:
+            pezzi = list(banda_pezzi(quad[0]))
+            if not pezzi[1]:
                 return  # pausa oppure nessuna banda: non c'e' niente da spostare
             passo = state.steps.get('banda', PASSO_BANDA)
-            if state.port_focus in (1, 3):
-                basso = scala_taglio(basso, direction, passo)
-            if state.port_focus in (2, 3):
-                alto = scala_taglio(alto, direction, passo)
-            quad[0] = banda_unisci(basso, alto)
+            for i in SCELTA_BANDA.get(state.port_focus, (0, 1)):
+                if pezzi[i]:
+                    pezzi[i] = scala_taglio(pezzi[i], direction, passo)
+            quad[0] = banda_componi(*pezzi)
         elif param == 0:
             val = quad[0]
             if is_portamento(val):
@@ -492,9 +525,12 @@ def edit_mode(db, preset_name):
             param_name = ["Nota", "Durata", "Pan (-100..100)", "Volume (0..100)"][state.focus_param] if state.focus_type == 'score' else ["A", "D", "S", "R"][state.focus_param]
             if state.focus_type == 'score':
                 if state.focus_param == 0 and is_rumore(state.preset.get('kind', 1)):
-                    if state.port_focus == 1: param_name = "Taglio basso in Hz"
-                    elif state.port_focus == 2: param_name = "Taglio alto in Hz"
-                    else: param_name = "Banda intera, per esempio 200-3000, n, p"
+                    scelti = SCELTA_BANDA.get(state.port_focus, ())
+                    if len(scelti) == 1:
+                        param_name = f"{NOMI_SCELTA[state.port_focus]}, in Hz"
+                    else:
+                        param_name = ("Banda intera, per esempio 200-3000 oppure "
+                                      "100-1000.800-1800, n, p")
                 elif state.focus_param == 0:
                     current_val = state.preset['score'][state.focus_idx][0]
                     if is_portamento(current_val):
@@ -519,23 +555,25 @@ def edit_mode(db, preset_name):
                 try:
                     if state.focus_type == 'score':
                         if state.focus_param == 0 and is_rumore(state.preset.get('kind', 1)):
-                            basso, alto = banda_parti(state.preset['score'][state.focus_idx][0])
+                            pezzi = list(banda_pezzi(state.preset['score'][state.focus_idx][0]))
                             scritto = val.strip()
-                            if state.port_focus == 3 or not alto:
+                            scelti = SCELTA_BANDA.get(state.port_focus, ())
+                            if not pezzi[1] or len(scelti) > 1 or '-' in scritto:
+                                # Si sta scrivendo la banda intera
                                 candidata = scritto
-                            elif state.port_focus == 1:
-                                candidata = banda_unisci(scritto, alto)
                             else:
-                                candidata = banda_unisci(basso, scritto)
+                                pezzi[scelti[0]] = scritto
+                                candidata = banda_componi(*pezzi)
                             # Si controlla prima di scrivere: una banda illeggibile
                             # resterebbe nel preset e farebbe cadere l'editor dopo.
                             pulita = normalizza_banda(candidata)
                             if pulita is None:
-                                print("\nBanda non valida. Si scrive taglio basso, "
-                                      "trattino, taglio alto, per esempio 200-3000. "
-                                      "Il punto indica la scivolata di un taglio, "
-                                      "per esempio 200-3000.400. Vale anche n per "
-                                      "nessuna banda e p per pausa.")
+                                print("\nBanda non valida. Il trattino separa il "
+                                      "taglio basso da quello alto, per esempio "
+                                      "200-3000. Il punto separa la banda di "
+                                      "partenza da quella d'arrivo, per esempio "
+                                      "100-1000.800-1800. Vale anche n per nessuna "
+                                      "banda e p per pausa.")
                             else:
                                 state.preset['score'][state.focus_idx][0] = pulita
                                 state.modified = True
@@ -603,16 +641,13 @@ def edit_mode(db, preset_name):
                 param_idx = state.focus_param
                 val = state.preset['score'][state.focus_idx][param_idx]
                 if param_idx == 0 and is_rumore(state.preset.get('kind', 1)):
-                    # Su una banda il punto accende o spegne la scivolata del
-                    # taglio scelto. Senza questo ramo la banda verrebbe presa
-                    # per un valore singolo e duplicata, restando poi corrotta.
-                    basso, alto = banda_parti(val)
-                    if alto:
-                        if state.port_focus in (1, 3):
-                            basso = alterna_scivolata(basso)
-                        if state.port_focus in (2, 3):
-                            alto = alterna_scivolata(alto)
-                        state.preset['score'][state.focus_idx][0] = banda_unisci(basso, alto)
+                    # Su una banda il punto sdoppia la banda in partenza e
+                    # arrivo, o la richiude. Senza questo ramo la banda
+                    # verrebbe presa per un valore singolo e duplicata.
+                    nuova = alterna_scivolata(val)
+                    if nuova != str(val).strip():
+                        state.preset['score'][state.focus_idx][0] = nuova
+                        state.port_focus = 3
                         state.modified = True
                 elif is_portamento(val):
                     if param_idx == 0:
@@ -642,11 +677,23 @@ def edit_mode(db, preset_name):
                         state.preset['score'][state.focus_idx][3] = user_to_vol(f"{u_val}.{u_val}")
                     state.port_focus = 3
                 state.modified = True
+        elif key in ('1', '2', '3', '4', '5', '6', '7') and \
+                state.focus_type == 'score' and state.focus_param == 0 and \
+                is_rumore(state.preset.get('kind', 1)):
+            # Sulla banda i numeri scelgono quale dei quattro valori muovere.
+            # Da 4 in su hanno senso solo se la banda scorre davvero.
+            scelta = int(key)
+            pezzi = banda_pezzi(state.preset['score'][state.focus_idx][0])
+            if scelta <= 3 or pezzi[2]:
+                state.port_focus = scelta
+                print(f"\r{' ' * 60}\r{NOMI_SCELTA[scelta]}", end="", flush=True)
+            else:
+                print(f"\r{' ' * 60}\rLa banda e' ferma: premi il punto per "
+                      "farla scorrere", end="", flush=True)
+            continue
         elif key in ('1', '2', '3'):
             if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
-                sulla_banda = (state.focus_param == 0
-                               and is_rumore(state.preset.get('kind', 1)))
-                if sulla_banda or is_portamento(
+                if is_portamento(
                         state.preset['score'][state.focus_idx][state.focus_param]):
                     state.port_focus = int(key)
         elif key == '4':
@@ -663,6 +710,29 @@ def edit_mode(db, preset_name):
                     elif param_idx == 3:
                         u_parts = vol_to_user(val).split('.')
                         state.preset['score'][state.focus_idx][3] = user_to_vol(f"{u_parts[1]}.{u_parts[0]}")
+                    state.modified = True
+        elif key == 'i':
+            # Inverte la scivolata: quello che partiva arriva e viceversa.
+            # Su una nota fa la stessa cosa del 4, che resta per abitudine.
+            if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
+                param_idx = state.focus_param
+                val = state.preset['score'][state.focus_idx][param_idx]
+                if param_idx == 0 and is_rumore(state.preset.get('kind', 1)):
+                    b_in, a_in, b_fi, a_fi = banda_pezzi(val)
+                    if b_fi:
+                        state.preset['score'][state.focus_idx][0] = banda_componi(
+                            b_fi, a_fi, b_in, a_in)
+                        state.modified = True
+                elif is_portamento(val):
+                    if param_idx == 0:
+                        parti = val.split('.')
+                        state.preset['score'][state.focus_idx][0] = f"{parti[1]}.{parti[0]}"
+                    elif param_idx == 2:
+                        u = pan_to_user(val).split('.')
+                        state.preset['score'][state.focus_idx][2] = user_to_pan(f"{u[1]}.{u[0]}")
+                    elif param_idx == 3:
+                        u = vol_to_user(val).split('.')
+                        state.preset['score'][state.focus_idx][3] = user_to_vol(f"{u[1]}.{u[0]}")
                     state.modified = True
         elif key == 'y':
             if state.focus_type == 'score':
@@ -794,9 +864,10 @@ def edit_mode(db, preset_name):
             print("\n--- Lista Tasti Rapidi ---")
             print("Spazio: Riproduce l'intero preset")
             print("Invio: Modifica il valore selezionato")
-            print(".: Attiva/disattiva o scambia fuoco portamento")
-            print("1, 2, 3: Fuoco su portamento (1: part, 2: arr, 3: entrambi)")
-            print("4: Inverte i valori del portamento")
+            print(".: Attiva o disattiva il portamento del valore corrente")
+            print("1, 2, 3: Fuoco sul portamento (1: part, 2: arr, 3: entrambi)")
+            print("i: Inverte il portamento, partenza e arrivo si scambiano")
+            print("4: Come i, sulle note, e resta per abitudine")
             print("y: Duplica la quartina corrente")
             print("c / v: Incrementa / Decrementa valore corrente")
             print("z / x: Passa al parametro precedente / successivo")
@@ -807,9 +878,16 @@ def edit_mode(db, preset_name):
             print("   Dente di Sega e i quattro rumori, bianco, rosa, marrone e azzurro.")
             print("   Con un rumore il primo campo della quartina non e' la nota ma la")
             print("   banda del filtro, per esempio 200-3000, oppure n per nessuna banda.")
-            print("   I tagli si scrivono anche in scivolata, per esempio 200-3000.400.")
-            print("   Sulla banda i tasti 1, 2 e 3 scelgono il taglio basso, l'alto o")
-            print("   entrambi, e c e v li spostano per rapporto, non per Hertz.")
+            print("   Il trattino separa il taglio basso da quello alto. Il punto sdoppia")
+            print("   la banda in partenza e arrivo, per esempio 100-1000.800-1800, che")
+            print("   si legge parte come 100-1000 e diventa 800-1800.")
+            print("   Sulla banda i numeri scelgono cosa muovono poi c e v:")
+            print("   1 il basso di partenza, 2 l'alto di partenza, 3 la banda di")
+            print("   partenza, 4 il basso d'arrivo, 5 l'alto d'arrivo, 6 la banda")
+            print("   d'arrivo, 7 tutti e quattro i valori insieme.")
+            print("   Da 4 in su hanno senso solo se la banda scorre davvero.")
+            print("   I tagli si spostano per rapporto, non per Hertz, e restano")
+            print("   sempre fra 20 e 20000 Hz.")
             print("a, d, s, r: Passa alla modifica dell'inviluppo ADSR")
             print("q: Passa alla modifica della quartina (Nota)")
             print("f / j: Inserisce nuova quartina prima / dopo quella corrente")
