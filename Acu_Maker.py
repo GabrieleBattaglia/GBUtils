@@ -3,12 +3,13 @@ import json
 import math
 import os
 import re
+import textwrap
 
 # Aggiungo la cartella corrente al path per importare GBUtils
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from GBUtils import menu, Acusticator, parse_pan_parts
+from GBUtils import menu, Acusticator, parse_pan_parts, dgt
 
-VERSION = "1.5.2" # I tagli della banda non si incrociano piu'
+VERSION = "1.6.0" # Doppioni rifiutati, nome proposto, statistiche in uscita
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)"
 RELEASE_DATE = "5 settembre 2026"
@@ -381,6 +382,27 @@ def get_unique_name(db, base_name):
     while f"{base_name}{i}" in db:
         i += 1
     return f"{base_name}{i}"
+
+def impronta_suono(preset):
+    """Cio' che rende due preset lo stesso suono: score, kind e adsr.
+
+    Il nome e la descrizione non contano: due preset che suonano identici
+    sono un doppione anche se si chiamano in modo diverso.
+    """
+    return json.dumps([preset.get("score"), preset.get("kind"),
+                       preset.get("adsr")], sort_keys=True)
+
+
+def trova_gemello(db, preset, escludi=None):
+    """Il nome del primo preset che suona identico a questo, o None."""
+    cercata = impronta_suono(preset)
+    for nome, dati in db.items():
+        if nome == escludi:
+            continue
+        if impronta_suono(dati) == cercata:
+            return nome
+    return None
+
 
 def transpose_note(note_str, semitones):
     if note_str.lower() == 'p': return note_str
@@ -1068,25 +1090,162 @@ def edit_mode(db, preset_name):
 
     print()
     if state.modified:
+        # Un suono che c'e' gia' non si salva, nemmeno con un altro nome:
+        # la collezione e' condivisa e un doppione la ingrossa e basta.
+        gemello = trova_gemello(db, state.preset, escludi=preset_name)
+        if gemello:
+            print(f"Questo suono esiste gia' come '{gemello}'.")
+            print("Sarebbe un doppione, quindi non lo salvo.")
+            return
         print("\nModifiche rilevate. Scegli un'opzione:")
         scelta = menu({"1": "Sovrascrivi preset corrente", "2": "Salva come nuovo preset", "3": "Esci senza salvare"}, p="Salva> ", show=True)
         if scelta == "1":
             db[preset_name] = state.preset
             print(f"Preset '{preset_name}' aggiornato.")
         elif scelta == "2":
-            new_name = input("Inserisci il nome breve del nuovo preset (max 50 car., no spazi): ").strip()
-            new_name = new_name.replace(" ", "")[:50]
+            # Il nome che il preset ha gia' e' li' pronto: invio lo accetta,
+            # e cosi' un preset nato dal tasto piu' non lascia dietro di se'
+            # il suo segnaposto vuoto.
+            new_name = dgt(f"Nome breve [{preset_name}]: ", kind="s", smax=50,
+                           default=preset_name)
+            new_name = new_name.strip().replace(" ", "")[:50]
             if not new_name:
-                new_name = "nuovo_preset"
-            
-            new_name = get_unique_name(db, new_name)
-            new_desc = input("Inserisci una descrizione: ")
-            
+                new_name = preset_name
+            if new_name != preset_name:
+                new_name = get_unique_name(db, new_name)
+            desc = state.preset.get('descrizione', '')
+            new_desc = dgt(f"Descrizione [{desc}]: ", kind="s", default=desc)
             state.preset['descrizione'] = new_desc
             db[new_name] = state.preset
-            print(f"Salvato come nuovo preset: '{new_name}'.")
+            print(f"Salvato come preset: '{new_name}'.")
         else:
             print("Modifiche ignorate.")
+
+def _num(valore, decimali=1):
+    """Un numero scritto all'italiana, con la virgola al posto del punto."""
+    return f"{valore:.{decimali}f}".replace(".", ",")
+
+
+def _perc(parte, tutto):
+    """Quanto pesa una parte sul totale, in percentuale."""
+    if not tutto:
+        return "0,0%"
+    return _num(parte * 100.0 / tutto) + "%"
+
+
+def _tempo(secondi):
+    """Una durata leggibile: sotto il minuto in secondi, sopra in minuti."""
+    if secondi < 60:
+        return _num(secondi) + " s"
+    minuti = int(secondi // 60)
+    return f"{minuti} min e {secondi - minuti * 60:.0f} s"
+
+
+def _quartine(quante):
+    """Il numero con il suo sostantivo, al singolare o al plurale."""
+    return f"{quante} quartina" if quante == 1 else f"{quante} quartine"
+
+
+def _riga(testo):
+    """Una riga di statistica, spezzata dove ci sta senza tagliare parole."""
+    print(textwrap.fill(testo, 72))
+
+
+def statistiche(db):
+    """Nove righe di numeri sulla collezione, per il gusto di leggerli."""
+    if not db:
+        print("La collezione e' vuota, niente da contare.")
+        return
+    quartine = 0
+    durata = 0.0
+    onde = {}
+    scivola_nota = scivola_banda = scivola_pan = 0
+    stereo_mobile = stereo_fermo = 0
+    piu_lungo = piu_corto = piu_folto = None
+    grave = acuto = None
+    famiglie = {}
+    for nome, dati in db.items():
+        score = dati.get("score", [])
+        kind = dati.get("kind", 1)
+        rumore = is_rumore(kind)
+        onde[kind] = onde.get(kind, 0) + 1
+        famiglia = nome.split("_")[0].lower()
+        famiglie[famiglia] = famiglie.get(famiglia, 0) + 1
+        mia_durata = 0.0
+        muove = fuori_centro = False
+        for quartina in score:
+            if not isinstance(quartina, list) or len(quartina) != 4:
+                continue
+            primo, dur, pan, _ = quartina
+            quartine += 1
+            try:
+                mia_durata += float(dur)
+            except (TypeError, ValueError):
+                pass
+            if is_portamento(pan):
+                scivola_pan += 1
+                muove = True
+            else:
+                try:
+                    if abs(float(pan)) > 0.01:
+                        fuori_centro = True
+                except (TypeError, ValueError):
+                    pass
+            if rumore:
+                if banda_pezzi(primo)[2]:
+                    scivola_banda += 1
+                continue
+            momenti = str(primo).strip().lower().split(".")
+            if is_portamento(primo) and len(momenti) == 2:
+                scivola_nota += 1
+            for momento in momenti:
+                hz = nota_in_hz(momento)
+                if hz is None:
+                    continue
+                grave = hz if grave is None or hz < grave else grave
+                acuto = hz if acuto is None or hz > acuto else acuto
+        durata += mia_durata
+        stereo_mobile += 1 if muove else 0
+        stereo_fermo += 1 if fuori_centro and not muove else 0
+        if piu_lungo is None or mia_durata > piu_lungo[1]:
+            piu_lungo = (nome, mia_durata)
+        if piu_corto is None or mia_durata < piu_corto[1]:
+            piu_corto = (nome, mia_durata)
+        if piu_folto is None or len(score) > piu_folto[1]:
+            piu_folto = (nome, len(score))
+    quanti = len(db)
+    intonate = sorted([(k, v) for k, v in onde.items() if not is_rumore(k)],
+                      key=lambda x: -x[1])
+    rumori = sorted([(k, v) for k, v in onde.items() if is_rumore(k)],
+                    key=lambda x: -x[1])
+    _riga(f"Collezione: {quanti} preset, {_quartine(quartine)}, "
+          f"{_tempo(durata)} di suono.")
+    _riga(f"In media {_num(quartine / quanti)} quartine e "
+          f"{_num(durata / quanti, 2)} s a preset.")
+    voci = [f"{ONDE[k]} {_perc(v, quanti)}" for k, v in intonate]
+    _riga("Onde: " + (", ".join(voci) if voci else "nessuna") + ".")
+    quanti_rumori = sum(v for _, v in rumori)
+    voci = [f"{ONDE[k].split()[-1]} {v}" for k, v in rumori]
+    _riga(f"Rumori: {quanti_rumori} preset ({_perc(quanti_rumori, quanti)})"
+          + (", " + ", ".join(voci) if voci else "") + ".")
+    _riga(f"Il piu' lungo e' {piu_lungo[0]}, {_tempo(piu_lungo[1])}.")
+    _riga(f"Il piu' corto {piu_corto[0]}, {_tempo(piu_corto[1])}; "
+          f"il piu' folto {piu_folto[0]}, {_quartine(piu_folto[1])}.")
+    scivolate = scivola_nota + scivola_banda + scivola_pan
+    _riga(f"Scivolate: {scivolate} su {quartine} quartine "
+          f"({_perc(scivolate, quartine)}), {scivola_nota} note, "
+          f"{scivola_banda} bande, {scivola_pan} pan.")
+    _riga(f"Stereo in moto in {stereo_mobile} preset "
+          f"({_perc(stereo_mobile, quanti)}), fermo fuori centro in "
+          f"{stereo_fermo}.")
+    regina = max(famiglie.items(), key=lambda x: x[1])
+    coda = f"regina {regina[0]} con {regina[1]} ({_perc(regina[1], quanti)})."
+    if grave and acuto:
+        _riga(f"Note dal {hz_in_nota(grave)} al {hz_in_nota(acuto)}, "
+              f"{_num(math.log2(acuto / grave))} ottave; famiglia " + coda)
+    else:
+        _riga("Nessuna nota da contare; famiglia " + coda)
+
 
 def main():
     print(f"--- {APP_NAME} v{VERSION} ---")
@@ -1155,6 +1314,7 @@ def main():
             
     print("\nSalvataggio libreria in corso...")
     save_db(db)
+    statistiche(db)
     print("Arrivederci!")
 
 if __name__ == "__main__":

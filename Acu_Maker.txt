@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.5.2)
+Manuale Utente: Acu_Maker (v1.6.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -69,6 +69,10 @@ Con [w] si gira fra le otto forme d'onda. Quando si attraversa il confine fra le
 
 Andando dalla nota alla banda e tornando indietro si ritrova la nota di partenza. Nell'altro verso la larghezza della banda non si può conservare, perché una nota non ha larghezza: tornando al rumore si ottiene una banda larga un'ottava centrata dov'era centrata quella di prima.
 
+# Le statistiche di chiusura
+
+Uscendo da Acu_Maker, subito dopo il salvataggio della libreria, compaiono nove righe di numeri sulla collezione: quanti preset e quante quartine contiene e quanto suono fanno in tutto; la media di quartine e di durata per preset; come si dividono in percentuale le quattro onde intonate; quanti preset usano i rumori e di che colore; qual è il più lungo, quale il più corto e quale ha più quartine; quante quartine hanno una scivolata, divise fra nota, banda e panoramica; quanti preset muovono lo stereo e quanti lo tengono fermo ma fuori centro; da quale nota a quale nota arriva la collezione, con quante ottave di escursione, e qual è la famiglia di preset più numerosa.
+
 # Modalità Edit (Modifica Preset)
 
 Quando carichi un preset, entri in "Edit Mode".
@@ -119,3 +123,7 @@ Usa questi tasti per interagire con i parametri:
           1. Sovrascrivere il preset attuale.
           2. Salvare con nome come nuovo preset.
           3. Uscire ignorando i cambiamenti.
+
+Prima di chiedere, l'app guarda se in collezione esiste già un preset che suona esattamente uguale, cioè con lo stesso score, la stessa forma d'onda e lo stesso inviluppo. Se c'è, lo dice e non salva niente: sarebbe un doppione, e un nome diverso non basta a rendere diverso un suono identico.
+
+Scegliendo di salvare con nome, il nome che il preset ha già viene proposto fra parentesi quadre: Invio lo accetta, altrimenti se ne scrive un altro. Accettando quello proposto il preset viene salvato al suo posto, così uno nato dal tasto [+] non lascia più dietro di sé il suo segnaposto vuoto. Allo stesso modo viene proposta la descrizione attuale.

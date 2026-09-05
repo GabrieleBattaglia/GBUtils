@@ -4313,30 +4313,6 @@
             0.05
         ]
     },
-    "spostamento": {
-        "descrizione": "ci si muove fra oggetti, si scorrono gli elementi di una lista, di un menu. Si scrollano file, voci di una casella, qualsiasi tipo di focalizzazione che passi fra oggetti di una lista",
-        "score": [
-            [
-                "g3",
-                0.04,
-                0.0,
-                0.0
-            ],
-            [
-                "e4",
-                0.02,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
-        ]
-    },
     "successivo": {
         "descrizione": "dato accettato e passo al successivo, digitazione ok, mostro il prossimo elemento, giro pagina",
         "score": [
@@ -4383,24 +4359,6 @@
             99.0,
             0.0,
             0.0
-        ]
-    },
-    "nuovo_preset0": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
         ]
     },
     "eliminato": {
@@ -5267,24 +5225,6 @@
             0.002
         ]
     },
-    "nuovo_preset1": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
-        ]
-    },
     "terminata": {
         "descrizione": "elaborazione terminata, operazione conclusa",
         "score": [
@@ -5543,24 +5483,6 @@
             10
         ]
     },
-    "nuovo_preset2": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
-        ]
-    },
     "Digitazione": {
         "descrizione": "lettere premute su un controller",
         "score": [
@@ -5573,24 +5495,6 @@
             [
                 "g4",
                 0.08,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
-        ]
-    },
-    "nuovo_preset3": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
                 0.0,
                 0.0
             ]
@@ -5619,24 +5523,6 @@
             0.1,
             85.0,
             1.0
-        ]
-    },
-    "nuovo_preset4": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
         ]
     },
     "vento_lontano": {
@@ -6309,24 +6195,6 @@
             15.0,
             75.0,
             25.0
-        ]
-    },
-    "nuovo_preset5": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
         ]
     },
     "scudisciata": {
