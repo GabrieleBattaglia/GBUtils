@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.5.0)
+Manuale Utente: Acu_Maker (v1.5.2)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -57,6 +57,18 @@ Da [4] in su hanno senso solo se la banda scorre davvero: su una banda ferma ven
 
 I tagli si spostano per rapporto e non per Hertz, di un semitono per volta salvo diverso passo, così un colpo di [c] pesa uguale a 100 Hz e a 10000. Restano sempre fra 20 e 20000 Hz.
 
+Il taglio basso non scavalca mai quello alto. I tasti [c] e [v] si fermano un passo prima e l'editor lo dice, e una banda rovesciata scritta a mano viene rifiutata. Due tagli uguali invece si accettano: danno una campana stretta intorno a quella frequenza. Una banda rovesciata non sarebbe un effetto ma un incidente: il motore spegne tutto quello che sta sotto il taglio basso e tutto quello che sta sopra il taglio alto, e di acceso resterebbe solo la sfumatura di un bordo, una fettina di spettro che non ha più niente a che vedere con i due valori scritti.
+
+# Il cambio di forma d'onda conserva la scivolata
+
+Con [w] si gira fra le otto forme d'onda. Quando si attraversa il confine fra le quattro onde intonate e i quattro rumori, il primo campo cambia significato e viene convertito da solo, senza perdere niente:
+- Una nota diventa la banda larga un'ottava che le sta intorno, cioè da mezza ottava sotto a mezza ottava sopra: c4 diventa 185-370.
+- Una banda diventa la nota più vicina al suo centro, calcolato come media geometrica dei due tagli, perché in musica conta il rapporto e non la differenza in Hertz: 200-3000 diventa g5.
+- La scivolata resta scivolata nei due versi: c4.g5 diventa 185-370.554-1109, e 100-1000.800-1800 diventa d#4.d6.
+- Le pause restano pause, e la banda "n", che non ha frequenza, diventa la nota di default c4.
+
+Andando dalla nota alla banda e tornando indietro si ritrova la nota di partenza. Nell'altro verso la larghezza della banda non si può conservare, perché una nota non ha larghezza: tornando al rumore si ottiene una banda larga un'ottava centrata dov'era centrata quella di prima.
+
 # Modalità Edit (Modifica Preset)
 
 Quando carichi un preset, entri in "Edit Mode".
@@ -77,7 +89,7 @@ Usa questi tasti per interagire con i parametri:
 - [c]            : Incrementa il valore del parametro selezionato.
 - [v]            : Decrementa il valore del parametro selezionato.
 - [Invio]        : Inserimento manuale del valore (da tastiera).
-- [w]            : Cicla il tipo di onda, da 1 a 8, rumori compresi.
+- [w]            : Cicla il tipo di onda, da 1 a 8, rumori compresi. Passando fra le onde intonate e i rumori il primo campo si converte da solo e la scivolata non si perde: vedi il capitolo dedicato.
 - [.]            : Aggiunge o toglie il Portamento alla nota o al panning selezionato. Su una banda la sdoppia in partenza e arrivo, o la richiude.
 - [1]            : Nel Portamento (nota o pan), focalizza e modifica solo il 1° valore.
 - [2]            : Nel Portamento (nota o pan), focalizza e modifica solo il 2° valore.

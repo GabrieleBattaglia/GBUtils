@@ -5620,5 +5620,731 @@
             85.0,
             1.0
         ]
+    },
+    "nuovo_preset4": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "c4",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "vento_lontano": {
+        "descrizione": "vento che passa lontano, da sinistra a destra",
+        "score": [
+            [
+                "300-1500.180-900",
+                2.2,
+                "-0.7.0.7",
+                -0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            30.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "onda_del_mare": {
+        "descrizione": "un'onda che arriva sulla battigia e si ritira",
+        "score": [
+            [
+                "150-900.500-4000",
+                1.6,
+                "-0.3.0.3",
+                0.0
+            ],
+            [
+                "500-4000.120-700",
+                2.0,
+                "0.3.-0.3",
+                -0.1
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            35.0,
+            0.0,
+            100.0,
+            45.0
+        ]
+    },
+    "respiro_di_vapore": {
+        "descrizione": "sbuffo di vapore che si chiude, valvola o pistone",
+        "score": [
+            [
+                "700-9000.2200-3600",
+                1.1,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 5,
+        "adsr": [
+            8.0,
+            0.0,
+            100.0,
+            25.0
+        ]
+    },
+    "tuono_lontano": {
+        "descrizione": "tuono che rotola in lontananza, o esplosione remota",
+        "score": [
+            [
+                "40-900.40-260",
+                1.8,
+                "0.2.-0.2",
+                0.1
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            2.0,
+            0.0,
+            100.0,
+            55.0
+        ]
+    },
+    "scintillio_di_ghiaccio": {
+        "descrizione": "due scintille acute, cristallo o magia gelida",
+        "score": [
+            [
+                "5000-11000",
+                0.18,
+                0.4,
+                -0.05
+            ],
+            [
+                "6500-11500",
+                0.14,
+                -0.4,
+                -0.1
+            ]
+        ],
+        "kind": 8,
+        "adsr": [
+            1.0,
+            60.0,
+            20.0,
+            30.0
+        ]
+    },
+    "pioggia_leggera": {
+        "descrizione": "pioggia fine di sottofondo che attraversa lo stereo",
+        "score": [
+            [
+                "600-6000",
+                2.5,
+                "-0.5.0.5",
+                -0.15
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            20.0,
+            0.0,
+            100.0,
+            25.0
+        ]
+    },
+    "radio_fuori_sintonia": {
+        "descrizione": "manopola girata fra le stazioni, disturbi e fruscii",
+        "score": [
+            [
+                "400-1200",
+                0.12,
+                -0.6,
+                -0.1
+            ],
+            [
+                "1500-4000",
+                0.09,
+                0.5,
+                -0.05
+            ],
+            [
+                "300-800",
+                0.14,
+                -0.3,
+                -0.1
+            ],
+            [
+                "2500-9000",
+                0.08,
+                0.7,
+                -0.15
+            ],
+            [
+                "600-2000.1800-5200",
+                0.3,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 5,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            5.0
+        ]
+    },
+    "passi_sulla_ghiaia": {
+        "descrizione": "tre passi su ghiaia, si allontanano appena",
+        "score": [
+            [
+                "200-2500",
+                0.09,
+                -0.2,
+                0.0
+            ],
+            [
+                "p",
+                0.22,
+                0.0,
+                0.0
+            ],
+            [
+                "180-2200",
+                0.09,
+                0.2,
+                -0.05
+            ],
+            [
+                "p",
+                0.24,
+                0.0,
+                0.0
+            ],
+            [
+                "220-2600",
+                0.09,
+                -0.15,
+                -0.02
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            1.0,
+            70.0,
+            10.0,
+            25.0
+        ]
+    },
+    "volo_radente": {
+        "descrizione": "qualcosa passa radente da sinistra a destra e scende",
+        "score": [
+            [
+                "c6.c4",
+                1.0,
+                "-1.1",
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            0.0,
+            100.0,
+            15.0
+        ]
+    },
+    "passaggio_veloce": {
+        "descrizione": "sfreccia da destra a sinistra, breve e ruvido",
+        "score": [
+            [
+                "a5.d4",
+                0.32,
+                "1.-1",
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2.0,
+            0.0,
+            100.0,
+            10.0
+        ]
+    },
+    "rimbalzo_stereo": {
+        "descrizione": "quattro rimbalzi che calano rimbalzando fra le casse",
+        "score": [
+            [
+                "e6",
+                0.1,
+                -0.9,
+                0.0
+            ],
+            [
+                "b5",
+                0.09,
+                0.9,
+                -0.05
+            ],
+            [
+                "e5",
+                0.08,
+                -0.7,
+                -0.1
+            ],
+            [
+                "b4",
+                0.12,
+                0.7,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            55.0,
+            30.0,
+            20.0
+        ]
+    },
+    "spirale_discendente": {
+        "descrizione": "discesa a spirale, gira nello stereo mentre cala",
+        "score": [
+            [
+                "g6.g5",
+                0.3,
+                "-0.9.0.9",
+                0.0
+            ],
+            [
+                "g5.g4",
+                0.3,
+                "0.9.-0.9",
+                -0.05
+            ],
+            [
+                "g4.g3",
+                0.4,
+                "-0.9.0.9",
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "raggio_traente": {
+        "descrizione": "raggio che sale di tre ottave e attraversa lo stereo",
+        "score": [
+            [
+                "c3.c6",
+                1.4,
+                "-0.8.0.8",
+                -0.1
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "jingle_livello_superato": {
+        "descrizione": "arpeggio che sale e si apre, un livello superato",
+        "score": [
+            [
+                "g4",
+                0.12,
+                -0.3,
+                -0.15
+            ],
+            [
+                "c5",
+                0.12,
+                -0.1,
+                -0.05
+            ],
+            [
+                "e5",
+                0.12,
+                0.1,
+                0.05
+            ],
+            [
+                "g5",
+                0.45,
+                0.3,
+                0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            10.0,
+            80.0,
+            20.0
+        ]
+    },
+    "jingle_scoperta": {
+        "descrizione": "tre note che salgono e restano sospese, una scoperta",
+        "score": [
+            [
+                "d5",
+                0.14,
+                0.0,
+                -0.05
+            ],
+            [
+                "a5",
+                0.14,
+                0.0,
+                0.0
+            ],
+            [
+                "f#6",
+                0.5,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "jingle_missione_fallita": {
+        "descrizione": "tre note che scendono e una scivolata che si spegne",
+        "score": [
+            [
+                "g4",
+                0.18,
+                0.0,
+                0.0
+            ],
+            [
+                "e4",
+                0.18,
+                0.0,
+                -0.03
+            ],
+            [
+                "c4",
+                0.22,
+                0.0,
+                -0.06
+            ],
+            [
+                "c4.f3",
+                0.8,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "fanfara_retro": {
+        "descrizione": "fanfara squadrata da videogioco antico",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.05
+            ],
+            [
+                "c6",
+                0.35,
+                0.0,
+                0.1
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            1.0,
+            8.0,
+            85.0,
+            15.0
+        ]
+    },
+    "carillon_dolce": {
+        "descrizione": "quattro note di carillon che si spengono piano",
+        "score": [
+            [
+                "e6",
+                0.22,
+                -0.2,
+                -0.1
+            ],
+            [
+                "c6",
+                0.22,
+                0.0,
+                -0.12
+            ],
+            [
+                "g5",
+                0.22,
+                0.2,
+                -0.14
+            ],
+            [
+                "c6",
+                0.5,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            45.0,
+            25.0,
+            50.0
+        ]
+    },
+    "arpeggio_pensoso": {
+        "descrizione": "arpeggio minore lento, attesa o riflessione",
+        "score": [
+            [
+                "a4",
+                0.2,
+                -0.2,
+                -0.05
+            ],
+            [
+                "c5",
+                0.2,
+                0.0,
+                -0.05
+            ],
+            [
+                "e5",
+                0.2,
+                0.2,
+                -0.05
+            ],
+            [
+                "a5",
+                0.55,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            20.0,
+            60.0,
+            35.0
+        ]
+    },
+    "doppio_tic_conferma": {
+        "descrizione": "due tic vicinissimi, conferma leggera",
+        "score": [
+            [
+                "e6",
+                0.035,
+                -0.15,
+                -0.1
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "b6",
+                0.045,
+                0.15,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1.0,
+            60.0,
+            0.0,
+            30.0
+        ]
+    },
+    "errore_secco": {
+        "descrizione": "due note stonate e basse, errore senza drammi",
+        "score": [
+            [
+                "b3",
+                0.09,
+                0.0,
+                0.0
+            ],
+            [
+                "a#3",
+                0.22,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            1.0,
+            30.0,
+            60.0,
+            20.0
+        ]
+    },
+    "caricamento_in_corso": {
+        "descrizione": "tre battiti uguali che scorrono da sinistra a destra",
+        "score": [
+            [
+                "c5",
+                0.07,
+                -0.4,
+                -0.15
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.07,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.07,
+                0.4,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "annullato": {
+        "descrizione": "scivolata corta all'ingiu', operazione annullata",
+        "score": [
+            [
+                "a4.d4",
+                0.28,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2.0,
+            0.0,
+            100.0,
+            25.0
+        ]
+    },
+    "moneta_raccolta": {
+        "descrizione": "due note svelte, si e' raccolto qualcosa",
+        "score": [
+            [
+                "b5",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.35,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            15.0,
+            75.0,
+            25.0
+        ]
+    },
+    "nuovo_preset5": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "c4",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "scudisciata": {
+        "descrizione": "Un colpo di frusta, anche scorrimento fra elementi, anche eliminazione elemento",
+        "score": [
+            [
+                "156-184.7040-11841",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            0.002,
+            1.0,
+            100.0,
+            0.0
+        ]
     }
 }

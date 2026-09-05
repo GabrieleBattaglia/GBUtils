@@ -1,5 +1,6 @@
 import sys
 import json
+import math
 import os
 import re
 
@@ -7,10 +8,10 @@ import re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import menu, Acusticator, parse_pan_parts
 
-VERSION = "1.5.0" # La banda si scrive come banda di partenza punto banda d'arrivo
+VERSION = "1.5.2" # I tagli della banda non si incrociano piu'
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)"
-RELEASE_DATE = "4 settembre 2026"
+RELEASE_DATE = "5 settembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -24,6 +25,14 @@ BANDA_DEFAULT = "200-3000"
 # lo stesso in ogni punto dello spettro. 2 elevato a un dodicesimo e' il
 # rapporto di un semitono, circa il sei per cento.
 PASSO_BANDA = 2 ** (1 / 12)
+# I nomi delle dodici note e i loro semitoni, usati sia per trasportare
+# sia per tradurre una frequenza nel nome di nota piu' vicino.
+NOMI_NOTE = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b']
+SEMITONI_NOTE = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
+# Quanto e' larga la banda che nasce da una nota quando si passa a un
+# rumore: mezza ottava sotto e mezza ottava sopra, cioe' una banda larga
+# un'ottava che si sente intonata su quella nota.
+MEZZA_OTTAVA = 2 ** 0.5
 
 
 def is_portamento(val):
@@ -91,6 +100,27 @@ NOMI_SCELTA = {
 }
 
 
+def banda_ordinata(pezzi):
+    """Vero se in ogni momento il taglio basso sta sotto quello alto.
+
+    Una banda rovesciata non e' un effetto ma un incidente: il motore
+    spegne tutto sotto il taglio basso e tutto sopra quello alto, e cio'
+    che sopravvive e' solo la sfumatura di un bordo, una fettina di
+    spettro che non ha piu' niente a che vedere con i due valori scritti.
+    Tagli uguali invece vanno bene: danno una campana stretta.
+    """
+    coppie = [(pezzi[0], pezzi[1])]
+    if pezzi[2] or pezzi[3]:
+        coppie.append((pezzi[2], pezzi[3]))
+    for basso, alto in coppie:
+        try:
+            if float(basso) > float(alto):
+                return False
+        except (TypeError, ValueError):
+            return False
+    return True
+
+
 def alterna_scivolata(val):
     """Accende o spegne la scivolata di una banda.
 
@@ -143,6 +173,8 @@ def normalizza_banda(testo):
     limitati = [limita(p) if p else '' for p in pezzi]
     if any(x is None for x in limitati):
         return None
+    if not banda_ordinata(limitati):
+        return None
     return banda_componi(*limitati)
 
 
@@ -170,6 +202,112 @@ def scala_taglio(taglio, direzione, passo=PASSO_BANDA):
         if len(pezzi) == 2:
             return f"{uno(pezzi[0])}.{uno(pezzi[1])}"
     return uno(testo)
+
+
+def nota_in_hz(val):
+    """La frequenza di una nota singola, o None se non e' leggibile.
+
+    Accetta il nome della nota, per esempio c4 o d#4, e anche il numero,
+    che nel campo della nota e' gia' una frequenza in Hertz.
+    """
+    if isinstance(val, (int, float)):
+        return float(val) if val > 0 else None
+    grezzo = str(val).strip().lower()
+    if grezzo.isdigit():
+        return float(grezzo) if float(grezzo) > 0 else None
+    incontro = re.match(r"^([a-g])([#b]?)(\d)$", grezzo)
+    if not incontro:
+        return None
+    lettera, alterazione, ottava = incontro.groups()
+    semitono = SEMITONI_NOTE[lettera]
+    if alterazione == '#':
+        semitono += 1
+    elif alterazione == 'b':
+        semitono -= 1
+    midi = 12 + semitono + 12 * int(ottava)
+    return 440.0 * (2.0 ** ((midi - 69) / 12.0))
+
+
+def hz_in_nota(freq):
+    """Il nome della nota piu' vicina a una frequenza.
+
+    Resta fra c0 e g9, che sono le note scritte con una cifra sola di
+    ottava, le uniche che l'editor e il motore sanno poi rileggere.
+    """
+    if not freq or freq <= 0:
+        return 'c4'
+    midi = round(69 + 12 * math.log2(freq / 440.0))
+    midi = max(12, min(127, midi))
+    return f"{NOMI_NOTE[midi % 12]}{midi // 12 - 1}"
+
+
+def banda_da_hz(freq):
+    """I due tagli della banda larga un'ottava centrata su una frequenza."""
+    basso = max(BANDA_MINIMA, min(BANDA_MASSIMA, freq / MEZZA_OTTAVA))
+    alto = max(BANDA_MINIMA, min(BANDA_MASSIMA, freq * MEZZA_OTTAVA))
+    return str(round(basso)), str(round(alto))
+
+
+def hz_da_banda(basso, alto):
+    """Il centro di una banda, cioe' la frequenza che vi si sente intonata.
+
+    E' la media geometrica dei due tagli e non quella aritmetica: in musica
+    conta il rapporto, quindi il centro fra 200 e 3000 sta a meta' strada
+    contando le ottave e non gli Hertz.
+    """
+    try:
+        return (float(basso) * float(alto)) ** 0.5
+    except (TypeError, ValueError):
+        return None
+
+
+def nota_in_banda(val):
+    """Traduce il primo campo dalla nota alla banda, scivolata compresa.
+
+    Una nota diventa la banda larga un'ottava che le sta intorno, e una
+    nota che scivola diventa una banda che scorre fra le bande delle due
+    note, cosi' passando a un rumore la scivolata resta quella che era.
+    """
+    if isinstance(val, (int, float)):
+        momenti = [val]
+    else:
+        testo = str(val).strip().lower()
+        if testo == 'p':
+            return 'p'
+        momenti = testo.split('.')
+        if len(momenti) != 2:
+            momenti = [testo]
+    frequenze = [nota_in_hz(m) for m in momenti]
+    if frequenze[0] is None:
+        return BANDA_DEFAULT
+    basso_in, alto_in = banda_da_hz(frequenze[0])
+    if len(frequenze) == 1 or frequenze[1] is None:
+        return banda_componi(basso_in, alto_in)
+    basso_fi, alto_fi = banda_da_hz(frequenze[1])
+    return banda_componi(basso_in, alto_in, basso_fi, alto_fi)
+
+
+def banda_in_nota(val):
+    """Traduce il primo campo dalla banda alla nota, scivolata compresa.
+
+    La nota e' quella piu' vicina al centro della banda, e una banda che
+    scorre diventa una nota che scivola fra i centri delle due bande, cosi'
+    passando a un'onda intonata la scivolata resta quella che era.
+    """
+    b_in, a_in, b_fi, a_fi = banda_pezzi(val)
+    if not a_in:
+        return 'p' if str(b_in).strip().lower() == 'p' else 'c4'
+    centro_in = hz_da_banda(b_in, a_in)
+    if centro_in is None:
+        return 'c4'
+    nota_in = hz_in_nota(centro_in)
+    if not b_fi:
+        return nota_in
+    centro_fi = hz_da_banda(b_fi, a_fi)
+    if centro_fi is None:
+        return nota_in
+    return f"{nota_in}.{hz_in_nota(centro_fi)}"
+
 
 def get_keypress():
     """Legge un singolo tasto, gestendo le frecce direzionali in modo nativo e sicuro."""
@@ -250,8 +388,7 @@ def transpose_note(note_str, semitones):
     if not match: return note_str
     note_letter, accidental, octave_str = match.groups()
     octave = int(octave_str)
-    note_base = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
-    semitone = note_base[note_letter]
+    semitone = SEMITONI_NOTE[note_letter]
     if accidental == '#': semitone += 1
     elif accidental == 'b': semitone -= 1
     
@@ -261,9 +398,8 @@ def transpose_note(note_str, semitones):
     if new_midi < 0: new_midi = 0
     if new_midi > 127: new_midi = 127
     
-    notes = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b']
     new_octave = (new_midi // 12) - 1
-    new_note = notes[new_midi % 12]
+    new_note = NOMI_NOTE[new_midi % 12]
     return f"{new_note}{new_octave}"
 
 class EditorState:
@@ -435,6 +571,12 @@ def transpose_single(val_str, direction, step):
         return transpose_note(val_str, direction)
 
 def inc_dec_value(state, direction):
+    """Muove il valore corrente di un passo.
+
+    Restituisce None se si e' mosso, altrimenti la ragione per cui e'
+    rimasto fermo, che il chiamante mostra al posto della riga di stato.
+    """
+    era_modificato = state.modified
     state.modified = True
     if state.focus_type == 'score':
         quad = state.preset['score'][state.focus_idx]
@@ -442,12 +584,20 @@ def inc_dec_value(state, direction):
         if param == 0 and is_rumore(state.preset.get('kind', 1)):
             pezzi = list(banda_pezzi(quad[0]))
             if not pezzi[1]:
-                return  # pausa oppure nessuna banda: non c'e' niente da spostare
+                # pausa oppure nessuna banda: non c'e' niente da spostare
+                state.modified = era_modificato
+                return "Qui non c'e' una banda da spostare"
             passo = state.steps.get('banda', PASSO_BANDA)
+            nuovi = list(pezzi)
             for i in SCELTA_BANDA.get(state.port_focus, (0, 1)):
-                if pezzi[i]:
-                    pezzi[i] = scala_taglio(pezzi[i], direction, passo)
-            quad[0] = banda_componi(*pezzi)
+                if nuovi[i]:
+                    nuovi[i] = scala_taglio(nuovi[i], direction, passo)
+            if not banda_ordinata(nuovi):
+                # Il taglio basso finirebbe sopra quello alto: la banda
+                # non lascerebbe passare piu' niente di sensato.
+                state.modified = era_modificato
+                return 'I tagli si incrocerebbero, fermo qui'
+            quad[0] = banda_componi(*nuovi)
         elif param == 0:
             val = quad[0]
             if is_portamento(val):
@@ -573,7 +723,8 @@ def edit_mode(db, preset_name):
                                       "200-3000. Il punto separa la banda di "
                                       "partenza da quella d'arrivo, per esempio "
                                       "100-1000.800-1800. Vale anche n per nessuna "
-                                      "banda e p per pausa.")
+                                      "banda e p per pausa. Il taglio basso deve "
+                                      "restare sotto quello alto.")
                             else:
                                 state.preset['score'][state.focus_idx][0] = pulita
                                 state.modified = True
@@ -742,8 +893,11 @@ def edit_mode(db, preset_name):
                 state.modified = True
                 print(f"\r{' ' * 50}\rDuplicata Sc.{state.focus_idx}", end="", flush=True)
                 continue
-        elif key == 'c': inc_dec_value(state, 1)
-        elif key == 'v': inc_dec_value(state, -1)
+        elif key in ('c', 'v'):
+            avviso = inc_dec_value(state, 1 if key == 'c' else -1)
+            if avviso:
+                print(f"\r{' ' * 60}\r{avviso}", end="", flush=True)
+                continue
         elif key == 'z': state.focus_param = (state.focus_param - 1) % 4
         elif key == 'x': state.focus_param = (state.focus_param + 1) % 4
         elif key == 'b':
@@ -798,13 +952,15 @@ def edit_mode(db, preset_name):
             state.preset['kind'] = (state.preset['kind'] % len(ONDE)) + 1
             state.modified = True
             # Passando fra note e rumore il primo campo cambia significato:
-            # si converte quello che c'e', altrimenti resterebbe illeggibile.
+            # si converte quello che c'e', scivolata compresa, altrimenti
+            # resterebbe illeggibile e il portamento andrebbe perso.
             adesso_rumore = is_rumore(state.preset['kind'])
             if prima_rumore != adesso_rumore:
                 for quartina in state.preset['score']:
                     if str(quartina[0]).strip().lower() == 'p':
                         continue
-                    quartina[0] = BANDA_DEFAULT if adesso_rumore else 'c4'
+                    quartina[0] = (nota_in_banda(quartina[0]) if adesso_rumore
+                                   else banda_in_nota(quartina[0]))
                 state.port_focus = 3
                 print(f"\r{' ' * 60}\rOnda: {ONDE[state.preset['kind']]}, "
                       f"il primo campo ora e' "
@@ -887,7 +1043,12 @@ def edit_mode(db, preset_name):
             print("   d'arrivo, 7 tutti e quattro i valori insieme.")
             print("   Da 4 in su hanno senso solo se la banda scorre davvero.")
             print("   I tagli si spostano per rapporto, non per Hertz, e restano")
-            print("   sempre fra 20 e 20000 Hz.")
+            print("   sempre fra 20 e 20000 Hz. Il taglio basso non scavalca mai")
+            print("   quello alto: c e v si fermano prima e lo dicono.")
+            print("   Cambiando forma il primo campo si converte da solo: la nota")
+            print("   diventa la banda larga un'ottava che le sta intorno e la banda")
+            print("   diventa la nota piu' vicina al suo centro. La scivolata non si")
+            print("   perde, resta scivolata su tutte e otto le forme d'onda.")
             print("a, d, s, r: Passa alla modifica dell'inviluppo ADSR")
             print("q: Passa alla modifica della quartina (Nota)")
             print("f / j: Inserisce nuova quartina prima / dopo quella corrente")
