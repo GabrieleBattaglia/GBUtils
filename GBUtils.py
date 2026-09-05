@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V110 di venerdì 4 settembre 2026
+	V111 di sabato 5 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.5.0 di venerdì 4 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -12,7 +12,7 @@ Lista utilità contenute in questo pacchetto
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0.1 del 4 settembre 2026
-	enter_escape V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
+	enter_escape V1.1 di sabato 5 settembre 2026 by Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro e ClaudIA (Claude Opus 5 UltraCode). Dice cosa fare quando si preme un tasto diverso da Invio o Esc
 	gestisci_aggiornamento V1.0.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "110"
+VERSION = "111"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -692,11 +692,17 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
     return quanti, lasciati
 
 
-def enter_escape(prompt=""):
+def enter_escape(prompt="", guida="Conferma con invio o annulla con escape"):
     """
-				V1.0 del 6 ottobre 2025 by Gabriele Battaglia & Gemini 2.5 Pro
+				V1.1 di sabato 5 settembre 2026 by Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro e ClaudIA (Claude Opus 5 UltraCode)
     Funzione cross-platform e auto-contenuta che attende la pressione di Invio o Esc.
     Stampa un prompt opzionale e non richiede ulteriori pressioni di Invio.
+    Parametri:
+        - prompt: testo mostrato prima dell'attesa, senza andare a capo.
+        - guida: messaggio stampato quando si preme un tasto diverso da Invio
+          o Esc. Chi lavora a orecchio non avrebbe altro modo di accorgersi di
+          aver premuto il tasto sbagliato, perche' la funzione resta in attesa
+          in silenzio. Passare None o stringa vuota per tornare al silenzio.
     Restituisce:
         - True se viene premuto Invio.
         - False se viene premuto Esc.
@@ -738,6 +744,12 @@ def enter_escape(prompt=""):
         elif k == b'\x1b':
             print() # Pulisce la riga andando a capo
             return False
+        # Qualsiasi altro tasto: si dice cosa serve, invece di restare muti.
+        elif guida:
+            print()
+            print(guida, flush=True)
+            if prompt:
+                print(prompt, end="", flush=True)
 def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False):
 	"""
 	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
