@@ -3,12 +3,12 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V111 di sabato 5 settembre 2026
+	V118 di domenica 6 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
+	CWzator V9.7 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0.1 del 4 settembre 2026
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "111"
+VERSION = "118"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -750,38 +750,108 @@ def enter_escape(prompt="", guida="Conferma con invio o annulla con escape"):
             print(guida, flush=True)
             if prompt:
                 print(prompt, end="", flush=True)
-def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False):
+def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0):
 	"""
-	CWzator V9.1 di sabato 30 maggio 2026 - Gabriele Battaglia (IZ4APU) e Stella/Gemini 3.5 Flash
+	CWzator V9.7 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
 		msg (str|int): Messaggio di testo da convertire in Morse.
 			se == -1 restituisce la mappa morse come dizionario (deprecato, usare get_map=True).
-		wpm (int): Velocità in parole al minuto (range 5-100).
+			I caratteri fuori mappa vengono scartati in silenzio. Lo spazio e il trattino basso
+			stanno nella mappa con codice vuoto e servono da segnaposti: non suonano, ma
+			separano le parole. Se nessun carattere del messaggio produce suono si riceve un
+			PlaybackHandle valido e muto, con rwpm uguale a wpm.
+		wpm (int): Velocità in parole al minuto (range 5-120).
+			Il tetto era 100 fino alla V9.1. Portarlo a 120 copre chi riceve più veloce senza
+			permettere combinazioni senza senso: a 550 Hz un punto contiene 5,5 cicli d'onda a
+			120 wpm ma solo 3,3 a 200, e sotto i quattro cicli un tono smette di essere un tono.
 		pitch (int): Frequenza in Hz per il tono (range 130-2800).
 		l (int): Peso per la durata della linea (default 30).
-		s (int): Peso per la durata degli spazi tra simboli/lettere (default 50).
+		s (int): Peso per la durata degli spazi tra simboli, lettere e parole (default 50).
 		p (int): Peso per la durata del punto (default 50).
 		fs (int): Frequenza di campionamento (default 44100 Hz).
-		ms (int): Durata in millisecondi per i fade-in/out sui toni (default 1).
+		ms (int|float): Durata in millisecondi della dissolvenza in apertura e in chiusura di ogni tono (default 1).
+			Attenzione: la dissolvenza accorcia la durata efficace dell'elemento di ms millesimi,
+			sempre, qualunque sia la sua lunghezza. Su un punto a 20 wpm è l'uno e sei per cento,
+			a 100 wpm è l'otto e tre. Siccome toglie lo stesso a punto e linea, alle alte velocità
+			il loro rapporto si allontana da tre: 3,03 a 20 wpm, 3,19 a 100. Vedi fade_mode.
+			Quando ms supera la metà dell'elemento la rampa viene accorciata a metà elemento,
+			non scartata: scartarla, come faceva la V9.1, lasciava uno schiocco proprio sugli
+			elementi più corti.
 		vol (float): Volume (range 0.0 a 1.0, default 0.5).
 		wv (int): Tipo d'onda (scipy.signal): 1=Sine(default), 2=Square, 3=Triangle, 4=Sawtooth (dente di sega discendente classica).
-		sync (bool): Se True, la funzione aspetta la fine della riproduzione; altrimenti ritorna subito.
-		to_file (bool): Se True, salva l'audio in un file WAV.
+		sync (bool): Se True, la funzione aspetta la fine reale del suono; altrimenti ritorna subito.
+		to_file (bool): Se True, salva l'audio in un file WAV. La riproduzione avviene comunque,
+			salvo che si passi play=False.
 		wave_output_path_file (str|None): Percorso e/o nome file per il salvataggio WAV.
 			Può contenere solo il percorso (directory), solo il nome file, o entrambi.
 			Se None (default), salva nella directory corrente con nome autogenerato.
 			Dove i dati sono presenti, hanno priorità sul comportamento di default.
 		get_map (bool): Se True, restituisce immediatamente il dizionario MORSE_MAP senza generare audio.
+		fade_mode (str): Come la dissolvenza si rapporta alla durata dell'elemento (default "fisso").
+			"fisso": ms millesimi tanto sul punto quanto sulla linea. È il comportamento storico e
+				quello dei manipolatori veri, dove il tempo di salita non dipende dalla velocità.
+				Il rapporto fra linea e punto si allontana da tre man mano che la velocità sale.
+			"proporzionale": la rampa è la stessa frazione di ogni elemento, ricavata da ms
+				rapportato al punto. Punto e linea perdono la stessa percentuale, quindi il loro
+				rapporto resta tre esatto a qualunque velocità, e le durate assolute non cambiano.
+			"compensato": la rampa resta di ms millesimi, ma l'elemento si allunga di altrettanto
+				e prende in prestito quel tempo dal silenzio che lo segue. La durata efficace torna
+				nominale, il rapporto torna tre e la lunghezza totale del messaggio non cambia.
+				Il prestito non supera mai metà dello spazio fra simboli.
+		fade_shape (str): Forma della rampa (default "lineare").
+			"lineare": rampa dritta, come nelle versioni fino alla V9.1.
+			"coseno": mezzo coseno rialzato. Toglie all'elemento esattamente la stessa durata
+				efficace della lineare, quindi non corregge il rapporto. Con dissolvenze lunghe
+				sporca molto meno la banda, da 11 a 15 dB in meno con ms uguale a 5; con ms
+				uguale a 1 è invece uguale o un filo peggiore della dritta.
+		play (bool): Se False genera l'audio e non lo riproduce (default True, cioè riproduce).
+			Serve a chi vuole soltanto il file WAV, a chi vuole l'array dei campioni per
+			analizzarlo o rielaborarlo, e alle misure. L'array sta in audio_data del
+			PlaybackHandle restituito, e resta riproducibile a mano con il suo metodo play.
+		pan (int|float): Posizione fra i due altoparlanti, da -100 tutto a sinistra a +100 tutto
+			a destra, 0 al centro (default). Serve soprattutto al pile-up: distribuendo le stazioni
+			sul fronte stereo si separano molto meglio che con il solo tono.
+			La legge è a potenza costante, quindi una stazione al centro non si sente più debole
+			di una tutta da un lato. Riguarda solo la riproduzione: l'array in audio_data e il file
+			WAV restano monofonici.
+			Nota: Acusticator per la stessa cosa usa la scala da -1 a +1. La differenza è voluta.
 	Returns:
 		dict: Se get_map=True o msg==-1, restituisce il dizionario della mappa Morse.
-		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm (velocità effettiva wpm).
+		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm, la velocità effettiva in wpm.
+			rwpm si ricava dalla durata davvero prodotta secondo la definizione PARIS, cioè
+			velocità uguale 1,2 per le unità standard del messaggio diviso la durata in secondi.
+			Con i pesi standard, cioè l 30, s 50 e p 50, coincide con wpm.
+			Il PlaybackHandle espone play, stop, wait_done(timeout=None) e l'array audio_data.
+			Finché suona resta nel registro delle riproduzioni attive, quindi non serve
+			conservarne il riferimento per impedire che il garbage collector lo distrugga.
 		tuple[None, None]: In caso di errore di validazione parametri.
+	Il mixer:
+		Le riproduzioni passano da un mixer con un solo stream, sempre alimentato: quando non c'è
+		niente da suonare vi si scrive silenzio, perché è il buffer che si svuota a far schioccare
+		il dispositivo, non l'apertura dello stream. Dopo CWzator.SILENZIO_MAX secondi di silenzio,
+		centoventi di partenza, lo stream si chiude e la scheda torna libera; al messaggio successivo
+		riapre da solo, e alla fine del programma si chiude comunque.
+		Fino a CWzator.VOCI_MAX messaggi possono suonare insieme, trentadue di partenza, e vengono
+		sommati: è così che si simula un pile-up di stazioni che chiamano tutte insieme. Quando le
+		voci sono tutte occupate la più vecchia lascia il posto alla nuova. Ogni PlaybackHandle
+		controlla soltanto la propria voce, quindi il suo stop non tocca le altre.
+		Il mixer è stereo e ogni voce ha la sua posizione, data dal parametro pan. La sintesi resta
+		monofonica: il pan si applica soltanto in riproduzione.
+		Cambiando frequenza di campionamento il mixer si rifà, perché quella non si può cambiare a
+		stream aperto, e le riproduzioni in corso si fermano.
+	Chiusura ordinata:
+		CWzator.chiudi_riproduzioni(attesa=2.0) ferma le riproduzioni ancora in corso e ne attende
+		la fine. È registrata con atexit, quindi in un programma che finisce normalmente non c'è
+		niente da fare; va chiamata a mano solo da chi esca per vie che saltano atexit, per esempio
+		os._exit, oppure da una interfaccia grafica che chiuda la finestra mentre un messaggio suona.
 	"""
+	import atexit
 	import os
 	import sys
 	import threading
+	import time
 	import wave
 	from datetime import datetime
 
@@ -814,7 +884,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		print("CWzator Error: msg deve essere una stringa non vuota.", file=sys.stderr)
 		return None, None
 	validations = [
-		("wpm", wpm, (int,), 5, 100),
+		("wpm", wpm, (int,), 5, 120),
 		("pitch", pitch, (int,), 130, 2800),
 		("l", l, (int,), 1, 100),
 		("s", s, (int,), 1, 100),
@@ -836,6 +906,18 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	if not (isinstance(wv, int) and wv in (1, 2, 3, 4)):
 		print(f"CWzator Error: wv ({wv}) non valido [1-4].", file=sys.stderr)
 		return None, None
+	if fade_mode not in ("fisso", "proporzionale", "compensato"):
+		print(f"CWzator Error: fade_mode ({fade_mode}) non valido [fisso, proporzionale, compensato].", file=sys.stderr)
+		return None, None
+	if fade_shape not in ("lineare", "coseno"):
+		print(f"CWzator Error: fade_shape ({fade_shape}) non valido [lineare, coseno].", file=sys.stderr)
+		return None, None
+	if not isinstance(pan, (int, float)) or isinstance(pan, bool):
+		print(f"CWzator Error: pan ({pan}) tipo non valido.", file=sys.stderr)
+		return None, None
+	if pan < -100 or pan > 100:
+		print(f"CWzator Error: pan ({pan}) fuori intervallo [-100, 100].", file=sys.stderr)
+		return None, None
 	# --- Calcolo Durate ---
 	T = 1.2 / float(wpm)
 	dot_duration = T * (p / 50.0)
@@ -843,7 +925,36 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	intra_gap = T * (s / 50.0)
 	letter_gap = 3.0 * T * (s / 50.0)
 	word_gap = 7.0 * T * (s / 50.0)
+	# --- Dissolvenza: quanto dura e quanto costa ---
+	# Una rampa lunga n toglie all'elemento meta' di se' per lato, cioe' in
+	# tutto quanto dura la rampa stessa. Vale per la lineare e vale identico
+	# per il coseno rialzato, che ha la stessa area: la forma cambia lo
+	# spettro, non la durata efficace. Siccome il costo e' in millesimi
+	# assoluti, punto e linea perdono la stessa quantita' e il loro rapporto
+	# si allontana da tre man mano che la velocita' sale. I due modi non
+	# fissi servono a questo, e sono alternativi fra loro.
+	fade_seconds = max(0.0, ms / 1000.0)
+	fade_frazione = 0.0
+	if dot_duration > 0:
+		fade_frazione = min(0.5, fade_seconds / dot_duration)
+	if fade_mode == "compensato":
+		# L'elemento si allunga di quanto la rampa gli toglie, e quel tempo
+		# lo prende in prestito dal silenzio che lo segue: cosi' la durata
+		# efficace torna nominale senza allungare il messaggio, e il calcolo
+		# di rwpm, che lavora sui pesi e non sulle durate, resta valido.
+		prestito = min(fade_seconds, intra_gap * 0.5)
+		dot_duration += prestito
+		dash_duration += prestito
+		intra_gap -= prestito
+		letter_gap -= prestito
+		word_gap -= prestito
 	# --- Pre-generazione dei 5 segmenti base ---
+	def _rampa(n):
+		"""Salita da zero a uno lunga n campioni, nella forma richiesta."""
+		x = np.linspace(0.0, 1.0, n, dtype=np.float32)
+		if fade_shape == "coseno":
+			return (0.5 - 0.5 * np.cos(np.pi * x)).astype(np.float32)
+		return x
 	def _generate_tone(duration):
 		N = int(round(fs * duration))
 		if N <= 0:
@@ -858,9 +969,18 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		else:  # Sawtooth classica discendente
 			signal_float = scipy_signal.sawtooth(2 * np.pi * pitch * t, width=0)
 		signal_float = signal_float.astype(np.float32)
-		fade_samples = int(round(fs * ms / 1000.0))
-		if fade_samples > 0 and fade_samples <= N // 2:
-			ramp = np.linspace(0, 1, fade_samples, dtype=np.float32)
+		if fade_mode == "proporzionale":
+			fade_samples = round(N * fade_frazione)
+		else:
+			fade_samples = round(fs * fade_seconds)
+		# Quando la rampa e' piu' lunga di meta' elemento si accorcia, non si
+		# scarta. Scartarla, come faceva la V9.1, lasciava il tono con due
+		# gradini netti proprio sugli elementi piu' corti, cioe' uno schiocco
+		# li' dove serve piu' pulizia: sotto i due millesimi di elemento non
+		# c'era piu' nessuna dissolvenza.
+		fade_samples = min(fade_samples, N // 2)
+		if fade_samples > 0:
+			ramp = _rampa(fade_samples)
 			signal_float[:fade_samples] *= ramp
 			signal_float[-fade_samples:] *= ramp[::-1]
 		signal_float = np.clip(signal_float * vol, -1.0, 1.0)
@@ -875,33 +995,45 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	seg_word = _generate_silence(word_gap)
 	# --- Primo passaggio: pianifica i segmenti e calcola la lunghezza totale ---
 	words_list = msg.lower().split()
+	# Le parole che producono suono davvero: quelle che contengono almeno un
+	# carattere con un codice non vuoto. Serve una definizione sola, usata sia
+	# per decidere dove mettere gli spazi di parola sia per contare le unita',
+	# altrimenti i due conti divergono e la velocita' annunciata non e' quella
+	# che si sente.
+	def _suona(parola):
+		return any(MORSE_MAP.get(ch) for ch in parola)
 	plan = []
 	total_samples = 0
-	valid_char_count = 0
+	# Unita' standard occupate dal messaggio: un punto ne vale una, una linea
+	# tre, lo spazio fra simboli una, quello fra lettere tre, quello fra parole
+	# sette. E' la misura con cui si definisce la velocita': la parola PARIS
+	# piu' lo spazio finale ne vale cinquanta.
+	standard_units = 0
 	for w_idx, word in enumerate(words_list):
-		valid_letters = "".join(ch for ch in word if ch in MORSE_MAP)
-		for l_idx, letter in enumerate(valid_letters):
-			code = MORSE_MAP.get(letter)
-			if not code:
-				continue
-			valid_char_count += 1
+		lettere_sonore = [ch for ch in word if MORSE_MAP.get(ch)]
+		for l_idx, letter in enumerate(lettere_sonore):
+			code = MORSE_MAP[letter]
 			for s_idx, symbol in enumerate(code):
 				if symbol == '.':
 					plan.append(seg_dot)
 					total_samples += seg_dot.size
+					standard_units += 1
 				elif symbol == '-':
 					plan.append(seg_dash)
 					total_samples += seg_dash.size
+					standard_units += 3
 				if s_idx < len(code) - 1:
 					plan.append(seg_intra)
 					total_samples += seg_intra.size
-			if l_idx < len(valid_letters) - 1:
+					standard_units += 1
+			if l_idx < len(lettere_sonore) - 1:
 				plan.append(seg_letter)
 				total_samples += seg_letter.size
-		if w_idx < len(words_list) - 1:
-			if valid_letters or any(ch in MORSE_MAP for ch in words_list[w_idx + 1]):
-				plan.append(seg_word)
-				total_samples += seg_word.size
+				standard_units += 3
+		if _suona(word) and any(_suona(w) for w in words_list[w_idx + 1:]):
+			plan.append(seg_word)
+			total_samples += seg_word.size
+			standard_units += 7
 	# --- Silenzio finale (5ms) ---
 	silence_samples_end = int(round(fs * 0.005))
 	if total_samples > 0 and silence_samples_end > 0:
@@ -919,100 +1051,242 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			audio[pos:pos + silence_samples_end] = 0
 	else:
 		audio = np.array([], dtype=np.int16)
-	# --- Calcolo rwpm (soglia: ≤3 caratteri → wpm nominale) ---
-	rwpm = wpm
-	if (l, s, p) != (30, 50, 50) and valid_char_count > 3:
-		dots = dashes = intra_gaps = letter_gaps_count = word_gaps_count = 0
-		for w_idx, w in enumerate(words_list):
-			current_word_letters = 0
-			for letter in w:
-				if letter in MORSE_MAP:
-					code = MORSE_MAP[letter]
-					if code:
-						dots += code.count('.')
-						dashes += code.count('-')
-						code_len = len(code)
-						if code_len > 1:
-							intra_gaps += (code_len - 1)
-						current_word_letters += 1
-			if current_word_letters > 1:
-				letter_gaps_count += (current_word_letters - 1)
-			if current_word_letters > 0 and w_idx < len(words_list) - 1:
-				if any(ch in MORSE_MAP and MORSE_MAP[ch] for ch in words_list[w_idx + 1]):
-					word_gaps_count += 1
-		standard_total_units = dots + 3 * dashes + intra_gaps + 3 * letter_gaps_count + 7 * word_gaps_count
-		actual_dot_units = p / 50.0
-		actual_dash_units = 3.0 * (l / 30.0)
-		actual_intra_gap_units = s / 50.0
-		actual_letter_gap_units = 3.0 * (s / 50.0)
-		actual_word_gap_units = 7.0 * (s / 50.0)
-		actual_total_units = (dots * actual_dot_units) + \
-							 (dashes * actual_dash_units) + \
-							 (intra_gaps * actual_intra_gap_units) + \
-							 (letter_gaps_count * actual_letter_gap_units) + \
-							 (word_gaps_count * actual_word_gap_units)
-		if standard_total_units > 0 and actual_total_units > 0:
-			ratio = actual_total_units / standard_total_units
-			rwpm = wpm / ratio
-		elif standard_total_units == 0 and actual_total_units == 0:
-			rwpm = wpm
+	# --- Calcolo di rwpm, la velocita' realmente prodotta ---
+	# Definizione PARIS: a X wpm si trasmette X volte al minuto la parola PARIS
+	# con il suo spazio finale, che vale cinquanta unita'. Un messaggio lungo U
+	# unita' dura quindi 1,2 per U diviso X secondi, e rovesciando si ha la
+	# velocita' a partire dalla durata: X uguale 1,2 per U diviso la durata.
+	# La durata usata qui e' quella dei campioni davvero generati, silenzio di
+	# coda escluso, non una durata ricalcolata a parte. Cosi' il numero
+	# annunciato non puo' discordare da cio' che si sente, qualunque cosa il
+	# messaggio contenga e qualunque sia il modo della dissolvenza.
+	# Fino alla V9.3 il conto si rifaceva in un secondo passaggio che percorreva
+	# il messaggio con regole leggermente diverse dal primo, e i due divergevano
+	# su tre casi: una parola di soli caratteri sconosciuti, un carattere a
+	# codice vuoto in coda a una parola, e i messaggi di tre caratteri o meno,
+	# per i quali il calcolo veniva saltato del tutto e si restituiva la
+	# velocita' nominale anche quando i pesi erano tutt'altro.
+	if (l, s, p) == (30, 50, 50):
+		# Pesi standard: la velocita' e' quella chiesta, e l'unico scarto e' la
+		# quantizzazione in campioni, sotto il decimo di per cento.
+		rwpm = wpm
+	else:
+		durata = (total_samples - silence_samples_end) / float(fs) if total_samples > 0 else 0.0
+		if standard_units > 0 and durata > 0:
+			rwpm = 1.2 * standard_units / durata
 		else:
 			rwpm = wpm
-			print("CWzator Warning: Calcolo rwpm anomalo, possibile input solo con spazi?", file=sys.stderr)
-	# --- Classe PlaybackHandle con caching ---
+	# --- Mixer e riproduzione, costruiti una volta sola ---
 	if not hasattr(CWzator, '_PlaybackHandle'):
+		CWzator._attivi = set()
+		CWzator._attivi_lock = threading.Lock()
+		CWzator._stream = None
+		CWzator._stream_fs = None
+		CWzator._stream_lock = threading.RLock()
+		CWzator._voci = []
+		CWzator._pompa = None
+		CWzator._stop_pompa = threading.Event()
+		# Quanti messaggi possono sovrapporsi. Sommarli e' il modo giusto:
+		# fino alla V9.5 ognuno apriva il proprio stream e la somma la faceva
+		# il sistema operativo, senza che nessuno la controllasse. Trentadue
+		# bastano a simulare un pile-up di stazioni che chiamano insieme.
+		# Quando sono tutte occupate la piu' vecchia lascia il posto, cosi'
+		# l'ultimo messaggio si sente sempre.
+		CWzator.VOCI_MAX = 32
+		# Dopo questo silenzio lo stream si chiude e la scheda torna libera;
+		# al messaggio successivo riapre da solo. Tenerlo aperto non costa CPU,
+		# misurato zero per cento, ma impegna il dispositivo e gli impedisce il
+		# risparmio energetico. E' la stessa soglia che usa Acusticator.
+		CWzator.SILENZIO_MAX = 120.0
+		def _pompa_audio(sample_rate, block_size):
+			"""Alimenta lo stream senza mai interrompersi, sommando le voci.
+			Tenere lo stream aperto non basta: se fra un messaggio e l'altro
+			nessuno scrive, il buffer si svuota, il dispositivo va in underrun,
+			ed e' li' che nasce lo schiocco. L'ascolto lo ha dimostrato, perche'
+			spariva soltanto quando venivano scritte anche le pause. Qui quindi
+			si scrive sempre: le voci attive sommate, e silenzio quando non c'e'
+			niente da suonare, finche' il silenzio non dura abbastanza da
+			chiudere e lasciare libera la scheda."""
+			silenzio = np.zeros((block_size, 2), dtype=np.int16)
+			try:
+				stream = sd.OutputStream(samplerate=sample_rate, channels=2, dtype=np.int16,
+										 blocksize=block_size, latency='low')
+				stream.start()
+			except Exception as e:
+				print(f"CWzator Mixer Error: {e}", file=sys.stderr)
+				with CWzator._stream_lock:
+					CWzator._pompa = None
+					for voce in CWzator._voci:
+						voce[2]._segna_fine()
+					CWzator._voci = []
+				return
+			with CWzator._stream_lock:
+				CWzator._stream = stream
+				CWzator._stream_fs = sample_rate
+			ultimo_suono = time.monotonic()
+			da_chiudere = []
+			try:
+				while not CWzator._stop_pompa.is_set():
+					adesso = time.monotonic()
+					# Una voce si dichiara conclusa non quando finiscono i suoi
+					# campioni, ma quando sono usciti davvero dal dispositivo,
+					# cioe' una latenza piu' tardi. E' quello che aspetta chi
+					# ha chiesto sync.
+					if da_chiudere:
+						rimasti = []
+						for quando, handle in da_chiudere:
+							if adesso >= quando:
+								handle._segna_fine()
+							else:
+								rimasti.append((quando, handle))
+						da_chiudere = rimasti
+					with CWzator._stream_lock:
+						voci = list(CWzator._voci)
+					if voci:
+						ultimo_suono = adesso
+						somma = np.zeros((block_size, 2), dtype=np.float32)
+						finite = []
+						for voce in voci:
+							dati = voce[0]
+							pezzo = dati[voce[1]:voce[1] + block_size]
+							if pezzo.size:
+								somma[:pezzo.size, 0] += pezzo * voce[3]
+								somma[:pezzo.size, 1] += pezzo * voce[4]
+							voce[1] += block_size
+							if voce[1] >= dati.size:
+								finite.append(voce)
+						if finite:
+							with CWzator._stream_lock:
+								CWzator._voci = [v for v in CWzator._voci
+												 if not any(v is f for f in finite)]
+							for v in finite:
+								da_chiudere.append((adesso + stream.latency, v[2]))
+						blocco = np.clip(somma, -32768, 32767).astype(np.int16)
+					else:
+						blocco = silenzio
+						if not da_chiudere and adesso - ultimo_suono > CWzator.SILENZIO_MAX:
+							break
+					stream.write(blocco)
+			except sd.PortAudioError as pae:
+				print(f"CWzator Mixer PortAudioError: {pae}", file=sys.stderr)
+			except Exception as e:
+				print(f"CWzator Mixer Error: {e}", file=sys.stderr)
+			finally:
+				try:
+					stream.abort()
+					stream.close()
+				except Exception:
+					pass
+				with CWzator._stream_lock:
+					CWzator._stream = None
+					CWzator._stream_fs = None
+					CWzator._pompa = None
+					restate = list(CWzator._voci)
+					CWzator._voci = []
+				for voce in restate:
+					voce[2]._segna_fine()
+				for _quando, handle in da_chiudere:
+					handle._segna_fine()
+		def _ferma_pompa(attesa=2.0):
+			"""Ferma il mixer e libera la scheda, aspettando che il suo thread
+			sia davvero uscito da PortAudio."""
+			with CWzator._stream_lock:
+				pompa = CWzator._pompa
+				restate = list(CWzator._voci)
+				CWzator._voci = []
+			for voce in restate:
+				voce[2]._segna_fine()
+			CWzator._stop_pompa.set()
+			try:
+				if pompa is not None and pompa.is_alive():
+					pompa.join(attesa)
+			finally:
+				CWzator._stop_pompa.clear()
+		def _chiudi_riproduzioni(attesa=2.0):
+			"""Ferma le riproduzioni in corso, ne aspetta la fine e chiude il
+			mixer.
+			Serve prima che l'interprete cominci a smontare i moduli: un thread
+			daemon sorpreso dentro PortAudio fa morire il processo, e su Windows
+			il codice di uscita e' 0xC0000374, corruzione dell'heap. Chiedere
+			l'arresto non basta, perche' il thread ha comunque bisogno del suo
+			tempo per uscire dallo stream: bisogna anche attenderlo.
+			Registrata con atexit, e disponibile al chiamante che voglia
+			chiudere in modo ordinato prima di uscire per conto suo."""
+			_ferma_pompa(attesa)
+		CWzator.chiudi_riproduzioni = staticmethod(_chiudi_riproduzioni)
+		atexit.register(_chiudi_riproduzioni)
 		class _PlaybackHandle:
-			def __init__(self, audio_data, sample_rate, block_size):
+			def __init__(self, audio_data, sample_rate, block_size, pan=0):
 				self.audio_data = audio_data
 				self.sample_rate = sample_rate
 				self._block_size = block_size
+				# Legge a potenza costante: al centro i due lati stanno a meno
+				# tre decibel ciascuno, cosi' la somma dei due resta la stessa
+				# a qualunque posizione e una stazione al centro non si sente
+				# piu' debole di una tutta da un lato.
+				angolo = (max(-100.0, min(100.0, float(pan))) / 100.0 + 1.0) * (np.pi / 4.0)
+				self.pan = pan
+				self._gain_sx = np.float32(np.cos(angolo))
+				self._gain_dx = np.float32(np.sin(angolo))
 				self.stream = None
 				self.is_playing = threading.Event()
-				self._thread = None
+				# Parte gia' concluso: chi chiede sync senza aver mai avviato
+				# la riproduzione, per esempio con play a falso, non deve
+				# restare appeso.
+				self._finito = threading.Event()
+				self._finito.set()
 				self._lock = threading.Lock()
-			def _playback_target(self):
-				"""Target function per il thread di riproduzione."""
-				self.is_playing.set()
-				try:
-					with sd.OutputStream(
-						samplerate=self.sample_rate, channels=1, dtype=np.int16,
-						blocksize=self._block_size, latency='low'
-					) as stream:
-						with self._lock:
-							self.stream = stream
-						for i in range(0, len(self.audio_data), self._block_size):
-							if not self.is_playing.is_set():
-								try:
-									stream.stop()
-								except Exception:
-									pass
-								break
-							block = self.audio_data[i:min(i + self._block_size, len(self.audio_data))]
-							stream.write(block)
-						if self.is_playing.is_set():
-							pass
-				except sd.PortAudioError as pae:
-					print(f"CWzator Playback PortAudioError: {pae}", file=sys.stderr)
-				except Exception as e:
-					print(f"CWzator Playback Error: {e}", file=sys.stderr)
-				finally:
-					self.is_playing.clear()
-					with self._lock:
-						self.stream = None
-			def play(self):
-				"""Avvia la riproduzione in un thread separato."""
-				with self._lock:
-					if not self.is_playing.is_set() and self.audio_data.size > 0:
-						self._thread = threading.Thread(target=self._playback_target)
-						self._thread.daemon = True
-						self._thread.start()
-			def wait_done(self):
-				"""Attende la fine della riproduzione corrente."""
-				if self._thread is not None and self._thread.is_alive():
-					self._thread.join()
-			def stop(self):
-				"""Richiede l'interruzione della riproduzione."""
+			def _segna_fine(self):
+				"""Chiamato dal mixer quando l'audio di questa voce e' uscito."""
 				self.is_playing.clear()
+				self._finito.set()
+				with CWzator._attivi_lock:
+					CWzator._attivi.discard(self)
+			def play(self):
+				"""Aggiunge il messaggio al mixer, che lo somma agli altri.
+				Piu' messaggi possono suonare insieme, fino a VOCI_MAX, e non
+				si interrompono a vicenda: e' cosi' che si puo' simulare un
+				pile-up. Cambiando frequenza di campionamento il mixer si rifa',
+				perche' quella non si cambia a stream aperto, e le riproduzioni
+				in corso si fermano."""
+				with self._lock:
+					if self.is_playing.is_set():
+						return
+					if self.audio_data.size == 0:
+						self._finito.set()
+						return
+					self.is_playing.set()
+					self._finito.clear()
+				with CWzator._attivi_lock:
+					CWzator._attivi.add(self)
+				with CWzator._stream_lock:
+					pompa = CWzator._pompa
+					fs_attuale = CWzator._stream_fs
+				if (pompa is not None and pompa.is_alive()
+						and fs_attuale is not None and fs_attuale != self.sample_rate):
+					_ferma_pompa()
+				with CWzator._stream_lock:
+					while len(CWzator._voci) >= CWzator.VOCI_MAX:
+						vecchia = CWzator._voci.pop(0)
+						vecchia[2]._segna_fine()
+					CWzator._voci.append([self.audio_data, 0, self, self._gain_sx, self._gain_dx])
+					self.stream = CWzator._stream
+					if CWzator._pompa is None or not CWzator._pompa.is_alive():
+						CWzator._pompa = threading.Thread(
+							target=_pompa_audio,
+							args=(self.sample_rate, self._block_size),
+							daemon=True)
+						CWzator._pompa.start()
+			def wait_done(self, timeout=None):
+				"""Attende la fine della riproduzione corrente.
+				Con timeout in secondi smette di attendere allo scadere e
+				torna comunque: senza, come prima, aspetta quanto serve."""
+				self._finito.wait(timeout)
+			def stop(self):
+				"""Toglie questo messaggio dal mixer. Gli altri proseguono."""
+				with CWzator._stream_lock:
+					CWzator._voci = [v for v in CWzator._voci if v[2] is not self]
+				self._segna_fine()
 			def __del__(self):
 				"""Cleanup automatico: ferma la riproduzione se l'oggetto viene distrutto."""
 				try:
@@ -1022,9 +1296,13 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		CWzator._PlaybackHandle = _PlaybackHandle
 	# --- Creazione Oggetto e Avvio Playback ---
 	PlaybackHandle = CWzator._PlaybackHandle
-	play_obj = PlaybackHandle(audio, fs, BLOCK_SIZE)
-	CWzator._last_play_obj = play_obj
-	play_obj.play()
+	play_obj = PlaybackHandle(audio, fs, BLOCK_SIZE, pan)
+	# Il registro delle riproduzioni attive, che play riempie e il thread
+	# svuota, tiene vivo l'oggetto finche' suona e serve alla chiusura
+	# ordinata. Sostituisce _last_play_obj, che teneva in memoria l'ultimo
+	# buffer per tutta la vita del processo anche a suono finito da un'ora.
+	if play:
+		play_obj.play()
 	# --- Salvataggio File ---
 	if to_file:
 		default_name = f"cwapu Morse recorded at {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"

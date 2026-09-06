@@ -100,3 +100,30 @@ rimandato, e che con INVIO annunci lo scaricamento e poi gli avanzamenti, che
 sono dieci, uno ogni dieci per cento, in righe corte come "30%, 26,2 MB su 87,5."
 Dimmi se dieci annunci sono troppi o troppo pochi per il tuo ascolto.
 Esito:
+LE PROVE D'ASCOLTO DI CWZATOR SI FANNO CON UNO SCRIPT, NON A MANO
+Aggiornato il 2026-09-06 su richiesta di Gabriele.
+Le prove d'ascolto di CWzator, quelle nate dal refactoring di fase 1, non
+stanno piu' scritte qui. Le conduce collaudo_cw.py, in questa cartella, che le
+presenta una alla volta, spiega prima cosa si sta per sentire e cosa osservare,
+aspetta un tasto, riproduce, e poi lascia scegliere se riascoltare, dichiarare
+che va bene o lasciare un commento.
+Come si lancia: apri un prompt in questa cartella e scrivi
+  python collaudo_cw.py
+I tasti: Invio per ascoltare, s per saltare una prova, q per uscire; dopo
+l'ascolto r per riascoltare, b se va bene, c per commentare.
+Il lavoro si puo' interrompere e riprendere quando vuoi: le prove gia' chiuse
+non vengono riproposte. Gli esiti si accumulano in collaudo_cw_esiti.txt, che
+e' il file che leggo io alla ripresa del lavoro.
+Le prove sono sedici e crescono man mano che il lavoro procede: coprono la coda
+dei messaggi, lo schiocco sugli elementi corti e su quelli cortissimi, la forma
+della dissolvenza e il rapporto fra punto e linea, la velocita' annunciata, il
+ritmo fra un messaggio e l'altro, le alte velocita' in due modi, la caccia allo
+schiocco in chiusura, il mixer, il pile-up e il panning.
+Le prove si riconoscono dal titolo e non dal numero, quindi aggiungerne una in
+mezzo non fa saltare quelle gia' registrate.
+Sul rallentamento, che risponde al fatto che oltre i 60 wpm non si legge:
+l'audio viene generato alla velocita' vera e riprodotto a un terzo della
+frequenza di campionamento. Le durate di punto, linea e spazi restano nelle
+stesse proporzioni fra loro, cambia soltanto l'altezza della nota, che scende
+di un'ottava e mezza. Serve a giudicare la forma degli elementi e la pulizia
+della manipolazione senza doverli leggere.

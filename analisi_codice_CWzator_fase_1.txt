@@ -1,0 +1,177 @@
+Analisi del codice, fase 1
+Progetto: GBUtils, utilita' CWzator
+Versione analizzata: CWzator V9.1, dentro GBUtils.py V111
+Versione corrente: CWzator V9.7, dentro GBUtils.py V118
+Fase: 1
+Data: 2026-09-06
+Analisi eseguita da: ClaudIA, Claude Opus 5 in modalita' auto
+Autori del progetto: Gabriele Battaglia (IZ4APU) & ClaudIA
+Nota sul nome del file: il punto 4.1 del documento di refactoring prevede analisi_codice_fase_x.txt, ma in questa cartella convivono diciannove voci di tabella con fasi diverse. Il nome porta quindi anche il nome dell'utilita'. Se preferisci un'altra convenzione si rinomina.
+Nota di metodo: le correzioni si applicano un blocco alla volta, e un rilievo risolto si cancella da questo file secondo il punto 4.1.1. I numeri dei rilievi non vengono rifatti quando qualcuno sparisce, cosi' i rimandi presi altrove restano validi: se la numerazione salta, vuol dire che quel rilievo e' stato chiuso.
+Stato di avanzamento delle correzioni
+Blocchi 1, 2 e 3 applicati il 2026-09-06, insieme ai lavori nati dai collaudi: versione CWzator V9.7 dentro GBUtils.py V118. Chiusi dieci rilievi, cioe' 1, 2, 3, 4, 5, 9, 10, 12, 13 e 18. Il resoconto di cosa e' stato fatto sta nel messaggio di commit e nell'elenco delle utilita' in cima a GBUtils.py, come vuole il punto 4.1.1: qui restano soltanto le decisioni che vincolano il lavoro futuro e cio' che e' ancora aperto.
+Decisioni prese con Gabriele il 2026-09-06, da non rimettere in discussione senza un motivo nuovo.
+Il tetto della velocita' e' 120 wpm e non 200: a 550 Hz un punto a 200 wpm contiene 3,3 cicli d'onda, e sotto i quattro un tono smette di essere un tono. Con le note basse e' peggio ancora.
+I due valori predefiniti della dissolvenza restano sul comportamento storico, cioe' fade_mode fisso e fade_shape lineare. Confermati sia dall'orecchio sia dalla misura dello spettro, che dice che il coseno rialzato conviene soltanto con dissolvenze lunghe.
+La scala del pan va da meno cento a piu' cento, diversa da quella di Acusticator che va da meno uno a piu' uno. La differenza e' voluta, perche' la prima e' piu' leggibile per chi la usa, ed e' scritta nella documentazione di entrambe.
+Restano per ora due mixer nel parco software, questo e quello di Acusticator. La strada giusta e' estrarne uno solo e condiviso, portandolo alla scrittura bloccante cosi' da chiudere anche la issue 1 di questo repository, e si fara' quando arrivera' il turno di Acusticator.
+La sovrapposizione dei messaggi e' una capacita' e non un effetto collaterale: serve a simulare un pile-up e non va tolta. Trentadue voci di partenza, configurabili.
+Cinque collaudi d'ascolto, sedici prove, tutte superate. Tre difetti importanti li ha trovati l'orecchio di Gabriele e non le mie misure: la coda dei messaggi tagliata, la causa vera dello schiocco, che era il buffer che si svuotava e non l'apertura dello stream, e il fatto che togliere la sovrapposizione fosse una perdita.
+Aperto, e aspetta una decisione: passare lo stream da MME a WASAPI. Misurato, porterebbe la latenza da 104 a 22 ms e toglierebbe altri 82 ms di attesa alla coda di ogni messaggio, ma cambia il dispositivo audio per tutti gli utenti. Da valutare insieme al rilievo 4, che era stato chiuso con una soluzione diversa proprio perche' questa restava da decidere.
+1. Perimetro esaminato
+GBUtils.py, la funzione CWzator per intero, comprese la mappa Morse, la validazione, la sintesi, il calcolo di rwpm, la classe interna _PlaybackHandle e il salvataggio su file. Erano le righe da 753 a 1059, cioe' 307, al momento dell'analisi; dopo il blocco 3 sono le righe da 753 a 1182, cioe' 430. Il secondo passaggio del calcolo della velocita', quaranta righe, e' sparito, ma i commenti che spiegano le correzioni lo hanno pareggiato. I riferimenti di riga qui sotto sono gia' aggiornati alla V9.3.1.
+Chiamanti censiti in tutto il parco software: soltanto cwapu.py, con 24 chiamate, piu' la copia di riserva in cwapu/backup. Nessun altro progetto importa CWzator.
+2. Issue aperte del repository GBUtils
+Issue 5, manuale deve impaginare anche un testo in memoria: non riguarda CWzator, resta aperta.
+Issue 1, sounddevice avvisa su NumPy 2.5 nel mixer a callback di Acusticator: non riguarda CWzator, che non usa il callback ma la scrittura bloccante. L'analisi conferma indirettamente quanto scritto nella issue, cioe' che la scrittura bloccante e' immune a quel problema.
+Nessuna issue aperta riguarda CWzator. I tredici rilievi qui sotto sono quindi tutti nuovi.
+3. Misure eseguite
+Tutte le prove sono state fatte a volume zero oppure fermando la riproduzione prima che uscisse suono, sul dispositivo Altoparlanti Realtek. Ogni valore di tempo e' la mediana di sette ripetizioni.
+3.1 Costo della generazione
+Ritorno di CWzator non sincrona: 0,39 ms per due caratteri, 0,57 per diciassette, 1,16 per cento. La generazione dell'audio non e' un collo di bottiglia e non lo diventa alle alte velocita'.
+3.2 Precisione della durata degli elementi
+Durate reali lette dall'inviluppo dell'audio prodotto, contro le durate teoriche, sul messaggio paris.
+wpm 35: punto atteso 34,286 ms, misurato 34,286. Linea attesa 102,857, misurata 102,721.
+wpm 60: punto atteso 20,000, misurato 19,932. Linea attesa 60,000, misurata 59,932.
+wpm 90: punto atteso 13,333, misurato 13,333. Linea attesa 40,000, misurata 39,932.
+wpm 100: punto atteso 12,000, misurato 11,837. Linea attesa 36,000, misurata 36,009.
+Lo scarto massimo e' 0,163 ms, e la gran parte di quel numero e' la risoluzione del mio metodo di misura, non un errore del codice. La sintesi e' quindi accurata.
+3.3 Quantizzazione in campioni e deriva
+La durata del punto viene arrotondata una volta sola a un numero intero di campioni, e quel segmento viene poi ripetuto. L'errore percentuale sul punto, a 44100 Hz, e' zero a 20, 35, 60, 70 e 90 wpm, meno 0,038 per cento a 50 e a 100, piu' 0,076 a 80, piu' 0,066 a 85. Su un messaggio di cinquecento elementi la deriva accumulata vale piu' 5,67 ms a 80 wpm, piu' 4,67 a 85, zero a 90, meno 0,60 a 95, meno 2,27 a 100.
+3.4 Precisione della velocita' a pesi standard
+Errore fra la velocita' realmente prodotta e quella chiesta, sul nominativo iz4apu, con l 30, s 50 e p 50. E' l'unico errore rimasto sul cw tradizionale, che e' quello su cui Gabriele chiede la precisione massima.
+A 44100 Hz: zero a 18, 25 e 60 wpm, piu' 0,006 per cento a 37, piu' 0,020 a 50. Alla velocita' e alla frequenza di campionamento usate oggi in cwapu l'errore vale due millesimi di wpm.
+A 8000 Hz, la piu' bassa che cwapu offre, il caso peggiore e' piu' 0,104 per cento a 37 wpm, cioe' quattro centesimi di wpm.
+A 48000 e a 96000 Hz l'errore resta sempre sotto lo 0,01 per cento.
+Su mille item consecutivi a 37 wpm la deriva accumulata vale 114 ms su circa 1900 secondi, cioe' lo 0,006 per cento.
+Conseguenza per il rilievo 14: resta di gravita' bassa. Correggere la quantizzazione non migliorerebbe niente di percepibile ne' di statisticamente rilevante, e costerebbe la pre-generazione dei cinque segmenti base, che oggi e' quello che rende veloce la sintesi.
+3.5 Larghezza di banda della manipolazione
+Energia sparsa attorno alla nota, in dB sotto il picco, misurata sullo spettro del messaggio paris paris a 550 Hz. Serve a scegliere la forma della rampa con un numero invece che a orecchio.
+Con ms 1 e rampa dritta: meno 24,3 dB a 100 Hz di distanza dalla nota, meno 43,2 a 500, meno 60,3 a 1000.
+Con ms 1 e rampa morbida: meno 24,1 a 100 Hz, meno 41,1 a 500, meno 54,4 a 1000.
+Con ms 5 e rampa dritta: meno 30,7 a 100 Hz, meno 56,1 a 500, meno 69,2 a 1000.
+Con ms 5 e rampa morbida: meno 27,8 a 100 Hz, meno 67,6 a 500, meno 83,8 a 1000.
+A 120 wpm con ms 1: la dritta da' meno 31,8 a 500 Hz, la morbida meno 29,3.
+Lettura: il coseno rialzato conviene soltanto con dissolvenze lunghe, dove guadagna da 11 a 15 dB. Con la dissolvenza da un millesimo, che e' il valore predefinito di cwapu, la rampa dritta e' uguale o leggermente migliore, e alle alte velocita' lo e' di quasi 9 dB. Il predefinito lasciato su lineare risulta quindi quello giusto per il caso d'uso reale, cosa che a intuito avrei sbagliato.
+3.6 Tenuta della riproduzione alle alte velocita'
+Messaggio cq cq de iz4apu iz4apu k, confronto fra durata dell'audio e tempo reale trascorso.
+wpm 90 a 44100 Hz: audio 3138,3 ms, reale 3293,8, scarto piu' 155,4.
+wpm 90 a 96000 Hz: audio 3138,3 ms, reale 3284,2, scarto piu' 145,9.
+wpm 90 a 192000 Hz: audio 3138,3 ms, reale 3283,8, scarto piu' 145,5.
+wpm 35 a 44100 Hz: audio 8062,1 ms, reale 8201,5, scarto piu' 139,4.
+Misure prese prima del blocco 2, quando la chiusura dello stream costava 128 ms fissi. Lo scarto era costante e coincideva con quella chiusura. Il dato che resta valido, ed e' il motivo per cui la sezione non si cancella, e' che non ci sono vuoti di buffer nemmeno a 192 kHz: la scrittura tiene il passo a qualunque velocita' e a qualunque frequenza di campionamento.
+4. Rilievi in ordine di gravita' decrescente
+4.2 Rilievi alti
+Rilievo 6
+Gravita': alto
+Categoria: regole generali
+File e riga: GBUtils.py 851, 865, 868, 871, 874, 877, 880, 1109, 1111, 1178
+Problema: la funzione stampa dieci messaggi d'errore diversi su sys.stderr e non li riferisce mai a chi l'ha chiamata. Il punto 3.8 del documento di refactoring dice l'opposto: una utilita' gli errori li riferisce con un valore di ritorno o con un'eccezione e non li stampa per conto proprio. Il caso peggiore e' l'errore di riproduzione, che nasce dentro il thread: il chiamante ha gia' ricevuto il suo PlaybackHandle e non ha nessun modo di sapere che l'audio non e' uscito.
+Impatto per l'utente: in un eseguibile PyInstaller compilato senza console i messaggi si perdono del tutto e il programma resta muto senza spiegazioni. Anche con la console, i messaggi sono in inglese misto a italiano e non passano dal catalogo delle traduzioni, quindi in cwapu compaiono in una lingua che l'utente potrebbe non aver scelto.
+Correzione proposta: aggiungere al PlaybackHandle un attributo con l'ultimo errore di riproduzione, valorizzato dal thread, e restituire gli errori di validazione come eccezione oppure lasciarli come coppia None, None ma senza stampare. Chi vuole ancora i messaggi a schermo se li stampa da fuori. Per non rompere i chiamanti attuali, la stampa puo' restare dietro un parametro nuovo, per esempio verbose=False, che ripete il comportamento di prima solo se richiesto.
+Rilievo 7
+Gravita': alto
+Categoria: fragilita'
+File e riga: GBUtils.py 847 e 848
+Problema: get_map restituisce direttamente il dizionario interno CWzator._morse_map, non una copia. Il chiamante puo' quindi modificarlo, e la modifica vale da quel momento per tutto il programma.
+Verifica: due chiamate consecutive restituiscono lo stesso oggetto, e una chiave aggiunta dal chiamante si ritrova nella mappa interna alla chiamata successiva.
+Impatto per l'utente: e' una bomba a orologeria. Oggi cwapu legge la mappa alla riga 91 e non la tocca, quindi non succede niente, ma il primo programma che ci scriva dentro cambia il codice Morse di tutto il processo, e sarebbe un difetto di quelli che non si trovano.
+Correzione proposta: restituire dict(CWzator._morse_map), oppure una MappingProxyType che rende evidente la sola lettura.
+4.3 Rilievi medi
+Rilievo 8
+Gravita': medio
+Categoria: regole generali
+File e riga: GBUtils.py 1153, 1165 e 1171
+Problema: due dipendenze che il punto 3.8 vieta esplicitamente. Il nome predefinito del file WAV e' cwapu Morse recorded at, cioe' porta scritto dentro il nome di una applicazione che non e' la libreria. E quando si chiede to_file senza indicare un percorso, il file finisce nella directory di lavoro, che e' la cosa che l'utilita' non deve mai usare per indovinare dove stanno le cose.
+Impatto per l'utente: lanciando cwapu da una cartella qualsiasi, per esempio dal desktop, la registrazione finisce li' invece che accanto all'applicazione, e chi non e' cwapu si ritrova file che si chiamano cwapu.
+Correzione proposta: nome predefinito neutro, per esempio Morse seguito dalla data, e cartella ricavata con _cartella_chiamante, che in questo stesso file esiste gia' alla riga 41 e serve proprio a questo.
+Rilievo 11
+Gravita': medio
+Categoria: fragilita'
+File e riga: GBUtils.py 1155
+Problema: wave_output_path_file non viene validato. Se il chiamante passa qualcosa che non e' una stringa, per esempio un oggetto Path oppure un numero, la chiamata a strip solleva AttributeError, e la riga sta fuori dal try che comincia alla 1168.
+Impatto per l'utente: l'applicazione si interrompe con un traceback invece di ricevere un errore parlante, e per giunta dopo che la riproduzione e' gia' partita.
+Correzione proposta: aggiungere il controllo di tipo in cima, insieme agli altri, accettando anche os.PathLike e convertendolo con os.fspath.
+4.4 Rilievi bassi
+Rilievo 14
+Gravita': basso
+Categoria: logica
+File e riga: GBUtils.py da 883 a 888, e 920
+Problema: la durata di ciascun tipo di elemento viene arrotondata una volta sola a un numero intero di campioni, e quel segmento viene poi ripetuto identico per tutto il messaggio. L'errore di arrotondamento non si compensa quindi mai: si somma.
+Verifica: misurato al punto 3.4. L'errore percentuale sul punto e' zero a 20, 35, 60, 70 e 90 wpm, e vale al massimo piu' 0,076 per cento a 80 wpm. Su un messaggio di cinquecento elementi la deriva vale al massimo piu' 5,67 ms, sempre a 80 wpm.
+Impatto per l'utente: nessuno udibile. Cinque millesimi di deriva su un messaggio di cinquecento elementi sono meno di mezzo campione per elemento, e nessun orecchio li sente. Lo segnalo lo stesso perche', dopo le correzioni dei rilievi 2 e 3, questa resta l'unica imprecisione strutturale rimasta nella sintesi, e chi cerca il bisturi vuole sapere dov'e' il filo.
+Correzione proposta: tenere la posizione di scrittura come numero in virgola mobile e ricavare il numero di campioni di ogni elemento dalla differenza fra due arrotondamenti successivi, invece che arrotondando la durata una volta sola. Costa poche righe e azzera la deriva. Da fare solo se e quando si mette mano a quella parte, non da sola.
+Rilievo 15
+Gravita': basso
+Categoria: ottimizzazione
+File e riga: GBUtils.py 753 e 847
+Problema: msg e' un parametro obbligatorio anche quando si chiede soltanto la mappa. Per ottenere il dizionario bisogna passare una stringa vuota insieme a get_map, cioe' un valore che non verra' guardato.
+Correzione proposta: dare a msg un valore predefinito, oppure, meglio, esporre la mappa come funzione separata, per esempio mappa_morse, lasciando get_map dov'e' per compatibilita'.
+Rilievo 16
+Gravita': basso
+Categoria: ottimizzazione
+File e riga: GBUtils.py 794 e 847
+Problema: il vecchio modo di chiedere la mappa, cioe' passare msg uguale a meno uno, e' dichiarato deprecato nella docstring, ma e' ancora l'unico che cwapu usa, alla riga 91. Finche' l'unico chiamante non passa a get_map, la deprecazione e' soltanto scritta.
+Correzione proposta: convertire cwapu, cosa che va fatta comunque nella sua analisi, e poi decidere se togliere il ramo o lasciarlo.
+Rilievo 17
+Gravita': basso
+Categoria: ottimizzazione
+File e riga: nessuna, il rilievo si e' chiuso da solo
+Problema: erano due tratti di codice morto. Il primo, un if seguito da pass dentro il thread di riproduzione, e' sparito con il blocco 2. Il secondo, un ramo elif indistinguibile dal ramo generale dentro il calcolo della velocita', e' sparito con il blocco 3 insieme a tutto il secondo passaggio.
+Stato: risolto, si cancella alla prossima revisione di questo file.
+Rilievo 19
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py da 1152 a 1178
+Problema: la funzione non dice al chiamante dove ha salvato il file, e nemmeno se ci e' riuscita. Il nome effettivo si costruisce dentro, con una data, e il chiamante non lo puo' prevedere.
+Correzione proposta: aggiungere il percorso effettivo fra i valori restituiti, o come attributo del PlaybackHandle.
+Rilievo 20
+Gravita': basso
+Categoria: ottimizzazione
+File e riga: GBUtils.py 827
+Problema: scipy viene importato a ogni chiamata anche quando serve l'onda sinusoidale, che e' il valore predefinito e quello che cwapu usa. Serve soltanto per le onde 2, 3 e 4.
+Impatto: nessuno percepibile a esecuzione, perche' l'import successivo al primo costa pochissimo. Conterebbe per PyInstaller, che vede la dipendenza sempre e la impacchetta comunque, ma scipy e' importato anche alla riga 2257 e alla 2664 di GBUtils.py, quindi togliendolo di qui la dipendenza non sparisce dal pacchetto: il guadagno sarebbe soltanto per chi importa CWzator da solo.
+Correzione proposta: spostare l'import dentro il ramo che lo usa. Da valutare se ne vale la pena, visto quanto sopra.
+Rilievo 21
+Gravita': basso
+Categoria: regole generali
+File e riga: tutta la funzione
+Problema: ruff riporta otto rilievi dentro la funzione, su trentadue dell'intero GBUtils.py. Nel dettaglio: tre RUF046, cast a intero di un valore gia' intero, alle righe 920, 950 e 999; tre BLE001, except Exception nudo, alle righe 1110, 1140 e 1177; un S110, try except pass, alla riga 1140; un DTZ005, datetime.now senza fuso, alla riga 1153.
+Nota: i tre RUF046 nascono da int di round, dove round con un solo argomento restituisce gia' un intero, quindi togliere int e' sicuro; un quarto e' sparito con il blocco 1, due BLE001 con il blocco 2 e i due SIM102 con il blocco 3. I BLE001 delle righe 1110 e 1177 sono voluti, perche' li' si vuole davvero prendere tutto, e vanno semmai stretti a eccezioni nominate insieme al rilievo 6.
+Correzione proposta: sistemarli contestualmente agli altri interventi.
+Rilievo 22
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py 755, e la riga 11, cioe' quella corrispondente nell'elenco in cima al file
+Problema: l'intestazione riporta Gabriele Battaglia (IZ4APU) e Stella, Gemini 3.5 Flash. La regola chiede Gabriele Battaglia (IZ4APU) & ClaudIA con modello e modalita' del momento. Va aggiunta ClaudIA quando si tocchera' la funzione, senza cancellare la paternita' di Stella ne' la citazione dell'idea originale di Kevin Schmidt W9CF.
+Correzione proposta: aggiornare intestazione, versione e data alla prima modifica applicata.
+Rilievo 23
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py da 754 a 816, la docstring
+Problema: la docstring non dice tre cose che il chiamante deve sapere. Non dice che lo spazio e il trattino basso stanno nella mappa con codice vuoto e servono da segnaposti di silenzio, che e' l'uso che cwapu ne fa. Non dice che i caratteri fuori mappa vengono scartati in silenzio. Non dice che, se nessun carattere del messaggio e' nella mappa, si riceve un PlaybackHandle valido e muto, con rwpm uguale a wpm e nessuna segnalazione: verificato con un messaggio di soli cancelletti, che produce zero campioni.
+Correzione proposta: completare la docstring, e valutare se il messaggio interamente muto meriti di essere segnalato al chiamante insieme al rilievo 6.
+5. Cosa e' risultato solido
+La durata degli elementi e' accurata. Misurata sull'inviluppo dell'audio prodotto, a 35, 60, 90 e 100 wpm, lo scarto massimo dalla durata teorica e' 0,163 ms, e la gran parte di quel numero e' la risoluzione del metodo di misura. La spaziatura fra elementi, fra lettere e fra parole e' esatta al campione. Sul piano della scansione dei tempi CWzator il bisturi lo era gia' prima del blocco 1: quello che mancava era la forma dell'inviluppo, ed e' cio' che il blocco 1 ha sistemato.
+La generazione dell'audio e' velocissima e non e' un collo di bottiglia: da 0,39 a 1,16 ms secondo la lunghezza, contro i 130 ms dello stream. La preallocazione dell'array e il riuso dei cinque segmenti base sono fatti bene.
+La scrittura tiene il passo a qualunque velocita' e a qualunque frequenza di campionamento. Provato a 90 wpm con 44100, 96000 e 192000 Hz: lo scarto fra durata dell'audio e tempo reale resta costante e coincide con l'arresto dello stream, quindi non ci sono vuoti di buffer.
+La scelta di rendere tutto il messaggio in un array unico e di scriverlo su uno stream solo e' quella giusta per la precisione: non c'e' nessuna schedulazione per elemento e quindi nessun jitter fra un punto e il successivo. Il blocco 2 l'ha conservata intatta, limitandosi a cambiare il modo in cui lo stream si chiude.
+La scelta della scrittura bloccante invece del callback tiene CWzator fuori dal problema descritto nella issue 1 di questo repository.
+La validazione dei parametri e' completa per gli otto valori numerici, per wv e, dal blocco 1, per i due parametri della dissolvenza, ed e' scritta in forma tabellare invece che ripetuta: il rilievo 6 riguarda quindi come gli errori vengono comunicati, non se vengono rilevati.
+La costruzione del nome del file WAV, con la distinzione fra solo cartella, solo nome e cartella piu' nome, e' pensata bene e copre i quattro casi.
+Le frequenze di campionamento offerte da cwapu, da 8000 a 384000, sono state provate tutte: su questa macchina il dispositivo le accetta tutte e nessuna produce errori.
+6. Riepilogo
+Rilievi critici: 0.
+Rilievi alti: 2.
+Rilievi medi: 2.
+Rilievi bassi: 9.
+Totale: 13, cioe' i ventitre iniziali meno i tre chiusi dal blocco 1, i tre del blocco 2, i due del blocco 3, il rilievo 18 anticipato perche' serviva subito e il rilievo 13 chiuso con lo stream persistente.
+Ordine di lavorazione, aggiornato al 2026-09-06
+Blocco 1, l'inviluppo: fatto, in attesa del riascolto.
+Blocco 2, lo stream: fatto, in attesa del riascolto. La strada scelta non e' quella che questo rapporto proponeva, ed e' bene che resti scritto perche': misurando si e' visto che l'arresto dello stream non stava drenando niente, dato che scrivere 500 ms di audio ne chiede 523 e quando l'ultima scrittura ritorna il suono e' gia' uscito. I 128 ms erano un costo fisso del driver. E' bastato quindi chiudere con abort invece che con stop, aspettando prima l'eventuale tempo residuo, senza toccare la struttura e senza il rischio dello stream persistente, che avrebbe cambiato il comportamento delle riproduzioni sovrapposte.
+Blocco 3, i numeri detti all'utente: fatto, in attesa del riascolto. La prova 18 chiede di verificare a orecchio che la velocita' annunciata corrisponda a quella che si sente, che e' l'unico controllo che una misura non puo' fare da sola.
+Blocco 4, il contratto verso i chiamanti. Rilievi 6, 7, 11 e 19, cioe' errori riferiti a chi chiama, mappa non modificabile, validazione del percorso, memoria trattenuta, play piu' solido, riproduzione facoltativa e percorso restituito. Qui cambia la firma, quindi ogni aggiunta nasce con un valore predefinito che ripete il comportamento di prima, come si e' fatto nel blocco 1 con fade_mode e fade_shape. Da valutare qui anche il passaggio a WASAPI descritto sopra, che appartiene al rilievo 4 ma cambia il contratto con il dispositivo audio.
+Blocco 5, pulizia. Rilievi 8, 14, 15, 16, 17, 20, 21, 22 e 23. Il rilievo 16 va coordinato con l'analisi di cwapu, che e' l'unico chiamante, e il rilievo 14 si fa solo se si mette mano alla generazione delle durate.
+7. Prove che richiedono l'orecchio di Gabriele
+Il blocco 1 ha cambiato il suono, quindi il collaudo.txt di questa cartella si e' allungato di quattro prove, dalla 12 alla 15. La 12 e la 13 sono confronti a orecchio e servono a decidere due valori predefiniti che al momento sono fermi sul comportamento storico, cioe' fade_mode uguale a fisso e fade_shape uguale a lineare: se dal riascolto uscisse una preferenza diversa, i predefiniti si cambiano ed e' una riga sola. La 14 verifica che lo schiocco sugli elementi cortissimi sia davvero sparito. La 15 verifica fin dove arriva il tetto nuovo dei 200 wpm, che e' stato alzato a tavolino e non e' mai stato ascoltato.
+Il blocco 3 ha aggiunto la prova 18, sulla velocita' annunciata. Il blocco 2 aveva aggiunto le prove 16 e 17. La 16 verifica che il suono non venga tagliato in coda, che e' l'unico rischio della chiusura con abort. La 17 verifica che la nuova prontezza non abbia cambiato il ritmo con cui i messaggi si susseguono, cosa che si sente soprattutto negli esercizi dove le trasmissioni sono ravvicinate.
