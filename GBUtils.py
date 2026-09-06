@@ -3,12 +3,12 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V118 di domenica 6 settembre 2026
+	V119 di domenica 6 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator V9.7 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti
+	CWzator V9.8 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, ed errori riferiti a chi chiama invece che stampati
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0.1 del 4 settembre 2026
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "118"
+VERSION = "119"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -750,13 +750,14 @@ def enter_escape(prompt="", guida="Conferma con invio o annulla con escape"):
             print(guida, flush=True)
             if prompt:
                 print(prompt, end="", flush=True)
-def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0):
+def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False):
 	"""
-	CWzator V9.7 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
+	CWzator V9.8 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
-		msg (str|int): Messaggio di testo da convertire in Morse.
+		msg (str|int): Messaggio di testo da convertire in Morse. Non serve passarlo
+			quando si chiede soltanto la mappa con get_map.
 			se == -1 restituisce la mappa morse come dizionario (deprecato, usare get_map=True).
 			I caratteri fuori mappa vengono scartati in silenzio. Lo spazio e il trattino basso
 			stanno nella mappa con codice vuoto e servono da segnaposti: non suonano, ma
@@ -784,10 +785,12 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		sync (bool): Se True, la funzione aspetta la fine reale del suono; altrimenti ritorna subito.
 		to_file (bool): Se True, salva l'audio in un file WAV. La riproduzione avviene comunque,
 			salvo che si passi play=False.
-		wave_output_path_file (str|None): Percorso e/o nome file per il salvataggio WAV.
+		wave_output_path_file (str|os.PathLike|None): Percorso e/o nome file per il salvataggio WAV.
 			Può contenere solo il percorso (directory), solo il nome file, o entrambi.
-			Se None (default), salva nella directory corrente con nome autogenerato.
-			Dove i dati sono presenti, hanno priorità sul comportamento di default.
+			Se None (default), salva accanto al file che ha chiamato CWzator, o accanto
+			all'eseguibile se il programma è compilato, con nome autogenerato. Dove i dati
+			sono presenti, hanno priorità sul comportamento di default.
+			Il percorso effettivamente usato si legge in file_salvato del PlaybackHandle.
 		get_map (bool): Se True, restituisce immediatamente il dizionario MORSE_MAP senza generare audio.
 		fade_mode (str): Come la dissolvenza si rapporta alla durata dell'elemento (default "fisso").
 			"fisso": ms millesimi tanto sul punto quanto sulla linea. È il comportamento storico e
@@ -806,6 +809,8 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 				efficace della lineare, quindi non corregge il rapporto. Con dissolvenze lunghe
 				sporca molto meno la banda, da 11 a 15 dB in meno con ms uguale a 5; con ms
 				uguale a 1 è invece uguale o un filo peggiore della dritta.
+		verbose (bool): Se True stampa gli errori anche su stderr, come le versioni fino
+			alla V9.7 (default False, cioè non stampa). Vedi la sezione Errori.
 		play (bool): Se False genera l'audio e non lo riproduce (default True, cioè riproduce).
 			Serve a chi vuole soltanto il file WAV, a chi vuole l'array dei campioni per
 			analizzarlo o rielaborarlo, e alle misure. L'array sta in audio_data del
@@ -841,6 +846,13 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		monofonica: il pan si applica soltanto in riproduzione.
 		Cambiando frequenza di campionamento il mixer si rifà, perché quella non si può cambiare a
 		stream aperto, e le riproduzioni in corso si fermano.
+	Errori:
+		Non vengono stampati: il punto 3.8 chiede che una utilità li riferisca a chi l'ha
+		chiamata, e in un eseguibile senza console stampare vuol dire buttarli via.
+		Un errore di validazione fa restituire (None, None) e lascia il messaggio in
+		CWzator.ultimo_errore. Un guasto durante la riproduzione o il salvataggio finisce
+		in errore del PlaybackHandle, oltre che in CWzator.ultimo_errore.
+		Con verbose=True si torna anche a stamparli su stderr, come faceva la V9.7.
 	Chiusura ordinata:
 		CWzator.chiudi_riproduzioni(attesa=2.0) ferma le riproduzioni ancora in corso e ne attende
 		la fine. È registrata con atexit, quindi in un programma che finisce normalmente non c'è
@@ -857,8 +869,19 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 
 	import numpy as np
 	import sounddevice as sd
-	from scipy import signal as scipy_signal
+	if wv != 1:
+		from scipy import signal as scipy_signal
 	BLOCK_SIZE = 256
+	# Gli errori si riferiscono a chi ha chiamato, non si stampano: il punto 3.8
+	# del documento di refactoring lo chiede, e in un eseguibile senza console
+	# stampare vuol dire buttare via il messaggio. L'ultimo errore resta qui
+	# finche' non ne arriva un altro, e con verbose a vero si stampa anche.
+	def _errore(testo):
+		CWzator.ultimo_errore = testo
+		if verbose:
+			print(f"CWzator Error: {testo}", file=sys.stderr)
+		return None, None
+	CWzator.ultimo_errore = None
 	# --- Caching MORSE_MAP sulla funzione stessa ---
 	if not hasattr(CWzator, '_morse_map'):
 		CWzator._morse_map = {
@@ -878,11 +901,13 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	MORSE_MAP = CWzator._morse_map
 	# --- Restituzione mappa Morse ---
 	if get_map or msg == -1:
-		return MORSE_MAP
+		# Una copia, non il dizionario interno: chi lo modificasse cambierebbe
+		# il codice Morse per tutto il programma, e sarebbe un difetto di quelli
+		# che non si trovano.
+		return dict(MORSE_MAP)
 	# --- Validazione parametri (DRY) ---
 	if not isinstance(msg, str) or msg == "":
-		print("CWzator Error: msg deve essere una stringa non vuota.", file=sys.stderr)
-		return None, None
+		return _errore("msg deve essere una stringa non vuota.")
 	validations = [
 		("wpm", wpm, (int,), 5, 120),
 		("pitch", pitch, (int,), 130, 2800),
@@ -895,29 +920,26 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 	]
 	for name, val, types, lo, hi in validations:
 		if not isinstance(val, types):
-			print(f"CWzator Error: {name} ({val}) tipo non valido.", file=sys.stderr)
-			return None, None
+			return _errore(f"{name} ({val}) tipo non valido.")
 		if lo is not None and val < lo:
-			print(f"CWzator Error: {name} ({val}) sotto il minimo [{lo}].", file=sys.stderr)
-			return None, None
+			return _errore(f"{name} ({val}) sotto il minimo [{lo}].")
 		if hi is not None and val > hi:
-			print(f"CWzator Error: {name} ({val}) sopra il massimo [{hi}].", file=sys.stderr)
-			return None, None
+			return _errore(f"{name} ({val}) sopra il massimo [{hi}].")
 	if not (isinstance(wv, int) and wv in (1, 2, 3, 4)):
-		print(f"CWzator Error: wv ({wv}) non valido [1-4].", file=sys.stderr)
-		return None, None
+		return _errore(f"wv ({wv}) non valido [1-4].")
 	if fade_mode not in ("fisso", "proporzionale", "compensato"):
-		print(f"CWzator Error: fade_mode ({fade_mode}) non valido [fisso, proporzionale, compensato].", file=sys.stderr)
-		return None, None
+		return _errore(f"fade_mode ({fade_mode}) non valido [fisso, proporzionale, compensato].")
 	if fade_shape not in ("lineare", "coseno"):
-		print(f"CWzator Error: fade_shape ({fade_shape}) non valido [lineare, coseno].", file=sys.stderr)
-		return None, None
+		return _errore(f"fade_shape ({fade_shape}) non valido [lineare, coseno].")
 	if not isinstance(pan, (int, float)) or isinstance(pan, bool):
-		print(f"CWzator Error: pan ({pan}) tipo non valido.", file=sys.stderr)
-		return None, None
+		return _errore(f"pan ({pan}) tipo non valido.")
 	if pan < -100 or pan > 100:
-		print(f"CWzator Error: pan ({pan}) fuori intervallo [-100, 100].", file=sys.stderr)
-		return None, None
+		return _errore(f"pan ({pan}) fuori intervallo [-100, 100].")
+	if to_file and wave_output_path_file is not None:
+		try:
+			wave_output_path_file = os.fspath(wave_output_path_file)
+		except TypeError:
+			return _errore(f"wave_output_path_file ({wave_output_path_file!r}) non e' un percorso.")
 	# --- Calcolo Durate ---
 	T = 1.2 / float(wpm)
 	dot_duration = T * (p / 50.0)
@@ -956,7 +978,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			return (0.5 - 0.5 * np.cos(np.pi * x)).astype(np.float32)
 		return x
 	def _generate_tone(duration):
-		N = int(round(fs * duration))
+		N = round(fs * duration)
 		if N <= 0:
 			return np.array([], dtype=np.int16)
 		t = np.linspace(0, duration, N, endpoint=False, dtype=np.float64)
@@ -986,7 +1008,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		signal_float = np.clip(signal_float * vol, -1.0, 1.0)
 		return (signal_float * 32767.0).astype(np.int16)
 	def _generate_silence(duration):
-		N = int(round(fs * duration))
+		N = round(fs * duration)
 		return np.zeros(N, dtype=np.int16) if N > 0 else np.array([], dtype=np.int16)
 	seg_dot = _generate_tone(dot_duration)
 	seg_dash = _generate_tone(dash_duration)
@@ -1035,7 +1057,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			total_samples += seg_word.size
 			standard_units += 7
 	# --- Silenzio finale (5ms) ---
-	silence_samples_end = int(round(fs * 0.005))
+	silence_samples_end = round(fs * 0.005)
 	if total_samples > 0 and silence_samples_end > 0:
 		total_samples += silence_samples_end
 	# --- Assemblaggio in array pre-allocato ---
@@ -1098,6 +1120,15 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		# misurato zero per cento, ma impegna il dispositivo e gli impedisce il
 		# risparmio energetico. E' la stessa soglia che usa Acusticator.
 		CWzator.SILENZIO_MAX = 120.0
+		def _guasto_mixer(testo):
+			"""Un guasto del mixer si riferisce a chi sta suonando, non si
+			stampa: chi ha chiamato lo trova in errore del suo PlaybackHandle,
+			e l'ultimo resta in CWzator.ultimo_errore."""
+			CWzator.ultimo_errore = testo
+			with CWzator._stream_lock:
+				voci = list(CWzator._voci)
+			for voce in voci:
+				voce[2].errore = testo
 		def _pompa_audio(sample_rate, block_size):
 			"""Alimenta lo stream senza mai interrompersi, sommando le voci.
 			Tenere lo stream aperto non basta: se fra un messaggio e l'altro
@@ -1113,7 +1144,7 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 										 blocksize=block_size, latency='low')
 				stream.start()
 			except Exception as e:
-				print(f"CWzator Mixer Error: {e}", file=sys.stderr)
+				_guasto_mixer(f"apertura del dispositivo audio non riuscita: {e}")
 				with CWzator._stream_lock:
 					CWzator._pompa = None
 					for voce in CWzator._voci:
@@ -1168,9 +1199,9 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 							break
 					stream.write(blocco)
 			except sd.PortAudioError as pae:
-				print(f"CWzator Mixer PortAudioError: {pae}", file=sys.stderr)
+				_guasto_mixer(f"PortAudioError durante la riproduzione: {pae}")
 			except Exception as e:
-				print(f"CWzator Mixer Error: {e}", file=sys.stderr)
+				_guasto_mixer(f"errore durante la riproduzione: {e}")
 			finally:
 				try:
 					stream.abort()
@@ -1229,6 +1260,10 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 				self._gain_sx = np.float32(np.cos(angolo))
 				self._gain_dx = np.float32(np.sin(angolo))
 				self.stream = None
+				# Cio' che il chiamante deve poter sapere senza leggere stderr:
+				# se qualcosa e' andato storto, e dove e' finito il file WAV.
+				self.errore = None
+				self.file_salvato = None
 				self.is_playing = threading.Event()
 				# Parte gia' concluso: chi chiede sync senza aver mai avviato
 				# la riproduzione, per esempio con play a falso, non deve
@@ -1305,7 +1340,12 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 		play_obj.play()
 	# --- Salvataggio File ---
 	if to_file:
-		default_name = f"cwapu Morse recorded at {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"
+		# Nome neutro: portava scritto dentro il nome di una applicazione che non
+		# e' questa libreria. E la cartella di chi ha chiamato, non la directory
+		# di lavoro: un'utilita' non deve indovinare dove stanno le cose da dove
+		# il programma e' stato lanciato. Sono due richieste del punto 3.8.
+		default_name = f"Morse {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"
+		default_dir = _cartella_chiamante(1)
 		if wave_output_path_file is not None:
 			given = wave_output_path_file.strip()
 			given_dir = os.path.dirname(given)
@@ -1315,11 +1355,11 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 			elif given_dir and not given_file:
 				filename = os.path.join(given_dir, default_name)
 			elif not given_dir and given_file:
-				filename = given_file
+				filename = os.path.join(default_dir, given_file)
 			else:
-				filename = default_name
+				filename = os.path.join(default_dir, default_name)
 		else:
-			filename = default_name
+			filename = os.path.join(default_dir, default_name)
 		try:
 			target_dir = os.path.dirname(filename)
 			if target_dir and not os.path.exists(target_dir):
@@ -1329,8 +1369,12 @@ def CWzator(msg, wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, w
 				wf.setsampwidth(2)
 				wf.setframerate(fs)
 				wf.writeframes(audio.tobytes())
+			play_obj.file_salvato = os.path.abspath(filename)
 		except Exception as e:
-			print(f"CWzator Error durante salvataggio file: {e}", file=sys.stderr)
+			play_obj.errore = f"salvataggio del file non riuscito: {e}"
+			CWzator.ultimo_errore = play_obj.errore
+			if verbose:
+				print(f"CWzator Error: {play_obj.errore}", file=sys.stderr)
 	# --- Gestione Sync ---
 	if sync:
 		play_obj.wait_done()
