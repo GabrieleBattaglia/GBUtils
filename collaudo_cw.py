@@ -358,6 +358,42 @@ def prova_panning():
 	time.sleep(4.5)
 
 
+def prova_interfaccia():
+	import sounddevice as _sd
+	dev, api = CWzator.scegli_dispositivo()
+	nome = _sd.query_devices(dev)["name"] if dev is not None else "quello predefinito"
+	print(f"L'interfaccia scelta da sola e': {api}, sul dispositivo {nome}.")
+	print("La latenza scende da 104 a 22 millesimi, e ogni messaggio finisce")
+	print("da 108 a 124 millesimi prima. Ma il margine contro i buchi scende")
+	print("nella stessa proporzione, ed e' quello che questa prova cerca.")
+	print("Primo gruppo: sei messaggi ripetuti sull'interfaccia scelta.")
+	for _ in range(6):
+		suona("paris paris", wpm=50, ms=2, attesa=0.5)
+	time.sleep(1.2)
+	print("Secondo gruppo: dodici messaggi corti in rapida successione, che e'")
+	print("il caso in cui un buco si sentirebbe meglio.")
+	for msg in ("test", "de", "iz4apu", "5nn", "r", "tu", "73", "e e",
+				"cq", "k", "bk", "73"):
+		suona(msg, wpm=37, attesa=0.1, **PESI_GABRIELE)
+	time.sleep(1.2)
+	print("Terzo gruppo: lo stesso messaggio a tre frequenze di campionamento")
+	print("diverse, perche' con questa interfaccia le converte il driver.")
+	for fs in (8000, 44100, 96000):
+		print(f"   {fs} Hz")
+		suona("cq de iz4apu k", wpm=30, fs=fs, attesa=0.6)
+	time.sleep(1.0)
+	print("Quarto gruppo: un pile-up di dodici stazioni, il carico piu' pesante.")
+	import random
+	random.seed(3)
+	call = ["dl4mm", "ik1ojm", "w9cf", "on4kt", "ea3abc", "ja1xyz",
+			"vk2pq", "sm3cer", "g3wxy", "lu5db", "9a1aa", "pa0rdt"]
+	for i, c in enumerate(call):
+		CWzator(msg=c, wpm=random.randint(24, 34), pitch=random.randint(430, 800),
+				vol=0.16, pan=-100 + i * 18, sync=False)
+		time.sleep(random.uniform(0.02, 0.14))
+	time.sleep(4.0)
+
+
 PROVE = [
 	("La coda dei messaggi",
 	 "Verifica che l'ultimo elemento di ogni trasmissione si senta intero. Era il difetto che ti ha fatto sentire kappa come d: la linea finale veniva tagliata e restava della lunghezza di un punto.",
@@ -423,6 +459,10 @@ PROVE = [
 	 "Il mixer e' diventato stereo e ogni stazione ha la sua posizione, da meno cento tutto a sinistra a piu' cento tutto a destra. La legge e' a potenza costante, quindi al centro i due lati stanno a meno tre decibel ciascuno e il volume non cambia spostandosi. La sintesi resta monofonica: il pan vale solo in riproduzione, i file WAV non cambiano.",
 	 "Se le posizioni si sentono dove devono, se il volume resta uguale spostando la stazione, e soprattutto se nel terzo gruppo, sedici stazioni sparse, riesci a estrarne piu' facilmente che nel quarto, dove sono tutte al centro. Se la differenza si sente, il panning vale la pena.",
 	 prova_panning),
+	("L'interfaccia audio piu' pronta",
+	 "CWzator sceglie da sola l'interfaccia audio, prendendo la piu' pronta fra quelle che puntano allo stesso dispositivo che hai scelto in Windows. Su questa macchina e' WASAPI, e la latenza scende da 104 a 22 millesimi: ogni messaggio finisce da 108 a 124 millesimi prima, e una trasmissione interrotta tace subito invece che dopo 118 millesimi. ASIO resta fuori dalla scelta automatica, perche' punta a un'altra scheda e perche' i suoi driver sono quasi sempre esclusivi e toglierebbero l'audio a NVDA.",
+	 "Se senti buchi, scatti o interruzioni, soprattutto nel secondo e nel quarto gruppo, che sono i piu' carichi. Il margine contro i buchi e' sceso di cinque volte, ed e' l'unico rischio di questa scelta: e' la cosa che non ho potuto misurare dall'interno. Se ne senti, si torna a MME con una riga.",
+	 prova_interfaccia),
 ]
 
 

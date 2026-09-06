@@ -3,12 +3,12 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V119 di domenica 6 settembre 2026
+	V120 di domenica 6 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator V9.8 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, ed errori riferiti a chi chiama invece che stampati
+	CWzator V9.9 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, errori riferiti a chi chiama invece che stampati, e scelta automatica dell'interfaccia audio piu' pronta fra quelle che puntano al dispositivo scelto in Windows
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0.1 del 4 settembre 2026
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "119"
+VERSION = "120"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -750,9 +750,9 @@ def enter_escape(prompt="", guida="Conferma con invio o annulla con escape"):
             print(guida, flush=True)
             if prompt:
                 print(prompt, end="", flush=True)
-def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False):
+def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None):
 	"""
-	CWzator V9.8 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
+	CWzator V9.9 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -809,6 +809,20 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				efficace della lineare, quindi non corregge il rapporto. Con dissolvenze lunghe
 				sporca molto meno la banda, da 11 a 15 dB in meno con ms uguale a 5; con ms
 				uguale a 1 è invece uguale o un filo peggiore della dritta.
+		api (str|int|None): Quale interfaccia audio usare (default None, cioè scegli tu).
+			Con None, alla prima riproduzione CWzator sceglie da sola fra le interfacce che
+			puntano allo stesso dispositivo scelto in Windows, prendendo la più pronta che si
+			lascia davvero aprire, e poi se lo ricorda. Su Windows questo di solito vuol dire
+			WASAPI, che porta la latenza da 104 a 22 millesimi.
+			Il vincolo dello stesso dispositivo è la parte che conta: cambiare interfaccia
+			spesso vuol dire cambiare scheda, quindi scegliere per sola latenza manderebbe il
+			suono dove chi ascolta non se lo aspetta.
+			ASIO non viene mai scelto da solo: i suoi driver sono quasi sempre esclusivi e
+			aprirlo toglierebbe la scheda audio a tutto il resto, lettore di schermo compreso.
+			Chi lo vuole lo chiede, passando api="asio".
+			Si può passare il nome di una interfaccia, per esempio "wasapi", "mme" o "asio",
+			oppure direttamente l'indice di un dispositivo di sounddevice.
+			CWzator.scegli_dispositivo() dice quale è stata scelta, senza suonare niente.
 		verbose (bool): Se True stampa gli errori anche su stderr, come le versioni fino
 			alla V9.7 (default False, cioè non stampa). Vedi la sezione Errori.
 		play (bool): Se False genera l'audio e non lo riproduce (default True, cioè riproduce).
@@ -1120,6 +1134,72 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		# misurato zero per cento, ma impegna il dispositivo e gli impedisce il
 		# risparmio energetico. E' la stessa soglia che usa Acusticator.
 		CWzator.SILENZIO_MAX = 120.0
+		# La scelta dell'interfaccia audio si fa una volta sola e si ricorda:
+		# enumerare le API costa 0,07 ms e una prova di apertura da 3 a 16, ma
+		# non c'e' motivo di rifarla a ogni messaggio.
+		CWzator._device_scelto = None
+		CWzator._api_scelta = None
+		CWzator._scelta_fatta = False
+		# Ordine di preferenza, dalla latenza piu' bassa alla piu' alta secondo
+		# quanto le API dichiarano. ASIO non c'e', ed e' voluto: i suoi driver
+		# sono quasi sempre esclusivi, quindi aprirlo toglierebbe la scheda a
+		# tutto il resto, lettore di schermo compreso. Chi lo vuole lo chiede.
+		PREFERENZA_API = ("WASAPI", "WDM-KS", "DirectSound", "MME")
+		def _scegli_dispositivo(api=None):
+			"""Il dispositivo su cui suonare, e il nome della sua interfaccia.
+			Con api a None sceglie da sola: fra le interfacce che puntano allo
+			stesso dispositivo scelto in Windows, prende la piu' pronta che si
+			lascia davvero aprire. Il vincolo dello stesso dispositivo e' la parte
+			che conta: cambiare interfaccia spesso vuol dire cambiare scheda, e su
+			questa macchina ASIO punta a un'altra scheda e DirectSound a un driver
+			generico. Scegliere per sola latenza manderebbe il suono dove chi
+			ascolta non se lo aspetta.
+			Con api indicata il chiamante si prende la responsabilita': puo' passare
+			il nome di una interfaccia, per esempio wasapi o asio, oppure
+			direttamente l'indice di un dispositivo."""
+			if isinstance(api, int) and not isinstance(api, bool):
+				return api, None
+			if api is not None:
+				voluta = str(api).strip().lower()
+				for h in sd.query_hostapis():
+					if h["name"].lower().replace("windows ", "").startswith(voluta):
+						d = h["default_output_device"]
+						if d < 0:
+							raise ValueError(f"l'interfaccia audio {api} non ha un dispositivo di uscita")
+						return d, h["name"]
+				raise ValueError(f"interfaccia audio {api} non disponibile")
+			if CWzator._scelta_fatta:
+				return CWzator._device_scelto, CWzator._api_scelta
+			try:
+				predefinito = sd.query_devices(sd.default.device[1])["name"]
+			except Exception:
+				predefinito = None
+			candidati = []
+			for h in sd.query_hostapis():
+				d = h["default_output_device"]
+				if d < 0:
+					continue
+				corto = h["name"].replace("Windows ", "")
+				if corto not in PREFERENZA_API:
+					continue
+				if predefinito is not None and sd.query_devices(d)["name"] != predefinito:
+					continue
+				candidati.append((PREFERENZA_API.index(corto), d, h["name"]))
+			scelto, nome = None, None
+			for _ordine, d, nome_api in sorted(candidati):
+				try:
+					extra = sd.WasapiSettings(auto_convert=True) if "WASAPI" in nome_api else None
+					prova = sd.OutputStream(device=d, samplerate=44100, channels=2, dtype=np.int16,
+											blocksize=256, latency="low", extra_settings=extra)
+					prova.start(); prova.abort(); prova.close()
+				except Exception:
+					continue
+				scelto, nome = d, nome_api
+				break
+			CWzator._device_scelto, CWzator._api_scelta = scelto, nome
+			CWzator._scelta_fatta = True
+			return scelto, nome
+		CWzator.scegli_dispositivo = staticmethod(_scegli_dispositivo)
 		def _guasto_mixer(testo):
 			"""Un guasto del mixer si riferisce a chi sta suonando, non si
 			stampa: chi ha chiamato lo trova in errore del suo PlaybackHandle,
@@ -1129,7 +1209,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				voci = list(CWzator._voci)
 			for voce in voci:
 				voce[2].errore = testo
-		def _pompa_audio(sample_rate, block_size):
+		def _pompa_audio(sample_rate, block_size, device, nome_api):
 			"""Alimenta lo stream senza mai interrompersi, sommando le voci.
 			Tenere lo stream aperto non basta: se fra un messaggio e l'altro
 			nessuno scrive, il buffer si svuota, il dispositivo va in underrun,
@@ -1140,8 +1220,14 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			chiudere e lasciare libera la scheda."""
 			silenzio = np.zeros((block_size, 2), dtype=np.int16)
 			try:
-				stream = sd.OutputStream(samplerate=sample_rate, channels=2, dtype=np.int16,
-										 blocksize=block_size, latency='low')
+				extra = None
+				if nome_api and "WASAPI" in nome_api:
+					# Senza questo WASAPI accetta soltanto la frequenza impostata in
+					# Windows, e delle dodici che cwapu offre ne passerebbe una sola.
+					extra = sd.WasapiSettings(auto_convert=True)
+				stream = sd.OutputStream(device=device, samplerate=sample_rate, channels=2,
+										 dtype=np.int16, blocksize=block_size, latency='low',
+										 extra_settings=extra)
 				stream.start()
 			except Exception as e:
 				_guasto_mixer(f"apertura del dispositivo audio non riuscita: {e}")
@@ -1154,6 +1240,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			with CWzator._stream_lock:
 				CWzator._stream = stream
 				CWzator._stream_fs = sample_rate
+				CWzator._stream_device = device
 			ultimo_suono = time.monotonic()
 			da_chiudere = []
 			try:
@@ -1247,7 +1334,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		CWzator.chiudi_riproduzioni = staticmethod(_chiudi_riproduzioni)
 		atexit.register(_chiudi_riproduzioni)
 		class _PlaybackHandle:
-			def __init__(self, audio_data, sample_rate, block_size, pan=0):
+			def __init__(self, audio_data, sample_rate, block_size, pan=0, device=None, nome_api=None):
 				self.audio_data = audio_data
 				self.sample_rate = sample_rate
 				self._block_size = block_size
@@ -1257,6 +1344,8 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				# piu' debole di una tutta da un lato.
 				angolo = (max(-100.0, min(100.0, float(pan))) / 100.0 + 1.0) * (np.pi / 4.0)
 				self.pan = pan
+				self.device = device
+				self.nome_api = nome_api
 				self._gain_sx = np.float32(np.cos(angolo))
 				self._gain_dx = np.float32(np.sin(angolo))
 				self.stream = None
@@ -1297,8 +1386,10 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				with CWzator._stream_lock:
 					pompa = CWzator._pompa
 					fs_attuale = CWzator._stream_fs
-				if (pompa is not None and pompa.is_alive()
-						and fs_attuale is not None and fs_attuale != self.sample_rate):
+					dev_attuale = getattr(CWzator, "_stream_device", None)
+				if pompa is not None and pompa.is_alive() and (
+						(fs_attuale is not None and fs_attuale != self.sample_rate)
+						or dev_attuale != self.device):
 					_ferma_pompa()
 				with CWzator._stream_lock:
 					while len(CWzator._voci) >= CWzator.VOCI_MAX:
@@ -1309,7 +1400,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 					if CWzator._pompa is None or not CWzator._pompa.is_alive():
 						CWzator._pompa = threading.Thread(
 							target=_pompa_audio,
-							args=(self.sample_rate, self._block_size),
+							args=(self.sample_rate, self._block_size, self.device, self.nome_api),
 							daemon=True)
 						CWzator._pompa.start()
 			def wait_done(self, timeout=None):
@@ -1331,7 +1422,11 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		CWzator._PlaybackHandle = _PlaybackHandle
 	# --- Creazione Oggetto e Avvio Playback ---
 	PlaybackHandle = CWzator._PlaybackHandle
-	play_obj = PlaybackHandle(audio, fs, BLOCK_SIZE, pan)
+	try:
+		device, nome_api = CWzator.scegli_dispositivo(api)
+	except ValueError as e:
+		return _errore(str(e))
+	play_obj = PlaybackHandle(audio, fs, BLOCK_SIZE, pan, device, nome_api)
 	# Il registro delle riproduzioni attive, che play riempie e il thread
 	# svuota, tiene vivo l'oggetto finche' suona e serve alla chiusura
 	# ordinata. Sostituisce _last_play_obj, che teneva in memoria l'ultimo
