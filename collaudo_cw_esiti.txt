@@ -51,3 +51,6 @@ Esito: superata
 PROVA 16: Il panning
 Data: 2026-09-06
 Esito: superata
+PROVA 17: L'interfaccia audio piu' pronta
+Data: 2026-09-06 16:19
+Esito: superata
