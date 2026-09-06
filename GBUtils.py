@@ -3,12 +3,12 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V121 di domenica 6 settembre 2026
+	V122 di domenica 6 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
-	CWzator V9.9.1 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, errori riferiti a chi chiama invece che stampati, e scelta automatica dell'interfaccia audio piu' pronta fra quelle che puntano al dispositivo scelto in Windows
+	CWzator V10.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Fase 1 del refactoring conclusa, motore di riproduzione rifatto. Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, errori riferiti a chi chiama invece che stampati, scelta automatica dell'interfaccia audio piu' pronta fra quelle che puntano al dispositivo scelto nel sistema, e via il vecchio modo di chiedere la mappa con msg uguale a meno uno
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt Versione 1.10 di lunedì 24 febbraio 2025
 	Donazione V2.0.1 del 4 settembre 2026
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "121"
+VERSION = "122"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -821,13 +821,12 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 	return scelto, nome
 def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None):
 	"""
-	CWzator V9.9.1 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
+	CWzator V10.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
-		msg (str|int): Messaggio di testo da convertire in Morse. Non serve passarlo
-			quando si chiede soltanto la mappa con get_map.
-			se == -1 restituisce la mappa morse come dizionario (deprecato, usare get_map=True).
+		msg (str): Messaggio di testo da convertire in Morse. Non serve passarlo quando si
+			chiede soltanto la mappa con get_map.
 			I caratteri fuori mappa vengono scartati in silenzio. Lo spazio e il trattino basso
 			stanno nella mappa con codice vuoto e servono da segnaposti: non suonano, ma
 			separano le parole. Se nessun carattere del messaggio produce suono si riceve un
@@ -908,7 +907,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			WAV restano monofonici.
 			Nota: Acusticator per la stessa cosa usa la scala da -1 a +1. La differenza è voluta.
 	Returns:
-		dict: Se get_map=True o msg==-1, restituisce il dizionario della mappa Morse.
+		dict: Se get_map=True, restituisce una copia del dizionario della mappa Morse.
 		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm, la velocità effettiva in wpm.
 			rwpm si ricava dalla durata davvero prodotta secondo la definizione PARIS, cioè
 			velocità uguale 1,2 per le unità standard del messaggio diviso la durata in secondi.
@@ -987,7 +986,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			"é":"..-..", "ì":".---."}
 	MORSE_MAP = CWzator._morse_map
 	# --- Restituzione mappa Morse ---
-	if get_map or msg == -1:
+	if get_map:
 		# Una copia, non il dizionario interno: chi lo modificasse cambierebbe
 		# il codice Morse per tutto il programma, e sarebbe un difetto di quelli
 		# che non si trovano.
