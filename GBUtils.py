@@ -3,14 +3,14 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V122 di domenica 6 settembre 2026
+	V123 di lunedì 7 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V10.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Fase 1 del refactoring conclusa, motore di riproduzione rifatto. Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, errori riferiti a chi chiama invece che stampati, scelta automatica dell'interfaccia audio piu' pronta fra quelle che puntano al dispositivo scelto nel sistema, e via il vecchio modo di chiedere la mappa con msg uguale a meno uno
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
-	dgt Versione 1.10 di lunedì 24 febbraio 2025
+	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
 	Donazione V2.0.1 del 4 settembre 2026
 	enter_escape V1.1 di sabato 5 settembre 2026 by Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro e ClaudIA (Claude Opus 5 UltraCode). Dice cosa fare quando si preme un tasto diverso da Invio o Esc
 	gestisci_aggiornamento V1.0.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "122"
+VERSION = "123"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -3417,71 +3417,121 @@ class _Acusticator:
 
 Acusticator = _Acusticator()
 
-def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
-	'''Versione 1.10 di lunedì 24 febbraio 2025
-	Potenzia la funzione input implementando controlli di sicurezza.
-	Riceve il prompt, il tipo e
-	  imin e imax minimo e massimo per i valori interi;
-	  fmin e fmax minimo e massimo per i valori float;
-	  smin e smax minimo e massimo per la quantità di caratteri nella stringa.
-	se il valore e più piccolo di minimo, quest'ultimo viene ritornato, idem per il valore massimo;
-	il kind può essere s stringa, i intero e f float;
-	se pwd è vera, si chiama getpass per l'inserimento mascherato e non vengono accettati valori fuori dai limiti
-	default viene ritornato solo se si preme invio prima di aver fornito un input e se dgt ha ricevuto un valore diverso da None
+def _dgt_limita_default(default, kind, minimo, massimo):
+	'''Riporta il predefinito di dgt dentro i limiti dichiarati nella stessa
+	chiamata e lo converte al tipo chiesto con kind, cioe' gli applica le
+	stesse regole che dgt applica a cio' che l'utente digita.
+	Riceve i limiti gia' risolti da dgt: per gli interi e i decimali sono il
+	minimo e il massimo del valore, per le stringhe sono smin e smax, cioe' la
+	lunghezza. Restituisce il valore da consegnare a chi ha chiamato dgt.
+	Un predefinito piu' corto di smin fa eccezione e viene restituito com'e':
+	allungarlo non si puo', e rifiutarlo toglierebbe a chi chiama il modo di
+	offrire una risposta vuota che significhi nessuna scelta.
+	Solleva ValueError se il predefinito non e' convertibile al tipo chiesto,
+	perche' quello e' un errore di chi programma e non di chi digita.
 	'''
+	if kind == "i":
+		try: valore = int(default)
+		except (TypeError, ValueError):
+			raise ValueError(f"dgt: il default {default!r} non e' convertibile in intero.") from None
+		return min(max(valore, minimo), massimo)
+	if kind == "f":
+		try: valore = float(default)
+		except (TypeError, ValueError):
+			raise ValueError(f"dgt: il default {default!r} non e' convertibile in decimale.") from None
+		return min(max(valore, minimo), massimo)
+	return str(default)[:massimo]
+def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
+	'''V2.0.0 di lunedi' 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalita' auto)
+	Potenzia input con i controlli che input non ha, e ripete la domanda
+	finche' non riceve un valore accettabile.
+	Riceve il prompt, il tipo e i limiti:
+	  imin e imax, minimo e massimo per gli interi;
+	  fmin e fmax, minimo e massimo per i decimali;
+	  smin e smax, lunghezza minima e massima per le stringhe.
+	kind vale s per stringa, i per intero, f per decimale.
+	Un valore digitato fuori dai limiti viene riportato al limite piu' vicino,
+	e la funzione lo dice; con pwd vero viene invece rifiutato e la domanda si
+	ripete, perche' cio' che si digita mascherato non si puo' rileggere.
+	default viene restituito quando si preme invio senza aver digitato niente.
+	Dalla V2.0.0, prima di essere restituito, viene convertito al tipo chiesto
+	e riportato dentro i limiti: fino alla 1.10 li scavalcava, quindi una
+	chiamata che dichiarava dei limiti poteva restituire un valore che li
+	violava, e perfino di un tipo diverso da quello chiesto. Fa eccezione il
+	predefinito piu' corto di smin, che viene restituito com'e'.
+	Cio' che l'utente digita viene restituito fedelmente, spazi ai bordi
+	compresi: e' chi chiama a decidere se toglierli.
+	Solleva ValueError quando kind non e' valido, quando i limiti sono
+	incoerenti fra loro e quando il predefinito non e' convertibile al tipo
+	chiesto; solleva EOFError quando non c'e' un terminale da cui leggere.
+	Sono errori di chi programma, e dalla V2.0.0 la funzione li riferisce a
+	chi l'ha chiamata invece di stamparli su una console che, in una
+	applicazione con interfaccia grafica, potrebbe non esistere. Restano
+	stampati soltanto i messaggi rivolti a chi sta digitando, che sono il
+	dialogo di cui la funzione vive.
+	'''
+	import getpass
+	import math
+	if not isinstance(kind, str) or not kind:
+		raise ValueError(f"dgt: kind deve essere una stringa non vuota, ricevuto {kind!r}.")
 	kind = kind[0].lower()
-	if kind not in 'sif':
-		print("Chiamata non corretta a DGT, verificare parametro kind.")
-		kind="s"
-	if pwd: import getpass
+	if kind not in "sif":
+		raise ValueError(f"dgt: kind deve valere s, i oppure f, ricevuto {kind!r}.")
+	if kind == "i":
+		if imin > imax:
+			raise ValueError(f"dgt: imin {imin} e' maggiore di imax {imax}.")
+		minimo, massimo = math.ceil(imin), math.floor(imax)
+		if minimo > massimo:
+			raise ValueError(f"dgt: fra imin {imin} e imax {imax} non c'e' nessun intero.")
+	elif kind == "f":
+		if fmin > fmax:
+			raise ValueError(f"dgt: fmin {fmin} e' maggiore di fmax {fmax}.")
+		minimo, massimo = float(fmin), float(fmax)
+	else:
+		if smin < 0:
+			raise ValueError(f"dgt: smin non puo' essere negativo, ricevuto {smin}.")
+		if smin > smax:
+			raise ValueError(f"dgt: smin {smin} e' maggiore di smax {smax}.")
+		minimo, massimo = smin, smax
 	while True:
-		if pwd: p = getpass.getpass(prompt)
-		else: p = input(prompt)
-		if p == "" and default is not None: return default
+		try:
+			p = getpass.getpass(prompt) if pwd else input(prompt)
+		except EOFError:
+			raise EOFError("dgt: non c'e' un terminale da cui leggere, lo standard input e' chiuso.") from None
+		if p == "" and default is not None:
+			return _dgt_limita_default(default, kind, minimo, massimo)
 		if kind == "i":
-			try:
-				p = int(p)
-				if pwd:
-					if p < imin or p > imax: print(f"Valore {p} non consentito.")
-					else: return p
-				elif p < imin:
-					print(f"Corretto con {imin-p}, accettato: {imin}")
-					return int(imin)
-				elif p > imax:
-					print(f"Corretto con {imax-p}, accettato: {imax}")
-					return int(imax)
-				else: return int(p)
+			try: valore = int(p)
 			except ValueError:
-				print("Si prega di inserire un valore numerico intero.")
-		if kind == "f":
-			try:
-				p = float(p)
-				if pwd:
-					if p < fmin or p > fmax: print(f"Valore {p} non consentito.")
-					else: return p
-				elif p < fmin:
-					print(f"Corretto con {fmin-p:10.3}, accettato: {fmin}")
-					return float(fmin)
-				elif p > fmax:
-					print(f"Corretto con {fmax-p:10.3}, accettato: {fmax}")
-					return float(fmax)
-				else: return p
+				print("Serve un numero intero.")
+				continue
+		elif kind == "f":
+			try: valore = float(p)
 			except ValueError:
-				print("Si prega di inserire un valore numerico decimale.")
-		elif kind == "s":
-			if pwd:
-				if len(p) < smin or len(p) > smax:
-					print("Lunghezza stringa non consentita.")
-				else: return p
-			elif len(p) < smin:
-				print(f"Stringa troppo corta: {len(p)}, richiesta: {smin}")
-			elif len(p) > smax:
-				print(f"Lunghezza stringa eccessiva: {len(p)}, richiesti: {smax} caratteri.")
-				p = p[:smax]
-				print(f"Accettato {p}")
-				return p
-			else: return p
-
+				print("Serve un numero decimale.")
+				continue
+		else:
+			valore = p
+		misura = len(valore) if kind == "s" else valore
+		if pwd:
+			if misura < minimo or misura > massimo:
+				if kind == "s": print(f"Lunghezza fuori da {smin} a {smax}.")
+				else: print(f"Fuori dai limiti {minimo} - {massimo}.")
+				continue
+			return valore
+		if misura < minimo:
+			if kind == "s":
+				print(f"Troppo corta, servono {smin} caratteri.")
+				continue
+			print(f"Troppo basso, accettato {minimo}.")
+			return minimo
+		if misura > massimo:
+			if kind == "s":
+				print(f"Troppo lunga, accettati {smax} caratteri.")
+				return valore[:smax]
+			print(f"Troppo alto, accettato {massimo}.")
+			return massimo
+		return valore
 def manuale(nf):
 	'''
 	Versione 1.0.1 di domenica 5 maggio 2024
