@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V124 di lunedì 7 settembre 2026
+	V125 di lunedì 7 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -17,14 +17,14 @@ Lista utilità contenute in questo pacchetto
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	manuale V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Impagina anche un testo gia' in memoria e non solo un file, legge in utf-8 con ripiego sulla codifica di sistema, cerca i nomi relativi nella cartella di chi la chiama e non in quella da cui si e' lanciato il programma, apre con with, dice a chi chiama se la lettura e' arrivata in fondo o e' stata interrotta, solleva invece di stampare, adatta la pagina all'altezza della console e chiama per nome cio' che sta mostrando
-	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
-	menu V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
+	Mazzo V6.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Opus 5, modalità auto). Tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
+	menu V5.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto). Nessun separatore grafico: spariti i cinque punti che stampavano trattini, compreso il doppio trattino fra chiave e descrizione di ogni voce, e la riga vuota che nasceva prima di ogni prompt. Il messaggio dell'ambiguita' dice cosa fare, il dizionario vuoto non viene piu' annunciato in inglese, e il primo parametro non e' piu' un dizionario modificabile
 	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "124"
+VERSION = "125"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -1486,24 +1486,34 @@ CWzator.VOCI_MAX = 32
 # energetico. E' la stessa soglia che usa Acusticator.
 CWzator.SILENZIO_MAX = 120.0
 
+_MAZZO_SEMI_FRANCESI = ("Cuori", "Quadri", "Fiori", "Picche")
+_MAZZO_SEMI_ITALIANI = ("Bastoni", "Spade", "Coppe", "Denari")
+_MAZZO_VALORI_FRANCESI = (("Asso", 1),) + tuple((str(i), i) for i in range(2, 11)) + (("Jack", 11), ("Regina", 12), ("Re", 13))
+_MAZZO_VALORI_ITALIANI = (("Asso", 1),) + tuple((str(i), i) for i in range(2, 8)) + (("Fante", 8), ("Cavallo", 9), ("Re", 10))
+_MAZZO_VALORI_DESCRIZIONE = {1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '0', 11: 'J', 12: 'Q', 13: 'K'}
+_MAZZO_SEMI_DESCRIZIONE = {"Cuori": 'C', "Quadri": 'Q', "Fiori": 'F', "Picche": 'P',
+	"Bastoni": 'B', "Spade": 'S', "Coppe": 'O', "Denari": 'D'} # 'O' per Coppe
 class Mazzo:
 	'''
-	V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
-	Classe autocontenuta che rappresenta un mazzo di carte italiano o francese,
-	con supporto per mazzi multipli, mescolamento, pesca con rimescolamento
-	automatico degli scarti, e gestione flessibile delle carte.
-	Non produce output diretto (print), ma restituisce valori o stringhe informative.
+	V6.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Opus 5, modalità auto)
+	Rappresenta un mazzo di carte italiano o francese, con supporto per mazzi
+	multipli, mescolamento, pesca con rimescolamento automatico degli scarti, e
+	gestione flessibile delle carte.
+	Non produce output diretto (print), ma restituisce valori o stringhe
+	informative. Fino alla V5.2 la promessa era scritta qui e smentita da pesca,
+	che stampava due righe: adesso pesca lo dice con l'attributo
+	ultimo_rimescolo, che chi vuole legge e chi non vuole ignora.
+	Le carte pescate escono dal mazzo e le tiene chi le ha pescate: dalla V6.0.0
+	la classe non finge piu' di tenerne l'elenco. Fino alla V5.2 quattro metodi
+	su dodici, cioe' rimescola_scarti, aggiungi_jolly, rimuovi_jolly e
+	mostra_carte, leggevano una lista pescate che __init__ non ha mai creato, e
+	sollevavano AttributeError alla prima chiamata, sempre. Chi vuole rimettere
+	nel mazzo le carte che ha in mano le passa a scarta_carte e poi chiama
+	rimescola_scarti, che e' la strada che gia' esisteva e che funziona.
 	'''
 	import random
 	from collections import namedtuple
 	Carta = namedtuple("Carta", ["id", "nome", "valore", "seme_nome", "seme_id", "desc_breve"])
-	_SEMI_FRANCESI = ["Cuori", "Quadri", "Fiori", "Picche"]
-	_SEMI_ITALIANI = ["Bastoni", "Spade", "Coppe", "Denari"]
-	_VALORI_FRANCESI = [("Asso", 1)] + [(str(i), i) for i in range(2, 11)] + [("Jack", 11), ("Regina", 12), ("Re", 13)]
-	_VALORI_ITALIANI = [("Asso", 1)] + [(str(i), i) for i in range(2, 8)] + [("Fante", 8), ("Cavallo", 9), ("Re", 10)]
-	_VALORI_DESCRIZIONE = {1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '0', 11: 'J', 12: 'Q', 13: 'K'}
-	_SEMI_DESCRIZIONE = {"Cuori": 'C', "Quadri": 'Q', "Fiori": 'F', "Picche": 'P',
-																						"Bastoni": 'B', "Spade": 'S', "Coppe": 'O', "Denari": 'D'} # 'O' per Coppe
 	def __init__(self, tipo_francese=True, num_mazzi=1):
 		'''
 		Inizializza uno o più mazzi di carte.
@@ -1519,37 +1529,31 @@ class Mazzo:
 		self.carte = [] # Mazzo principale da cui pescare
 		self.scarti = [] # Pila degli scarti, possono essere rimescolati
 		self.scarti_permanenti = [] # Carte rimosse permanentemente
+		# Vero se l'ultima pesca ha dovuto rimescolare gli scarti. Sostituisce le
+		# due righe che pesca stampava per conto suo fino alla V5.2.
+		self.ultimo_rimescolo = False
 		self._costruisci_mazzo()
 	def _costruisci_mazzo(self):
 		'''
 		(Metodo privato) Costruisce il mazzo di carte in base al tipo e al numero di mazzi.
+		L'identificativo del seme va da 1 a 4 per entrambi i tipi di mazzo: a
+		distinguere un mazzo italiano da uno francese e' il nome del seme.
 		'''
 		self.carte = [] # Resetta il mazzo
-		semi = self._SEMI_FRANCESI if self.tipo_francese else self._SEMI_ITALIANI
-		valori = self._VALORI_FRANCESI if self.tipo_francese else self._VALORI_ITALIANI
+		semi = _MAZZO_SEMI_FRANCESI if self.tipo_francese else _MAZZO_SEMI_ITALIANI
+		valori = _MAZZO_VALORI_FRANCESI if self.tipo_francese else _MAZZO_VALORI_ITALIANI
 		id_carta_counter = 1
 		for _ in range(self.num_mazzi):
 			for id_seme, nome_seme in enumerate(semi, 1):
-				# Correzione: L'ID seme per mazzi italiani dovrebbe partire da 5 per distinguerli?
-				# No, l'ID seme è relativo al tipo di mazzo (1-4 per entrambi),
-				# il nome_seme è ciò che li distingue. Manteniamo 1-4.
-				seme_id_effettivo = id_seme
-				if not self.tipo_francese:
-					# Se si volesse un ID globale unico (1-4 Francese, 5-8 Italiano)
-					# seme_id_effettivo = id_seme + 4 # Questa è un'opzione di design, ma la lasciamo 1-4 per ora
-					pass # Manteniamo 1-4 come da codice originale
 				for nome_valore, valore_num in valori:
-					desc_val = self._VALORI_DESCRIZIONE.get(valore_num, '?')
-					desc_seme = self._SEMI_DESCRIZIONE.get(nome_seme, '?')
-					desc_breve = f"{desc_val}{desc_seme}"
-					nome_completo = f"{nome_valore} di {nome_seme}"
-					# Usiamo la definizione di Carta interna alla classe
+					desc_val = _MAZZO_VALORI_DESCRIZIONE.get(valore_num, '?')
+					desc_seme = _MAZZO_SEMI_DESCRIZIONE.get(nome_seme, '?')
 					carta = self.Carta(id=id_carta_counter,
-																								nome=nome_completo,
-																								valore=valore_num,
-																								seme_nome=nome_seme,
-																								seme_id=seme_id_effettivo,
-																								desc_breve=desc_breve)
+						nome=f"{nome_valore} di {nome_seme}",
+						valore=valore_num,
+						seme_nome=nome_seme,
+						seme_id=id_seme,
+						desc_breve=f"{desc_val}{desc_seme}")
 					self.carte.append(carta)
 					id_carta_counter += 1
 	def mescola_mazzo(self):
@@ -1563,8 +1567,13 @@ class Mazzo:
 	def pesca(self, quante=1):
 		'''
 		Pesca carte dal mazzo principale. Se le carte nel mazzo non sono sufficienti,
-		rimescola automaticamente gli scarti prima di pescare.
-		Le carte pescate vengono spostate nella lista 'pescate'.
+		rimescola automaticamente gli scarti prima di pescare, e in quel caso
+		lascia vero l'attributo ultimo_rimescolo, che chi vuole avvisare l'utente
+		legge subito dopo la chiamata. Fino alla V5.2 il rimescolamento veniva
+		annunciato da due print, che in una applicazione con interfaccia grafica
+		nessuno leggeva.
+		Le carte pescate escono dal mazzo e le tiene chi le ha pescate: per
+		rimetterle in gioco si passano a scarta_carte.
 		Parametri:
 		- quante (int): Numero di carte da pescare (default 1).
 		Ritorna:
@@ -1573,15 +1582,14 @@ class Mazzo:
 		'''
 		if quante < 0:
 			raise ValueError("Il numero di carte da pescare deve essere non negativo.")
+		self.ultimo_rimescolo = False
 		if quante == 0:
 			return []
-		# NUOVA LOGICA: Se le carte nel mazzo sono meno di quelle richieste, rimescola gli scarti.
 		if len(self.carte) < quante and self.scarti:
-			print("\n--- Carte insufficienti nel mazzo. Rimescolo gli scarti... ---") # Feedback utile per il giocatore
 			self.carte.extend(self.scarti)
 			self.scarti = []
 			self.mescola_mazzo()
-			print(f"--- Rimescolamento completato. Carte nel mazzo: {len(self.carte)} ---")
+			self.ultimo_rimescolo = True
 		# Ora procedi con la pesca
 		num_da_pescare = min(quante, len(self.carte))
 		carte_pescate_ora = []
@@ -1598,53 +1606,25 @@ class Mazzo:
 		if not carte_da_scartare:
 			return
 		self.scarti.extend(carte_da_scartare)
-	def rimescola_scarti(self, include_pescate=False):
+	def rimescola_scarti(self):
 		'''
 		Rimette le carte dalla pila degli scarti nel mazzo principale e mescola.
-		Opzionalmente, può includere anche le carte attualmente pescate.
 		Non reintegra le carte scartate permanentemente.
-		Parametri:
-		- include_pescate (bool): Se True, anche le carte in self.pescate sono rimesse (default False).
+		Fino alla V5.2 accettava include_pescate, che leggeva una lista mai
+		creata: chiamare questo metodo, in qualunque modo, sollevava sempre
+		AttributeError. Il parametro e' stato tolto perche' nessun programma
+		poteva usarlo. Chi vuole rimettere in gioco le carte che ha in mano le
+		passa prima a scarta_carte.
 		Ritorna:
 		- str: Messaggio che riepiloga l'operazione.
 		'''
-		carte_da_reintegrare = []
-		msg_parts = []
 		num_scarti = len(self.scarti)
-		if num_scarti > 0:
-			carte_da_reintegrare.extend(self.scarti)
-			self.scarti = []
-			msg_parts.append(f"{num_scarti} scarti reintegrati.")
-		else:
-			msg_parts.append("Nessuno scarto da reintegrare.")
-		num_pescate = len(self.pescate)
-		if include_pescate:
-			if num_pescate > 0:
-				carte_da_reintegrare.extend(self.pescate)
-				self.pescate = []
-				msg_parts.append(f"{num_pescate} carte pescate reintegrate.")
-			else:
-				msg_parts.append("Nessuna carta pescata da reintegrare.")
-		if not carte_da_reintegrare:
-			return "Nessuna carta da rimescolare. " + " ".join(msg_parts)
-		self.carte.extend(carte_da_reintegrare)
+		if num_scarti == 0:
+			return "Nessuno scarto da reintegrare."
+		self.carte.extend(self.scarti)
+		self.scarti = []
 		self.mescola_mazzo()
-		msg_parts.append(f"Mazzo ora contiene {len(self.carte)} carte.")
-		return " ".join(msg_parts)
-	def _rimuovi_carte_da_lista(self, lista_sorgente, condizione, destinazione, nome_destinazione):
-		''' Funzione helper per rimuovere carte da una lista in base a una condizione. '''
-		carte_da_mantenere = []
-		carte_rimosse = []
-		for carta in lista_sorgente:
-			if condizione(carta):
-				carte_rimosse.append(carta)
-			else:
-				carte_da_mantenere.append(carta)
-		if carte_rimosse:
-			destinazione.extend(carte_rimosse)
-			# Modifica la lista originale inplace
-			lista_sorgente[:] = carte_da_mantenere
-		return carte_rimosse
+		return f"{num_scarti} scarti reintegrati. Nel mazzo ora {len(self.carte)} carte."
 	def rimuovi_semi(self, semi_id_da_rimuovere, permanente=False):
 		'''
 		Rimuove dal mazzo principale (self.carte) tutte le carte con i semi specificati.
@@ -1656,10 +1636,9 @@ class Mazzo:
 		- int: Numero di carte rimosse dal mazzo principale.
 		'''
 		destinazione = self.scarti_permanenti if permanente else self.scarti
-		nome_dest = "permanenti" if permanente else "temporanei"
 		def condizione(carta):
 			return carta.seme_id in semi_id_da_rimuovere
-		carte_rimosse = self._rimuovi_carte_da_lista(self.carte, condizione, destinazione, nome_dest)
+		carte_rimosse = self._rimuovi_carte_da_lista(self.carte, condizione, destinazione)
 		return len(carte_rimosse)
 	def rimuovi_valori(self, valori_da_rimuovere, permanente=True):
 		'''
@@ -1672,10 +1651,9 @@ class Mazzo:
 		- int: Numero di carte rimosse dal mazzo principale.
 		'''
 		destinazione = self.scarti_permanenti if permanente else self.scarti
-		nome_dest = "permanenti" if permanente else "temporanei"
 		def condizione(carta):
 			return carta.valore in valori_da_rimuovere
-		carte_rimosse = self._rimuovi_carte_da_lista(self.carte, condizione, destinazione, nome_dest)
+		carte_rimosse = self._rimuovi_carte_da_lista(self.carte, condizione, destinazione)
 		return len(carte_rimosse)
 	def aggiungi_jolly(self, quanti_per_mazzo=2):
 		'''
@@ -1696,7 +1674,7 @@ class Mazzo:
 		# Calcola il numero totale di jolly che dovrebbero esserci
 		jolly_attesi_totali = self.num_mazzi * quanti_per_mazzo
 		# Controlla quanti jolly esistono già in *tutte* le liste
-		all_cards = self.carte + self.pescate + self.scarti + self.scarti_permanenti
+		all_cards = self.carte + self.scarti + self.scarti_permanenti
 		jolly_esistenti_count = sum(1 for c in all_cards if c.nome == "Jolly")
 		# Determina quanti jolly mancano (se ce ne sono)
 		jolly_da_aggiungere = jolly_attesi_totali - jolly_esistenti_count
@@ -1726,8 +1704,10 @@ class Mazzo:
 			return "Nessun nuovo jolly aggiunto."
 	def rimuovi_jolly(self, permanente=False):
 		'''
-		Rimuove tutti i jolly dalle pile modificabili (mazzo, pescate, e scarti se permanente=True)
+		Rimuove tutti i jolly dal mazzo, e anche dagli scarti se permanente e' vero,
 		e li sposta nella destinazione appropriata (scarti temporanei o permanenti).
+		I jolly gia' pescati non si toccano, perche' sono usciti dal mazzo e li
+		tiene chi li ha pescati.
 		Parametri:
 		- permanente (bool): Se True, sposta in scarti_permanenti e pulisce anche gli scarti temporanei.
 		                     Se False, sposta solo in scarti temporanei.
@@ -1741,12 +1721,10 @@ class Mazzo:
 			return carta.nome == "Jolly"
 		# Helper per evitare codice duplicato e gestire la collezione degli oggetti
 		def _processa_lista(lista_sorgente):
-			carte_rimosse = self._rimuovi_carte_da_lista(lista_sorgente, condizione, destinazione, tipo_destinazione)
+			carte_rimosse = self._rimuovi_carte_da_lista(lista_sorgente, condizione, destinazione)
 			jolly_rimossi_total_obj.extend(carte_rimosse)
 		# Rimuove da self.carte
 		_processa_lista(self.carte)
-		# Rimuove da self.pescate
-		_processa_lista(self.pescate)
 		# Rimuove da self.scarti SOLO SE la destinazione NON è self.scarti
 		# Questo previene che gli elementi appena aggiunti a self.scarti vengano rimossi di nuovo.
 		if permanente:
@@ -1758,7 +1736,7 @@ class Mazzo:
 			return f"Rimossi {num_rimossi_unici} jolly unici. Spostati negli scarti {tipo_destinazione}."
 		else:
 			return "Nessun jolly trovato da rimuovere."
-	def _rimuovi_carte_da_lista(self, lista_sorgente, condizione, destinazione, nome_destinazione):
+	def _rimuovi_carte_da_lista(self, lista_sorgente, condizione, destinazione):
 		''' Funzione helper per rimuovere carte da una lista in base a una condizione. '''
 		carte_da_mantenere = []
 		carte_rimosse = []
@@ -1775,10 +1753,14 @@ class Mazzo:
 			# Ritorna la lista degli elementi rimossi
 		return carte_rimosse
 	def stato_mazzo(self):
-		''' Ritorna una stringa che riepiloga lo stato attuale del mazzo. '''
-		return (f"Mazzo: {len(self.carte)} carte | "
-				f"Scarti: {len(self.scarti)} carte | "
-				f"Scarti Permanenti: {len(self.scarti_permanenti)} carte")
+		''' Ritorna una stringa che riepiloga lo stato attuale del mazzo.
+		Fino alla V5.2 era lunga sessantuno caratteri e teneva i tre numeri
+		divisi da barre verticali, cioe' un allineamento a colonne: adesso e' una
+		frase di una trentina di caratteri, che sta in un blocco solo sul display
+		braille.
+		'''
+		return (f"Mazzo {len(self.carte)}, scarti {len(self.scarti)}, "
+				f"permanenti {len(self.scarti_permanenti)}.")
 	def __len__(self):
 		''' Ritorna il numero di carte attualmente nel mazzo principale (self.carte). '''
 		return len(self.carte)
@@ -1788,9 +1770,11 @@ class Mazzo:
 	def mostra_carte(self, lista='mazzo'):
 		'''
 		Restituisce una stringa con le descrizioni brevi delle carte
-		in una specifica lista (mazzo, pescate, scarti, permanenti).
+		in una specifica lista (mazzo, scarti, permanenti).
+		Fino alla V5.2 accettava anche 'pescate', che leggeva una lista mai
+		creata e sollevava sempre AttributeError.
 		Parametri:
-		- lista (str): Nome della lista ('mazzo', 'pescate', 'scarti', 'permanenti').
+		- lista (str): Nome della lista ('mazzo', 'scarti', 'permanenti').
 		Ritorna:
 		- str: Stringa formattata con le carte o messaggio di lista vuota/non valida.
 		'''
@@ -1799,9 +1783,6 @@ class Mazzo:
 		if lista == 'mazzo':
 			target_lista_ref = self.carte
 			nome_lista = "Mazzo Principale"
-		elif lista == 'pescate':
-			target_lista_ref = self.pescate
-			nome_lista = "Carte Pescate"
 		elif lista == 'scarti':
 			target_lista_ref = self.scarti
 			nome_lista = "Pila Scarti"
@@ -1809,7 +1790,7 @@ class Mazzo:
 			target_lista_ref = self.scarti_permanenti
 			nome_lista = "Scarti Permanenti"
 		else:
-			return "Lista non valida. Scegli tra: 'mazzo', 'pescate', 'scarti', 'permanenti'."
+			return "Lista non valida. Scegli tra: 'mazzo', 'scarti', 'permanenti'."
 		if not target_lista_ref:
 			return f"Nessuna carta nella lista '{nome_lista}'."
 		# Usa la lista referenziata per ottenere le carte
@@ -3585,8 +3566,8 @@ def manuale(nf=None, testo=None, nome="Guida", codifica=None, righe_pagina=None)
 			if risposta.strip().lower() == "e": return False
 	return True
 
-def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None):
-    """V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
+def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None):
+    """V5.0.0 - lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -3601,9 +3582,18 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     ordered: se True (default), le voci del menu vengono ordinate alfabeticamente per chiave.
     Restituisce:
     La chiave scelta dal dizionario 'd', oppure None se l'utente annulla (ESC o Invio su input vuoto).
+    None e' anche cio' che si riceve quando 'd' e' vuoto: dalla V5.0.0 il caso
+    non viene piu' annunciato con una stampa, perche' chi ha passato il
+    dizionario sa gia' che era vuoto e in una interfaccia grafica quella frase
+    non la leggerebbe nessuno.
+    Dalla V5.0.0 l'elenco non ha piu' righe di trattini attorno alle voci ne'
+    fra la chiave e la descrizione: le regole di accessibilita' vietano i
+    separatori grafici, e menu, essendo chiamata da tutto il parco software,
+    era il posto in cui se ne stampavano di piu'.
     """
     import os
     import sys
+    if d is None: d = {}
     def lcp(strings):
         """Calcola il prefisso comune più lungo da una lista di stringhe ignorando il case."""
         if not strings: return ""
@@ -3647,27 +3637,20 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     def Mostra(items_to_show, pager, is_numbered, num_map=None, user_input=""):
-        """Visualizza una lista di elementi usando un pager internazionalizzato."""
-        count = 0
+        """Elenca le voci, fermandosi ogni pager righe."""
         total = len(items_to_show)
         if total == 0 and user_input: print(ntf); return True
         if total == 0: return True
-        print("--- Menu ---")
-        for item in items_to_show:
+        for count, item in enumerate(items_to_show, 1):
             if is_numbered:
-                original_key = num_map[item]
-                desc = d[original_key]
-                print(f"[{item}] -- {desc}")
+                print(f"{item}. {d[num_map[item]]}")
             else:
-                desc = d.get(item, "N/A")
-                print(f"- ({item}) -- {desc};")
-            count += 1
+                desc = d.get(item, "")
+                print(f"{item}: {desc}" if desc else f"{item}")
             if pager > 0 and count % pager == 0 and count < total:
-                page_num = int(count / pager)
-                prompt_pager = f"--- [{page_num}] ({count-pager+1}-{count}/{total}) ---"
-                ch_pager = key(prompt_pager); print()
+                ch_pager = key(f"Viste {count} di {total}. Esc per uscire. "); print()
                 if ch_pager == '\x1b': return False
-        print(f"---------- [{count}/{total}] ----------")
+        print(f"Voci in elenco: {total}.")
         return True
     def Listaprompt_autocomplete(keys_list, display_input):
         """Genera un prompt che suggerisce i prossimi caratteri validi."""
@@ -3695,13 +3678,18 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
     if numbered:
         num_map = {str(i): k for i, k in enumerate(orig_keys, 1)}
         orig_keys = list(num_map.keys())
-    if not d: print("No options available."); return None
-    if len(d) == 1 and not show_only: return list(d.keys())[0]
+    if not d: return None
+    if len(d) == 1 and not show_only: return next(iter(d))
     if show_only: Mostra(orig_keys, pager, numbered, num_map); return None
     if show:
         Mostra(orig_keys, pager, numbered, num_map)
         last_displayed = orig_keys[:]
     disable_autocomplete_once = False
+    # Vero quando l'ultima cosa stampata e' rimasta a meta' riga, cioe' il
+    # prompt o il carattere appena digitato. Serve per andare a capo solo
+    # quando c'e' davvero una riga da chiudere: prima si andava a capo sempre,
+    # e dopo un elenco ne nasceva una riga vuota che NVDA legge per intero.
+    a_capo_pendente = False
     while True:
         filtered = [k for k in orig_keys if valid_match(k, user_input)]
         display_input = user_input
@@ -3717,9 +3705,10 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             print()
             return num_map.get(final_choice, final_choice)
         if show and show_on_filter and final_filtered != last_displayed:
-            print("\n-----------------------")
+            if a_capo_pendente: print()
             Mostra(final_filtered, pager, numbered, num_map, user_input)
             last_displayed = final_filtered[:]
+            a_capo_pendente = False
         if numbered:
             prompt_str = p if p != "> " else f"(1-{len(orig_keys)})"
             if not prompt_str.strip().endswith('>'): prompt_str += '> '
@@ -3727,10 +3716,12 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             prompt_str = Listaprompt_autocomplete(final_filtered, display_input)
         else:
             prompt_str = p
-        full_prompt = "\n"+prompt_str + display_input
+        full_prompt = ("\n" if a_capo_pendente else "") + prompt_str + display_input
         user_char = key(full_prompt)
+        a_capo_pendente = True
         if user_char in ['\r', '\n']:
             print()
+            a_capo_pendente = False
             exact_matches = [k for k in final_filtered if k.lower() == display_input.lower()]
             if exact_matches:
                 return num_map.get(exact_matches[0], exact_matches[0])
@@ -3739,13 +3730,14 @@ def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keys
             elif user_input == "":
                 return empty_enter
             else:
-                 print("--- '?' . ---")
+                 print("Scelta ambigua. '?' per l'elenco.")
                  last_displayed = None
         elif user_char in ['\x1b', '\x03']: print(); return None
         elif user_char == '?':
-            print("\n")
+            print()
             Mostra(final_filtered, pager, numbered, num_map, user_input)
             last_displayed = final_filtered[:]
+            a_capo_pendente = False
         elif user_char == '\x08':
             if user_input:
                 user_input = user_input[:-1]
