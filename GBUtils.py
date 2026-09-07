@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V123 di lunedì 7 settembre 2026
+	V124 di lunedì 7 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -16,7 +16,7 @@ Lista utilità contenute in questo pacchetto
 	gestisci_aggiornamento V1.0.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
-	manuale 1.0.1 di domenica 5 maggio 2024
+	manuale V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Impagina anche un testo gia' in memoria e non solo un file, legge in utf-8 con ripiego sulla codifica di sistema, cerca i nomi relativi nella cartella di chi la chiama e non in quella da cui si e' lanciato il programma, apre con with, dice a chi chiama se la lettura e' arrivata in fondo o e' stata interrotta, solleva invece di stampare, adatta la pagina all'altezza della console e chiama per nome cio' che sta mostrando
 	mazzo V5.2 - settembre 2025 b Gabriele Battaglia & Gemini 2.5
 	menu V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
 	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "123"
+VERSION = "124"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -3532,25 +3532,58 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 			print(f"Troppo alto, accettato {massimo}.")
 			return massimo
 		return valore
-def manuale(nf):
+def manuale(nf=None, testo=None, nome="Guida", codifica=None, righe_pagina=None):
+	'''V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Impagina un testo lungo e lo mostra a pezzi, fermandosi a ogni pagina.
+	Riceve, in alternativa fra loro:
+	  nf, il nome del file da mostrare, assoluto oppure relativo alla cartella
+	    di chi chiama, mai alla directory di lavoro;
+	  testo, una stringa gia' in memoria, per impaginare cio' che non e' un
+	    file, per esempio le note di una release arrivate dalla rete.
+	nome e' cio' che si sta mostrando e compare nella domanda di fine pagina.
+	codifica None significa prova utf-8 e, se non si decodifica, ripiega sulla
+	  codifica preferita dal sistema; un valore esplicito impone quello e basta.
+	righe_pagina None significa quante righe entrano nella console, misurate a
+	  ogni chiamata, con quindici come ripiego se non c'e' un terminale da
+	  misurare; un numero impone quello.
+	Restituisce True se il testo e' stato mostrato fino in fondo, False se
+	l'utente ha interrotto la lettura: fino alla 1.0.1 chi chiamava non aveva
+	modo di saperlo.
+	Solleva ValueError se non riceve ne' nf ne' testo, oppure se li riceve
+	entrambi, e OSError se il file non si apre o non si decodifica con nessuna
+	codifica. Sono notizie per chi chiama, e dalla V2.0.0 la funzione non le
+	stampa piu' per conto proprio: in una applicazione con interfaccia grafica
+	nessuno le leggerebbe.
 	'''
-	Versione 1.0.1 di domenica 5 maggio 2024
-	pager che carica e mostra un file di testo.
-	riceve il nomefile e non restituisce nulla
-	'''
-	try:
-		man = open(nf, "rt")
-		rig = man.readlines()
-		man.close()
-		cr = 0; tasto = "."
-		for l in rig:
-			print(l,end="")
-			cr += 1
-			if cr % 15 == 0:
-				tasto = dgt("\nPremi invio per proseguire o 'e' per uscire dalla guida. Pagina "+str(int(cr/15)))
-				if tasto.lower() == "e": break
-	except OSError:
-		print("Attenzione, file della guida mancante.\n\tRichiedere il file all'autore dell'App.")
+	import os
+	if (nf is None) == (testo is None):
+		raise ValueError("manuale: serve o un nome di file o un testo gia' pronto, non nessuno dei due e non tutti e due.")
+	if testo is None:
+		percorso = nf
+		if not os.path.isabs(percorso) and not os.path.exists(percorso):
+			percorso = os.path.join(_cartella_chiamante(1), nf)
+		errore = None
+		for prova in ([codifica] if codifica else ["utf-8", None]):
+			try:
+				with open(percorso, "rt", encoding=prova) as f:
+					testo = f.read()
+				break
+			except UnicodeDecodeError as e:
+				errore = e
+		if testo is None:
+			raise OSError(f"manuale: {nome} in {percorso} non si decodifica.") from errore
+	righe = testo.splitlines()
+	if not righe: return True
+	if righe_pagina is None:
+		try: righe_pagina = max(5, os.get_terminal_size().lines - 2)
+		except OSError: righe_pagina = 15
+	pagine = (len(righe) + righe_pagina - 1) // righe_pagina
+	for numero, riga in enumerate(righe, 1):
+		print(riga)
+		if numero % righe_pagina == 0 and numero < len(righe):
+			risposta = dgt(f"{nome}, pagina {numero // righe_pagina} di {pagine}. Invio o 'e'. ")
+			if risposta.strip().lower() == "e": return False
+	return True
 
 def menu(d={}, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None):
     """V4.6.4 - sabato 27 giugno 2026 - Stella Gemini 3.5 Flash & Gabriele Battaglia
