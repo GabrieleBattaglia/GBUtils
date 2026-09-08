@@ -100,6 +100,40 @@ rimandato, e che con INVIO annunci lo scaricamento e poi gli avanzamenti, che
 sono dieci, uno ogni dieci per cento, in righe corte come "30%, 26,2 MB su 87,5."
 Dimmi se dieci annunci sono troppi o troppo pochi per il tuo ascolto.
 Esito:
+
+PROVA 12: LA TABELLA DEI TASTI DI KEY, CON LA TASTIERA VERA
+Cosa fare: lancia python collaudo_key.py da questa cartella, prima in una
+finestra di Windows Terminal e poi in un prompt dei comandi classico. Il
+programma dice una riga per ogni tasto premuto. Premi in fila: le quattro frecce
+dedicate, le stesse sul tastierino a blocco numerico spento, il 5 del tastierino,
+Home, Fine, PagSu, PagGiu', Ins e Canc, dedicati e sul tastierino; poi le stesse
+cose con Ctrl e con Alt; F1 fino a F12 nudi, poi con Maiusc, con Ctrl e con Alt;
+Ctrl+Tab, Backspace, Ctrl+Backspace; Alt con qualche lettera e qualche cifra;
+Invio, Escape e Tab. Alla fine premi Ctrl+C.
+Cosa osservare: che ogni riga dica il nome del tasto che hai premuto, per
+esempio nome: alt-up per Alt piu' freccia su, nome: ctrl-pad-home per Ctrl piu'
+Home sul tastierino, nome: alt-f11, nome: alt-a, e che Backspace e
+Ctrl+Backspace siano due cose diverse. Il 5 del tastierino dovrebbe dire
+pad-center, ma la libreria di runtime iniettando gli eventi lo ha scartato,
+quindi e' proprio quello da guardare. Ctrl+PagSu dedicato dira' f12: e' un
+limite noto della libreria di runtime di Windows, non un errore. Ctrl+C deve
+fermare il programma. Se una riga dice special seguito da un codice, oppure un
+nome diverso da quello del tasto premuto, scrivimi quale tasto e cosa e' uscito.
+Perche' serve: la tabella e' stata verificata iniettando gli eventi nella
+console, ma solo la tastiera vera dice se i codici che arrivano sono quelli.
+Esito:
+
+PROVA 13: KEY DENTRO I PROGRAMMI, ATTESE E SCADENZE
+Cosa fare: usa per un po' meditimer, che sorveglia la tastiera cento volte al
+secondo, e ChessREG, che alle sue domande da' un tempo di risposta e alla
+scadenza torna al menu. Lascia scadere una domanda di ChessREG senza rispondere.
+Cosa osservare: che meditimer risponda ai tasti come prima e non scaldi il
+processore, che le domande di ChessREG scadano dopo il tempo giusto e che alla
+scadenza il programma dica di non aver toccato niente.
+Perche' serve: key non aspetta piu' un tempo finto di 99999 secondi ma senza
+limite, e il ciclo di attesa e' stato riscritto.
+Esito:
+
 LE PROVE D'ASCOLTO DI CWZATOR: FATTE TUTTE, LO STRUMENTO RESTA
 Aggiornato il 2026-09-06, a fase 1 conclusa.
 Le diciassette prove d'ascolto nate dal refactoring di CWzator sono state fatte

@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V128 di martedì 8 settembre 2026
+	V129 di martedì 8 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -16,7 +16,7 @@ Lista utilità contenute in questo pacchetto
 	enter_escape V1.1 di sabato 5 settembre 2026 by Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro e ClaudIA (Claude Opus 5 UltraCode). Dice cosa fare quando si preme un tasto diverso da Invio o Esc
 	gestisci_aggiornamento V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo
 	gridapu 1.2 from IU1FIG
-	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
+	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
 	manuale V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Impagina anche un testo gia' in memoria e non solo un file, legge in utf-8 con ripiego sulla codifica di sistema, cerca i nomi relativi nella cartella di chi la chiama e non in quella da cui si e' lanciato il programma, apre con with, dice a chi chiama se la lettura e' arrivata in fondo o e' stata interrotta, solleva invece di stampare, adatta la pagina all'altezza della console e chiama per nome cio' che sta mostrando
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
 	menu V5.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto). Nessun separatore grafico: spariti i cinque punti che stampavano trattini, compreso il doppio trattino fra chiave e descrizione di ogni voce, e la riga vuota che nasceva prima di ogni prompt. Il messaggio dell'ambiguita' dice cosa fare, il dizionario vuoto non viene piu' annunciato in inglese, e il primo parametro non e' piu' un dizionario modificabile
@@ -25,7 +25,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "128"
+VERSION = "129"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1876,180 +1876,259 @@ def base62(n):
 	out.reverse()
 	return segno + ''.join(symbols[l] for l in out)
 
-def key(prompt="", attesa=99999):
-	"""V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
-	Advanced key reader with special keys, numpad (NumLock OFF) and modifiers support.
-	Returns logical names for special keys (e.g., 'up', 'ctrl-a', 'pad-up', 'f1').
-	Retains original 'key' functionality with timeout and prompt.
+# Tabelle di key. Sono costanti di modulo perche' key viene chiamata anche
+# cento volte al secondo da chi sorveglia la tastiera senza fermarsi, e
+# ricostruirle a ogni chiamata era lavoro sprecato. I codici di Windows sono
+# stati verificati uno per uno contro la libreria di runtime, iniettando gli
+# eventi di tastiera nella console con WriteConsoleInput.
+# Windows, prefisso \x00: tastierino a blocco numerico spento, tasti funzione
+# con e senza modificatori, Ctrl e Alt con i tasti dedicati di navigazione,
+# che la libreria di runtime manda con questo prefisso quando c'e' Alt, e Alt
+# con lettere e cifre.
+_KEY_WINDOWS_00 = {
+	'H': 'pad-up', 'P': 'pad-down', 'K': 'pad-left', 'M': 'pad-right',
+	'G': 'pad-home', 'O': 'pad-end', 'I': 'pad-pageup', 'Q': 'pad-pagedown',
+	'R': 'pad-insert', 'S': 'pad-delete', 'L': 'pad-center',
+	';': 'f1', '<': 'f2', '=': 'f3', '>': 'f4', '?': 'f5', '@': 'f6',
+	'A': 'f7', 'B': 'f8', 'C': 'f9', 'D': 'f10', '\x85': 'f11', '\x86': 'f12',
+	'T': 'shift-f1', 'U': 'shift-f2', 'V': 'shift-f3', 'W': 'shift-f4',
+	'X': 'shift-f5', 'Y': 'shift-f6', 'Z': 'shift-f7', '[': 'shift-f8',
+	'\\': 'shift-f9', ']': 'shift-f10', '\x87': 'shift-f11', '\x88': 'shift-f12',
+	'^': 'ctrl-f1', '_': 'ctrl-f2', '`': 'ctrl-f3', 'a': 'ctrl-f4',
+	'b': 'ctrl-f5', 'c': 'ctrl-f6', 'd': 'ctrl-f7', 'e': 'ctrl-f8',
+	'f': 'ctrl-f9', 'g': 'ctrl-f10', '\x89': 'ctrl-f11', '\x8a': 'ctrl-f12',
+	'h': 'alt-f1', 'i': 'alt-f2', 'j': 'alt-f3', 'k': 'alt-f4',
+	'l': 'alt-f5', 'm': 'alt-f6', 'n': 'alt-f7', 'o': 'alt-f8',
+	'p': 'alt-f9', 'q': 'alt-f10', '\x8b': 'alt-f11', '\x8c': 'alt-f12',
+	'w': 'ctrl-pad-home', 'u': 'ctrl-pad-end', '\x84': 'ctrl-pad-pageup', 'v': 'ctrl-pad-pagedown',
+	'\x8d': 'ctrl-pad-up', '\x91': 'ctrl-pad-down', 's': 'ctrl-pad-left', 't': 'ctrl-pad-right',
+	'\x92': 'ctrl-pad-insert', '\x93': 'ctrl-pad-delete',
+	'\x94': 'ctrl-tab',
+	'\x97': 'alt-home', '\x9f': 'alt-end', '\x99': 'alt-pageup', '\xa1': 'alt-pagedown',
+	'\x98': 'alt-up', '\xa0': 'alt-down', '\x9b': 'alt-left', '\x9d': 'alt-right',
+	'\xa2': 'alt-insert', '\xa3': 'alt-delete',
+}
+# Alt con lettere e cifre: la libreria di runtime li codifica per posizione
+# fisica del tasto, quindi le lettere valgono per le tastiere QWERTY.
+for _lettere, _primo in (("qwertyuiop", 0x10), ("asdfghjkl", 0x1e), ("zxcvbnm", 0x2c), ("1234567890", 0x78)):
+	for _posizione, _lettera in enumerate(_lettere):
+		_KEY_WINDOWS_00[chr(_primo + _posizione)] = f"alt-{_lettera}"
+del _lettere, _primo, _posizione, _lettera
+# Windows, prefisso \xe0: tasti dedicati di navigazione, da soli e con Ctrl,
+# e F11 e F12 con tutti i modificatori. Ctrl+PagSu dedicato arriva con \x86,
+# lo stesso codice di F12: e' un limite della libreria di runtime e non si
+# puo' distinguere da qui. Le voci con Alt restano per le versioni della
+# libreria che li mandassero con questo prefisso invece che con \x00.
+_KEY_WINDOWS_E0 = {
+	'H': 'up', 'P': 'down', 'K': 'left', 'M': 'right',
+	'G': 'home', 'O': 'end', 'I': 'pageup', 'Q': 'pagedown',
+	'R': 'insert', 'S': 'delete',
+	'\x85': 'f11', '\x86': 'f12', '\x87': 'shift-f11', '\x88': 'shift-f12',
+	'\x89': 'ctrl-f11', '\x8a': 'ctrl-f12', '\x8b': 'alt-f11', '\x8c': 'alt-f12',
+	'\x8d': 'ctrl-up', '\x91': 'ctrl-down', 's': 'ctrl-left', 't': 'ctrl-right',
+	'w': 'ctrl-home', 'u': 'ctrl-end', 'v': 'ctrl-pagedown',
+	'\x92': 'ctrl-insert', '\x93': 'ctrl-delete', '\x94': 'ctrl-tab',
+	'\x98': 'alt-up', '\xa0': 'alt-down', '\x9b': 'alt-left', '\x9d': 'alt-right',
+	'\x97': 'alt-home', '\x9f': 'alt-end', '\x99': 'alt-pageup', '\xa1': 'alt-pagedown',
+	'\xa2': 'alt-insert', '\xa3': 'alt-delete',
+}
+# Unix: sequenze che seguono un Escape, nelle forme di xterm, di vt e di rxvt.
+_KEY_ANSI = {
+	'[A': 'up', '[B': 'down', '[C': 'right', '[D': 'left',
+	'[H': 'home', '[F': 'end', 'OH': 'home', 'OF': 'end',
+	'[1~': 'home', '[4~': 'end', '[7~': 'home', '[8~': 'end',
+	'[5~': 'pageup', '[6~': 'pagedown', '[2~': 'insert', '[3~': 'delete',
+	'[E': 'pad-center', '[Z': 'shift-tab',
+	'OP': 'f1', 'OQ': 'f2', 'OR': 'f3', 'OS': 'f4',
+	'[11~': 'f1', '[12~': 'f2', '[13~': 'f3', '[14~': 'f4',
+	'[15~': 'f5', '[17~': 'f6', '[18~': 'f7', '[19~': 'f8',
+	'[20~': 'f9', '[21~': 'f10', '[23~': 'f11', '[24~': 'f12',
+}
+# Unix con modificatori: [1;5A e' Ctrl+Su, [3;3~ e' Alt+Canc, [1;2P e' Shift+F1.
+_KEY_ANSI_LETTERE = {'A': 'up', 'B': 'down', 'C': 'right', 'D': 'left', 'H': 'home', 'F': 'end', 'P': 'f1', 'Q': 'f2', 'R': 'f3', 'S': 'f4'}
+_KEY_ANSI_TILDE = {
+	'1': 'home', '2': 'insert', '3': 'delete', '4': 'end', '5': 'pageup', '6': 'pagedown', '7': 'home', '8': 'end',
+	'11': 'f1', '12': 'f2', '13': 'f3', '14': 'f4', '15': 'f5', '17': 'f6', '18': 'f7', '19': 'f8',
+	'20': 'f9', '21': 'f10', '23': 'f11', '24': 'f12',
+}
+_KEY_ANSI_MODIFICATORI = {'2': 'shift', '3': 'alt', '4': 'shift-alt', '5': 'ctrl', '6': 'shift-ctrl', '7': 'alt-ctrl', '8': 'shift-alt-ctrl'}
+
+def _key_sequenza_ansi(seq):
+	"""Traduce cio' che su Unix segue un Escape in un nome di tasto.
+	Restituisce il nome quando lo riconosce, alt- piu' il carattere quando
+	l'Escape e' seguito da un solo carattere stampabile, cioe' Alt piu' quel
+	tasto, ed esc- piu' la sequenza grezza in tutti gli altri casi, cosi' che
+	un tasto nuovo si scopra premendolo."""
+	import re
+	nome = _KEY_ANSI.get(seq)
+	if nome:
+		return nome
+	trovato = re.fullmatch(r'\[(\d+)(?:;(\d+))?([A-Z~])', seq)
+	if trovato:
+		numero, modificatore, finale = trovato.groups()
+		if finale == '~':
+			base = _KEY_ANSI_TILDE.get(numero)
+		else:
+			base = _KEY_ANSI_LETTERE.get(finale) if numero == '1' else None
+		if base:
+			if not modificatore or modificatore == '1':
+				return base
+			return f"{_KEY_ANSI_MODIFICATORI.get(modificatore, 'mod' + modificatore)}-{base}"
+	if len(seq) == 1 and seq.isprintable():
+		return f"alt-{seq}"
+	return f"esc-{seq}"
+
+def _key_carattere(ch):
+	"""Nome di un carattere singolo, uguale sui due sistemi: Ctrl piu' lettera
+	diventa ctrl-a fino a ctrl-z, Ctrl+C interrompe con KeyboardInterrupt come
+	in qualunque programma da console, tutto il resto torna com'e', compresi
+	Invio, Escape, Backspace e Tab che restano i loro caratteri."""
+	if ch == '\x03':
+		raise KeyboardInterrupt
+	if '\x01' <= ch <= '\x1a' and ch not in ('\x08', '\t', '\r'):
+		return f"ctrl-{chr(ord(ch) + 96)}"
+	return ch
+
+def _key_console_windows():
+	"""Solleva EOFError se il processo non ha una console: senza, kbhit non
+	vede mai niente e key resterebbe in attesa per sempre, per esempio in
+	un'applicazione con interfaccia grafica avviata senza terminale."""
+	import ctypes
+	try:
+		senza_console = ctypes.windll.kernel32.GetConsoleCP() == 0
+	except (AttributeError, OSError):
+		return
+	if senza_console:
+		raise EOFError("key: nessuna console da cui leggere")
+
+def key(prompt="", attesa=None, alla_scadenza=""):
+	"""V7.0.0 di martedi' 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalita' auto)
+	Legge un tasto singolo senza aspettare Invio, riconosce i tasti speciali,
+	il tastierino a blocco numerico spento e i modificatori, e riferisce ogni
+	tasto con un nome leggibile, uguale su Windows e su Unix.
+	Parametri:
+	  prompt: testo stampato prima dell'attesa, senza andare a capo.
+	  attesa: secondi da aspettare; None, il predefinito, aspetta senza limite.
+	    Zero da' un solo sguardo alla tastiera e torna subito: e' il modo di
+	    sorvegliarla senza fermarsi.
+	  alla_scadenza: cio' che viene restituito se l'attesa scade senza tasti.
+	    Il predefinito e' la stringa vuota. Attenzione: la stringa vuota e'
+	    sottostringa di qualunque stringa, quindi un controllo come risposta in
+	    "abc" e' vero anche alla scadenza. Chi usa quell'idioma passi None, che
+	    non e' sottostringa di niente, e lo confronti per primo.
+	Restituisce:
+	  i caratteri stampabili come sono, spazio compreso;
+	  Invio come \\r, Escape come \\x1b, Backspace come \\x08, Tab come \\t;
+	  Ctrl piu' lettera come ctrl-a fino a ctrl-z, tranne le tre combinazioni
+	    che sono gia' i tasti sopra;
+	  frecce e navigazione dedicate come up, down, left, right, home, end,
+	    pageup, pagedown, insert, delete, e con ctrl o alt davanti, per esempio
+	    ctrl-left o alt-home;
+	  le stesse sul tastierino a blocco numerico spento con pad davanti, per
+	    esempio pad-up o ctrl-pad-home, e pad-center per il 5;
+	  i tasti funzione come f1 fino a f12, anche con shift, ctrl e alt davanti;
+	  Alt piu' lettera o cifra come alt-a o alt-1, e su Windows anche ctrl-tab
+	    e ctrl-backspace;
+	  un codice non riconosciuto come special-00-xx o special-e0-xx su Windows
+	    e come esc- piu' la sequenza su Unix, cosi' che si scopra premendolo.
+	Limiti della libreria di runtime di Windows, che da qui non si aggirano:
+	Ctrl+PagSu dedicato arriva con lo stesso codice di F12 e viene riferito
+	come f12; Shift con le frecce e i tasti di navigazione arriva senza il
+	modificatore; Alt con i tasti del tastierino non arriva affatto.
+	Ctrl+C interrompe il programma con KeyboardInterrupt, come in qualunque
+	programma da console, e non viene mai restituito come tasto.
+	Solleva EOFError quando il processo non ha una console o un terminale da
+	cui leggere, per esempio un'applicazione con interfaccia grafica avviata
+	senza terminale, invece di restare in attesa per sempre; solleva TypeError
+	se attesa non e' None e non e' un numero.
+	Dalla V7.0.0 i quattro tasti di servizio tornano come caratteri anche su
+	Unix, dove prima tornavano come parole; l'attesa predefinita e' senza
+	limite, dove prima era di 99999 secondi con una stringa vuota alla
+	ventottesima ora; le tabelle dei tasti sono costanti di modulo invece di
+	essere ricostruite a ogni chiamata; la tabella di Windows e' stata
+	verificata contro la libreria di runtime, correggendo Alt con le frecce
+	dedicate, che tornavano con i nomi del tastierino, e aggiungendo Ctrl e Alt
+	con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; e su
+	Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i
+	tasti funzione.
 	"""
 	import os
 	import sys
 	import time
-
-	if prompt:
-		print(prompt, end="", flush=True)
-
-	start_time = time.time()
-
+	if attesa is not None:
+		try:
+			attesa = float(attesa)
+		except (TypeError, ValueError) as errore:
+			raise TypeError("key: attesa deve essere None o un numero di secondi") from errore
 	if os.name == 'nt':
 		import msvcrt
-		
-		# Mappature per codici speciali su Windows (prefisso \x00 - spesso Tastierino Numerico o F1-F10)
-		special_mapping_00 = {
-			'H': 'pad-up', 'P': 'pad-down', 'K': 'pad-left', 'M': 'pad-right',
-			'G': 'pad-home', 'O': 'pad-end', 'I': 'pad-pageup', 'Q': 'pad-pagedown',
-			'R': 'pad-insert', 'S': 'pad-delete', 'L': 'pad-center', # Tasto 5 del numpad
-			
-			# Tasti funzione standard
-			';': 'f1', '<': 'f2', '=': 'f3', '>': 'f4',
-			'?': 'f5', '@': 'f6', 'A': 'f7', 'B': 'f8',
-			'C': 'f9', 'D': 'f10',
-			
-			# F-Keys con modificatori (spesso restituiscono \x00)
-			# Shift+F1..F10 (84..93)
-			'T': 'shift-f1', 'U': 'shift-f2', 'V': 'shift-f3', 'W': 'shift-f4',
-			'X': 'shift-f5', 'Y': 'shift-f6', 'Z': 'shift-f7', '[': 'shift-f8',
-			'\\': 'shift-f9', ']': 'shift-f10',
-			# Ctrl+F1..F10 (94..103)
-			'^': 'ctrl-f1', '_': 'ctrl-f2', '`': 'ctrl-f3', 'a': 'ctrl-f4',
-			'b': 'ctrl-f5', 'c': 'ctrl-f6', 'd': 'ctrl-f7', 'e': 'ctrl-f8',
-			'f': 'ctrl-f9', 'g': 'ctrl-f10',
-			# Alt+F1..F10 (104..113)
-			'h': 'alt-f1', 'i': 'alt-f2', 'j': 'alt-f3', 'k': 'alt-f4',
-			'l': 'alt-f5', 'm': 'alt-f6', 'n': 'alt-f7', 'o': 'alt-f8',
-			'p': 'alt-f9', 'q': 'alt-f10',
-			
-			# Modificatori Numpad (Ctrl)
-			'w': 'ctrl-pad-home', 'u': 'ctrl-pad-end', '\x84': 'ctrl-pad-pageup', 'v': 'ctrl-pad-pagedown',
-			'\x8d': 'ctrl-pad-up', '\x91': 'ctrl-pad-down', 's': 'ctrl-pad-left', 't': 'ctrl-pad-right',
-			
-			# Modificatori Numpad (Alt)
-			'\x97': 'alt-pad-home', '\x9f': 'alt-pad-end', '\x99': 'alt-pad-pageup', '\xa1': 'alt-pad-pagedown',
-			'\x98': 'alt-pad-up', '\xa0': 'alt-pad-down', '\x9b': 'alt-pad-left', '\x9d': 'alt-pad-right',
-		}
-
-		# Mappature per codici speciali su Windows (prefisso \xe0 - Tasti Navigazione Dedicati e F11/F12)
-		special_mapping_e0 = {
-			'H': 'up', 'P': 'down', 'K': 'left', 'M': 'right',
-			'G': 'home', 'O': 'end', 'I': 'pageup', 'Q': 'pagedown',
-			'R': 'insert', 'S': 'delete',
-			
-			# F11 e F12 e loro modificatori restituiscono \xe0
-			'\x85': 'f11', '\x86': 'f12',
-			'\x87': 'shift-f11', '\x88': 'shift-f12',
-			'\x89': 'ctrl-f11', '\x8a': 'ctrl-f12',
-			'\x8b': 'alt-f11', '\x8c': 'alt-f12',
-			
-			# Frecce dedicate con modificatori
-			'\x8d': 'ctrl-up', '\x91': 'ctrl-down', 's': 'ctrl-left', 't': 'ctrl-right',
-			'\x98': 'alt-up', '\xa0': 'alt-down', '\x9b': 'alt-left', '\x9d': 'alt-right',
-			
-			# PagUp/PagDn/Home/End dedicati con Ctrl e Alt
-			'\x84': 'ctrl-pageup', 'v': 'ctrl-pagedown', 'w': 'ctrl-home', 'u': 'ctrl-end',
-			'\x99': 'alt-pageup', '\xa1': 'alt-pagedown', '\x97': 'alt-home', '\x9f': 'alt-end',
-			
-			'\x94': 'ctrl-tab',
-			'\x82': 'alt-f11', '\x83': 'alt-f12'
-		}
-
-		while time.time() - start_time <= attesa:
+		_key_console_windows()
+		if prompt:
+			print(prompt, end="", flush=True)
+		inizio = time.monotonic()
+		while True:
 			if msvcrt.kbhit():
 				ch = msvcrt.getwch()
-				
 				if ch == '\x00':
 					ch2 = msvcrt.getwch()
-					return special_mapping_00.get(ch2, f"special-00-{ord(ch2):02x}")
-				elif ch == '\xe0':
+					return _KEY_WINDOWS_00.get(ch2, f"special-00-{ord(ch2):02x}")
+				if ch == '\xe0':
 					ch2 = msvcrt.getwch()
-					return special_mapping_e0.get(ch2, f"special-e0-{ord(ch2):02x}")
-				elif ch == '\r':
-					return '\r'
-				elif ch == '\x1b':
-					return '\x1b'
-				elif ch == '\x08':
-					return '\x08'
-				elif ch == '\t':
-					return '\t'
-				elif '\x01' <= ch <= '\x1a':
-					# Ctrl + Lettera (Ctrl+A = 1, Ctrl+Z = 26)
-					# Escludiamo Invio (\r=13), Tab (\t=9), Esc (\x1b=27) gestiti sopra
-					char_letter = chr(ord(ch) + 96).lower()
-					if char_letter not in ('m', 'i'): # m=13(enter), i=9(tab)
-						return f"ctrl-{char_letter}"
-					return ch
-				else:
-					return ch
-			time.sleep(0.01)
-		return ''
-	else:
-		import select
-		import termios
-		import tty
+					return _KEY_WINDOWS_E0.get(ch2, f"special-e0-{ord(ch2):02x}")
+				if ch == '\x7f':
+					return 'ctrl-backspace'
+				return _key_carattere(ch)
+			if attesa is None:
+				time.sleep(0.01)
+				continue
+			residuo = attesa - (time.monotonic() - inizio)
+			if residuo <= 0:
+				return alla_scadenza
+			time.sleep(min(0.01, residuo))
+	import select
+	import termios
+	import tty
+	try:
 		fd = sys.stdin.fileno()
-		old_settings = termios.tcgetattr(fd)
-		
-		# Semplice mappa per alcune sequenze ANSI comuni
-		ansi_mapping = {
-			'[A': 'up', '[B': 'down', '[C': 'right', '[D': 'left',
-			'[H': 'home', '[F': 'end', '[5~': 'pageup', '[6~': 'pagedown',
-			'[2~': 'insert', '[3~': 'delete',
-			'OP': 'f1', 'OQ': 'f2', 'OR': 'f3', 'OS': 'f4',
-			'[15~': 'f5', '[17~': 'f6', '[18~': 'f7', '[19~': 'f8',
-			'[20~': 'f9', '[21~': 'f10', '[23~': 'f11', '[24~': 'f12',
-		}
-		
-		# Modificatori ANSI: ...[1;5A = Ctrl+Up
-		# 2=Shift, 3=Alt, 4=Shift+Alt, 5=Ctrl, 6=Shift+Ctrl, 7=Alt+Ctrl, 8=Shift+Alt+Ctrl
-		mod_map = {'2': 'shift', '3': 'alt', '4': 'shift-alt', '5': 'ctrl', '6': 'shift-ctrl', '7': 'alt-ctrl', '8': 'shift-alt-ctrl'}
-		
-		try:
-			tty.setcbreak(fd)
-			while time.time() - start_time <= attesa:
-				rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-				if rlist:
-					ch = sys.stdin.read(1)
-					if ch == '\x1b':
-						# Inizio sequenza ANSI
-						rlist2, _, _ = select.select([sys.stdin], [], [], 0.05)
-						if rlist2:
-							seq = ""
-							while True:
-								# Leggiamo il resto della sequenza non in modo bloccante
-								rl, _, _ = select.select([sys.stdin], [], [], 0.01)
-								if rl:
-									seq += sys.stdin.read(1)
-								else:
-									break
-							
-							# Parsa sequenza
-							if seq in ansi_mapping:
-								return ansi_mapping[seq]
-							
-							# Controlla per modificatori complessi es. [1;5A
-							import re
-							match = re.match(r'\[1;(\d)([A-D])', seq)
-							if match:
-								mod, key_char = match.groups()
-								base_key = {'A': 'up', 'B': 'down', 'C': 'right', 'D': 'left'}.get(key_char, key_char)
-								mod_str = mod_map.get(mod, f"mod{mod}")
-								return f"{mod_str}-{base_key}"
-								
-							return f"esc-{seq}" # Seq non riconosciuta
-						else:
-							return 'esc'
-					elif ch == '\n' or ch == '\r': return 'enter'
-					elif ch == '\x08' or ch == '\x7f': return 'backspace'
-					elif ch == '\t': return 'tab'
-					elif '\x01' <= ch <= '\x1a':
-						char_letter = chr(ord(ch) + 96).lower()
-						if char_letter not in ('j', 'm', 'i'): 
-							return f"ctrl-{char_letter}"
-						return ch
-					else:
-						return ch
-			return ''
-		finally:
-			termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+		vecchie_impostazioni = termios.tcgetattr(fd)
+	except (AttributeError, ValueError, OSError, termios.error) as errore:
+		raise EOFError("key: nessun terminale da cui leggere") from errore
+	if prompt:
+		print(prompt, end="", flush=True)
+	inizio = time.monotonic()
+	try:
+		tty.setcbreak(fd)
+		while True:
+			timeout = None
+			if attesa is not None:
+				timeout = max(0.0, attesa - (time.monotonic() - inizio))
+			pronti, _, _ = select.select([sys.stdin], [], [], timeout)
+			if not pronti:
+				if attesa is not None and time.monotonic() - inizio >= attesa:
+					return alla_scadenza
+				continue
+			ch = sys.stdin.read(1)
+			if ch == '\x1b':
+				# Un Escape da solo o l'inizio di una sequenza: si aspetta un
+				# attimo per vedere se arriva altro, poi si legge il resto.
+				seq = ""
+				pausa = 0.05
+				while True:
+					pronti, _, _ = select.select([sys.stdin], [], [], pausa)
+					if not pronti:
+						break
+					seq += sys.stdin.read(1)
+					pausa = 0.01
+				if not seq:
+					return '\x1b'
+				return _key_sequenza_ansi(seq)
+			if ch in ('\n', '\r'):
+				return '\r'
+			if ch in ('\x08', '\x7f'):
+				return '\x08'
+			return _key_carattere(ch)
+	finally:
+		termios.tcsetattr(fd, termios.TCSADRAIN, vecchie_impostazioni)
 
 def gridapu(x=0.0, y=0.0, num=10):
 	'''GRIDAPU V1.2 - Author unknown, and kindly find on the net by IU1FIG Diego Rispoli.
