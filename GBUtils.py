@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V127 di martedì 8 settembre 2026
+	V128 di martedì 8 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -14,7 +14,7 @@ Lista utilità contenute in questo pacchetto
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
 	Donazione V2.0.1 del 4 settembre 2026
 	enter_escape V1.1 di sabato 5 settembre 2026 by Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro e ClaudIA (Claude Opus 5 UltraCode). Dice cosa fare quando si preme un tasto diverso da Invio o Esc
-	gestisci_aggiornamento V1.0.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica
+	gestisci_aggiornamento V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	manuale V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Impagina anche un testo gia' in memoria e non solo un file, legge in utf-8 con ripiego sulla codifica di sistema, cerca i nomi relativi nella cartella di chi la chiama e non in quella da cui si e' lanciato il programma, apre con with, dice a chi chiama se la lettura e' arrivata in fondo o e' stata interrotta, solleva invece di stampare, adatta la pagina all'altezza della console e chiama per nome cio' che sta mostrando
@@ -25,7 +25,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "127"
+VERSION = "128"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -512,10 +512,10 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
                            timeout: int = 10, chiedi=None, avvisa=None, traduci=None,
                            solo_se_compilato: bool = True) -> bool:
     """
-    V1.0.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
     Conduce da sola tutta la conversazione dell'aggiornamento: controlla se ce
-    n'e' uno, lo riferisce, chiede se applicarlo, lo scarica annunciando a che
-    punto e' e avvia la sostituzione.
+    n'e' uno, lo riferisce, mostra le novita', chiede se applicarlo, lo scarica
+    annunciando a che punto e' e avvia la sostituzione.
     Restituisce True soltanto quando il programma deve chiudersi perche'
     l'aggiornamento sta per essere applicato; in ogni altro caso False, e il
     programma prosegue.
@@ -526,7 +526,11 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     Le applicazioni con interfaccia grafica passano chiedi e avvisa, cioe' le
     proprie finestre: chiedi riceve un testo e risponde vero o falso, avvisa
     riceve un testo e lo mostra. Chi non le passa ottiene la conversazione da
-    console, con enter_escape per la domanda e print per il resto.
+    console, con enter_escape per la domanda e print per il resto; le novita'
+    della release, che possono essere lunghe, passano da manuale e si leggono
+    una pagina alla volta, cosi' chi decide se aggiornare le ha davvero lette
+    invece di vedersele scorrere via. E' la scelta di Gabriele del 4 settembre
+    2026, resa possibile da manuale V2.0.0, che accetta un testo in memoria.
     traduci, se indicata, riceve ogni testo prima che venga mostrato: le
     applicazioni tradotte le passano la propria funzione di gettext. Le frasi
     predefinite sono in italiano, quindi finche' non entrano nei cataloghi
@@ -575,7 +579,10 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     dillo(tr("Tu hai la") + f" {current_version}.")
     if changelog:
         dillo(tr("Novita' di questa versione:"))
-        dillo(changelog.strip())
+        if avvisa:
+            dillo(changelog.strip())
+        else:
+            manuale(testo=changelog.strip(), nome=tr("Novita'"))
     if not domanda(tr("Vuoi aggiornare adesso?")):
         dillo(tr("Aggiornamento rimandato."))
         return False
