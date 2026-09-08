@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V125 di lunedì 7 settembre 2026
+	V126 di martedì 8 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -17,14 +17,14 @@ Lista utilità contenute in questo pacchetto
 	gridapu 1.2 from IU1FIG
 	key V6.1.1 di lunedì 1 giugno 2026 by Gabriele Battaglia and Stella/Gemini 3.5 Flash.
 	manuale V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Impagina anche un testo gia' in memoria e non solo un file, legge in utf-8 con ripiego sulla codifica di sistema, cerca i nomi relativi nella cartella di chi la chiama e non in quella da cui si e' lanciato il programma, apre con with, dice a chi chiama se la lettura e' arrivata in fondo o e' stata interrotta, solleva invece di stampare, adatta la pagina all'altezza della console e chiama per nome cio' che sta mostrando
-	Mazzo V6.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Opus 5, modalità auto). Tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
+	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
 	menu V5.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto). Nessun separatore grafico: spariti i cinque punti che stampavano trattini, compreso il doppio trattino fra chiave e descrizione di ogni voce, e la riga vuota che nasceva prima di ogni prompt. Il messaggio dell'ambiguita' dice cosa fare, il dizionario vuoto non viene piu' annunciato in inglese, e il primo parametro non e' piu' un dizionario modificabile
 	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "125"
+VERSION = "126"
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -1495,7 +1495,11 @@ _MAZZO_SEMI_DESCRIZIONE = {"Cuori": 'C', "Quadri": 'Q', "Fiori": 'F', "Picche": 
 	"Bastoni": 'B', "Spade": 'S', "Coppe": 'O', "Denari": 'D'} # 'O' per Coppe
 class Mazzo:
 	'''
-	V6.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Opus 5, modalità auto)
+	V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
+	Dalla V6.1.0 il costruttore accetta lettere_semi, per scegliere le lettere
+	dei semi nella descrizione breve dove quelle predefinite non vanno bene:
+	la O delle Coppe, scelta per non confonderle con i Cuori, non e' la C che
+	portano le carte segnate in braille di Gabriele.
 	Rappresenta un mazzo di carte italiano o francese, con supporto per mazzi
 	multipli, mescolamento, pesca con rimescolamento automatico degli scarti, e
 	gestione flessibile delle carte.
@@ -1514,17 +1518,26 @@ class Mazzo:
 	import random
 	from collections import namedtuple
 	Carta = namedtuple("Carta", ["id", "nome", "valore", "seme_nome", "seme_id", "desc_breve"])
-	def __init__(self, tipo_francese=True, num_mazzi=1):
+	def __init__(self, tipo_francese=True, num_mazzi=1, lettere_semi=None):
 		'''
 		Inizializza uno o più mazzi di carte.
 		Parametri:
 		- tipo_francese (bool): True per mazzo francese (default), False per mazzo italiano.
 		- num_mazzi (int): Numero di mazzi da includere (default 1). Deve essere >= 1.
+		- lettere_semi (dict): da nome del seme a lettera per la descrizione
+		  breve, sovrapposto alla tabella predefinita, che resta valida per i
+		  semi non nominati. Con None, il predefinito, le lettere sono quelle
+		  di sempre. Solleva ValueError se non e' un dizionario.
 		'''
 		if not isinstance(num_mazzi, int) or num_mazzi < 1:
 			raise ValueError("Il numero di mazzi deve essere un intero maggiore o uguale a 1.")
+		if lettere_semi is not None and not isinstance(lettere_semi, dict):
+			raise ValueError("lettere_semi deve essere un dizionario da nome del seme a lettera, oppure None.")
 		self.tipo_francese = tipo_francese
 		self.num_mazzi = num_mazzi
+		self.lettere_semi = dict(_MAZZO_SEMI_DESCRIZIONE)
+		if lettere_semi:
+			self.lettere_semi.update({str(k): str(v) for k, v in lettere_semi.items()})
 		# Liste per tracciare lo stato delle carte
 		self.carte = [] # Mazzo principale da cui pescare
 		self.scarti = [] # Pila degli scarti, possono essere rimescolati
@@ -1547,7 +1560,7 @@ class Mazzo:
 			for id_seme, nome_seme in enumerate(semi, 1):
 				for nome_valore, valore_num in valori:
 					desc_val = _MAZZO_VALORI_DESCRIZIONE.get(valore_num, '?')
-					desc_seme = _MAZZO_SEMI_DESCRIZIONE.get(nome_seme, '?')
+					desc_seme = self.lettere_semi.get(nome_seme, '?')
 					carta = self.Carta(id=id_carta_counter,
 						nome=f"{nome_valore} di {nome_seme}",
 						valore=valore_num,
