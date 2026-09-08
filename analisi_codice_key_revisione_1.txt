@@ -1,0 +1,99 @@
+Analisi del codice, revisione 1
+Utilita': key, lettura di un tasto singolo con riconoscimento dei tasti speciali
+Progetto: GBUtils
+Versione analizzata: 6.1.1 di lunedi' 1 giugno 2026
+Revisione: 1
+Data: 2026-09-07
+Analisi eseguita da: ClaudIA, Claude Opus 5 in modalita' auto
+Autori dell'utilita': Gabriele Battaglia (IZ4APU) e Stella (Gemini 3.5 Flash)
+Nota sul metodo
+Questa e' la sola analisi, senza correzioni: il codice non e' stato toccato. Il rapporto e' intestato alla sola key secondo il punto 4.1, cosi' che la sua riga in tabella possa chiudersi per conto suo. La riga di GBUtils key resta a revisione 0 finche' questo rapporto non si e' svuotato.
+1. Codice esaminato
+GBUtils.py, righe da 1822 a 1995, 174 righe, la funzione key per intero, nei due rami Windows e Unix.
+Chiamanti nel parco software: dodici file almeno, fra cui ChessReg.py, tre file di Chitabry, cwapu.py e Words_Creator.py, gabryscola/motore_briscola.py, meditimer.py, tre file di orologic, scacchierando.py, rubik-cli.py, QuinQu e collaudo_cw.py. E' l'utilita' piu' usata della libreria dopo dgt.
+2. Issue aperte trovate su GitHub
+Sette issue aperte sul repository GBUtils. Una la riguarda da vicino.
+Issue 14, menu riscrive la lettura di tasto singolo, che key gia' fa duecento righe piu' in la'. L'analisi la conferma e la allarga: le copie sono tre, perche' anche enter_escape ha la propria, come dice il rapporto di quella utilita'. key e' la copia buona, cioe' quella a cui le altre due devono appoggiarsi.
+Le altre sei, numeri 1, 7, 8, 9, 15 e 16, non la riguardano.
+3. Rilievi in ordine di gravita' decrescente
+3.1 Rilievi alti
+Rilievo 1
+Gravita': alto
+Categoria: logica
+File e riga: GBUtils.py:1908, 1910, 1912, 1914, da confrontare con 1983, 1984, 1985 e 1978
+Problema: i due rami della funzione restituiscono nomi diversi per gli stessi tasti. Su Windows l'invio torna come barra r, Escape come la sequenza di escape, il tasto di cancellazione come barra x08 e il tabulatore come barra t; su Unix gli stessi quattro tasti tornano rispettivamente come le parole enter, esc, backspace e tab. Per tutti gli altri tasti speciali, invece, i due rami concordano: freccia in su torna up da entrambe le parti.
+Verifica: la prova che il problema e' reale e gia' incontrato sta nel codice che la usa. rubik-cli.py, alle righe 749, 793, 808 e 809, verifica se il tasto premuto sia il carattere numero ventisette oppure la parola esc, cioe' controlla tutte e due le forme. Il punto 3.8 del documento dice che quando in un progetto si trova un aggiramento scritto apposta per far funzionare una utilita' di GBUtils, quello e' il segnale che all'utilita' manca qualcosa, e che la correzione giusta sta nella libreria e non nell'aggiramento. Questo e' esattamente quel caso.
+Impatto per chi la usa: una applicazione scritta e provata su Windows, che confronti il risultato con barra r, su Linux non riconosce piu' l'invio, e viceversa. Poiche' la docstring dichiara la funzione cross-platform, chi la usa non ha ragione di sospettarlo. Dodici file del parco software la chiamano.
+Correzione proposta: scegliere una sola forma per quei quattro tasti e usarla su tutti e due i sistemi. Per non rompere le applicazioni esistenti, che sono tutte su Windows e quindi confrontano con i caratteri, la scelta meno invasiva e' portare il ramo Unix a restituire i caratteri come fa Windows. La scelta piu' pulita, cioe' i nomi parlanti da entrambe le parti, romperebbe i chiamanti e va decisa con Gabriele.
+Rilievo 2
+Gravita': alto
+Categoria: logica
+File e riga: GBUtils.py:1822, 1832, 1900 e 1925
+Problema: alla scadenza dell'attesa la funzione restituisce la stringa vuota. La scelta e' legittima e la funzione e' coerente, ma la stringa vuota ha una proprieta' insidiosa in Python: e' sottostringa di qualunque stringa, quindi l'espressione risposta in abc e' vera anche quando la risposta e' vuota. Poiche' l'idioma piu' naturale per verificare un tasto e' proprio quello, il valore restituito alla scadenza attraversa i controlli dei chiamanti come se fosse una risposta valida.
+Verifica: il difetto si e' gia' presentato due volte nel parco software, e in un caso distrugge un dato. In ChessReg.py, riga 660, il controllo e' s in uno due tre, e alla scadenza dei sessanta secondi la stringa vuota lo supera, il ciclo si chiude e il ramo predefinito cancella l'ultimo punteggio Elo registrato. In rubik-cli.py, riga 807, il controllo e' analogo e il danno e' minore, cioe' la mossa va perduta.
+Impatto per chi la usa: non e' un difetto di key in senso stretto, perche' la funzione fa quello che dichiara; e' pero' un difetto della libreria come strumento, perche' il valore che restituisce in un caso normale, cioe' la scadenza, si combina male con l'uso piu' naturale che se ne fa, e nessuno avvisa.
+Correzione proposta: due strade, da valutare con Gabriele. La minima e' scrivere nella docstring, a chiare lettere, che alla scadenza si riceve la stringa vuota e che va confrontata prima di qualunque altra verifica. La migliore e' aggiungere un parametro che permetta di ricevere None alla scadenza, con valore predefinito che ripete il comportamento di prima, come chiede il punto 3.8: None non e' sottostringa di niente e l'errore non si puo' commettere.
+3.2 Rilievi medi
+Rilievo 3
+Gravita': medio
+Categoria: ottimizzazione
+File e riga: GBUtils.py da 1839 a 1897, e da 1934 a 1946
+Problema: le due tabelle dei tasti speciali di Windows, che insieme contano oltre centoventi voci, vengono costruite da capo a ogni chiamata, perche' stanno dentro il corpo della funzione. Lo stesso vale per le due tabelle del ramo Unix e per l'importazione di re alla riga 1970, che sta addirittura dentro il ciclo.
+Impatto per chi la usa: il costo di una singola chiamata resta piccolo, ma alcune applicazioni chiamano key in ciclo stretto per sorvegliare la tastiera senza bloccarsi: meditimer, alla riga 660, la chiama con un'attesa di un centesimo di secondo, cioe' circa cento volte al secondo, e ogni volta ricostruisce le due tabelle. Su un portatile a batteria e' lavoro sprecato, e la funzione non lascia mai riposare il processore.
+Correzione proposta: portare le tabelle fuori dalla funzione, come costanti di modulo private, e spostare l'importazione di re in cima al ramo. Non cambia niente per chi la usa e si fa una volta sola.
+Rilievo 4
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:1916, 1917, 1918, 1919, 1920 e 1921
+Problema: Ctrl+C, che e' il byte tre, ricade nell'intervallo dei tasti di controllo e viene restituito come la stringa ctrl-c. La funzione non solleva quindi mai KeyboardInterrupt.
+Impatto per chi la usa: mentre una applicazione e' ferma su key, Ctrl+C non la interrompe; il tasto viene semplicemente consegnato al chiamante, che quasi sempre lo ignora perche' non lo ha previsto. Chi non vede lo schermo e ha perso il filo del programma non ha la via d'uscita che si aspetta da un programma a console. La stessa cosa vale per enter_escape.
+Correzione proposta: da decidere con Gabriele. Riconoscere il byte tre e sollevare KeyboardInterrupt sarebbe il comportamento atteso; consegnarlo al chiamante e' difendibile in un gioco che voglia usare quella combinazione. In ogni caso va scritto nella docstring, che oggi non lo dice.
+Rilievo 5
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:1898, 1899 e 1900, da confrontare con 1949 e 1950
+Problema: i due rami aspettano in modo diverso. Windows interroga la tastiera e poi dorme un centesimo di secondo, quindi risponde entro dieci millesimi; Unix usa select con una scadenza di un decimo di secondo, quindi puo' rispondere fino a cento millesimi dopo la pressione. La differenza e' di dieci volte.
+Impatto per chi la usa: una applicazione che misuri i tempi di reazione, o che debba seguire una battitura veloce, si comporta in modo sensibilmente diverso sui due sistemi. Per il parco software, che e' Windows first, il caso e' teorico; per una utilita' che si dichiara cross-platform, no.
+Correzione proposta: usare la stessa granularita' nei due rami.
+Rilievo 6
+Gravita': medio
+Categoria: regole generali
+File e riga: GBUtils.py:1822
+Problema: l'attesa predefinita e' 99999 secondi, cioe' poco meno di ventotto ore. E' un numero magico che finge di essere infinito senza esserlo, e alla sua scadenza si ricade nel rilievo 2.
+Impatto per chi la usa: un programma lasciato aperto tutta la notte, per esempio meditimer con un timer impostato, alla ventottesima ora riceve una stringa vuota che non si aspetta.
+Correzione proposta: accettare None come valore che significa attesa senza limite, tenendo 99999 come predefinito per non cambiare il comportamento di chi la usa gia'.
+3.3 Rilievi bassi
+Rilievo 7
+Gravita': basso
+Categoria: logica
+File e riga: GBUtils.py:1916, 1919, 1920 e 1921
+Problema: dentro il ramo dei tasti di controllo, il codice esclude le lettere m e i, spiegando nel commento che corrispondono a invio e tabulatore. Ma invio, tabulatore e anche il tasto di cancellazione sono gia' stati intercettati piu' sopra, alle righe 1908, 1914 e 1912, quindi non possono arrivare fin li'. E' un ramo morto, di quelli che il punto 3.3 chiede di cercare, ed e' anche incompleto, perche' nomina due delle tre lettere che non potrebbero comunque passare.
+Impatto per chi la usa: nessuno.
+Correzione proposta: togliere il controllo e il ramo che restituisce il carattere grezzo.
+Rilievo 8
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py:1823, 1824, 1825 e 1826
+Problema: la docstring e' in inglese, mentre le utilita' revisionate di recente, cioe' dgt, manuale, menu, Mazzo e CWzator, ce l'hanno in italiano. La riga degli autori non e' nel formato del parco software, che vuole modello e modalita' del momento. Non e' documentato niente di cio' che i rilievi 2, 4 e 6 chiedono di documentare, cioe' che cosa si riceve alla scadenza, che cosa succede con Ctrl+C e quanto vale l'attesa predefinita.
+Impatto per chi la usa: chi legge la docstring non trova le tre cose che gli servirebbero di piu'.
+Correzione proposta: riscriverla in italiano, elencando i valori di ritorno per famiglie, e dichiarando i tre comportamenti.
+Rilievo 9
+Gravita': basso
+Categoria: ottimizzazione
+File e riga: GBUtils.py:1848, 1849, 1850, 1851, 1852, 1853, 1854 e 1855
+Problema: la tabella dei tasti funzione con i modificatori copre F1 fino a F10 per Maiusc, Ctrl e Alt, ma non F11 e F12, che stanno nell'altra tabella e li' hanno i modificatori. La combinazione Alt+F11 e Alt+F12 compare pero' due volte nella seconda tabella, alle righe 1888 e 1894, con codici diversi: la seconda assegnazione sovrascrive silenziosamente la prima, perche' in un dizionario l'ultima chiave uguale vince. Le chiavi in conflitto sono barra x8b e barra x82 da un lato e barra x8c e barra x83 dall'altro, quindi non e' un conflitto di chiavi ma una doppia definizione dello stesso nome logico su due codici diversi.
+Impatto per chi la usa: nessuno, perche' i due codici esistono davvero e possono arrivare entrambi a seconda della tastiera. Va pero' verificato quale dei due arrivi davvero, perche' se uno dei due fosse sbagliato la combinazione verrebbe riconosciuta come un'altra.
+Correzione proposta: nessuna azione senza una prova a mano. Vedi la sezione 6.
+4. Riepilogo
+Rilievi totali: 9. Critici 0, alti 2, medi 4, bassi 3.
+Cio' che e' solido: key e' l'utilita' piu' ricca della libreria e la sua tabella dei tasti e' un lavoro paziente e prezioso. Riconosce le frecce dedicate e quelle del tastierino a blocco numerico spento, e le distingue fra loro, cosa che quasi nessuna libreria fa e che per chi usa il tastierino come strumento di comando e' proprio la differenza che conta. Riconosce i tasti funzione con tutti e tre i modificatori, i tasti di navigazione con Ctrl e con Alt, e le combinazioni Ctrl piu' lettera, restituendo nomi leggibili invece di codici. Il codice non riconosciuto non viene buttato via ma restituito in una forma che si puo' riconoscere, cioe' special seguito dal prefisso e dal codice: e' la scelta giusta, perche' permette a chi ci mette mano di scoprire un tasto nuovo semplicemente premendolo. Nel ramo Unix, il ripristino delle impostazioni del terminale sta dentro un finally, quindi il terminale non resta mai in uno stato strano nemmeno se qualcosa va storto: e' il dettaglio che distingue una utilita' scritta bene. La gestione delle sequenze ANSI con i modificatori, riconosciute con un'espressione regolare, e' completa.
+Quadro d'insieme: key fa un mestiere difficile e lo fa bene. I suoi due rilievi alti non riguardano il riconoscimento dei tasti, che e' la parte difficile, ma il contratto con chi la chiama: i quattro tasti che rispondono con nomi diversi sui due sistemi, e il valore restituito alla scadenza, che ha gia' provocato due difetti nel parco software, uno dei quali cancella un dato. Sono due questioni di interfaccia, non di implementazione, e vanno decise prima di essere scritte, perche' toccano dodici file.
+5. Ordine di lavorazione proposto
+Primo, la decisione: rilievi 1 e 2, cioe' che cosa deve restituire key per invio, escape, tabulatore e cancellazione, e che cosa alla scadenza. Sono due scelte di contratto e vanno prese con Gabriele prima di toccare una riga, perche' da esse dipende quanto lavoro ricade sui chiamanti.
+Secondo, le correzioni che non cambiano il contratto: rilievi 3, 5, 7 e 8.
+Terzo, insieme alla issue 14 e al rapporto di enter_escape: far leggere il tasto a key anche a menu e a enter_escape, che e' il lavoro che rende utile tutto il resto.
+Da decidere con Gabriele: il rilievo 4, cioe' se Ctrl+C debba interrompere, e il rilievo 6, cioe' se accettare None come attesa illimitata.
+6. Prove che richiedono Gabriele
+Due, entrambe di tastiera, ed entrambe si possono fare subito.
+La prima riguarda il rilievo 9: avviare un programmino che stampi cio' che key restituisce, e premere Alt+F11 e Alt+F12. Se il nome che compare e' quello giusto, il rilievo si chiude; se compare un altro nome, o uno dei codici non riconosciuti nella forma special, dimmi quale.
+La seconda e' una verifica generale della tabella, che val la pena fare una volta sola e per intero: con lo stesso programmino, premere in fila le frecce dedicate, le stesse sul tastierino a blocco numerico spento, i dodici tasti funzione nudi e poi con Maiusc, con Ctrl e con Alt, e i tasti di navigazione con Ctrl e con Alt. E' l'unico modo di sapere se la tabella, che nessuno puo' verificare leggendola, corrisponda davvero alla tastiera che hai sotto le dita.

@@ -1,0 +1,105 @@
+Analisi del codice, revisione 1
+Utilita': sonify, sonificazione di una serie di dati numerici
+Progetto: GBUtils
+Versione analizzata: 7.3 dell'11 aprile 2026
+Revisione: 1
+Data: 2026-09-07
+Analisi eseguita da: ClaudIA, Claude Opus 5 in modalita' auto
+Autori dell'utilita': Gabriele Battaglia (IZ4APU), Stella e Gemini 3 Pro
+Nota sul metodo
+Questa e' la sola analisi, senza correzioni: il codice non e' stato toccato. Il rapporto e' intestato alla sola sonify secondo il punto 4.1, cosi' che la sua riga in tabella possa chiudersi per conto suo. La riga di GBUtils sonify resta a revisione 0 finche' questo rapporto non si e' svuotato.
+1. Codice esaminato
+GBUtils.py, righe da 2045 a 2131, 87 righe, la funzione sonify per intero.
+Chiamanti nel parco software: tre, cioe' ChessREG/ChessReg.py alla riga 401, per il grafico sonoro dei punteggi Elo; orologic/orologic_modules/lichess_stats.py alla riga 359, per l'andamento dei punteggi su Lichess; QuinQu/quinqu.py alla riga 1447, per l'andamento di un obiettivo.
+2. Issue aperte trovate su GitHub
+Sette issue aperte sul repository GBUtils. Due riguardano sonify da vicino e questa analisi le conferma entrambe dall'esterno.
+Issue 8, un mixer audio solo per tutto il parco software non due. sonify e' in realta' la terza via audio della libreria, perche' apre uno stream per conto proprio con sd.play, accanto al mixer di Acusticator e alla riproduzione di CWzator. Vedi il rilievo 5.
+Issue 1, Acusticator, sounddevice avvisa su NumPy 2.5 e il mixer a callback si rompera'. sonify usa la stessa libreria sounddevite e la stessa NumPy, quindi quando quel problema arrivera' arrivera' anche qui.
+Le altre cinque, numeri 7, 9, 14, 15 e 16, non la riguardano.
+3. Rilievi in ordine di gravita' decrescente
+3.1 Rilievi alti
+Rilievo 1
+Gravita': alto
+Categoria: fragilita'
+File e riga: GBUtils.py:2062, 2063, 2064 e 2065
+Problema: la conversione della lista in vettore e' racchiusa in un try che cattura qualunque eccezione e restituisce senza dire niente. Una lista che contenga un None, una stringa o un oggetto qualsiasi fa quindi uscire la funzione in silenzio assoluto: nessun suono, nessun messaggio, nessun valore di ritorno che lo dica.
+Impatto per chi la usa: chi chiama sonify e non sente niente non ha modo di sapere se il problema sia nei dati, nella scheda audio o nel volume. Il punto 3.8 dice che una utilita' riferisce gli errori a chi l'ha chiamata, con un valore di ritorno o con un'eccezione: qui non fa ne' l'una ne' l'altra cosa. In ChessREG, dove i dati arrivano da un file JSON che potrebbe contenere un valore nullo, il silenzio sarebbe l'unico sintomo.
+Correzione proposta: catturare le eccezioni che si sanno nominare, cioe' ValueError e TypeError, e risollevarle con un messaggio che dica che i dati non sono numerici.
+Rilievo 2
+Gravita': alto
+Categoria: regole generali
+File e riga: GBUtils.py:2069
+Problema: quando la lista e' troppo corta o troppo lunga, la funzione stampa sonify, data_list length out of range e restituisce. Stampa, cioe', da dentro una libreria, e in inglese. Il punto 3.8 dice che una utilita' non puo' dare per scontato che esista un terminale su cui scrivere.
+Impatto per chi la usa: in una applicazione con interfaccia grafica il messaggio si perde, e resta il silenzio del rilievo 1. In una a console compare un messaggio in inglese in mezzo a un programma italiano. Il caso non e' raro: in ChessREG, alla riga 396, il programma controlla gia' da solo di avere abbastanza valori, il che dimostra che chi chiama sa fare quel controllo se solo la funzione glielo lasciasse fare.
+Correzione proposta: sollevare ValueError con il testo in italiano, e togliere la stampa.
+Rilievo 3
+Gravita': alto
+Categoria: fragilita'
+File e riga: GBUtils.py:2125 e 2126
+Problema: quando si chiede di salvare l'audio, il nome del file e' relativo, quindi il file nasce nella directory di lavoro corrente. Il punto 3.8 dice che quando una utilita' deve indovinare qualcosa lo ricava dal file che l'ha chiamata, mai dalla directory di lavoro. La libreria ha gia' _cartella_chiamante, alla riga 41, scritta apposta per questo, e update_checker la usa.
+Impatto per chi la usa: il file .wav finisce dove capita, cioe' dove si trovava la console quando il programma e' stato avviato, e chi lo cerca accanto al programma non lo trova. Da eseguibile compilato, la cartella di lavoro e' quella da cui si e' fatto doppio clic.
+Correzione proposta: comporre il percorso a partire da _cartella_chiamante, e restituire a chi ha chiamato il percorso completo del file scritto, vedi il rilievo 6.
+3.2 Rilievi medi
+Rilievo 4
+Gravita': medio
+Categoria: fragilita'
+File e riga: GBUtils.py:2123, 2126, 2127, 2128, 2129 e 2130
+Problema: la scrittura del file non e' protetta da nessun try, mentre tutto il resto della funzione ingoia qualunque errore. Una cartella su cui non si scrive, un disco pieno o un nome non ammesso fanno risalire OSError a chi ha chiamato, che a quel punto ha gia' sentito il suono e non se lo aspetta piu'.
+Impatto per chi la usa: la funzione e' silenziosa sugli errori che contano, cioe' i dati sbagliati, e rumorosa su quello che conta meno, cioe' il file di comodo. E' l'incoerenza opposta a quella che servirebbe.
+Correzione proposta: uniformare, cioe' sollevare in tutti e tre i casi, dopo aver accolto i rilievi 1 e 2.
+Rilievo 5
+Gravita': medio
+Categoria: DRY
+File e riga: GBUtils.py:2060 e 2121
+Problema: sonify apre la propria riproduzione con sd.play, cioe' con la funzione di comodo di sounddevice, che crea uno stream tutto suo. Nella stessa libreria, Acusticator ha un mixer a callback che tiene lo stream aperto e somma fino a trentadue voci, e CWzator ha la propria riproduzione. Sono tre vie audio diverse dentro la stessa libreria.
+Impatto per chi la usa: chiamare sonify mentre Acusticator sta suonando significa aprire un secondo stream sullo stesso dispositivo, con esiti che dipendono dalla scheda audio e dal driver. In QuinQu, che importa sia Acusticator sia sonify, il caso e' possibile.
+Correzione proposta: nessuna azione qui. La proposta di unificare i mixer e' gia' la issue 8 su GBUtils e questo rilievo serve come prova a sostegno, secondo il punto 2.7.2. Va pero' tenuto presente che sonify, a differenza di Acusticator, produce un suono lungo anche minuti: chi unifichera' i due dovra' occuparsi anche di questo.
+Rilievo 6
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:2055, 2065, 2070, 2088 e 2131
+Problema: la funzione restituisce sempre None, in tutti e cinque i punti in cui puo' uscire, sia che abbia suonato sia che non abbia fatto niente. Chi la chiama non ha nessun modo di sapere che cosa sia successo, e quando si chiede il file non riceve nemmeno il nome del file scritto.
+Impatto per chi la usa: e' l'altra meta' dei rilievi 1 e 2. Anche correggendo quelli, resta il fatto che una riproduzione riuscita e una lista di dati tutti uguali, che alla riga 2081 diventa una nota sola tenuta, sono indistinguibili dall'esterno.
+Correzione proposta: restituire almeno la durata effettiva, e il percorso del file quando lo si scrive.
+Rilievo 7
+Gravita': medio
+Categoria: fragilita'
+File e riga: GBUtils.py:2086, 2087, 2090, 2100, 2118 e 2119
+Problema: la durata non ha nessun limite superiore. Il numero di campioni si ricava moltiplicando la durata per 44100, e da li' nascono almeno cinque vettori: il tempo, le frequenze, la fase in float64, il segnale, i due canali e la versione a interi. Una durata di un'ora produce circa centocinquantotto milioni di campioni e, contando tutti i vettori intermedi, alcuni gigabyte di memoria.
+Impatto per chi la usa: un valore sbagliato passato per errore, per esempio secondi al posto di minuti moltiplicati, non produce un messaggio ma un blocco della macchina. Il limite sulla lunghezza dei dati c'e' gia', cinque a cinquecentomila; quello sulla durata no.
+Correzione proposta: fissare un tetto ragionevole alla durata, per esempio qualche minuto, e sollevare ValueError oltre.
+3.3 Rilievi bassi
+Rilievo 8
+Gravita': basso
+Categoria: logica
+File e riga: GBUtils.py:2112 e 2113
+Problema: la panoramica e' fissa e va sempre da sinistra a destra lungo tutta la durata. Non e' un parametro e non si puo' spegnere.
+Impatto per chi la usa: l'idea e' buona, perche' fa corrispondere il tempo allo spazio e aiuta a capire a che punto della serie ci si trova; ma chi ascolta in cuffia con un orecchio solo, o chi vuole una sonificazione centrata, non ha scelta.
+Correzione proposta: aggiungere un parametro con valore predefinito che ripeta il comportamento di prima, come chiede il punto 3.8.
+Rilievo 9
+Gravita': basso
+Categoria: logica
+File e riga: GBUtils.py:2076 e 2077
+Problema: l'intervallo di frequenze, dal fa2 all'fa8, e' scritto nel codice e non e' un parametro. Sei ottave sono molte, e la parte alta, sopra i quattromila hertz, e' quella in cui l'orecchio distingue peggio le altezze.
+Impatto per chi la usa: due dati vicini fra loro nella parte alta della scala si sentono piu' simili di quanto siano, e la lettura della serie e' meno precisa proprio dove i valori sono piu' alti.
+Correzione proposta: rendere l'intervallo un parametro, con i valori attuali come predefiniti, e valutare con Gabriele se un intervallo piu' stretto non sia piu' leggibile. E' una scelta di ascolto e va decisa da lui.
+Rilievo 10
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py:2046, 2047, 2048, 2049, 2050, 2051, 2052, 2053, 2054 e 2055
+Problema: la docstring dichiara sonify V7.3, cioe' due cifre invece delle tre chieste dalla regola x.y.z, ed e' scritta in inglese, mentre le utilita' revisionate di recente hanno docstring in italiano. La riga degli autori non e' nel formato del parco software.
+Impatto per chi la usa: nessuno funzionale.
+Correzione proposta: portare la versione a x.y.z, tradurre la docstring e aggiornare la riga degli autori.
+4. Riepilogo
+Rilievi totali: 10. Critici 0, alti 3, medi 4, bassi 3.
+Cio' che e' solido: il cuore della sonificazione e' scritto bene e con attenzione a cose che di solito sfuggono. La fase si accumula con cumsum in float64 invece che in float32, e il commento della riga 2099 spiega perche': su una sonificazione lunga la precisione singola perderebbe il conto e la frequenza scivolerebbe. La mappatura dei dati sulle frequenze protegge il caso della serie costante, alla riga 2080, evitando la divisione per zero e producendo una nota centrale, che e' la risposta giusta. Le dissolvenze ai due estremi, di un centesimo di secondo e limitate a meta' del segnale quando questo e' cortissimo, tolgono lo schiocco all'attacco e alla fine. La panoramica usa la legge del coseno e del seno, che mantiene costante la potenza percepita mentre il suono attraversa la scena, invece della semplice proporzione lineare che farebbe calare il volume al centro. La vettorizzazione con NumPy rende istantaneo un lavoro che in un ciclo Python richiederebbe minuti. E' una funzione pensata da chi ascolta.
+Quadro d'insieme: sonify e' un buon strumento con un contorno da libreria vecchia. Tutti e tre i rilievi alti dicono la stessa cosa da tre lati diversi: la funzione non parla con chi la chiama. Ingoia gli errori dei dati, stampa quello sulla lunghezza e scrive il file dove capita senza dire dove. Sono correzioni piccole, tutte concentrate in sei righe, e non toccano il cuore.
+5. Ordine di lavorazione proposto
+Primo blocco: rilievi 1, 2, 4 e 6, cioe' rendere la funzione capace di dire che cosa e' successo. Si toccano fra loro e conviene farli insieme.
+Secondo blocco: rilievi 3 e 7, cioe' il percorso del file e il tetto alla durata.
+Terzo blocco: rilievi 10 e, se Gabriele li vuole, 8 e 9.
+Da decidere con Gabriele: il rilievo 9, cioe' se l'intervallo di sei ottave sia davvero il migliore all'ascolto, e il rilievo 5, che aspetta la issue 8.
+6. Prove che richiedono Gabriele
+Due, e sono di ascolto.
+La prima riguarda il rilievo 9 e si puo' fare subito, prima di qualunque correzione: ascoltare la stessa serie di dati, per esempio una delle liste Elo di ChessREG, e dire se nella parte alta le differenze fra un valore e l'altro si distinguono bene come nella parte bassa. Se non si distinguono, l'intervallo va stretto.
+La seconda riguarda il rilievo 5 e va fatta solo se si decidera' di unificare i mixer: far partire una sonificazione lunga e, mentre suona, provocare un effetto di Acusticator, per sentire se i due si sovrappongono, se uno interrompe l'altro o se qualcosa si rompe.

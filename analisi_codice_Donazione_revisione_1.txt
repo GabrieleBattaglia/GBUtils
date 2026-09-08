@@ -1,0 +1,87 @@
+Analisi del codice, revisione 1
+Utilita': Donazione, il messaggio che invita a offrire un caffe' all'autore
+Progetto: GBUtils
+Versione analizzata: 2.0.1 del 4 settembre 2026
+Revisione: 1
+Data: 2026-09-07
+Analisi eseguita da: ClaudIA, Claude Opus 5 in modalita' auto
+Autori dell'utilita': Gabriele Battaglia (IZ4APU) & ClaudIA
+Nota sul metodo
+Questa e' la sola analisi, senza correzioni: il codice non e' stato toccato. Il rapporto e' intestato alla sola Donazione secondo il punto 4.1, cosi' che la sua riga in tabella possa chiudersi per conto suo. La riga di GBUtils Donazione resta a revisione 0 finche' questo rapporto non si e' svuotato.
+1. Codice esaminato
+GBUtils.py, righe da 3756 a 3844, 89 righe, la funzione Donazione per intero, insieme alla funzione _lingua_di_sistema che chiama alla riga 3837.
+Chiamanti nel parco software: sei, cioe' cwapu.py, orologic.py, scriba.py, Terminal_Beast/controller.py, Tornello/tornello.py e Tornello/src/gui/main_frame.py. Quest'ultimo e' rilevante e torna nel rilievo 1.
+2. Issue aperte trovate su GitHub
+Sette issue aperte sul repository GBUtils, numeri 1, 7, 8, 9, 14, 15 e 16. Nessuna riguarda Donazione, quindi nessun rilievo di questo rapporto e' gia' registrato altrove.
+3. Rilievi in ordine di gravita' decrescente
+3.1 Rilievi alti
+Rilievo 1
+Gravita': alto
+Categoria: regole generali
+File e riga: GBUtils.py:3844
+Problema: la funzione, dopo aver scelto la lingua giusta fra dieci, stampa il messaggio con print e non restituisce niente. Il punto 3.8 del documento dice che una utilita' deve funzionare sia in una applicazione con console sia in una con interfaccia grafica, e che quindi non puo' dare per scontato che esista un terminale su cui scrivere.
+Verifica: il chiamante Tornello/src/gui/main_frame.py, alla riga 3663, importa wx alla riga 6 ed e' quindi una finestra grafica. In un pacchetto compilato senza console, sys.stdout vale None. Provato in laboratorio che cosa fa print in quel caso: non solleva nessun errore, semplicemente non scrive niente. Il messaggio quindi non arriva, e nessuno se ne accorge, perche' non c'e' neanche un errore da vedere.
+Impatto per chi la usa: nel Tornello compilato, che e' una applicazione con interfaccia grafica, l'invito alla donazione non compare mai. Nelle applicazioni a console funziona, ma la funzione non da' comunque a chi la chiama nessun modo di decidere dove mostrarlo.
+Correzione proposta: restituire il messaggio invece di stamparlo, lasciando che sia il chiamante a metterlo dove sa. Per non rompere le sei applicazioni che oggi si aspettano la stampa, il punto 3.8 indica la strada: un parametro nuovo con un valore predefinito che ripete il comportamento di prima, per esempio stampa uguale a vero, e il messaggio restituito comunque. Chi ha una finestra passa stampa uguale a falso e mostra il testo come vuole.
+3.2 Rilievi medi
+Rilievo 2
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:3766 e 3769
+Problema: la funzione pesca un numero con random.randint, cioe' dal generatore casuale globale di Python, quello che ogni programma condivide. Chiamarla sposta quindi lo stato di quel generatore.
+Impatto per chi la usa: un programma che abbia fissato il seme per essere riproducibile, per esempio per rigiocare una partita o per una prova automatica, ottiene risultati diversi a seconda che il messaggio di donazione sia comparso o no. E' un effetto collaterale invisibile che una utilita' di libreria non deve avere: il punto 3.8 chiede che cio' che le serve lo riceva, non che tocchi lo stato di chi la chiama.
+Correzione proposta: usare un generatore privato, cioe' un'istanza di random.Random creata dentro la funzione o accanto a lei.
+Rilievo 3
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:3769
+Problema: la probabilita' del venti per cento e' scritta nel codice e non e' un parametro. Chi chiama non puo' ne' cambiarla ne' forzarla.
+Impatto per chi la usa: non si puo' mettere una voce di menu che mostri l'invito su richiesta, cosa che sarebbe la forma piu' gentile di chiederlo; non si puo' provarla senza rilanciare il programma cinque volte in media; e non si puo' abbassarla in una applicazione che si avvia molte volte al giorno.
+Correzione proposta: aggiungere un parametro con valore predefinito venti, che ripete il comportamento di prima, e ammettere il valore cento per forzare la comparsa.
+Rilievo 4
+Gravita': medio
+Categoria: DRY
+File e riga: GBUtils.py:3793, 3795, 3796, 3797, 3798 e 3801
+Problema: la funzione cerca il file selected_language.json costruendosi da sola l'elenco dei posti dove guardare: la cartella dell'eseguibile se congelato, la cartella di sys.argv[0], e la directory di lavoro corrente. La libreria ha gia' _cartella_chiamante, alla riga 41, che fa esattamente questo lavoro e lo fa meglio, perche' quando non e' congelata risale al file di chi ha chiamato invece di fidarsi di sys.argv[0], che e' lo script lanciato e non necessariamente quello che sta chiedendo.
+Impatto per chi la usa: in una applicazione fatta di piu' moduli, come Tornello, sys.argv[0] e la cartella del modulo chiamante possono non coincidere, e la lingua puo' non essere ritrovata. In piu' la directory di lavoro corrente resta fra i posti in cui si cerca, mentre il punto 3.8 dice che quando una utilita' deve indovinare qualcosa lo ricava dal file che l'ha chiamata, mai dalla directory di lavoro.
+Correzione proposta: usare _cartella_chiamante, che e' gia' li' e che update_checker gia' usa.
+Rilievo 5
+Gravita': medio
+Categoria: fragilita'
+File e riga: GBUtils.py:3788, 3789, 3799, 3800, 3815, 3816, 3829 e 3830
+Problema: quattro blocchi except Exception seguiti da pass ingoiano qualunque guasto senza lasciarne traccia. Ruff segnala l'ultimo con BLE001. Sono messi a protezione di quattro tentativi in cascata, quindi la logica del ripiego e' giusta; il problema e' che nessuno dei quattro distingue il caso normale, cioe' il file che non c'e', da quello anomalo, cioe' il file che c'e' ma non si legge.
+Impatto per chi la usa: se selected_language.json esistesse ma fosse danneggiato, la funzione passerebbe al ripiego successivo senza dirlo, e la lingua del messaggio potrebbe non essere quella scelta dall'utente senza che nessuno capisca perche'.
+Correzione proposta: intercettare le eccezioni che si sanno nominare, cioe' OSError e json.JSONDecodeError, e lasciar risalire le altre.
+3.3 Rilievi bassi
+Rilievo 6
+Gravita': basso
+Categoria: DRY
+File e riga: GBUtils.py, dalle righe 3771 alla 3780
+Problema: l'indirizzo di posta elettronica compare dieci volte, una per ogni traduzione.
+Impatto per chi la usa: cambiare indirizzo vuol dire dieci modifiche, e dimenticarne una lascia in giro un indirizzo vecchio in una lingua che nessuno rilegge.
+Correzione proposta: tenere l'indirizzo in una costante e comporlo nel messaggio.
+Rilievo 7
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py:3757 e 3758
+Problema: la docstring dichiara la versione e la data ma non ha la riga degli autori nel formato del parco software.
+Impatto per chi la usa: nessuno.
+Correzione proposta: aggiungerla, come hanno gia' dgt, manuale, menu e Mazzo.
+Rilievo 8
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py:3756
+Problema: il nome della funzione comincia per maiuscola, mentre le altre funzioni della libreria sono in minuscolo, cioe' dgt, menu, key, sonify, gridapu, base62, polipo. La maiuscola nella libreria distingue le classi, cioe' Mazzo e Acusticator.
+Impatto per chi la usa: nessuno; e' coerenza.
+Correzione proposta: nessuna azione. Rinominarla romperebbe le sei applicazioni che la importano, e il guadagno non vale il prezzo. Segnalato per completezza.
+4. Riepilogo
+Rilievi totali: 8. Critici 0, alti 1, medi 4, bassi 3.
+Cio' che e' solido: la cascata dei quattro modi di scoprire la lingua e' pensata bene ed e' nell'ordine giusto: prima cio' che il chiamante dichiara, poi la scelta che l'utente ha gia' fatto con polipo, poi la funzione di traduzione eventualmente installata, e infine la lingua di sistema, con l'inglese come ultima rete. La normalizzazione del codice di lingua, che taglia il paese sia dopo il trattino basso sia dopo il trattino, gestisce tutte le forme in cui un codice puo' arrivare. Le dieci traduzioni sono complete e nessuna e' una copia dell'inglese. La condivisione di _lingua_di_sistema con polipo, annotata nel commento della riga 3833, e' proprio il tipo di lavoro che il documento chiede, cioe' due copie diventate una.
+Quadro d'insieme: Donazione fa bene la cosa difficile, cioe' capire in che lingua parlare, e sbaglia la cosa facile, cioe' consegnare il risultato. Il rilievo 1 e' il solo che faccia danno oggi, e lo fa in un punto preciso e verificabile: il Tornello compilato non mostra mai l'invito. Gli altri quattro rilievi medi sono tutti effetti collaterali che una utilita' di libreria non dovrebbe avere.
+5. Ordine di lavorazione proposto
+Primo, il rilievo 1, cioe' restituire il messaggio conservando la stampa come comportamento predefinito, e poi adeguare la chiamata di Tornello dentro la finestra.
+Secondo, i rilievi 2, 3 e 4, che si toccano fra loro perche' stanno tutti nella prima meta' della funzione.
+Terzo, i rilievi 5, 6 e 7.
+Da decidere con Gabriele: se la probabilita' del rilievo 3 debba restare al venti per cento come predefinito, e se valga la pena aggiungere una voce di menu che mostri l'invito su richiesta.
+6. Prove che richiedono Gabriele
+Una sola, e va fatta dopo la correzione del rilievo 1: aprire il Tornello compilato, quello con la finestra, e verificare che l'invito alla donazione compaia davvero, in italiano, e che si possa leggere con NVDA. Oggi non compare mai, quindi la prova ha senso solo dopo.

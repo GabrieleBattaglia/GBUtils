@@ -1,0 +1,89 @@
+Analisi del codice, revisione 1
+Utilita': enter_escape, attesa di una conferma con invio o di un annullamento con escape
+Progetto: GBUtils
+Versione analizzata: 1.1 di sabato 5 settembre 2026
+Revisione: 1
+Data: 2026-09-07
+Analisi eseguita da: ClaudIA, Claude Opus 5 in modalita' auto
+Autori dell'utilita': Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro e ClaudIA
+Nota sul metodo
+Questa e' la sola analisi, senza correzioni: il codice non e' stato toccato. Il rapporto e' intestato alla sola enter_escape secondo il punto 4.1, cosi' che la sua riga in tabella possa chiudersi per conto suo. La riga di GBUtils enter_escape resta a revisione 0 finche' questo rapporto non si e' svuotato.
+Nota sulla versione: la tabella al punto 6 riporta v1.0, mentre la docstring dichiara V1.1 del 5 settembre 2026. La tabella si aggiorna soltanto a revisione chiusa, quindi la differenza e' regolare; va solo tenuto presente che la revisione 1 parte dalla 1.1 e non dalla 1.0.
+1. Codice esaminato
+GBUtils.py, righe da 695 a 752, 58 righe, la funzione enter_escape per intero.
+Chiamanti nel parco software: dieci file, cioe' Chitabry.py, Chitabry/gioca_suono.py, Chitabry/midistudy.py, Chitabry/views.py, cwapu.py, orologic.py, orologic_modules/cleaner.py, orologic_modules/clock.py, orologic_modules/easyfish/easyfish_app.py e easyfish/game_mode.py, piu' QuinQu e lichess_stats. E' fra le utilita' piu' usate della libreria.
+2. Issue aperte trovate su GitHub
+Sette issue aperte sul repository GBUtils. Una la riguarda da vicino e questa analisi la conferma allargandola.
+Issue 14, menu riscrive la lettura di tasto singolo, che key gia' fa duecento righe piu' in la'. L'analisi conferma il fatto e aggiunge che le copie non sono due ma tre: anche enter_escape ha la propria lettura di tasto singolo, alle righe da 713 a 731, mille cento righe prima di key. Vedi il rilievo 1.
+Le altre sei, numeri 1, 7, 8, 9, 15 e 16, non la riguardano.
+3. Rilievi in ordine di gravita' decrescente
+3.1 Rilievi alti
+Rilievo 1
+Gravita': alto
+Categoria: DRY
+File e riga: GBUtils.py da 713 a 731, da confrontare con key alle righe da 1822 a 1996
+Problema: enter_escape si scrive da sola la lettura di un tasto singolo, con il ramo Windows che usa msvcrt e quello Unix che usa termios e tty. La stessa cosa la fa key, nella stessa libreria, in modo molto piu' completo, e la fa una terza volta menu, come dice la issue 14. Sono tre implementazioni della stessa idea nello stesso file.
+Impatto per chi la usa: ogni correzione al modo di leggere la tastiera va fatta tre volte, e chi ne dimentica una lascia due comportamenti diversi nella stessa libreria. La conseguenza pratica e' il rilievo 2, che in key non c'e' perche' li' il caso e' gestito.
+Correzione proposta: far leggere il tasto a key, che restituisce gia' la barra r per l'invio e la sequenza di escape per Esc, e tenere in enter_escape la sola logica del dialogo, cioe' il prompt, la guida e il valore di ritorno. La correzione va coordinata con la issue 14, perche' e' lo stesso lavoro.
+Rilievo 2
+Gravita': alto
+Categoria: logica
+File e riga: GBUtils.py:717, 738, 748, 749, 750, 751 e 752
+Problema: su Windows msvcrt.getch, davanti a un tasto speciale come una freccia, un tasto funzione o quelli del tastierino, non restituisce un carattere ma un prefisso, cioe' il byte zero oppure il byte e0, e lascia il secondo byte in coda, da leggere con una seconda chiamata. enter_escape non lo sa e legge un byte per volta.
+Verifica: la prova che il comportamento e' reale sta nella stessa libreria: key, alle righe 1902 e 1905, legge esattamente quel prefisso e poi chiama una seconda volta per prendere il byte che segue. Cioe' il problema e' gia' noto e gia' risolto duecento righe piu' in la', ma non qui.
+Impatto per chi la usa: premendo una freccia, cosa facilissima quando si cerca di rileggere cio' che lo screen reader ha appena detto, la funzione stampa il messaggio di guida due volte di fila, perche' consuma prima il prefisso e poi il byte rimasto in coda, e ogni volta ristampa anche il prompt. Chi ascolta sente la stessa frase ripetuta e non capisce di aver premuto un tasto solo. Poiche' dieci file del parco software chiamano questa funzione, il difetto si presenta ovunque.
+Correzione proposta: accogliere il rilievo 1, che lo risolve da solo. In alternativa, riconoscere i due prefissi e consumare subito il byte che segue prima di dire qualcosa.
+3.2 Rilievi medi
+Rilievo 3
+Gravita': medio
+Categoria: regole generali
+File e riga: GBUtils.py:735, 738, 741, 745, 749, 750 e 752
+Problema: la funzione stampa il prompt e la guida, e legge dalla tastiera. Il punto 3.8 del documento dice che una utilita' deve funzionare sia in una applicazione con console sia in una con interfaccia grafica, e che quindi non puo' dare per scontato che esista un terminale su cui scrivere o da cui leggere. enter_escape lo da' per scontato in entrambe le direzioni.
+Impatto per chi la usa: in una applicazione con finestra, o in un pacchetto compilato senza console, la stampa si perde e la lettura o fallisce o resta in attesa per sempre. Oggi il caso non si presenta, perche' i dieci chiamanti sono tutti a console; si presenterebbe il giorno in cui uno di loro passasse alla finestra, come e' gia' successo a Cartella.
+Correzione proposta: dichiararlo nella docstring, cioe' scrivere apertamente che questa funzione richiede un terminale, e verificare in testa che ci sia, sollevando un errore chiaro invece di restare in attesa. E' la stessa scelta che dgt ha gia' fatto nella V2.0.0, dove solleva EOFError quando non c'e' un terminale da cui leggere.
+Rilievo 4
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:737 e 738
+Problema: non c'e' nessun limite di tempo. La funzione aspetta per sempre, e non c'e' modo per chi la chiama di dire quanto aspettare. key, la sua sorella nella stessa libreria, ha invece il parametro attesa.
+Impatto per chi la usa: un programma che debba proseguire da solo dopo un po', per esempio uno che stia conducendo una sequenza di operazioni, non puo' usare enter_escape per una conferma facoltativa. La issue 51 di Chitabry, che chiede di mostrare le note della release prima di chiedere se aggiornare, e' proprio un caso in cui una scadenza servirebbe.
+Correzione proposta: aggiungere un parametro di attesa con valore predefinito che ripeta il comportamento di prima, cioe' l'attesa illimitata, come chiede il punto 3.8; alla scadenza restituire un terzo valore, oppure lo stesso di Esc, da decidere con Gabriele.
+Rilievo 5
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:717 e 738
+Problema: msvcrt.getch, davanti a Ctrl+C, restituisce il byte 03 e non solleva KeyboardInterrupt. La funzione lo tratta come un tasto qualunque e stampa la guida.
+Impatto per chi la usa: mentre una applicazione e' ferma su enter_escape, Ctrl+C non la interrompe. Chi non vede lo schermo e ha perso il filo del programma non ha la via d'uscita che si aspetta da un programma a console.
+Correzione proposta: da decidere con Gabriele. Riconoscere il byte 03 e sollevare KeyboardInterrupt sarebbe il comportamento atteso da chi usa una console; lasciare com'e' e' difendibile se si vuole che una conferma non si possa saltare. In ogni caso va scritto nella docstring.
+3.3 Rilievi bassi
+Rilievo 6
+Gravita': basso
+Categoria: fragilita'
+File e riga: GBUtils.py:713, 715 e 719
+Problema: la scelta fra i due sistemi si fa provando a importare msvcrt e ripiegando su termios in caso di ImportError. Funziona, ma il try racchiude anche la definizione della funzione interna, quindi un errore diverso da ImportError dentro quel blocco non verrebbe intercettato e uscirebbe con un messaggio poco parlante.
+Impatto per chi la usa: nessuno in pratica; e' leggibilita'.
+Correzione proposta: usare os.name, come fa key alla riga 1837, che e' piu' esplicito e non usa un'eccezione per decidere.
+Rilievo 7
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py:697
+Problema: la docstring dichiara V1.1, cioe' due cifre invece delle tre chieste dalla regola x.y.z. La riga degli autori c'e' ed e' nel formato giusto, con modello e modalita'.
+Impatto per chi la usa: nessuno funzionale.
+Correzione proposta: portare la versione a x.y.z.
+Rilievo 8
+Gravita': basso
+Categoria: logica
+File e riga: GBUtils.py:731
+Problema: nel ramo Unix il carattere letto viene ricodificato in byte con encode utf-8, per poterlo confrontare con le costanti in byte del ramo comune. Per i tre caratteri che interessano, invio, escape e ritorno a capo, funziona; per un carattere accentato produce due byte e il confronto fallisce comunque, il che va bene, ma la conversione avanti e indietro e' un giro inutile.
+Impatto per chi la usa: nessuno.
+Correzione proposta: sparira' da solo accogliendo il rilievo 1, che toglie tutta la lettura locale.
+4. Riepilogo
+Rilievi totali: 8. Critici 0, alti 2, medi 3, bassi 3.
+Cio' che e' solido: la funzione fa esattamente cio' che promette e lo fa in modo pulito. La scelta di due valori di ritorno soli, vero per invio e falso per escape, e' la giusta per una conferma e rende leggibilissimo il codice di chi la chiama. Il parametro guida, aggiunto nella V1.1, e' un'ottima idea e il commento che lo accompagna spiega bene perche': chi lavora a orecchio, davanti a una funzione che resta muta in attesa, non avrebbe altro modo di accorgersi di aver premuto il tasto sbagliato. La ristampa del prompt dopo la guida, alle righe 751 e 752, e' il dettaglio che rende la cosa davvero usabile, perche' rimette l'utente davanti alla domanda invece di lasciarlo davanti a un avviso. Il ritorno a capo prima di uscire, alle righe 741 e 745, tiene pulita la riga. La gestione dei due caratteri di invio, barra r su Windows e barra n su Unix, e' corretta.
+Quadro d'insieme: enter_escape e' una funzione ben pensata che ha un solo difetto vero, il rilievo 2, e una sola ragione strutturale che lo ha permesso, il rilievo 1. Entrambi si risolvono insieme, appoggiando la lettura a key, ed e' lo stesso lavoro che la issue 14 chiede per menu. Conviene quindi fare i tre casi in una volta sola.
+5. Ordine di lavorazione proposto
+Un blocco solo, insieme alla issue 14: portare enter_escape e menu a leggere il tasto con key, il che risolve da solo i rilievi 1, 2 e 8, e apre la strada al rilievo 4, perche' key ha gia' l'attesa.
+Poi, in un secondo momento, i rilievi 3, 5, 6 e 7.
+Da decidere con Gabriele: il rilievo 5, cioe' se Ctrl+C debba interrompere l'attesa, e il rilievo 4, cioe' che cosa debba restituire una scadenza.
+6. Prove che richiedono Gabriele
+Una sola, e conviene farla subito, prima di qualunque correzione, perche' e' la conferma sul campo del rilievo 2: avviare una qualunque applicazione che chieda una conferma con enter_escape, per esempio cwapu, e alla domanda premere una volta sola la freccia in su. Se il messaggio di guida viene detto due volte, il rilievo e' confermato. Prova poi anche con un tasto funzione e con un tasto del tastierino a blocco numerico spento.

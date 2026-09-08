@@ -1,0 +1,87 @@
+Analisi del codice, revisione 1
+Utilita': gridapu, conversione da coordinate geografiche a locatore Maidenhead
+Progetto: GBUtils
+Versione analizzata: 1.2
+Revisione: 1
+Data: 2026-09-07
+Analisi eseguita da: ClaudIA, Claude Opus 5 in modalita' auto
+Autori dell'utilita': autore originale sconosciuto, trovato in rete da Diego Rispoli (IU1FIG), tradotto da Java da Gabriele Battaglia (IZ4APU)
+Nota sul metodo
+Questa e' la sola analisi, senza correzioni: il codice non e' stato toccato. Il rapporto e' intestato alla sola gridapu secondo il punto 4.1, cosi' che la sua riga in tabella possa chiudersi per conto suo. La riga di GBUtils gridapu resta a revisione 0 finche' questo rapporto non si e' svuotato.
+1. Codice esaminato
+GBUtils.py, righe da 1997 a 2043, 47 righe, la funzione gridapu per intero.
+Chiamanti nel parco software: uno solo, Stuff/AriadneToLocators.py, che alla riga 45 la chiama come gridapu(lon, lat), cioe' con i parametri nell'ordine giusto.
+2. Issue aperte trovate su GitHub
+Sette issue aperte sul repository GBUtils, numeri 1, 7, 8, 9, 14, 15 e 16. Nessuna riguarda gridapu, quindi nessun rilievo di questo rapporto e' gia' registrato altrove.
+3. Rilievi in ordine di gravita' decrescente
+3.1 Rilievi alti
+Rilievo 1
+Gravita': alto
+Categoria: logica
+File e riga: GBUtils.py:2003, 2004 e 2005
+Problema: il controllo di tipo pretende che entrambe le coordinate siano decimali, con isinstance e float. Un intero viene quindi rifiutato, benche' una coordinata intera sia perfettamente legittima: la latitudine 44 e la longitudine 11 individuano un punto come qualunque altro.
+Verifica: riprodotto. gridapu(11.34, 44.49, 6) restituisce JN54QL, che e' il locatore giusto di Bologna. gridapu(11, 44, 6) stampa Lat or Lon wrong type e restituisce la stringa vuota.
+Impatto per chi la usa: una coordinata che arriva da un JSON, da un file di testo o da un calcolo puo' benissimo essere un intero, e in quel caso la funzione non converte niente e non lo dice a chi l'ha chiamata in modo utilizzabile. Il chiamante che non controlla il valore di ritorno si ritrova un locatore vuoto nel proprio archivio.
+Correzione proposta: accettare numeri, cioe' interi e decimali, e convertirli in decimale prima di lavorarci. In pratica basta sostituire il controllo con uno che accetti anche gli interi e faccia float delle due coordinate.
+Rilievo 2
+Gravita': alto
+Categoria: regole generali
+File e riga: GBUtils.py:2004 e 2005
+Problema: quando il tipo non va bene, la funzione stampa un messaggio in inglese e restituisce la stringa vuota. Il punto 3.8 dice che una utilita' riferisce gli errori a chi l'ha chiamata, con un valore di ritorno o con un'eccezione, e non li stampa per conto proprio, perche' non puo' dare per scontato che esista un terminale su cui scrivere.
+Impatto per chi la usa: in una applicazione con interfaccia grafica il messaggio si perde e resta solo la stringa vuota, che e' indistinguibile da un locatore non calcolabile per altre ragioni, per esempio per num uguale a zero, vedi il rilievo 5.
+Correzione proposta: sollevare TypeError, che il chiamante non puo' ignorare, e togliere la stampa.
+Rilievo 3
+Gravita': alto
+Categoria: fragilita'
+File e riga: GBUtils.py:2010, 2011, 2034, 2036, 2038, 2040 e 2042
+Problema: le coordinate non vengono validate. La latitudine non ha nessun controllo di intervallo, e la longitudine ha un solo passo di riavvolgimento, cioe' aggiunge o toglie trecentosessanta una volta sola. Fuori intervallo, gli indici calcolati escono dagli alfabeti e la funzione o restituisce un locatore inventato o cade.
+Verifica: riprodotto. gridapu(0.0, -91.0, 6) restituisce JA09AA, che sembra un locatore valido e non lo e', perche' la latitudine meno novantuno non esiste. gridapu(0.0, 95.0, 6) restituisce JS05AA, stessa cosa. gridapu(900.0, 44.49, 6) solleva IndexError, string index out of range, perche' novecento meno trecentosessanta fa ancora cinquecentoquaranta, cioe' resta fuori scala.
+Impatto per chi la usa: i due casi sono peggiori l'uno dell'altro. Il primo mette in archivio un locatore falso che nessuno riconoscera' come tale; il secondo fa cadere il programma che ha chiamato la funzione, con un errore che parla di indici di stringa e non dice niente sulle coordinate.
+Correzione proposta: validare la latitudine fra meno novanta e novanta e sollevare ValueError fuori da li'; riavvolgere la longitudine con il resto della divisione, che funziona per qualunque valore, invece che con un solo passo.
+3.2 Rilievi medi
+Rilievo 4
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:1997, 2000, 2014 e 2015
+Problema: i due parametri si chiamano x e y, e la docstring dice che riceve prima la longitudine e poi la latitudine. Il nome x per la longitudine e' coerente con la convenzione cartesiana, ma nel parlare comune, e in quasi tutte le interfacce che trattano coordinate, l'ordine abituale e' prima la latitudine e poi la longitudine.
+Impatto per chi la usa: chi scambia i due argomenti non riceve nessun errore, perche' entrambi sono decimali e spesso entrambi sono in intervallo: riceve semplicemente un locatore sbagliato, che indica un altro punto del mondo. E' il tipo di errore che si scopre mesi dopo.
+Correzione proposta: rinominare i parametri in lon e lat, che sono nomi che non si possono scambiare per sbaglio, conservando l'ordine attuale per non rompere l'unico chiamante esistente, che lo rispetta gia'.
+Rilievo 5
+Gravita': medio
+Categoria: logica
+File e riga: GBUtils.py:2033, 2035, 2037, 2039 e 2041
+Problema: il parametro num, cioe' quante cifre deve avere il locatore, non viene validato. I cinque controlli in cascata usano il maggiore o uguale, quindi un valore dispari viene silenziosamente arrotondato per difetto, un valore minore di due produce la stringa vuota e un valore maggiore di dieci produce dieci caratteri.
+Verifica: riprodotto. gridapu(11.34, 44.49, 3) restituisce JN, cioe' due caratteri invece dei tre chiesti. gridapu(11.34, 44.49, 0) restituisce la stringa vuota, che e' lo stesso valore restituito in caso di errore di tipo, vedi il rilievo 2.
+Impatto per chi la usa: chiedere tre cifre e riceverne due senza nessun avviso, e non poter distinguere una richiesta impossibile da un errore.
+Correzione proposta: accettare solo i valori pari da due a dieci e sollevare ValueError sugli altri, oppure documentare l'arrotondamento per difetto e dirlo nel valore di ritorno.
+3.3 Rilievi bassi
+Rilievo 6
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py, da 2007 a 2031
+Problema: i nomi sono quelli della traduzione dal Java e non dicono niente: L, U e D per i tre alfabeti, ycalc, ydiv_ar, yn, yi, yk, ylp, yres per il calcolo. La lettera L in particolare, in molti caratteri tipografici, non si distingue dalla cifra uno. Il punto 3.5 chiede nomi chiari.
+Impatto per chi la usa: nessuno; e' manutenibilita'. La funzione e' pero' difficile da correggere proprio per questo, ed e' un ostacolo pratico ai rilievi 3 e 5.
+Correzione proposta: rinominare i tre alfabeti in maiuscole, minuscole e cifre, e le variabili di calcolo con nomi che dicano se stanno lavorando sulla longitudine o sulla latitudine.
+Rilievo 7
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py:1998, 1999, 2000 e 2001
+Problema: la docstring dichiara V1.2, cioe' due cifre invece delle tre chieste dalla regola x.y.z, ed e' scritta in inglese, mentre le utilita' revisionate di recente hanno docstring in italiano. Manca la riga degli autori nel formato del parco software.
+Impatto per chi la usa: nessuno funzionale.
+Correzione proposta: portare la versione a x.y.z, tradurre la docstring conservando l'attribuzione a Diego Rispoli e all'autore originale, che va tenuta, e aggiungere la riga di chi la revisiona ora.
+Rilievo 8
+Gravita': basso
+Categoria: regole generali
+File e riga: GBUtils.py:2005
+Problema: fra return e la stringa vuota manca lo spazio, cioe' e' scritto return seguito subito dagli apici.
+Impatto per chi la usa: nessuno.
+Correzione proposta: aggiungere lo spazio. Il rilievo sparira' da solo accogliendo il rilievo 2, che toglie quella riga.
+4. Riepilogo
+Rilievi totali: 8. Critici 0, alti 3, medi 2, bassi 3.
+Cio' che e' solido: il calcolo del locatore e' corretto e verificato sul campo. Le coordinate di Bologna, longitudine 11,34 e latitudine 44,49, danno JN54QL, che e' esattamente il locatore giusto. La struttura a divisori successivi, dieci, uno, un ventiquattresimo, un duecentoquarantesimo e un duecentoquarantesimo di ventiquattro, e' il modo corretto di scomporre un locatore Maidenhead nei suoi cinque livelli, e la scelta di trattare separatamente il caso positivo con floor e quello negativo con ceil e' giusta, perche' e' cio' che serve per non sbagliare di uno nell'emisfero sud e a ovest di Greenwich. L'alternanza fra maiuscole, cifre, maiuscole, cifre e minuscole rispetta la convenzione internazionale.
+Quadro d'insieme: gridapu e' una funzione che fa bene il suo mestiere e non fa niente per proteggersi. Tutti e tre i rilievi alti riguardano cio' che entra: un tipo legittimo rifiutato, un errore stampato invece che sollevato, e coordinate fuori scala accettate in silenzio o fatali. Poiche' la usa una sola applicazione, e con i parametri giusti, oggi non sta facendo danno; ma e' una utilita' di libreria, quindi il prossimo chiamante potrebbe non essere altrettanto attento.
+5. Ordine di lavorazione proposto
+Un blocco solo: i rilievi 1, 2, 3 e 5 si correggono tutti nelle prime cinque righe della funzione, aggiungendo una validazione unica in testa. Il rilievo 6, il rinominare, conviene farlo nello stesso momento, perche' e' quello che rende leggibile il resto.
+Da decidere con Gabriele: il rilievo 4, cioe' se cambiare i nomi dei parametri, e il rilievo 5, cioe' se num dispari debba essere un errore o un arrotondamento dichiarato.
+6. Prove che richiedono Gabriele
+Nessuna. gridapu non produce suoni, non aspetta tasti e non tocca il disco: si prova per intero in laboratorio, e in laboratorio e' stata provata, compreso il confronto con il locatore vero di Bologna.
