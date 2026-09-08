@@ -3,12 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V126 di martedì 8 settembre 2026
+	V127 di martedì 8 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	base62 3.0 di martedì 15 novembre 2022
 	CWzator V10.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Fase 1 del refactoring conclusa, motore di riproduzione rifatto. Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, errori riferiti a chi chiama invece che stampati, scelta automatica dell'interfaccia audio piu' pronta fra quelle che puntano al dispositivo scelto nel sistema, e via il vecchio modo di chiedere la mappa con msg uguale a meno uno
+	contesto_ssl V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Il contesto con cui urllib verifica i certificati: archivio di sistema più certifi, perché ognuno dei due conosce radici che l'altro non ha. Nasce dalla issue 40 di Orologic
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
 	Donazione V2.0.1 del 4 settembre 2026
@@ -22,9 +23,12 @@ Lista utilità contenute in questo pacchetto
 	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
 	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	perform_update V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
+	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "126"
+VERSION = "127"
+# Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
+# prima richiesta, perche' caricare gli archivi dei certificati costa.
+_CONTESTO_SSL = None
 def _parse_version(version_str: str) -> tuple | None:
     """Helper interno per il parsing semantico della versione.
     Restituisce None quando nella stringa non c'e' nessun numero. Prima in quel
@@ -245,20 +249,51 @@ def update_checker(current_version: str, api_url: str, timeout: int = 10, cartel
         _write_update_log(f"Errore durante il controllo aggiornamenti: {e}", cartella_log, nome_app)
         return False, None, None, None
 
+def contesto_ssl():
+    """
+    V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
+    Contesto SSL con cui il parco software apre le connessioni sicure di urllib.
+    Verifica i certificati con l'archivio del sistema e, in aggiunta, con il
+    pacchetto certifi che arriva insieme a requests. Le due fonti coprono guai
+    diversi: l'archivio di Windows conosce le radici installate da antivirus e
+    proxy, ma le altre le scarica soltanto quando un programma Microsoft le
+    incontra, e OpenSSL non lo fa mai; certifi le ha tutte dalla nascita, ma
+    non sa niente di quello che l'utente ha installato.
+    Con il solo archivio di sistema, su un PC dove nessun programma Microsoft
+    aveva mai incontrato la radice di GitHub, urllib rifiutava api.github.com
+    con "unable to get local issuer certificate" mentre requests, che usa
+    certifi, passava: e' la issue 40 di Orologic, e lo stesso sarebbe successo
+    a perform_update al momento di scaricare l'aggiornamento.
+    La verifica non viene mai disattivata. Se certifi manca resta il solo
+    archivio di sistema. Il contesto si costruisce una volta e si riusa.
+    Uso: urllib.request.urlopen(url, context=contesto_ssl())
+    """
+    import ssl
+    global _CONTESTO_SSL
+    if _CONTESTO_SSL is None:
+        contesto = ssl.create_default_context()
+        try:
+            import certifi
+            contesto.load_verify_locations(cafile=certifi.where())
+        except (ImportError, OSError):
+            pass
+        _CONTESTO_SSL = contesto
+    return _CONTESTO_SSL
+
 def _scarica(url: str, destinazione: str, avanzamento=None, timeout: int = 30) -> int:
     """Scarica un file e restituisce i byte presi, avvisando man mano.
     Sta fuori da perform_update perche' cosi' si puo' provare senza dover
     aggiornare davvero un programma.
     Legge a blocchi invece di usare urlretrieve, che non accetta un tempo
     massimo: una connessione che si impianta senza chiudersi lasciava il
-    programma appeso per sempre. La verifica dei certificati resta attiva:
-    questo e' l'unico punto in cui il parco software prende dalla rete codice
-    che poi verra' eseguito."""
+    programma appeso per sempre. La verifica dei certificati resta attiva, e
+    passa da contesto_ssl: questo e' l'unico punto in cui il parco software
+    prende dalla rete codice che poi verra' eseguito."""
     import urllib.request
 
     scaricato = 0
     ultima_percentuale = -1
-    with urllib.request.urlopen(url, timeout=timeout) as risposta:
+    with urllib.request.urlopen(url, timeout=timeout, context=contesto_ssl()) as risposta:
         try:
             totale = int(risposta.headers.get("Content-Length") or 0)
         except (TypeError, ValueError):
@@ -363,10 +398,12 @@ start "" /D "{current_dir}" "{current_exe}"
 def perform_update(download_url: str, app_name: str = "App", avanzamento=None, timeout: int = 30,
                    cartella_log: str | None = None) -> bool:
     """
-    V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5, modalità auto)
+    V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto)
     Scarica l'aggiornamento, lo estrae e avvia lo script che sostituisce
     l'installazione, poi restituisce True perche' il chiamante possa chiudersi.
-    Il download avviene con la verifica dei certificati attiva.
+    Il download avviene con la verifica dei certificati attiva, tramite
+    contesto_ssl: dalla V1.6.1 vale l'archivio di sistema piu' certifi, cosi'
+    una radice che Windows non ha ancora scaricato non blocca l'aggiornamento.
     Gli errori vengono registrati accanto all'applicazione, non nella directory
     di lavoro, e firmati con il nome passato in app_name.
     True significa che lo script e' stato avviato, non che l'aggiornamento sia
