@@ -134,6 +134,31 @@ Perche' serve: key non aspetta piu' un tempo finto di 99999 secondi ma senza
 limite, e il ciclo di attesa e' stato riscritto.
 Esito:
 
+PROVA 14: LA SCALA DI SONIFY, SEI OTTAVE O TRE
+Cosa fare: lancia python collaudo_sonify.py da questa cartella. Sono sei
+ascolti di otto secondi, spiegati uno per uno; Invio suona, Escape salta.
+Cosa osservare: nelle prime due prove la stessa serie sale con passo regolare
+e poi, in cima, si muove di poco per dieci valori. La prima usa la scala
+predefinita di sei ottave, la seconda tre ottave. Dimmi in quale delle due i
+dieci piccoli movimenti finali si distinguono meglio: se nella seconda, il
+predefinito di sonify va stretto e lo cambiamo. Le altre quattro prove sono
+controlli: portamento, suono fermo al centro, panoramica da destra a sinistra,
+e il file wav scritto nella cartella temporanea, da aprire con un lettore.
+Perche' serve: sopra i quattromila hertz l'orecchio distingue peggio le
+altezze, e la scala e' una scelta d'ascolto che solo tu puoi fare.
+Esito:
+
+PROVA 15: I TRE PROGRAMMI CHE SONIFICANO
+Cosa fare: il grafico sonoro degli Elo in ChessREG, l'andamento dei punteggi
+Lichess in orologic e l'andamento di un obiettivo in QuinQu, come li usi di
+solito.
+Cosa osservare: che suonino come prima, che il suono parta senza attesa e che
+non compaiano messaggi in inglese. Attenzione: in ChessREG con tre o quattro
+Elo e in QuinQu con meno di cinque valori il programma ora si ferma con un
+errore invece di restare muto, e ho aperto una issue su ciascuno dei due;
+finche' non le sistemiamo, prova con almeno cinque valori.
+Esito:
+
 LE PROVE D'ASCOLTO DI CWZATOR: FATTE TUTTE, LO STRUMENTO RESTA
 Aggiornato il 2026-09-06, a fase 1 conclusa.
 Le diciassette prove d'ascolto nate dal refactoring di CWzator sono state fatte

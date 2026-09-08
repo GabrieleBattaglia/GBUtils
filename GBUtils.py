@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V129 di martedì 8 settembre 2026
+	V130 di martedì 8 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -21,11 +21,11 @@ Lista utilità contenute in questo pacchetto
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
 	menu V5.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto). Nessun separatore grafico: spariti i cinque punti che stampavano trattini, compreso il doppio trattino fra chiave e descrizione di ogni voce, e la riga vuota che nasceva prima di ogni prompt. Il messaggio dell'ambiguita' dice cosa fare, il dizionario vuoto non viene piu' annunciato in inglese, e il primo parametro non e' piu' un dizionario modificabile
 	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
-	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
+	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto). Gli errori tornano a chi chiama: dati non numerici, non finiti o in numero sbagliato, durata e frequenze fuori dai limiti sollevano invece di uscire in silenzio o stampare in inglese; il file wav nasce nella cartella di chi chiama, o dove dice il percorso passato in file, e la funzione ne restituisce il percorso; tetto di cinque minuti alla durata, che prima poteva bloccare la macchina; parametro pan per spegnere o fissare la panoramica e parametri freq_min e freq_max per stringere la scala; meno memoria, perche' i vettori intermedi si liberano man mano
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "129"
+VERSION = "130"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -2178,93 +2178,156 @@ def gridapu(x=0.0, y=0.0, num=10):
 		qthloc += L[yn[8]] + L[yn[9]]
 	return qthloc
 
-def sonify(data_list, duration, ptm=False, vol=0.5, file=False):
+# Tetto alla durata di sonify: il segnale si costruisce tutto in memoria, e a
+# 44100 campioni al secondo cinque minuti sono gia' oltre un centinaio di
+# megabyte fra i vettori intermedi. Senza il tetto, una durata sbagliata di
+# un ordine di grandezza bloccava la macchina invece di dare un errore.
+_SONIFY_DURATA_MASSIMA = 300.0
+_SONIFY_DURATA_MINIMA = 0.01
+_SONIFY_FREQUENZA_CAMPIONAMENTO = 44100
+
+def _sonify_panoramica(pan):
+	"""Traduce il parametro pan di sonify nella coppia di posizioni, iniziale
+	e finale, fra -1 a sinistra e 1 a destra. True e' lo scorrimento intero da
+	sinistra a destra, False o None il centro fermo, un numero una posizione
+	fissa, una coppia di numeri uno scorrimento dal primo al secondo."""
+	if pan is True:
+		return -1.0, 1.0
+	if pan is False or pan is None:
+		return 0.0, 0.0
+	try:
+		if isinstance(pan, (int, float)):
+			inizio = fine = float(pan)
+		else:
+			inizio, fine = (float(v) for v in pan)
+	except (TypeError, ValueError) as errore:
+		raise ValueError("sonify: pan deve essere True, False, un numero fra -1 e 1 o una coppia di numeri") from errore
+	return max(-1.0, min(1.0, inizio)), max(-1.0, min(1.0, fine))
+
+def sonify(data_list, duration, ptm=False, vol=0.5, file=False, pan=True, freq_min=87.31, freq_max=5587.65):
+	"""V8.0.0 di martedi' 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalita' auto)
+	Sonifica una serie di numeri: ogni valore diventa una frequenza, dal piu'
+	basso al piu' alto, e la serie viene suonata in stereo per la durata
+	chiesta, con un suono che scorre da sinistra a destra per far
+	corrispondere il tempo allo spazio. La riproduzione parte e la funzione
+	torna subito, senza aspettare la fine; una chiamata nuova interrompe la
+	precedente.
+	Parametri:
+	  data_list: sequenza semplice di numeri, da 5 a 500000 valori, tutti
+	    finiti.
+	  duration: durata totale in secondi, da 0.01 a 300.
+	  ptm: con True le frequenze scivolano l'una nell'altra, come un
+	    portamento; con False ogni valore tiene la propria nota.
+	  vol: volume da 0.1 a 1.0; i valori fuori vengono riportati al limite.
+	  file: False non scrive niente; True scrive sonification seguito da data
+	    e ora, con estensione wav, nella cartella del programma che chiama; un
+	    percorso scrive li', e se e' relativo lo risolve sulla stessa cartella.
+	  pan: True, il predefinito, fa scorrere il suono da sinistra a destra;
+	    False lo tiene al centro; un numero fra -1 e 1 lo tiene fermo li'; una
+	    coppia di numeri lo fa scorrere dal primo al secondo.
+	  freq_min e freq_max: estremi in hertz della scala su cui si
+	    distribuiscono i valori; i predefiniti sono il fa della seconda ottava
+	    e quello dell'ottava.
+	Una serie di valori tutti uguali produce una nota sola, a meta' della
+	scala.
+	Restituisce il percorso completo del file scritto, o None se non ne ha
+	scritto nessuno.
+	Solleva TypeError se i dati, la durata, il volume o le frequenze non sono
+	numeri o se file non e' un percorso; ValueError se i dati sono troppi,
+	troppo pochi, non finiti, None compreso, o non in una sola dimensione, se
+	la durata o le frequenze sono fuori dai limiti o se pan non ha una delle
+	forme ammesse; OSError se il file non si puo'
+	scrivere; e gli errori di sounddevice se la scheda audio non si apre. Fino
+	alla 7.3 i dati sbagliati facevano uscire in silenzio, la lunghezza
+	sbagliata veniva stampata in inglese e il file nasceva nella directory di
+	lavoro: dalla V8.0.0 ogni errore torna a chi chiama, e il file nasce
+	accanto a chi l'ha chiesto. Il tetto alla durata prima non c'era.
 	"""
-	sonify V7.3 - 11 aprile 2026 - Gabriele Battaglia, Stella & Gemini 3 Pro
-	Sonifies a list of float data. Optimized with NumPy vectorization and float32.
-	Parameters:
-	  data_list: List of float (5 <= len <= 500000)
-	  duration: Total duration in seconds (e.g., 2.58)
-	  ptm: If True, applies glissando (continuous portamento)
-	  vol: Volume factor (0.1 <= vol <= 1.0)
-	  file: If True, saves the audio to sonification[datetime].wav
-	Returns immediately (non-blocking playback).
-	"""
+	import os
+	import time
 	import wave
 
 	import numpy as np
 	import sounddevice as sd
-	
 	try:
-		data = np.asanyarray(data_list, dtype=np.float32)
-	except Exception:
-		return
-
+		data = np.asarray(data_list, dtype=np.float32)
+	except (TypeError, ValueError) as errore:
+		raise TypeError("sonify: data_list deve contenere soltanto numeri") from errore
+	if data.ndim != 1:
+		raise ValueError("sonify: data_list deve essere una sequenza semplice di numeri, non annidata")
 	n = data.size
 	if n < 5 or n > 500000:
-		print("sonify: data_list length out of range")
-		return
-
+		raise ValueError(f"sonify: servono da 5 a 500000 valori, ricevuti {n}")
+	if not np.isfinite(data).all():
+		raise ValueError("sonify: data_list contiene valori non finiti")
+	try:
+		durata = float(duration)
+		vol = float(vol)
+		freq_min = float(freq_min)
+		freq_max = float(freq_max)
+	except (TypeError, ValueError) as errore:
+		raise TypeError("sonify: duration, vol, freq_min e freq_max devono essere numeri") from errore
+	if not _SONIFY_DURATA_MINIMA <= durata <= _SONIFY_DURATA_MASSIMA:
+		raise ValueError(f"sonify: la durata deve stare fra {_SONIFY_DURATA_MINIMA} e {_SONIFY_DURATA_MASSIMA:.0f} secondi, ricevuta {durata}")
+	fs = _SONIFY_FREQUENZA_CAMPIONAMENTO
+	if not 0 < freq_min < freq_max <= fs / 2:
+		raise ValueError(f"sonify: serve 0 < freq_min < freq_max <= {fs // 2}, ricevute {freq_min} e {freq_max}")
 	vol = max(0.1, min(vol, 1.0))
+	pan_inizio, pan_fine = _sonify_panoramica(pan)
+	campioni = int(durata * fs)
 	data_min = data.min()
 	data_max = data.max()
-	
-	freq_min = 87.31   # F2
-	freq_max = 5587.65 # F8
-	
-	data_range = data_max - data_min
-	if data_range == 0:
-		frequencies = np.full(n, (freq_min + freq_max) / 2, dtype=np.float32)
+	if data_max == data_min:
+		frequenze = np.full(n, (freq_min + freq_max) / 2, dtype=np.float32)
 	else:
-		frequencies = freq_min + (data - data_min) * ((freq_max - freq_min) / data_range)
-
-	sample_rate = 44100
-	total_samples = int(duration * sample_rate)
-	if total_samples <= 0:
-		return
-
-	t = np.linspace(0, duration, total_samples, endpoint=False, dtype=np.float32)
-	
+		frequenze = (freq_min + (data - data_min) * ((freq_max - freq_min) / (data_max - data_min))).astype(np.float32)
 	if ptm:
-		segment_times = np.linspace(0, duration, n, endpoint=True, dtype=np.float32)
-		freq_array = np.interp(t, segment_times, frequencies)
+		t = np.linspace(0, durata, campioni, endpoint=False, dtype=np.float32)
+		tempi = np.linspace(0, durata, n, endpoint=True, dtype=np.float32)
+		freq_array = np.interp(t, tempi, frequenze).astype(np.float32)
+		del t, tempi
 	else:
-		indices = np.floor(np.linspace(0, n, total_samples, endpoint=False)).astype(np.int32)
-		freq_array = frequencies[indices]
-
-	# La cumsum in float64 previene la perdita di precisione sulle durate lunghe
-	phase = 2.0 * np.pi * np.cumsum(freq_array.astype(np.float64) / sample_rate)
-	audio_signal = (np.sin(phase) * vol).astype(np.float32)
-	
-	fade_duration_sec = 0.01
-	fade_samples = int(round(fade_duration_sec * sample_rate))
-	fade_samples = min(fade_samples, total_samples // 2)
-	
-	if fade_samples > 0:
-		fade_curve = np.sin(np.linspace(0, np.pi / 2, fade_samples, dtype=np.float32))
-		audio_signal[:fade_samples] *= fade_curve
-		audio_signal[-fade_samples:] *= fade_curve[::-1]
-
-	pan = np.linspace(-1.0, 1.0, total_samples, dtype=np.float32)
-	pan_angle = (pan + 1.0) * (np.pi / 4.0)
-	
-	left = audio_signal * np.cos(pan_angle)
-	right = audio_signal * np.sin(pan_angle)
-	
-	audio_stereo = np.column_stack((left, right))
-	audio_stereo_int16 = (audio_stereo * 32767).astype(np.int16)
-	
-	sd.play(audio_stereo_int16, sample_rate)
-	
-	if file:
-		from datetime import datetime
-		filename = "sonification" + datetime.now().strftime("%Y%m%d%H%M%S") + ".wav"
-		with wave.open(filename, 'wb') as wf:
+		indici = np.floor(np.linspace(0, n, campioni, endpoint=False)).astype(np.int32)
+		freq_array = frequenze[indici]
+		del indici
+	# La fase si accumula in float64: in float32, su una sonificazione lunga,
+	# perderebbe il conto e la frequenza scivolerebbe.
+	fase = 2.0 * np.pi * np.cumsum(freq_array.astype(np.float64) / fs)
+	del freq_array
+	segnale = (np.sin(fase) * vol).astype(np.float32)
+	del fase
+	# Dissolvenza di un centesimo di secondo ai due estremi, contro lo
+	# schiocco, e non oltre meta' del segnale quando questo e' cortissimo.
+	dissolvenza = min(round(0.01 * fs), campioni // 2)
+	if dissolvenza > 0:
+		curva = np.sin(np.linspace(0, np.pi / 2, dissolvenza, dtype=np.float32))
+		segnale[:dissolvenza] *= curva
+		segnale[-dissolvenza:] *= curva[::-1]
+	# Panoramica a potenza costante, con coseno e seno: il volume percepito
+	# non cala mentre il suono attraversa il centro.
+	angolo = (np.linspace(pan_inizio, pan_fine, campioni, dtype=np.float32) + 1.0) * (np.pi / 4.0)
+	stereo = np.column_stack((segnale * np.cos(angolo), segnale * np.sin(angolo)))
+	del segnale, angolo
+	stereo_int16 = (stereo * 32767).astype(np.int16)
+	del stereo
+	percorso = None
+	if file is not False and file is not None:
+		if file is True:
+			percorso = os.path.join(_cartella_chiamante(), "sonification" + time.strftime("%Y%m%d%H%M%S") + ".wav")
+		else:
+			try:
+				percorso = os.fspath(file)
+			except TypeError as errore:
+				raise TypeError("sonify: file deve essere True, False o un percorso") from errore
+			if not os.path.isabs(percorso):
+				percorso = os.path.join(_cartella_chiamante(), percorso)
+		with wave.open(percorso, 'wb') as wf:
 			wf.setnchannels(2)
 			wf.setsampwidth(2)
-			wf.setframerate(sample_rate)
-			wf.writeframes(audio_stereo_int16.tobytes())
-	return
+			wf.setframerate(fs)
+			wf.writeframes(stereo_int16.tobytes())
+	sd.play(stereo_int16, fs)
+	return percorso
 
 def parse_pan_parts(val):
 	"""
