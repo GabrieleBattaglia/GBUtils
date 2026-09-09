@@ -6532,5 +6532,1349 @@
             100.0,
             40.0
         ]
+    },
+    "pokermachine_avvio": {
+        "descrizione": "benvenuto alla Poker Machine: arpeggio di settima maggiore che sale da sinistra a destra e si apre in una scivolata",
+        "score": [
+            [
+                "c4",
+                0.09,
+                -0.6,
+                -0.02
+            ],
+            [
+                "e4",
+                0.09,
+                -0.3,
+                0.0
+            ],
+            [
+                "g4",
+                0.09,
+                0.0,
+                0.0
+            ],
+            [
+                "b4",
+                0.09,
+                0.3,
+                0.02
+            ],
+            [
+                "c5",
+                0.09,
+                0.6,
+                0.04
+            ],
+            [
+                "e5.c6",
+                0.35,
+                "0.6.-0.6",
+                0.06
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            10,
+            80,
+            20
+        ]
+    },
+    "pokermachine_chiusura": {
+        "descrizione": "congedo dalla Poker Machine: lo stesso arpeggio dell'avvio al contrario, che scende e si spegne",
+        "score": [
+            [
+                "c6",
+                0.09,
+                0.6,
+                0.04
+            ],
+            [
+                "b5",
+                0.09,
+                0.3,
+                0.02
+            ],
+            [
+                "g5",
+                0.09,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.09,
+                -0.3,
+                0.0
+            ],
+            [
+                "c5",
+                0.09,
+                -0.6,
+                -0.02
+            ],
+            [
+                "e4.c4",
+                0.4,
+                "-0.6.0.6",
+                "0.55.0.25"
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            10,
+            80,
+            20
+        ]
+    },
+    "pokermachine_puntata": {
+        "descrizione": "due fiches posate sul tavolo: due colpetti secchi di rumore rosa, il secondo un po' piu' grave",
+        "score": [
+            [
+                "2000-7000.1200-4000",
+                0.035,
+                -0.2,
+                0.05
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "1600-6000.1000-3500",
+                0.03,
+                0.2,
+                0.0
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            5,
+            0,
+            100,
+            40
+        ]
+    },
+    "pokermachine_puntata_minima": {
+        "descrizione": "la puntata viene alzata al minimo consentito: due note, una sotto e una sopra, una correzione gentile",
+        "score": [
+            [
+                "g4",
+                0.09,
+                0.0,
+                -0.05
+            ],
+            [
+                "c5",
+                0.18,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            10,
+            80,
+            30
+        ]
+    },
+    "pokermachine_distribuzione": {
+        "descrizione": "cinque carte distribuite una dopo l'altra da sinistra a destra: cinque fruscii brevi di rumore bianco che salgono",
+        "score": [
+            [
+                "300-4000.1500-12000",
+                0.07,
+                -0.8,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "300-4000.1500-12000",
+                0.07,
+                -0.4,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "300-4000.1500-12000",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "300-4000.1500-12000",
+                0.07,
+                0.4,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "300-4000.1500-12000",
+                0.07,
+                0.8,
+                0.0
+            ]
+        ],
+        "kind": 5,
+        "adsr": [
+            10,
+            0,
+            100,
+            40
+        ]
+    },
+    "pokermachine_scarto": {
+        "descrizione": "carte scartate: un colpo di polso che le fa volare verso sinistra e il tonfo sul tavolo",
+        "score": [
+            [
+                "3000-11000.400-1500",
+                0.09,
+                "0.4.-0.4",
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "150-600",
+                0.05,
+                -0.3,
+                0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            5,
+            0,
+            100,
+            30
+        ]
+    },
+    "pokermachine_carta_alta": {
+        "descrizione": "Poker Machine, carta alta: la puntata e' persa, due note gravi che scendono senza drammi",
+        "score": [
+            [
+                "e3",
+                0.14,
+                0.0,
+                -0.05
+            ],
+            [
+                "c3",
+                0.22,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            10,
+            70,
+            40
+        ]
+    },
+    "pokermachine_coppia_non_pagata": {
+        "descrizione": "Poker Machine, coppia non pagata: una nota e una scivolata verso il basso, il quasi che non basta",
+        "score": [
+            [
+                "a3",
+                0.1,
+                0.0,
+                -0.05
+            ],
+            [
+                "g3.e3",
+                0.22,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            10,
+            70,
+            40
+        ]
+    },
+    "pokermachine_coppia_pagata": {
+        "descrizione": "Poker Machine, coppia pagata: due note uguali per il pareggio, la puntata torna indietro",
+        "score": [
+            [
+                "c4",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.18,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            10,
+            80,
+            30
+        ]
+    },
+    "pokermachine_doppia_coppia": {
+        "descrizione": "Poker Machine, doppia coppia: due coppie di note uguali, la prima a sinistra e la seconda piu' alta a destra",
+        "score": [
+            [
+                "c5",
+                0.08,
+                -0.3,
+                0.0
+            ],
+            [
+                "c5",
+                0.08,
+                -0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.08,
+                0.3,
+                0.02
+            ],
+            [
+                "e5",
+                0.12,
+                0.3,
+                0.02
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            10,
+            80,
+            30
+        ]
+    },
+    "pokermachine_tris": {
+        "descrizione": "Poker Machine, tris: tre note uguali che attraversano lo stereo e una nota di chiusura piu' alta",
+        "score": [
+            [
+                "e5",
+                0.08,
+                -0.3,
+                0.0
+            ],
+            [
+                "e5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.08,
+                0.3,
+                0.0
+            ],
+            [
+                "g5",
+                0.2,
+                0.0,
+                0.04
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            10,
+            80,
+            30
+        ]
+    },
+    "pokermachine_scala": {
+        "descrizione": "Poker Machine, scala: una scala musicale di cinque note che sale da sinistra a destra e si posa sulla sesta",
+        "score": [
+            [
+                "c5",
+                0.07,
+                -0.6,
+                0.0
+            ],
+            [
+                "d5",
+                0.07,
+                -0.3,
+                0.0
+            ],
+            [
+                "e5",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "f5",
+                0.07,
+                0.3,
+                0.02
+            ],
+            [
+                "g5",
+                0.07,
+                0.6,
+                0.02
+            ],
+            [
+                "a5",
+                0.25,
+                0.6,
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_colore": {
+        "descrizione": "Poker Machine, colore: la stessa nota su tre ottave, un solo colore che sale e scende nello stereo e poi si allarga",
+        "score": [
+            [
+                "c5",
+                0.07,
+                -0.7,
+                0.0
+            ],
+            [
+                "c6",
+                0.07,
+                -0.35,
+                0.0
+            ],
+            [
+                "c7",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.07,
+                0.35,
+                0.0
+            ],
+            [
+                "c5",
+                0.07,
+                0.7,
+                0.0
+            ],
+            [
+                "c6",
+                0.3,
+                "0.7.-0.7",
+                0.05
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            3,
+            10,
+            80,
+            30
+        ]
+    },
+    "pokermachine_full": {
+        "descrizione": "Poker Machine, full: un tris di note gravi, una coppia di note acute e una scivolata che chiude",
+        "score": [
+            [
+                "g4",
+                0.07,
+                -0.3,
+                0.0
+            ],
+            [
+                "g4",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.07,
+                0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.13,
+                -0.4,
+                0.02
+            ],
+            [
+                "c5",
+                0.13,
+                0.4,
+                0.02
+            ],
+            [
+                "e5.g5",
+                0.25,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            10,
+            80,
+            25
+        ]
+    },
+    "pokermachine_poker": {
+        "descrizione": "Poker Machine, poker: quattro colpi uguali da sinistra a destra e una fanfara che sale all'ottava",
+        "score": [
+            [
+                "c5",
+                0.09,
+                -0.6,
+                0.02
+            ],
+            [
+                "c5",
+                0.09,
+                -0.2,
+                0.02
+            ],
+            [
+                "c5",
+                0.09,
+                0.2,
+                0.02
+            ],
+            [
+                "c5",
+                0.09,
+                0.6,
+                0.02
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0.0,
+                0.04
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.06
+            ],
+            [
+                "c6",
+                0.35,
+                0.0,
+                0.1
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_super_poker": {
+        "descrizione": "Poker Machine, super poker, cinque carte uguali: cinque colpi di sega attraverso lo stereo, fanfara, e un colpo grave in fondo",
+        "score": [
+            [
+                "c5",
+                0.09,
+                -0.8,
+                0.02
+            ],
+            [
+                "c5",
+                0.09,
+                -0.4,
+                0.02
+            ],
+            [
+                "c5",
+                0.09,
+                0.0,
+                0.02
+            ],
+            [
+                "c5",
+                0.09,
+                0.4,
+                0.02
+            ],
+            [
+                "c5",
+                0.09,
+                0.8,
+                0.02
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.04
+            ],
+            [
+                "c6",
+                0.1,
+                0.0,
+                0.06
+            ],
+            [
+                "e6",
+                0.1,
+                0.0,
+                0.08
+            ],
+            [
+                "g6.c7",
+                0.45,
+                "-0.8.0.8",
+                0.1
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.3,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_scala_a_colore": {
+        "descrizione": "Poker Machine, scala a colore: la scala intera di otto note che sale nello stereo, il colore che rimbalza fra due ottave e una scivolata lunga",
+        "score": [
+            [
+                "c5",
+                0.06,
+                -0.8,
+                0.0
+            ],
+            [
+                "d5",
+                0.06,
+                -0.6,
+                0.0
+            ],
+            [
+                "e5",
+                0.06,
+                -0.4,
+                0.0
+            ],
+            [
+                "f5",
+                0.06,
+                -0.2,
+                0.02
+            ],
+            [
+                "g5",
+                0.06,
+                0.2,
+                0.02
+            ],
+            [
+                "a5",
+                0.06,
+                0.4,
+                0.04
+            ],
+            [
+                "b5",
+                0.06,
+                0.6,
+                0.04
+            ],
+            [
+                "c6",
+                0.12,
+                0.8,
+                0.06
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.07,
+                -0.5,
+                0.04
+            ],
+            [
+                "c7",
+                0.07,
+                0.5,
+                0.04
+            ],
+            [
+                "c6",
+                0.07,
+                -0.5,
+                0.04
+            ],
+            [
+                "c7",
+                0.07,
+                0.5,
+                0.04
+            ],
+            [
+                "g6.c7",
+                0.5,
+                "0.8.-0.8",
+                0.1
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            1,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_scala_reale": {
+        "descrizione": "Poker Machine, scala reale, il premio massimo: fanfara reale di sette note, cascata di otto che attraversa lo stereo e un finale lungo che cresce",
+        "score": [
+            [
+                "c5",
+                0.13,
+                0.0,
+                0.02
+            ],
+            [
+                "c5",
+                0.13,
+                0.0,
+                0.02
+            ],
+            [
+                "c5",
+                0.13,
+                0.0,
+                0.02
+            ],
+            [
+                "c5",
+                0.3,
+                0.0,
+                0.06
+            ],
+            [
+                "g#4",
+                0.3,
+                -0.3,
+                0.04
+            ],
+            [
+                "a#4",
+                0.3,
+                0.3,
+                0.04
+            ],
+            [
+                "c5",
+                0.45,
+                0.0,
+                0.08
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.05,
+                -0.9,
+                0.0
+            ],
+            [
+                "d5",
+                0.05,
+                -0.65,
+                0.0
+            ],
+            [
+                "e5",
+                0.05,
+                -0.4,
+                0.0
+            ],
+            [
+                "f5",
+                0.05,
+                -0.15,
+                0.02
+            ],
+            [
+                "g5",
+                0.05,
+                0.15,
+                0.02
+            ],
+            [
+                "a5",
+                0.05,
+                0.4,
+                0.04
+            ],
+            [
+                "b5",
+                0.05,
+                0.65,
+                0.04
+            ],
+            [
+                "c6",
+                0.05,
+                0.9,
+                0.06
+            ],
+            [
+                "e6",
+                0.1,
+                0.5,
+                0.06
+            ],
+            [
+                "g6",
+                0.1,
+                -0.5,
+                0.08
+            ],
+            [
+                "c7",
+                0.7,
+                "0.9.-0.9",
+                "0.5.0.65"
+            ]
+        ],
+        "kind": 2,
+        "adsr": [
+            2,
+            8,
+            85,
+            15
+        ]
+    },
+    "pokermachine_killer_hand": {
+        "descrizione": "Poker Machine, arriva la Killer Hand: tritono grave che rimbalza fra le casse e una scivolata che sale minacciosa",
+        "score": [
+            [
+                "c3",
+                0.14,
+                -0.6,
+                0.0
+            ],
+            [
+                "f#3",
+                0.14,
+                0.6,
+                0.0
+            ],
+            [
+                "c3",
+                0.14,
+                -0.6,
+                0.0
+            ],
+            [
+                "f#3",
+                0.14,
+                0.6,
+                0.0
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "c3.c4",
+                0.45,
+                "-0.9.0.9",
+                "0.45.0.6"
+            ],
+            [
+                "c4",
+                0.15,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5,
+            0,
+            100,
+            10
+        ]
+    },
+    "pokermachine_kh_bonus": {
+        "descrizione": "Poker Machine, bonus della Killer Hand, la vincita triplicata: tre terzine che salgono, a sinistra, al centro e a destra, e una nota che attraversa",
+        "score": [
+            [
+                "c5",
+                0.06,
+                -0.7,
+                0.0
+            ],
+            [
+                "e5",
+                0.06,
+                -0.7,
+                0.0
+            ],
+            [
+                "g5",
+                0.06,
+                -0.7,
+                0.02
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.06,
+                0.0,
+                0.02
+            ],
+            [
+                "g5",
+                0.06,
+                0.0,
+                0.02
+            ],
+            [
+                "c6",
+                0.06,
+                0.0,
+                0.04
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.06,
+                0.7,
+                0.04
+            ],
+            [
+                "c6",
+                0.06,
+                0.7,
+                0.04
+            ],
+            [
+                "e6",
+                0.06,
+                0.7,
+                0.06
+            ],
+            [
+                "g6",
+                0.4,
+                "0.7.-0.7",
+                0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_kh_penalita": {
+        "descrizione": "Poker Machine, penalita' della Killer Hand: una scivolata di due ottave verso il basso e due colpi gravi",
+        "score": [
+            [
+                "c5.c3",
+                0.5,
+                "0.5.-0.5",
+                "0.55.0.4"
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c2",
+                0.15,
+                0.0,
+                0.05
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c2",
+                0.25,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3,
+            0,
+            100,
+            20
+        ]
+    },
+    "pokermachine_record_vincita": {
+        "descrizione": "Poker Machine, record di vincita in una mano: scivolata di due ottave verso l'alto e arpeggio brillante che torna a sinistra",
+        "score": [
+            [
+                "c4.c6",
+                0.4,
+                "-0.8.0.8",
+                "0.45.0.55"
+            ],
+            [
+                "c6",
+                0.08,
+                0.4,
+                0.05
+            ],
+            [
+                "e6",
+                0.08,
+                0.2,
+                0.05
+            ],
+            [
+                "g6",
+                0.08,
+                -0.2,
+                0.05
+            ],
+            [
+                "c7",
+                0.35,
+                -0.4,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            85,
+            25
+        ]
+    },
+    "pokermachine_record_perdita": {
+        "descrizione": "Poker Machine, record di perdita in una mano: scivolata di due ottave verso il basso e due note cupe",
+        "score": [
+            [
+                "c5.c3",
+                0.5,
+                "0.8.-0.8",
+                "0.5.0.4"
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c3",
+                0.12,
+                0.0,
+                -0.05
+            ],
+            [
+                "b2",
+                0.35,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3,
+            8,
+            80,
+            30
+        ]
+    },
+    "pokermachine_record_mani": {
+        "descrizione": "Poker Machine, primato di mani senza fallimenti superato: tre squilli uguali, una nota alta e una piu' alta che attraversa",
+        "score": [
+            [
+                "g5",
+                0.1,
+                -0.4,
+                0.02
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                0.02
+            ],
+            [
+                "g5",
+                0.1,
+                0.4,
+                0.02
+            ],
+            [
+                "c6",
+                0.3,
+                0.0,
+                0.05
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.1,
+                0.0,
+                0.06
+            ],
+            [
+                "g6",
+                0.3,
+                "0.4.-0.4",
+                0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_game_over": {
+        "descrizione": "Poker Machine, fiches esaurite: quattro note che scendono e una scivolata lunga verso il basso che si spegne",
+        "score": [
+            [
+                "e4",
+                0.3,
+                0.0,
+                0.0
+            ],
+            [
+                "d4",
+                0.3,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.3,
+                0.0,
+                0.0
+            ],
+            [
+                "b3",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "b3.e2",
+                0.9,
+                "0.5.-0.5",
+                "0.5.0.2"
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5,
+            10,
+            80,
+            30
+        ]
+    },
+    "pokermachine_soglia_fiches": {
+        "descrizione": "Poker Machine, superata una soglia di fiches: cascata di monete che sale e quattro campanelle che scendono alternando le casse",
+        "score": [
+            [
+                "c6",
+                0.05,
+                -0.6,
+                0.0
+            ],
+            [
+                "e6",
+                0.05,
+                -0.36,
+                0.0
+            ],
+            [
+                "g6",
+                0.05,
+                -0.12,
+                0.0
+            ],
+            [
+                "c7",
+                0.05,
+                0.12,
+                0.02
+            ],
+            [
+                "e7",
+                0.05,
+                0.36,
+                0.02
+            ],
+            [
+                "g7",
+                0.05,
+                0.6,
+                0.02
+            ],
+            [
+                "c7",
+                0.15,
+                0.5,
+                0.02
+            ],
+            [
+                "g6",
+                0.15,
+                -0.5,
+                0.02
+            ],
+            [
+                "e6",
+                0.15,
+                0.5,
+                0.02
+            ],
+            [
+                "c6",
+                0.4,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1,
+            20,
+            50,
+            40
+        ]
     }
 }
