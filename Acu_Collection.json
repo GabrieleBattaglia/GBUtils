@@ -282,7 +282,7 @@
         ]
     },
     "convalida": {
-        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o \u00e8 andato a buon fine",
+        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o è andato a buon fine",
         "score": [
             [
                 "g7",
@@ -1056,7 +1056,7 @@
         ]
     },
     "sirena_d_allarme_1": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.15",
+        "descrizione": "Sirena allarme velocità 0.15",
         "score": [
             [
                 "c5.g5",
@@ -1116,7 +1116,7 @@
         ]
     },
     "sirena_d_allarme_2": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.20",
+        "descrizione": "Sirena allarme velocità 0.20",
         "score": [
             [
                 "c5.g5",
@@ -1188,7 +1188,7 @@
         ]
     },
     "sirena_d_allarme_3": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.25",
+        "descrizione": "Sirena allarme velocità 0.25",
         "score": [
             [
                 "c5.g5",
@@ -1236,7 +1236,7 @@
         ]
     },
     "sirena_d_allarme_4": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.30",
+        "descrizione": "Sirena allarme velocità 0.30",
         "score": [
             [
                 "c5.g5",
@@ -1296,7 +1296,7 @@
         ]
     },
     "sirena_d_allarme_5": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.35",
+        "descrizione": "Sirena allarme velocità 0.35",
         "score": [
             [
                 "c5.g5",
@@ -1368,7 +1368,7 @@
         ]
     },
     "sirena_d_allarme_6": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.40",
+        "descrizione": "Sirena allarme velocità 0.40",
         "score": [
             [
                 "c5.g5",
@@ -1416,7 +1416,7 @@
         ]
     },
     "sirena_d_allarme_7": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.45",
+        "descrizione": "Sirena allarme velocità 0.45",
         "score": [
             [
                 "c5.g5",
@@ -1476,7 +1476,7 @@
         ]
     },
     "sirena_d_allarme_8": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.50",
+        "descrizione": "Sirena allarme velocità 0.50",
         "score": [
             [
                 "c5.g5",
@@ -1548,7 +1548,7 @@
         ]
     },
     "sirena_d_allarme_9": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.55",
+        "descrizione": "Sirena allarme velocità 0.55",
         "score": [
             [
                 "c5.g5",
@@ -1596,7 +1596,7 @@
         ]
     },
     "sirena_d_allarme_10": {
-        "descrizione": "Sirena allarme velocit\u00e0 0.60",
+        "descrizione": "Sirena allarme velocità 0.60",
         "score": [
             [
                 "c5.g5",
@@ -3666,7 +3666,7 @@
         ]
     },
     "roger_cw_conferma": {
-        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta s\u00ec prosegui approvato",
+        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta sì prosegui approvato",
         "score": [
             [
                 "e5",
@@ -3738,7 +3738,7 @@
         ]
     },
     "campanellino": {
-        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa \u00e8 comparso",
+        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa è comparso",
         "score": [
             [
                 "c8.c#8",
@@ -3894,7 +3894,7 @@
         ]
     },
     "written_ok": {
-        "descrizione": "un file \u00e8 stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
+        "descrizione": "un file è stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
         "score": [
             [
                 "c4",
@@ -3918,7 +3918,7 @@
         ]
     },
     "controllo_ok": {
-        "descrizione": "qualcosa ha superato un controllo ed \u00e8 stato ammesso",
+        "descrizione": "qualcosa ha superato un controllo ed è stato ammesso",
         "score": [
             [
                 "c4",
@@ -3948,7 +3948,7 @@
         ]
     },
     "rifiutato": {
-        "descrizione": "un valore inserito non \u00e8 corretto, qualcosa viene respinto, un'azione non \u00e8 la pi\u00f9 appropriata",
+        "descrizione": "un valore inserito non è corretto, qualcosa viene respinto, un'azione non è la più appropriata",
         "score": [
             [
                 "g3.d3",
@@ -4014,7 +4014,7 @@
         ]
     },
     "cancellato": {
-        "descrizione": "un elemento \u00e8 stato cancellato da una lista, qualcosa \u00e8 scomparso dallo schermo, una lista o un elenco si \u00e8 ridotto di dimensioni, un dato \u00e8 diminuito",
+        "descrizione": "un elemento è stato cancellato da una lista, qualcosa è scomparso dallo schermo, una lista o un elenco si è ridotto di dimensioni, un dato è diminuito",
         "score": [
             [
                 "b2.g#2",
@@ -4044,7 +4044,7 @@
         ]
     },
     "vittoria": {
-        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo \u00e8 stato centrato",
+        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo è stato centrato",
         "score": [
             [
                 "f#4",
@@ -4080,7 +4080,7 @@
         ]
     },
     "convalida0": {
-        "descrizione": "un dato \u00e8 stato convalidato",
+        "descrizione": "un dato è stato convalidato",
         "score": [
             [
                 "c4",
@@ -4254,7 +4254,7 @@
         ]
     },
     "concluso": {
-        "descrizione": "una procedura rapida si \u00e8 conclusa, un dato \u00e8 stato validato o accettato",
+        "descrizione": "una procedura rapida si è conclusa, un dato è stato validato o accettato",
         "score": [
             [
                 "c5",
@@ -4290,7 +4290,7 @@
         ]
     },
     "salto": {
-        "descrizione": "fatto un saltello, qualcosa \u00e8 stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
+        "descrizione": "fatto un saltello, qualcosa è stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
         "score": [
             [
                 "f#3.d#6",
@@ -4362,7 +4362,7 @@
         ]
     },
     "eliminato": {
-        "descrizione": "qualsiasi oggetto \u00e8 stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta",
+        "descrizione": "qualsiasi oggetto è stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta",
         "score": [
             [
                 "f4.d7",
@@ -7873,6 +7873,1008 @@
         "adsr": [
             1,
             20,
+            50,
+            40
+        ]
+    },
+    "meditimer_avvio": {
+        "descrizione": "benvenuto di Meditimer: quattro note dolci che salgono da sinistra a destra",
+        "score": [
+            [
+                "c5",
+                0.07,
+                -0.5,
+                -0.05
+            ],
+            [
+                "e5",
+                0.07,
+                -0.2,
+                -0.05
+            ],
+            [
+                "g5",
+                0.07,
+                0.2,
+                -0.05
+            ],
+            [
+                "c6",
+                0.2,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            0,
+            100,
+            40
+        ]
+    },
+    "meditimer_chiusura": {
+        "descrizione": "arrivederci di Meditimer: le stesse quattro note che scendono, da destra a sinistra",
+        "score": [
+            [
+                "c6",
+                0.07,
+                0.5,
+                -0.05
+            ],
+            [
+                "g5",
+                0.07,
+                0.2,
+                -0.05
+            ],
+            [
+                "e5",
+                0.07,
+                -0.2,
+                -0.05
+            ],
+            [
+                "c5",
+                0.24,
+                -0.5,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            0,
+            100,
+            45
+        ]
+    },
+    "meditimer_cronometro_avviato": {
+        "descrizione": "il cronometro parte: due note corte che salgono, come un via",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0,
+                -0.05
+            ],
+            [
+                "c6",
+                0.08,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            40,
+            40,
+            40
+        ]
+    },
+    "meditimer_cronometro_pausa": {
+        "descrizione": "il cronometro si ferma in pausa: due note corte che scendono",
+        "score": [
+            [
+                "c6",
+                0.05,
+                0,
+                -0.05
+            ],
+            [
+                "g5",
+                0.09,
+                0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            40,
+            40,
+            40
+        ]
+    },
+    "meditimer_cronometro_ripreso": {
+        "descrizione": "il cronometro riparte dalla pausa: tre note veloci che salgono",
+        "score": [
+            [
+                "e5",
+                0.04,
+                0,
+                -0.08
+            ],
+            [
+                "g5",
+                0.04,
+                0,
+                -0.05
+            ],
+            [
+                "c6",
+                0.07,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            30,
+            50,
+            40
+        ]
+    },
+    "meditimer_cronometro_fermato": {
+        "descrizione": "stop del cronometro: due note basse e morbide che si spengono",
+        "score": [
+            [
+                "a4",
+                0.07,
+                0,
+                -0.05
+            ],
+            [
+                "e4",
+                0.16,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            30,
+            50,
+            45
+        ]
+    },
+    "meditimer_cronometro_azzerato": {
+        "descrizione": "azzeramento del cronometro: una scivolata verso il basso di un'ottava",
+        "score": [
+            [
+                "c6.c5",
+                0.25,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            0,
+            100,
+            40
+        ]
+    },
+    "meditimer_giro": {
+        "descrizione": "un giro registrato, il primo, senza confronti: un tic solo",
+        "score": [
+            [
+                "a5",
+                0.045,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            50,
+            0,
+            40
+        ]
+    },
+    "meditimer_giro_piu_veloce": {
+        "descrizione": "giro più veloce del precedente: due tic che salgono",
+        "score": [
+            [
+                "e5",
+                0.04,
+                -0.15,
+                -0.05
+            ],
+            [
+                "a5",
+                0.06,
+                0.15,
+                -0.02
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            50,
+            0,
+            40
+        ]
+    },
+    "meditimer_giro_piu_lento": {
+        "descrizione": "giro più lento del precedente: due tic che scendono",
+        "score": [
+            [
+                "a5",
+                0.04,
+                0.15,
+                -0.05
+            ],
+            [
+                "e5",
+                0.06,
+                -0.15,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            50,
+            0,
+            40
+        ]
+    },
+    "meditimer_giro_nella_media": {
+        "descrizione": "giro nella media dei precedenti: due tic uguali, fermi sulla stessa nota",
+        "score": [
+            [
+                "g5",
+                0.04,
+                0,
+                -0.05
+            ],
+            [
+                "p",
+                0.035,
+                0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.04,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            50,
+            0,
+            40
+        ]
+    },
+    "meditimer_giro_uguale": {
+        "descrizione": "giro uguale al precedente: tre tic uguali e fitti",
+        "score": [
+            [
+                "g5",
+                0.03,
+                0,
+                -0.05
+            ],
+            [
+                "p",
+                0.025,
+                0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.03,
+                0,
+                -0.05
+            ],
+            [
+                "p",
+                0.025,
+                0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.03,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            50,
+            0,
+            40
+        ]
+    },
+    "meditimer_record_veloce": {
+        "descrizione": "nuovo giro più veloce di tutti: un arpeggio brillante che sale fino in alto",
+        "score": [
+            [
+                "c5",
+                0.05,
+                -0.4,
+                -0.05
+            ],
+            [
+                "e5",
+                0.05,
+                -0.2,
+                -0.05
+            ],
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.02
+            ],
+            [
+                "c6",
+                0.05,
+                0.2,
+                0.0
+            ],
+            [
+                "e6",
+                0.16,
+                0.4,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            0,
+            100,
+            45
+        ]
+    },
+    "meditimer_record_lento": {
+        "descrizione": "nuovo giro più lento di tutti: quattro note che scendono piano, senza rimprovero",
+        "score": [
+            [
+                "e5",
+                0.06,
+                0.3,
+                -0.08
+            ],
+            [
+                "c5",
+                0.06,
+                0.1,
+                -0.08
+            ],
+            [
+                "a4",
+                0.06,
+                -0.1,
+                -0.1
+            ],
+            [
+                "f4",
+                0.18,
+                -0.3,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            0,
+            100,
+            45
+        ]
+    },
+    "meditimer_statistiche": {
+        "descrizione": "le statistiche dei giri: due note dolci di onda triangolare, una quinta che si apre",
+        "score": [
+            [
+                "d5",
+                0.08,
+                -0.2,
+                -0.05
+            ],
+            [
+                "a5",
+                0.18,
+                0.2,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8,
+            0,
+            100,
+            45
+        ]
+    },
+    "meditimer_data": {
+        "descrizione": "la data di oggi: due note che scendono, un rintocco da calendario",
+        "score": [
+            [
+                "d6",
+                0.06,
+                0,
+                -0.05
+            ],
+            [
+                "a5",
+                0.1,
+                0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            30,
+            50,
+            40
+        ]
+    },
+    "meditimer_ora": {
+        "descrizione": "l'ora: tic a sinistra e toc a destra, separati da un silenzio",
+        "score": [
+            [
+                "a5",
+                0.05,
+                -0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.07,
+                0,
+                -0.5
+            ],
+            [
+                "f5",
+                0.05,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            50,
+            0,
+            40
+        ]
+    },
+    "meditimer_tempo_trascorso": {
+        "descrizione": "il tempo trascorso dal cronometro: una scivolata verso l'alto",
+        "score": [
+            [
+                "a4.e5",
+                0.14,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            0,
+            100,
+            30
+        ]
+    },
+    "meditimer_tempo_esecuzione": {
+        "descrizione": "il tempo di esecuzione del programma: due scivolate verso l'alto, una dopo l'altra",
+        "score": [
+            [
+                "a4.e5",
+                0.1,
+                -0.2,
+                -0.08
+            ],
+            [
+                "e5.a5",
+                0.12,
+                0.2,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10,
+            0,
+            100,
+            30
+        ]
+    },
+    "meditimer_timer_impostato": {
+        "descrizione": "timer impostato: una scivolata che sale e si posa su un tic",
+        "score": [
+            [
+                "c5.g5",
+                0.18,
+                0,
+                -0.05
+            ],
+            [
+                "g5",
+                0.05,
+                0,
+                -0.02
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8,
+            0,
+            100,
+            30
+        ]
+    },
+    "meditimer_sveglia_impostata": {
+        "descrizione": "sveglia impostata: una scivolata più acuta che sale e si posa su un tic",
+        "score": [
+            [
+                "e5.b5",
+                0.18,
+                0,
+                -0.05
+            ],
+            [
+                "b5",
+                0.05,
+                0,
+                -0.02
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8,
+            0,
+            100,
+            30
+        ]
+    },
+    "meditimer_elenco": {
+        "descrizione": "l'elenco di timer e sveglie: tre tic che scendono, da sinistra a destra",
+        "score": [
+            [
+                "e6",
+                0.04,
+                -0.3,
+                -0.08
+            ],
+            [
+                "c6",
+                0.04,
+                0,
+                -0.08
+            ],
+            [
+                "a5",
+                0.05,
+                0.3,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            50,
+            0,
+            40
+        ]
+    },
+    "meditimer_annullato": {
+        "descrizione": "timer o sveglia annullati: una scivolata verso il basso",
+        "score": [
+            [
+                "g5.c5",
+                0.2,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8,
+            0,
+            100,
+            40
+        ]
+    },
+    "meditimer_allarme": {
+        "descrizione": "la suoneria di timer e sveglie: due campane alternate fra sinistra e destra, chiare ma non aggressive",
+        "score": [
+            [
+                "a5",
+                0.18,
+                -0.3,
+                0.05
+            ],
+            [
+                "f5",
+                0.18,
+                0.3,
+                0.05
+            ],
+            [
+                "a5",
+                0.18,
+                -0.3,
+                0.05
+            ],
+            [
+                "f5",
+                0.3,
+                0.3,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1,
+            30,
+            50,
+            40
+        ]
+    },
+    "meditimer_allarme_zittito": {
+        "descrizione": "suoneria zittita: una scivolata breve verso il basso, che chiude",
+        "score": [
+            [
+                "e5.a4",
+                0.2,
+                0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8,
+            0,
+            100,
+            45
+        ]
+    },
+    "meditimer_report_salvato": {
+        "descrizione": "report della sessione salvato su file: due tic vicini, il secondo più acuto",
+        "score": [
+            [
+                "c6",
+                0.035,
+                -0.15,
+                -0.05
+            ],
+            [
+                "p",
+                0.04,
+                0,
+                -0.5
+            ],
+            [
+                "g6",
+                0.045,
+                0.15,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1,
+            60,
+            0,
+            30
+        ]
+    },
+    "meditimer_banco_avvio": {
+        "descrizione": "il banco di prova parte: un motore che sale di giri, rumore rosa che si alza",
+        "score": [
+            [
+                "150-600.600-2400",
+                0.7,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10,
+            0,
+            100,
+            30
+        ]
+    },
+    "meditimer_banco_fase": {
+        "descrizione": "inizio di una fase del banco di prova: un tic che sale appena",
+        "score": [
+            [
+                "c5.e5",
+                0.08,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5,
+            0,
+            100,
+            40
+        ]
+    },
+    "meditimer_banco_fase_conclusa": {
+        "descrizione": "fine di una fase del banco di prova: due tic, il secondo più acuto",
+        "score": [
+            [
+                "e5",
+                0.05,
+                0,
+                -0.05
+            ],
+            [
+                "b5",
+                0.08,
+                0,
+                -0.02
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            50,
+            0,
+            40
+        ]
+    },
+    "meditimer_banco_concluso": {
+        "descrizione": "banco di prova concluso: una piccola fanfara triangolare che sale da sinistra a destra",
+        "score": [
+            [
+                "g5",
+                0.08,
+                -0.5,
+                -0.02
+            ],
+            [
+                "c6",
+                0.08,
+                -0.2,
+                -0.02
+            ],
+            [
+                "e6",
+                0.08,
+                0.2,
+                0.0
+            ],
+            [
+                "g6",
+                0.24,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5,
+            0,
+            100,
+            40
+        ]
+    },
+    "meditimer_banco_annullato": {
+        "descrizione": "banco di prova annullato: il motore che si spegne, rumore rosa che scende",
+        "score": [
+            [
+                "2400-600.600-150",
+                0.45,
+                0,
+                -0.08
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            5,
+            0,
+            100,
+            50
+        ]
+    },
+    "meditimer_banco_salvato": {
+        "descrizione": "prova salvata in archivio: tre tic veloci che salgono",
+        "score": [
+            [
+                "c6",
+                0.035,
+                -0.2,
+                -0.05
+            ],
+            [
+                "p",
+                0.035,
+                0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.035,
+                0,
+                -0.05
+            ],
+            [
+                "p",
+                0.035,
+                0,
+                -0.5
+            ],
+            [
+                "g6",
+                0.05,
+                0.2,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1,
+            60,
+            0,
+            30
+        ]
+    },
+    "meditimer_classifiche": {
+        "descrizione": "le classifiche dei banchi di prova: un arpeggio morbido di quattro note triangolari",
+        "score": [
+            [
+                "d5",
+                0.05,
+                -0.3,
+                -0.08
+            ],
+            [
+                "f#5",
+                0.05,
+                -0.1,
+                -0.08
+            ],
+            [
+                "a5",
+                0.05,
+                0.1,
+                -0.05
+            ],
+            [
+                "d6",
+                0.14,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5,
+            0,
+            100,
+            40
+        ]
+    },
+    "meditimer_primato_macchina": {
+        "descrizione": "nuovo primato di questa macchina nel banco di prova: un accordo spezzato che sale e resta",
+        "score": [
+            [
+                "a5",
+                0.06,
+                -0.3,
+                -0.05
+            ],
+            [
+                "c#6",
+                0.06,
+                0,
+                -0.05
+            ],
+            [
+                "e6",
+                0.06,
+                0.3,
+                -0.02
+            ],
+            [
+                "a6",
+                0.22,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            0,
+            100,
+            50
+        ]
+    },
+    "meditimer_manuale": {
+        "descrizione": "il manuale si apre: un fruscio di pagina, rumore bianco che scende",
+        "score": [
+            [
+                "800-6000.300-2000",
+                0.13,
+                0,
+                -0.15
+            ]
+        ],
+        "kind": 5,
+        "adsr": [
+            10,
+            0,
+            100,
+            40
+        ]
+    },
+    "meditimer_tasto_sconosciuto": {
+        "descrizione": "tasto non previsto: due note basse e vicine, un no gentile",
+        "score": [
+            [
+                "b3",
+                0.08,
+                0,
+                -0.05
+            ],
+            [
+                "a#3",
+                0.14,
+                0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            30,
+            50,
+            40
+        ]
+    },
+    "meditimer_errore": {
+        "descrizione": "dato scritto male, durata o orario non validi: due note basse che scendono",
+        "score": [
+            [
+                "e4",
+                0.07,
+                0,
+                -0.05
+            ],
+            [
+                "c4",
+                0.13,
+                0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3,
+            30,
             50,
             40
         ]
