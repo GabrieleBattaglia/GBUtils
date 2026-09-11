@@ -8878,5 +8878,23 @@
             50,
             40
         ]
+    },
+    "meditimer_pulizia": {
+        "descrizione": "pulizia dei report vecchi: una spazzata breve di rumore rosa che scende e passa da sinistra a destra",
+        "score": [
+            [
+                "3000-9000.400-1200",
+                0.3,
+                "-0.4.0.4",
+                -0.15
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10,
+            0,
+            100,
+            40
+        ]
     }
 }
