@@ -159,6 +159,26 @@ errore invece di restare muto, e ho aperto una issue su ciascuno dei due;
 finche' non le sistemiamo, prova con almeno cinque valori.
 Esito:
 
+PROVA 16: IL CONTEGGIO E IL PROMPT DI FINE PAGINA DI MENU
+Cosa fare: apri un programma con un elenco lungo che passa da menu, per esempio
+la scelta del tipo di scala in Chitabry, che ha piu' di venti voci, e lascia
+che l'elenco si fermi a fine pagina; premi Invio per continuare e, in un
+secondo giro, Esc per interrompere. Poi, in un menu qualunque, digita una
+lettera che non corrisponde a nessuna voce, prima in un programma che non
+passa un messaggio, come QuinQu o batnav, poi in uno che lo passa, come
+Chitabry o cwapu.
+Cosa osservare: a fine pagina il display braille deve restare sul prompt, che
+dice per esempio (20 / 45) - (1 / 3), cioe' venti voci viste su quarantacinque,
+pagina uno di tre; in coda a ogni elenco c'e' il conteggio nella stessa forma,
+senza la parte delle pagine quando la pagina e' una sola. Con la lettera
+sbagliata i programmi senza messaggio dicono (0 / 0), gli altri il loro
+messaggio. Dimmi se il conteggio letto da NVDA e sul braille e' chiaro, e se
+rivuoi i due trattini ai lati che avevi scritto nella issue 19: li ho lasciati
+fuori perche' la V5.0.0 aveva tolto proprio i doppi trattini come separatori.
+Perche' serve: banco_menu.py verifica cio' che menu stampa e restituisce, ma
+solo l'orecchio e le dita dicono se la forma e' leggibile.
+Esito:
+
 LE PROVE D'ASCOLTO DI CWZATOR: FATTE TUTTE, LO STRUMENTO RESTA
 Aggiornato il 2026-09-06, a fase 1 conclusa.
 Le diciassette prove d'ascolto nate dal refactoring di CWzator sono state fatte

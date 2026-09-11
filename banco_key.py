@@ -59,11 +59,15 @@ class Banco:
 		self.totale = 0
 		self.uguali = 0
 
-	def inietta(self, vk, stato=0, ch=0):
+	def inietta(self, vk, stato=0, ch=0, premuto=True):
+		"""Scrive un evento di tastiera: la pressione del tasto, o con premuto
+		falso il suo rilascio. Il rilascio serve fra due pressioni identiche
+		consecutive, perche' la console le fonderebbe in un record solo con il
+		conteggio di ripetizione a due, che getwch legge una volta sola."""
 		rec = _InputRecord()
 		rec.EventType = KEY_EVENT
 		ke = rec.Event.KeyEvent
-		ke.bKeyDown = True
+		ke.bKeyDown = premuto
 		ke.wRepeatCount = 1
 		ke.wVirtualKeyCode = vk
 		ke.wVirtualScanCode = u.MapVirtualKeyW(vk, 0)

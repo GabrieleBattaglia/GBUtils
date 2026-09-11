@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V130 di martedì 8 settembre 2026
+	V131 di venerdì 11 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -19,13 +19,13 @@ Lista utilità contenute in questo pacchetto
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
 	manuale V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Impagina anche un testo gia' in memoria e non solo un file, legge in utf-8 con ripiego sulla codifica di sistema, cerca i nomi relativi nella cartella di chi la chiama e non in quella da cui si e' lanciato il programma, apre con with, dice a chi chiama se la lettura e' arrivata in fondo o e' stata interrotta, solleva invece di stampare, adatta la pagina all'altezza della console e chiama per nome cio' che sta mostrando
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
-	menu V5.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto). Nessun separatore grafico: spariti i cinque punti che stampavano trattini, compreso il doppio trattino fra chiave e descrizione di ogni voce, e la riga vuota che nasceva prima di ogni prompt. Il messaggio dell'ambiguita' dice cosa fare, il dizionario vuoto non viene piu' annunciato in inglese, e il primo parametro non e' piu' un dizionario modificabile
+	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode). Non dice piu' una parola di suo, perche' chiamata da tutto il parco software non sa in che lingua parlare, e chiude la issue 19: al posto del conteggio delle voci e del prompt di fine pagina in italiano c'e' un conteggio uguale in ogni lingua, (viste / totale) - (pagina / pagine), che a fine pagina sta fra due ritorni carrello per il display braille; il messaggio di scelta ambigua sparisce e ntf, senza piu' un predefinito italiano, e' l'unica parola che menu pronuncia, quando gliela passa il chiamante. Legge i tasti con la key del pacchetto invece di una copia propria, e chiude la issue 14: i tasti speciali e le combinazioni con Ctrl e Alt vengono ignorati invece di finire nel filtro, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError invece di un'attesa senza fine
 	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto). Gli errori tornano a chi chiama: dati non numerici, non finiti o in numero sbagliato, durata e frequenze fuori dai limiti sollevano invece di uscire in silenzio o stampare in inglese; il file wav nasce nella cartella di chi chiama, o dove dice il percorso passato in file, e la funzione ne restituisce il percorso; tetto di cinque minuti alla durata, che prima poteva bloccare la macchina; parametro pan per spegnere o fissare la panoramica e parametri freq_min e freq_max per stringere la scala; meno memoria, perche' i vettori intermedi si liberano man mano
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "130"
+VERSION = "131"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -3765,13 +3765,17 @@ def manuale(nf=None, testo=None, nome="Guida", codifica=None, righe_pagina=None)
 			if risposta.strip().lower() == "e": return False
 	return True
 
-def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None):
-    """V5.0.0 - lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
+def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None):
+    """V5.1.0 - venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
     p: prompt personalizzato; usato in modalità non-keyslist o in modalità numerata.
-    ntf: messaggio in caso di filtro vuoto o input ambiguo.
+    ntf: messaggio stampato quando cio' che si e' digitato non corrisponde a
+      nessuna voce. Il predefinito e' la stringa vuota, cioe' nessuna parola:
+      menu non conosce la lingua del programma che la chiama, quindi il testo
+      lo passa il chiamante, gia' tradotto, e senza testo resta il conteggio
+      (0 / 0), che e' uguale in ogni lingua.
     show: se True, mostra il menu iniziale completo prima del prompt.
     show_only: se True, mostra il menu completo e termina (non interattivo).
     keyslist: se True (default), il prompt suggerisce i caratteri per l'autocompletamento.
@@ -3779,19 +3783,36 @@ def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, ke
     show_on_filter: se True, la lista delle opzioni si aggiorna visivamente a ogni tasto.
     numbered: se True, il menu diventa numerato, con selezione interattiva dei numeri.
     ordered: se True (default), le voci del menu vengono ordinate alfabeticamente per chiave.
+    empty_enter: cio' che viene restituito quando si preme Invio senza aver digitato niente.
     Restituisce:
-    La chiave scelta dal dizionario 'd', oppure None se l'utente annulla (ESC o Invio su input vuoto).
+    La chiave scelta dal dizionario 'd', oppure None se l'utente annulla con Esc;
+    Invio senza aver digitato niente restituisce empty_enter, che per predefinito e' None.
     None e' anche cio' che si riceve quando 'd' e' vuoto: dalla V5.0.0 il caso
     non viene piu' annunciato con una stampa, perche' chi ha passato il
     dizionario sa gia' che era vuoto e in una interfaccia grafica quella frase
     non la leggerebbe nessuno.
+    Dalla V5.1.0 menu non dice piu' una parola di suo: chiamata da tutto il
+    parco software, non sa in che lingua parlare. Dopo ogni elenco stampa un
+    conteggio che ha la stessa forma in ogni lingua, (viste / totale), seguito
+    da - (pagina / pagine) quando le pagine sono almeno due; a fine pagina lo
+    stesso conteggio e' il prompt che aspetta un tasto, fra due ritorni
+    carrello perche' il display braille vi resti sopra: Esc interrompe
+    l'elenco, ogni altro tasto continua. Quando il filtro non trova niente
+    stampa ntf, o (0 / 0) se ntf e' vuoto; Invio su un prefisso ambiguo non
+    dice piu' niente, e l'elenco dei candidati si ripresenta da solo quando
+    show_on_filter e' vero, altrimenti lo si chiede con il punto
+    interrogativo. I tasti li legge la key di questo pacchetto invece di una
+    copia propria: frecce, tasti funzione, Tab e le combinazioni con Ctrl e
+    Alt vengono ignorati invece di finire nel filtro, Ctrl+C interrompe il
+    programma con KeyboardInterrupt come in qualunque programma da console,
+    e senza una console da cui leggere si riceve EOFError invece di
+    un'attesa senza fine.
     Dalla V5.0.0 l'elenco non ha piu' righe di trattini attorno alle voci ne'
     fra la chiave e la descrizione: le regole di accessibilita' vietano i
     separatori grafici, e menu, essendo chiamata da tutto il parco software,
     era il posto in cui se ne stampavano di piu'.
     """
     import os
-    import sys
     if d is None: d = {}
     def lcp(strings):
         """Calcola il prefisso comune più lungo da una lista di stringhe ignorando il case."""
@@ -3799,47 +3820,21 @@ def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, ke
         lower_strings = [s.lower() for s in strings]
         prefix_len = len(os.path.commonprefix(lower_strings))
         return strings[0][:prefix_len]
-    def key(prompt=""):
-        """Legge un singolo carattere dalla console senza bisogno di Invio."""
-        print(prompt, end='', flush=True)
-        if os.name == 'nt':
-            import msvcrt
-            ch = msvcrt.getwch()
-            if ch in ('\x00', '\xe0'):
-                msvcrt.getwch()
-                return '\x00'
-            if ch == '\x08': return ch
-            if ch == '\r': return ch
-            if ch == '\x1b': return ch
-            if ch == '?': return ch
-            if ord(ch) == 127: return '\x08'
-            return ch
-        else:
-            import select
-            import termios
-            import tty
-            fd = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(fd)
-            try:
-                tty.setcbreak(fd)
-                ch = sys.stdin.read(1)
-                if ch == '\x1b':
-                    r, _, _ = select.select([sys.stdin], [], [], 0.05)
-                    if r:
-                        sys.stdin.read(2)
-                        return '\x00'
-                    else:
-                        return '\x1b'
-                elif ord(ch) == 127: return '\x08'
-                elif ch in ['\n', '\r']: return '\r'
-                else: return ch
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    def Mostra(items_to_show, pager, is_numbered, num_map=None, user_input=""):
-        """Elenca le voci, fermandosi ogni pager righe."""
+    def Mostra(items_to_show, pager, is_numbered, num_map=None):
+        """Elenca le voci, fermandosi ogni pager righe, e chiude con il
+        conteggio (viste / totale) - (pagina / pagine), che a fine pagina e'
+        anche il prompt fra due ritorni carrello. Restituisce False se
+        l'elenco e' stato interrotto con Esc, True altrimenti."""
         total = len(items_to_show)
-        if total == 0 and user_input: print(ntf); return True
-        if total == 0: return True
+        pagine = (total + pager - 1) // pager if pager > 0 else 1
+        def conteggio(viste):
+            testo = f"({viste} / {total})"
+            if pagine > 1:
+                testo += f" - ({(viste + pager - 1) // pager} / {pagine})"
+            return testo
+        if total == 0:
+            print(ntf if ntf else conteggio(0))
+            return True
         for count, item in enumerate(items_to_show, 1):
             if is_numbered:
                 print(f"{item}. {d[num_map[item]]}")
@@ -3847,9 +3842,9 @@ def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, ke
                 desc = d.get(item, "")
                 print(f"{item}: {desc}" if desc else f"{item}")
             if pager > 0 and count % pager == 0 and count < total:
-                ch_pager = key(f"Viste {count} di {total}. Esc per uscire. "); print()
+                ch_pager = key(f"\r{conteggio(count)}\r"); print()
                 if ch_pager == '\x1b': return False
-        print(f"Voci in elenco: {total}.")
+        print(conteggio(total))
         return True
     def Listaprompt_autocomplete(keys_list, display_input):
         """Genera un prompt che suggerisce i prossimi caratteri validi."""
@@ -3857,9 +3852,9 @@ def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, ke
         next_chars = []
         seen = set()
         input_len = len(display_input)
-        for key in keys_list:
-            if len(key) > input_len:
-                char = key[input_len].upper()
+        for voce in keys_list:
+            if len(voce) > input_len:
+                char = voce[input_len].upper()
                 if char not in seen:
                     seen.add(char)
                     next_chars.append(char)
@@ -3896,7 +3891,7 @@ def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, ke
             common_prefix = lcp(filtered)
             if len(common_prefix) > len(user_input):
                 user_input = common_prefix
-                display_input = common_prefix        
+                display_input = common_prefix
         disable_autocomplete_once = False
         final_filtered = [k for k in orig_keys if valid_match(k, display_input)]
         if len(final_filtered) == 1 and len(display_input) > 0:
@@ -3905,7 +3900,7 @@ def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, ke
             return num_map.get(final_choice, final_choice)
         if show and show_on_filter and final_filtered != last_displayed:
             if a_capo_pendente: print()
-            Mostra(final_filtered, pager, numbered, num_map, user_input)
+            Mostra(final_filtered, pager, numbered, num_map)
             last_displayed = final_filtered[:]
             a_capo_pendente = False
         if numbered:
@@ -3918,39 +3913,44 @@ def menu(d=None, p="> ", ntf="Scelta non valida", show=True, show_only=False, ke
         full_prompt = ("\n" if a_capo_pendente else "") + prompt_str + display_input
         user_char = key(full_prompt)
         a_capo_pendente = True
-        if user_char in ['\r', '\n']:
+        if user_char == '\r':
             print()
             a_capo_pendente = False
             exact_matches = [k for k in final_filtered if k.lower() == display_input.lower()]
             if exact_matches:
                 return num_map.get(exact_matches[0], exact_matches[0])
             elif len(final_filtered) == 1:
-                 return num_map.get(final_filtered[0], final_filtered[0])
+                return num_map.get(final_filtered[0], final_filtered[0])
             elif user_input == "":
                 return empty_enter
             else:
-                 print("Scelta ambigua. '?' per l'elenco.")
-                 last_displayed = None
-        elif user_char in ['\x1b', '\x03']: print(); return None
+                # Prefisso ambiguo: nessuna parola, perche' menu non sa in che
+                # lingua dirla. Azzerare l'ultimo elenco fa ripresentare i
+                # candidati al giro dopo, quando show_on_filter e' vero.
+                last_displayed = None
+        elif user_char == '\x1b': print(); return None
         elif user_char == '?':
             print()
-            Mostra(final_filtered, pager, numbered, num_map, user_input)
+            Mostra(final_filtered, pager, numbered, num_map)
             last_displayed = final_filtered[:]
             a_capo_pendente = False
-        elif user_char == '\x08':
+        elif user_char in ('\x08', 'ctrl-backspace'):
             if user_input:
                 user_input = user_input[:-1]
                 print('\b \b'*len(display_input), end='', flush=True)
                 last_displayed = None
                 disable_autocomplete_once = True
-        elif user_char == '\x00': pass
+        elif len(user_char) != 1 or not user_char.isprintable():
+            # Frecce, tasti funzione, combinazioni con Ctrl e Alt, Tab e la
+            # stringa vuota: non sono caratteri da filtro e si lasciano cadere.
+            pass
+        elif numbered and not user_char.isdigit():
+            pass
         else:
-            if (numbered and not user_char.isdigit()): pass
-            else:
-                print(user_char, end='', flush=True)
-                user_input += user_char
-                last_displayed = None
-                disable_autocomplete_once = False
+            print(user_char, end='', flush=True)
+            user_input += user_char
+            last_displayed = None
+            disable_autocomplete_once = False
 
 def Donazione(lang=None):
     """
