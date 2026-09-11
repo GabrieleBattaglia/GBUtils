@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V131 di venerdì 11 settembre 2026
+	V132 di venerdì 11 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
 	Donazione V2.0.1 del 4 settembre 2026
-	enter_escape V1.1 di sabato 5 settembre 2026 by Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro e ClaudIA (Claude Opus 5 UltraCode). Dice cosa fare quando si preme un tasto diverso da Invio o Esc
+	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
 	gestisci_aggiornamento V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo
 	gridapu 1.2 from IU1FIG
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
@@ -25,7 +25,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "131"
+VERSION = "132"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -736,64 +736,49 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
     return quanti, lasciati
 
 
-def enter_escape(prompt="", guida="Conferma con invio o annulla con escape"):
-    """
-				V1.1 di sabato 5 settembre 2026 by Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro e ClaudIA (Claude Opus 5 UltraCode)
-    Funzione cross-platform e auto-contenuta che attende la pressione di Invio o Esc.
-    Stampa un prompt opzionale e non richiede ulteriori pressioni di Invio.
+def enter_escape(prompt="", guida="", attesa=None):
+    """V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode)
+    Aspetta Invio o Escape e riferisce quale dei due e' arrivato.
     Parametri:
-        - prompt: testo mostrato prima dell'attesa, senza andare a capo.
-        - guida: messaggio stampato quando si preme un tasto diverso da Invio
-          o Esc. Chi lavora a orecchio non avrebbe altro modo di accorgersi di
-          aver premuto il tasto sbagliato, perche' la funzione resta in attesa
-          in silenzio. Passare None o stringa vuota per tornare al silenzio.
-    Restituisce:
-        - True se viene premuto Invio.
-        - False se viene premuto Esc.
+      prompt: testo stampato prima dell'attesa, senza andare a capo, e
+        ripetuto dopo ogni tasto che non sia Invio o Escape: chi lavora a
+        orecchio risente la domanda e sa che la funzione aspetta ancora.
+      guida: frase stampata prima di ripetere il prompt quando arriva un
+        tasto diverso da Invio o Escape. Il predefinito e' la stringa vuota,
+        cioe' nessuna parola: enter_escape non conosce la lingua di chi la
+        chiama, quindi il testo lo passa il chiamante, gia' tradotto, e senza
+        testo resta la ripetizione del prompt, che e' gia' nella sua lingua.
+      attesa: secondi da aspettare; None, il predefinito, aspetta senza
+        limite. Un tasto sbagliato fa ripartire l'attesa.
+    Restituisce True se viene premuto Invio, False se viene premuto Escape,
+    None se l'attesa scade senza risposta: nei chiamanti scritti come
+    "if enter_escape(...)" la scadenza vale come un Escape.
+    Solleva KeyboardInterrupt con Ctrl+C, come in qualunque programma da
+    console, ed EOFError quando il processo non ha una console o un
+    terminale da cui leggere, invece di restare in attesa per sempre.
+    Dalla V2.0.0 il tasto lo legge la key di questo pacchetto invece di una
+    copia propria: fino alla V1.1 su Windows un tasto speciale, per esempio
+    una freccia, arrivava in due pezzi e la guida veniva detta due volte, e
+    Ctrl+C veniva preso per un tasto sbagliato. Il predefinito della guida
+    era una frase italiana, che i programmi in altre lingue si prendevano
+    senza volerlo.
     """
-    # Le importazioni e le definizioni sono interne per la massima portabilità
-    import sys
-
-    try:
-        # --- Implementazione per Windows ---
-        import msvcrt
-        def _get_key_press():
-            return msvcrt.getch()
-
-    except ImportError:
-        # --- Implementazione per Unix-like (macOS, Linux) ---
-        import termios
-        import tty
-        def _get_key_press():
-            fd = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(fd)
-            try:
-                tty.setcbreak(sys.stdin.fileno())
-                char = sys.stdin.read(1)
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-            return char.encode('utf-8')
-
-    # Logica principale della funzione
-    if prompt:
-        print(prompt, end="", flush=True)
-    
     while True:
-        k = _get_key_press()
-        # Invio può essere \r (Windows) o \n (Unix)
-        if k in (b'\r', b'\n'):
-            print() # Pulisce la riga andando a capo
-            return True
-        # Esc è sempre \x1b
-        elif k == b'\x1b':
-            print() # Pulisce la riga andando a capo
-            return False
-        # Qualsiasi altro tasto: si dice cosa serve, invece di restare muti.
-        elif guida:
+        tasto = key(prompt, attesa=attesa, alla_scadenza=None)
+        if tasto is None:
             print()
+            return None
+        if tasto == '\r':
+            print()
+            return True
+        if tasto == '\x1b':
+            print()
+            return False
+        # Qualunque altro tasto: a capo, la guida se c'e', e al giro dopo key
+        # ristampa il prompt, cosi' chi ascolta risente la domanda.
+        print()
+        if guida:
             print(guida, flush=True)
-            if prompt:
-                print(prompt, end="", flush=True)
 # Ordine di preferenza fra le interfacce audio, dalla piu' pronta alla meno.
 # ASIO c'e' ed e' in cima: puo' entrare in gioco soltanto se punta allo stesso
 # dispositivo scelto nel sistema, e se un altro programma la tiene in esclusiva

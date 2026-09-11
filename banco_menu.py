@@ -43,7 +43,13 @@ def tasto(c):
 	guarda soltanto il carattere Unicode."""
 	return (ord(c.upper()) if c.isalnum() else 0xBF, 0, ord(c))
 
-class BancoMenu(Banco):
+class BancoUscita(Banco):
+	"""Corridore per una funzione che aspetta tasti e stampa: inietta la
+	sequenza, cattura l'uscita e confronta esito e testo con le attese. Le
+	sottoclassi dicono quale funzione provare e quali parole non deve dire."""
+	funzione = None
+	parole_vietate = ()
+
 	def __init__(self):
 		super().__init__()
 		self.passate = 0
@@ -64,7 +70,7 @@ class BancoMenu(Banco):
 		uscita = io.StringIO()
 		try:
 			with contextlib.redirect_stdout(uscita):
-				esito = menu(**argomenti)
+				esito = self.funzione(**argomenti)
 		except KeyboardInterrupt:
 			esito = "KeyboardInterrupt"
 		scaduta = not guardia.is_alive()
@@ -78,7 +84,7 @@ class BancoMenu(Banco):
 		for pezzo in contiene:
 			if pezzo not in testo:
 				problemi.append(f"manca {pezzo!r}")
-		for pezzo in tuple(non_contiene) + PAROLE_VIETATE:
+		for pezzo in tuple(non_contiene) + tuple(self.parole_vietate):
 			if pezzo in testo:
 				problemi.append(f"stampa {pezzo!r}")
 		self.totale += 1
@@ -88,6 +94,10 @@ class BancoMenu(Banco):
 		else:
 			self.passate += 1
 			print(f"{nome}: ok")
+
+class BancoMenu(BancoUscita):
+	funzione = staticmethod(menu)
+	parole_vietate = PAROLE_VIETATE
 
 def main():
 	b = BancoMenu()
