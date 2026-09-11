@@ -54,7 +54,7 @@ class BancoUscita(Banco):
 		super().__init__()
 		self.passate = 0
 
-	def prova(self, nome, sequenza, atteso, contiene=(), non_contiene=(), **argomenti):
+	def prova(self, titolo, sequenza, atteso, contiene=(), non_contiene=(), **argomenti):
 		k.FlushConsoleInputBuffer(self.hin)
 		# Ogni tasto viene premuto e rilasciato, come dalla tastiera vera: senza
 		# il rilascio la console fonde due pressioni identiche consecutive, per
@@ -71,8 +71,10 @@ class BancoUscita(Banco):
 		try:
 			with contextlib.redirect_stdout(uscita):
 				esito = self.funzione(**argomenti)
-		except KeyboardInterrupt:
-			esito = "KeyboardInterrupt"
+		except (KeyboardInterrupt, ValueError, OSError, EOFError, TypeError) as errore:
+			# Le eccezioni attese si riferiscono con il loro nome, cosi' una
+			# prova puo' aspettarsele come esito.
+			esito = type(errore).__name__
 		scaduta = not guardia.is_alive()
 		guardia.cancel()
 		testo = uscita.getvalue()
@@ -89,11 +91,11 @@ class BancoUscita(Banco):
 				problemi.append(f"stampa {pezzo!r}")
 		self.totale += 1
 		if problemi:
-			print(f"{nome}: {'; '.join(problemi)}")
+			print(f"{titolo}: {'; '.join(problemi)}")
 			print(f"  uscita: {testo!r}")
 		else:
 			self.passate += 1
-			print(f"{nome}: ok")
+			print(f"{titolo}: ok")
 
 class BancoMenu(BancoUscita):
 	funzione = staticmethod(menu)

@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V133 di venerdì 11 settembre 2026
+	V134 di venerdì 11 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -16,7 +16,7 @@ Lista utilità contenute in questo pacchetto
 	gestisci_aggiornamento V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo
 	gridapu 1.2 from IU1FIG
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
-	manuale V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Impagina anche un testo gia' in memoria e non solo un file, legge in utf-8 con ripiego sulla codifica di sistema, cerca i nomi relativi nella cartella di chi la chiama e non in quella da cui si e' lanciato il programma, apre con with, dice a chi chiama se la lettura e' arrivata in fondo o e' stata interrotta, solleva invece di stampare, adatta la pagina all'altezza della console e chiama per nome cio' che sta mostrando
+	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Il prompt di fine pagina non parla piu' italiano, e chiude la issue 28: e' il nome passato dal chiamante seguito da (pagina / pagine), fra due ritorni carrello per il display braille, letto con key, con Esc che interrompe e ogni altro tasto che continua; il predefinito di nome e' la stringa vuota. Il file relativo si cerca prima in sys._MEIPASS quando il programma e' congelato e poi nella cartella di chi chiama, mai nella directory di lavoro, e chiude la issue 26; la ricerca sta in _percorso_risorsa, privata, pronta a diventare pubblica con la issue 20
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
 	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode). Non dice piu' una parola di suo, perche' chiamata da tutto il parco software non sa in che lingua parlare, e chiude la issue 19: al posto del conteggio delle voci e del prompt di fine pagina in italiano c'e' un conteggio uguale in ogni lingua, (viste / totale) - (pagina / pagine), che a fine pagina sta fra due ritorni carrello per il display braille; il messaggio di scelta ambigua sparisce e ntf, senza piu' un predefinito italiano, e' l'unica parola che menu pronuncia, quando gliela passa il chiamante. Legge i tasti con la key del pacchetto invece di una copia propria, e chiude la issue 14: i tasti speciali e le combinazioni con Ctrl e Alt vengono ignorati invece di finire nel filtro, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError invece di un'attesa senza fine
 	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "133"
+VERSION = "134"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -3673,20 +3673,52 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 			print(f"Troppo alto, accettato {massimo}.")
 			return massimo
 		return valore
-def manuale(nf=None, testo=None, nome="Guida", codifica=None, righe_pagina=None):
-	'''V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+def _percorso_risorsa(nome_file, risalita=1):
+	"""Dove sta un file in sola lettura che viaggia con l'applicazione, per
+	esempio la guida. Un percorso assoluto torna com'e'. Uno relativo si cerca
+	prima fra le risorse del pacchetto PyInstaller, in sys._MEIPASS, quando il
+	programma e' congelato, perche' i file dichiarati nei datas vengono
+	scompattati li' e non accanto all'eseguibile; poi nella cartella di chi
+	chiama secondo _cartella_chiamante, mai nella directory di lavoro. Se non
+	esiste in nessuno dei due torna quello nella cartella di chi chiama, cosi'
+	che l'errore di chi lo apre dica dove lo si aspettava. risalita vale 1 per
+	chi la invoca dal corpo di una utilita' pubblica. Nasce con la issue 26
+	per manuale; la issue 20 potra' renderla pubblica per tutti i progetti."""
+	import os
+	import sys
+	if os.path.isabs(nome_file):
+		return nome_file
+	candidati = []
+	if getattr(sys, "frozen", False) and getattr(sys, "_MEIPASS", None):
+		candidati.append(os.path.join(sys._MEIPASS, nome_file))
+	candidati.append(os.path.join(_cartella_chiamante(risalita + 1), nome_file))
+	for percorso in candidati:
+		if os.path.exists(percorso):
+			return percorso
+	return candidati[-1]
+
+def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
+	'''V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Impagina un testo lungo e lo mostra a pezzi, fermandosi a ogni pagina.
 	Riceve, in alternativa fra loro:
-	  nf, il nome del file da mostrare, assoluto oppure relativo alla cartella
-	    di chi chiama, mai alla directory di lavoro;
+	  nf, il nome del file da mostrare, assoluto oppure relativo: quello
+	    relativo si cerca prima fra le risorse del pacchetto PyInstaller, in
+	    sys._MEIPASS, quando il programma e' congelato, e poi nella cartella
+	    di chi chiama, mai nella directory di lavoro;
 	  testo, una stringa gia' in memoria, per impaginare cio' che non e' un
 	    file, per esempio le note di una release arrivate dalla rete.
-	nome e' cio' che si sta mostrando e compare nella domanda di fine pagina.
+	nome e' cio' che si sta mostrando e apre il prompt di fine pagina. Il
+	  predefinito e' la stringa vuota: manuale non conosce la lingua di chi la
+	  chiama, quindi la parola la passa il chiamante, gia' tradotta.
 	codifica None significa prova utf-8 e, se non si decodifica, ripiega sulla
 	  codifica preferita dal sistema; un valore esplicito impone quello e basta.
 	righe_pagina None significa quante righe entrano nella console, misurate a
 	  ogni chiamata, con quindici come ripiego se non c'e' un terminale da
 	  misurare; un numero impone quello.
+	A fine pagina il prompt e' nome seguito da (pagina / pagine), fra due
+	ritorni carrello perche' il display braille vi resti sopra, e aspetta un
+	tasto: Esc interrompe la lettura, ogni altro tasto continua. Fino alla
+	V2.0.0 la domanda era una frase italiana e si usciva con la lettera e.
 	Restituisce True se il testo e' stato mostrato fino in fondo, False se
 	l'utente ha interrotto la lettura: fino alla 1.0.1 chi chiamava non aveva
 	modo di saperlo.
@@ -3694,15 +3726,14 @@ def manuale(nf=None, testo=None, nome="Guida", codifica=None, righe_pagina=None)
 	entrambi, e OSError se il file non si apre o non si decodifica con nessuna
 	codifica. Sono notizie per chi chiama, e dalla V2.0.0 la funzione non le
 	stampa piu' per conto proprio: in una applicazione con interfaccia grafica
-	nessuno le leggerebbe.
+	nessuno le leggerebbe. Dal tasto, letto con key, arrivano KeyboardInterrupt
+	con Ctrl+C ed EOFError quando non c'e' una console da cui leggere.
 	'''
 	import os
 	if (nf is None) == (testo is None):
 		raise ValueError("manuale: serve o un nome di file o un testo gia' pronto, non nessuno dei due e non tutti e due.")
 	if testo is None:
-		percorso = nf
-		if not os.path.isabs(percorso) and not os.path.exists(percorso):
-			percorso = os.path.join(_cartella_chiamante(1), nf)
+		percorso = _percorso_risorsa(nf, 1)
 		errore = None
 		for prova in ([codifica] if codifica else ["utf-8", None]):
 			try:
@@ -3712,18 +3743,19 @@ def manuale(nf=None, testo=None, nome="Guida", codifica=None, righe_pagina=None)
 			except UnicodeDecodeError as e:
 				errore = e
 		if testo is None:
-			raise OSError(f"manuale: {nome} in {percorso} non si decodifica.") from errore
+			raise OSError(f"manuale: {nome or nf} in {percorso} non si decodifica.") from errore
 	righe = testo.splitlines()
 	if not righe: return True
 	if righe_pagina is None:
 		try: righe_pagina = max(5, os.get_terminal_size().lines - 2)
 		except OSError: righe_pagina = 15
 	pagine = (len(righe) + righe_pagina - 1) // righe_pagina
+	etichetta = f"{nome} " if nome else ""
 	for numero, riga in enumerate(righe, 1):
 		print(riga)
 		if numero % righe_pagina == 0 and numero < len(righe):
-			risposta = dgt(f"{nome}, pagina {numero // righe_pagina} di {pagine}. Invio o 'e'. ")
-			if risposta.strip().lower() == "e": return False
+			tasto = key(f"\r{etichetta}({numero // righe_pagina} / {pagine})\r"); print()
+			if tasto == '\x1b': return False
 	return True
 
 def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None):
