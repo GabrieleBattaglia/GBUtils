@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V135 di venerdì 11 settembre 2026
+	V136 di venerdì 11 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -14,7 +14,6 @@ Lista utilità contenute in questo pacchetto
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Restituisce il messaggio invece di stamparlo soltanto, con il parametro stampa che per predefinito lo stampa come prima: chi ha una finestra passa falso e lo mostra come vuole. Parametro probabilita, predefinito venti, con cento che forza la comparsa; generatore casuale privato, che non sposta piu' quello del programma; la lingua salvata da polipo si cerca nella cartella di chi chiama e non piu' in argv zero o nella directory di lavoro; le eccezioni intercettate hanno un nome, e l'indirizzo di posta sta in una costante
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
 	gestisci_aggiornamento V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo
-	gridapu 1.2 from IU1FIG
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Il prompt di fine pagina non parla piu' italiano, e chiude la issue 28: e' il nome passato dal chiamante seguito da (pagina / pagine), fra due ritorni carrello per il display braille, letto con key, con Esc che interrompe e ogni altro tasto che continua; il predefinito di nome e' la stringa vuota. Il file relativo si cerca prima in sys._MEIPASS quando il programma e' congelato e poi nella cartella di chi chiama, mai nella directory di lavoro, e chiude la issue 26; la ricerca sta in _percorso_risorsa, privata, pronta a diventare pubblica con la issue 20
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
@@ -24,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "135"
+VERSION = "136"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -2090,54 +2089,6 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 			return _key_carattere(ch)
 	finally:
 		termios.tcsetattr(fd, termios.TCSADRAIN, vecchie_impostazioni)
-
-def gridapu(x=0.0, y=0.0, num=10):
-	'''GRIDAPU V1.2 - Author unknown, and kindly find on the net by IU1FIG Diego Rispoli.
-	Translated from Java by IZ4APU Gabriele Battaglia.
-	It Receives long, lat in float and how many digits (num)
-	It returns the locator as string.
-	'''
-	if not isinstance(y, float) or not isinstance(x, float):
-		print('Lat or Lon wrong type!')
-		return''
-	import math
-	from string import ascii_lowercase as L
-	from string import ascii_uppercase as U
-	from string import digits as D
-	if x<-180: x+=360
-	if x>180: x += -360
-	ycalc = [0,0,0]
-	ydiv_ar = [10, 1, 1/24, 1/240, 1/240/24]
-	ycalc[0] = (x + 180)/2
-	ycalc[1] = y + 90
-	yn=[0,0,0,0,0,0,0,0,0,0]
-	yi,yk=0,0
-	while yi < 2:
-		while yk < 5:
-			ydiv = ydiv_ar[yk]
-			yres = ycalc[yi] / ydiv
-			ycalc[yi] = yres
-			if ycalc[yi] > 0:
-				ylp = math.floor(yres)
-			else:
-				ylp = math.ceil(yres)
-			ycalc[yi] = (ycalc[yi] - ylp) * ydiv
-			yn[2*yk + yi] = ylp
-			yk += 1
-		yi += 1
-		yk = 0
-	qthloc=""
-	if num >= 2:
-		qthloc += U[yn[0]] + U[yn[1]]
-	if num >= 4:
-		qthloc += D[yn[2]] + D[yn[3]]
-	if num >= 6:
-		qthloc += U[yn[4]] + U[yn[5]]
-	if num >= 8:
-		qthloc += D[yn[6]] + D[yn[7]]
-	if num >= 10:
-		qthloc += L[yn[8]] + L[yn[9]]
-	return qthloc
 
 # Tetto alla durata di sonify: il segnale si costruisce tutto in memoria, e a
 # 44100 campioni al secondo cinque minuti sono gia' oltre un centinaio di
