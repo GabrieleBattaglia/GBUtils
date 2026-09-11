@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V134 di venerdì 11 settembre 2026
+	V135 di venerdì 11 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -11,7 +11,7 @@ Lista utilità contenute in questo pacchetto
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Il contesto con cui urllib verifica i certificati: archivio di sistema più certifi, perché ognuno dei due conosce radici che l'altro non ha. Nasce dalla issue 40 di Orologic
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
-	Donazione V2.0.1 del 4 settembre 2026
+	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Restituisce il messaggio invece di stamparlo soltanto, con il parametro stampa che per predefinito lo stampa come prima: chi ha una finestra passa falso e lo mostra come vuole. Parametro probabilita, predefinito venti, con cento che forza la comparsa; generatore casuale privato, che non sposta piu' quello del programma; la lingua salvata da polipo si cerca nella cartella di chi chiama e non piu' in argv zero o nella directory di lavoro; le eccezioni intercettate hanno un nome, e l'indirizzo di posta sta in una costante
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
 	gestisci_aggiornamento V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo
 	gridapu 1.2 from IU1FIG
@@ -24,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "134"
+VERSION = "135"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -3945,95 +3945,90 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             last_displayed = None
             disable_autocomplete_once = False
 
-def Donazione(lang=None):
-    """
-    V2.0.1 del 4 settembre 2026
-    Mostra un messaggio di donazione con una probabilità del 20%
-    nella lingua specificata o rilevata dal sistema/configurazione.
-    Lingue supportate: Italiano, Portoghese, Inglese, Francese, Spagnolo, Tedesco, Russo, Cinese (semplificato), Giapponese, Arabo.
+# L'indirizzo a cui arrivano i caffe': sta qui una volta sola, e le dieci
+# traduzioni lo compongono nel messaggio.
+_EMAIL_DONAZIONI = "gabriele.battaglia@gmail.com"
+
+def Donazione(lang=None, probabilita=20, stampa=True):
+    """V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
+    L'invito a offrire un caffe' all'autore, nella lingua giusta fra dieci:
+    italiano, inglese, portoghese, francese, spagnolo, tedesco, russo, cinese
+    semplificato, giapponese e arabo.
+    Parametri:
+      lang: codice della lingua, per esempio it, en o it_IT. Se manca, la
+        lingua si ricava nell'ordine dal file selected_language.json che
+        polipo salva nella cartella di chi chiama, dalla funzione di
+        traduzione installata in builtins, e dalla lingua di sistema, con
+        l'inglese come ultima rete.
+      probabilita: percentuale di volte in cui l'invito compare. Venti per
+        predefinito, cento per farlo comparire sempre, per esempio da una voce
+        di menu che lo mostra a richiesta, zero per non farlo comparire mai.
+      stampa: se vero, il predefinito, il messaggio viene anche stampato, come
+        faceva la funzione fino alla V2.0.1. Chi ha una finestra passa falso e
+        lo mostra come vuole.
+    Restituisce il messaggio quando il sorteggio passa, None altrimenti.
+    Il sorteggio usa un generatore casuale privato: chiamarla non sposta il
+    generatore globale del programma, e una partita riproducibile resta tale.
+    Dalla V2.1.0 il messaggio torna a chi chiama invece di essere soltanto
+    stampato: nella finestra di Tornello, compilata senza console, la stampa
+    finiva nel nulla e l'invito non compariva mai. La lingua salvata da polipo
+    si cerca nella cartella di chi chiama, non piu' in argv zero o nella
+    directory di lavoro, e le eccezioni intercettate hanno un nome: un file
+    che manca e' il caso normale, uno che non si legge viene saltato, tutto il
+    resto risale.
     """
     import builtins
     import json
     import os
     import random
-    import sys
-
-    if random.randint(1, 100) <= 20:
-        messaggi = {
-            'it': "Se questo software ti è piaciuto, ti è stato utile, ti sei divertito ad usarlo, considera l'idea di offrirmi un caffè. Mi trovi su paypal come gabriele.battaglia@gmail.com Grazie di cuore.",
-            'en': "If you enjoyed this software, found it useful, or had fun using it, consider buying me a coffee. You can find me on PayPal at gabriele.battaglia@gmail.com Thank you.",
-            'pt': "Se você gostou deste software, o achou útil ou se divertiu usando-o, considere me pagar um café. Você pode me encontrar no PayPal em gabriele.battaglia@gmail.com. Muito obrigado.",
-            'fr': "Si vous avez aimé ce logiciel, l'avez trouvé utile ou vous êtes amusé en l'utilisant, envisagez de m'offrir un café. Vous pouvez me trouver sur PayPal à l'adresse gabriele.battaglia@gmail.com Merci beaucoup.",
-            'es': "Si te ha gustado este software, te ha resultado útil o te has divertido usándolo, considera la idea de invitarme a un café. Me puedes encontrar en PayPal como gabriele.battaglia@gmail.com. Muchas gracias.",
-            'de': "Wenn Ihnen diese Software gefallen hat, sie nützlich war oder Sie Spaß daran hatten, sie zu nutzen, ziehen Sie in Betracht, mir einen Kaffee auszugeben. Sie finden mich auf PayPal unter gabriele.battaglia@gmail.com Vielen Dank.",
-            'ru': "Если вам понравилась эта программа, она оказалась полезной или вы получили удовольствие от ее использования, рассмотрите возможность угостить меня кофе. Вы можете найти меня на PayPal по адресу gabriele.battaglia@gmail.com Спасибо.",
-            'zh': "如果您喜欢这款软件，觉得它有用，或者在使用过程中获得了乐趣，请考虑请我喝杯咖啡。您可以在PayPal上找到我：gabriele.battaglia@gmail.com 谢谢。",
-            'ja': "このソフトウェアを楽しんだり、役立つと感じたり、楽しく使っていただけたなら、私にコーヒーをご馳走することを検討してください。PayPalでgabriele.battaglia@gmail.comとして見つけることができます。ありがとうございます。",
-            'ar': "إذا أعجبك هذا البرنامج، أو وجدته مفيدًا، أو استمتعت باستخدامه، ففكر في شراء قهوة لي. يمكنك العثور عليّ على PayPal على gabriele.battaglia@gmail.com. شكرًا لك."
-        }
-        lingua_rilevata = None
-
-        # 1. Priorità: Parametro esplicito 'lang'
-        if lang:
+    if random.Random().randint(1, 100) > probabilita:
+        return None
+    email = _EMAIL_DONAZIONI
+    messaggi = {
+        'it': f"Se questo software ti è piaciuto, ti è stato utile, ti sei divertito ad usarlo, considera l'idea di offrirmi un caffè. Mi trovi su paypal come {email} Grazie di cuore.",
+        'en': f"If you enjoyed this software, found it useful, or had fun using it, consider buying me a coffee. You can find me on PayPal at {email} Thank you.",
+        'pt': f"Se você gostou deste software, o achou útil ou se divertiu usando-o, considere me pagar um café. Você pode me encontrar no PayPal em {email}. Muito obrigado.",
+        'fr': f"Si vous avez aimé ce logiciel, l'avez trouvé utile ou vous êtes amusé en l'utilisant, envisagez de m'offrir un café. Vous pouvez me trouver sur PayPal à l'adresse {email} Merci beaucoup.",
+        'es': f"Si te ha gustado este software, te ha resultado útil o te has divertido usándolo, considera la idea de invitarme a un café. Me puedes encontrar en PayPal como {email}. Muchas gracias.",
+        'de': f"Wenn Ihnen diese Software gefallen hat, sie nützlich war oder Sie Spaß daran hatten, sie zu nutzen, ziehen Sie in Betracht, mir einen Kaffee auszugeben. Sie finden mich auf PayPal unter {email} Vielen Dank.",
+        'ru': f"Если вам понравилась эта программа, она оказалась полезной или вы получили удовольствие от ее использования, рассмотрите возможность угостить меня кофе. Вы можете найти меня на PayPal по адресу {email} Спасибо.",
+        'zh': f"如果您喜欢这款软件，觉得它有用，或者在使用过程中获得了乐趣，请考虑请我喝杯咖啡。您可以在PayPal上找到我：{email} 谢谢。",
+        'ja': f"このソフトウェアを楽しんだり、役立つと感じたり、楽しく使っていただけたなら、私にコーヒーをご馳走することを検討してください。PayPalで{email}として見つけることができます。ありがとうございます。",
+        'ar': f"إذا أعجبك هذا البرنامج، أو وجدته مفيدًا، أو استمتعت باستخدامه، ففكر في شراء قهوة لي. يمكنك العثور عليّ على PayPal على {email}. شكرًا لك.",
+    }
+    def codice(valore):
+        """Da it_IT, it-IT o IT si arriva a it; None se non c'e' niente."""
+        valore = str(valore or "").strip().lower().split('_')[0].split('-')[0]
+        return valore or None
+    lingua = codice(lang)
+    if not lingua:
+        # La scelta che l'utente ha gia' fatto con polipo, salvata accanto a
+        # chi chiama. Un file che manca e' il caso normale; uno che non si
+        # legge, non e' JSON o non ha la forma attesa viene saltato.
+        percorso = os.path.join(_cartella_chiamante(1), 'selected_language.json')
+        if os.path.exists(percorso):
             try:
-                lingua_rilevata = str(lang).strip().lower().split('_')[0].split('-')[0]
-            except Exception:
-                pass
-
-        # 2. Priorità: Leggere la lingua selezionata da selected_language.json (usato da polipo)
-        if not lingua_rilevata:
-            percorsi_ricerca = []
+                with open(percorso, 'r', encoding='utf-8') as f:
+                    dati = json.load(f)
+                lingua = codice(dati.get('language_code')) if isinstance(dati, dict) else None
+            except (OSError, ValueError):
+                lingua = None
+    if not lingua:
+        # La funzione di traduzione installata da gettext, se c'e': il suo
+        # oggetto sa in che lingua sta traducendo.
+        traduzione = getattr(getattr(builtins, '_', None), '__self__', None)
+        info = getattr(traduzione, 'info', None)
+        if callable(info):
             try:
-                if hasattr(sys, 'frozen') and sys.frozen:
-                    percorsi_ricerca.append(os.path.dirname(sys.executable))
-                if sys.argv and sys.argv[0]:
-                    percorsi_ricerca.append(os.path.dirname(os.path.abspath(sys.argv[0])))
-            except Exception:
-                pass
-            percorsi_ricerca.append(os.getcwd())
-
-            for percorso in percorsi_ricerca:
-                if not percorso:
-                    continue
-                file_settings = os.path.join(percorso, 'selected_language.json')
-                if os.path.exists(file_settings):
-                    try:
-                        with open(file_settings, 'r', encoding='utf-8') as f:
-                            data = json.load(f)
-                            codice = data.get('language_code')
-                            if codice:
-                                lingua_rilevata = str(codice).strip().lower().split('_')[0].split('-')[0]
-                                break
-                    except Exception:
-                        pass
-
-        # 3. Priorità: Ispezionare la funzione di traduzione builtins._
-        if not lingua_rilevata:
-            try:
-                if hasattr(builtins, '_'):
-                    _ = builtins._
-                    if hasattr(_, '__self__'):
-                        trans = _.__self__
-                        if hasattr(trans, 'info'):
-                            info = trans.info()
-                            if 'language' in info:
-                                lingua_rilevata = info['language'].strip().lower().split('_')[0].split('-')[0]
-            except Exception:
-                pass
-
-        # 4. Priorità: la lingua dell'utente, ricavata da ambiente e sistema.
-        # I tre ripieghi che stavano qui, cioè variabili d'ambiente, API di
-        # Windows e locale.getlocale, sono ora in _lingua_di_sistema, che li
-        # condivide con polipo invece di tenerne due copie.
-        if not lingua_rilevata:
-            lingua_rilevata = _lingua_di_sistema()
-
-        # Fallback finale: inglese
-        if not lingua_rilevata:
-            lingua_rilevata = 'en'
-
-        messaggio_da_mostrare = messaggi.get(lingua_rilevata, messaggi['en'])
-        print(messaggio_da_mostrare)
+                lingua = codice(info().get('language'))
+            except (AttributeError, TypeError):
+                lingua = None
+    if not lingua:
+        lingua = _lingua_di_sistema()
+    messaggio = messaggi.get(lingua or 'en', messaggi['en'])
+    if stampa:
+        print(messaggio)
+    return messaggio
 
 def polipo(domain='messages', localedir='locales', source_language='en', config_path=None,
            interattivo=True, lingua_predefinita=None):

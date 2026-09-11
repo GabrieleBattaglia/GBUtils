@@ -81,7 +81,13 @@ class BancoUscita(Banco):
 		problemi = []
 		if scaduta and atteso != "KeyboardInterrupt":
 			problemi.append("attesa scaduta, mancava un tasto")
-		if esito != atteso:
+		# atteso e' il valore che la funzione deve restituire, oppure un
+		# controllo, cioe' una funzione che riceve l'esito e dice se va bene:
+		# serve quando il valore e' un testo lungo che il banco non ricopia.
+		if callable(atteso):
+			if not atteso(esito):
+				problemi.append(f"esito rifiutato dal controllo: {esito!r}")
+		elif esito != atteso:
 			problemi.append(f"restituito {esito!r} invece di {atteso!r}")
 		for pezzo in contiene:
 			if pezzo not in testo:
