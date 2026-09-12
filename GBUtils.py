@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V143 di sabato 12 settembre 2026
+	V144 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V8.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
@@ -17,7 +17,7 @@ Lista utilità contenute in questo pacchetto
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
 	gestisci_aggiornamento V1.1.1 di sabato 12 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo; dalla V1.1.1 gli avanzamenti dello scaricamento sono cinque invece di dieci, uno ogni venti per cento, come Gabriele ha chiesto dopo averli ascoltati
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
-	mixer V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Il mixer condiviso della issue 8, che alimenta la scheda scrivendo invece di rispondere a un callback: sotto carico il callback perde campioni, perché deve entrare in Python nel momento esatto in cui la scheda ha fame e resta in coda per il lucchetto dell'interprete. Misurato il 12 settembre: a callback sette buchi al secondo, a scrittura nessuno. Blocco di 1024 campioni, ventitré millesimi, che è il valore dove i buchi spariscono con margine. Somma fino a trentadue voci con panoramica a potenza costante, ferma una voce o tutte, ricampiona ciò che arriva a un'altra frequenza, sceglie l'uscita più pronta, chiude dopo due minuti di silenzio e si riapre da solo. Per ora nasce accanto ai due mixer esistenti, che passeranno a lui uno alla volta
+	mixer V1.1.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Il mixer condiviso della issue 8, che alimenta la scheda scrivendo invece di rispondere a un callback: sotto carico il callback perde campioni, perché deve entrare in Python nel momento esatto in cui la scheda ha fame e resta in coda per il lucchetto dell'interprete. Misurato il 12 settembre: a callback sette buchi al secondo, a scrittura nessuno. Blocco di 1024 campioni, ventitré millesimi, che è il valore dove i buchi spariscono con margine. Somma fino a trentadue voci con panoramica a potenza costante, ferma una voce o tutte, ricampiona ciò che arriva a un'altra frequenza, sceglie l'uscita più pronta, chiude dopo due minuti di silenzio e si riapre da solo. Dalla V1.1.0 chi manda un suono puo' chiedere di essere avvisato quando finisce, e l'avviso arriva anche se il suono e' stato fermato, se ha lasciato il posto a un altro o se il mixer si chiude: serve a chi tiene un oggetto per ogni suono, come CWzator. Acusticator lo usa dalla V8.0.0; CWzator ha ancora il suo
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Il prompt di fine pagina non parla piu' italiano, e chiude la issue 28: e' il nome passato dal chiamante seguito da (pagina / pagine), fra due ritorni carrello per il display braille, letto con key, con Esc che interrompe e ogni altro tasto che continua; il predefinito di nome e' la stringa vuota. Il file relativo si cerca prima in sys._MEIPASS quando il programma e' congelato e poi nella cartella di chi chiama, mai nella directory di lavoro, e chiude la issue 26; la ricerca sta in _percorso_risorsa, privata, pronta a diventare pubblica con la issue 20
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
 	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode). Non dice piu' una parola di suo, perche' chiamata da tutto il parco software non sa in che lingua parlare, e chiude la issue 19: al posto del conteggio delle voci e del prompt di fine pagina in italiano c'e' un conteggio uguale in ogni lingua, (viste / totale) - (pagina / pagine), che a fine pagina sta fra due ritorni carrello per il display braille; il messaggio di scelta ambigua sparisce e ntf, senza piu' un predefinito italiano, e' l'unica parola che menu pronuncia, quando gliela passa il chiamante. Legge i tasti con la key del pacchetto invece di una copia propria, e chiude la issue 14: i tasti speciali e le combinazioni con Ctrl e Alt vengono ignorati invece di finire nel filtro, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError invece di un'attesa senza fine
@@ -26,7 +26,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "143"
+VERSION = "144"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -913,9 +913,9 @@ class _Voce:
 	"""Un suono in riproduzione: il buffer, dove siamo arrivati, la panoramica
 	e l'evento con cui chi l'ha mandato puo' aspettarne la fine."""
 
-	__slots__ = ("buffer", "destra", "fermata", "fine", "nata", "pos", "sinistra")
+	__slots__ = ("a_fine", "buffer", "destra", "fermata", "fine", "nata", "pos", "sinistra")
 
-	def __init__(self, buffer, pan, orologio):
+	def __init__(self, buffer, pan, orologio, a_fine=None):
 		import math
 		import threading
 		self.buffer = buffer
@@ -930,6 +930,9 @@ class _Voce:
 		self.fine = threading.Event()
 		self.nata = orologio()
 		self.fermata = False
+		# Cosa fare quando questa voce e' finita, oltre a svegliare chi
+		# aspetta: serve a chi tiene un oggetto per ogni suono, come CWzator.
+		self.a_fine = a_fine
 
 
 class _MixerCondiviso:
@@ -985,7 +988,7 @@ class _MixerCondiviso:
 
 	# --- Cio' che serve a chi manda un suono ---
 
-	def suona(self, buffer, fs=None, pan=0.0, sync=False):
+	def suona(self, buffer, fs=None, pan=0.0, sync=False, a_fine=None):
 		"""Manda un buffer al mixer. Restituisce la voce, o None se il
 		dispositivo non si apre.
 
@@ -996,6 +999,10 @@ class _MixerCondiviso:
 		pan: da meno uno, tutto a sinistra, a piu' uno, tutto a destra.
 		sync: vero aspetta che il suono sia finito; un numero aspetta al
 		  massimo quei secondi.
+		a_fine: funzione chiamata quando il suono e' finito, anche se e' stato
+		  fermato o ha lasciato il posto a un altro. Gira nel filo del mixer,
+		  quindi deve essere breve: se ci mette, la scheda resta a secco. Se
+		  solleva, il guasto finisce in ultimo_errore e il mixer prosegue.
 		"""
 		import numpy as np
 		if buffer is None or len(buffer) == 0:
@@ -1008,11 +1015,10 @@ class _MixerCondiviso:
 				return None
 		if fs is not None and int(fs) != self._fs:
 			buffer = self._adatta_frequenza(buffer, int(fs))
-		voce = _Voce(buffer, pan, self._orologio)
+		voce = _Voce(buffer, pan, self._orologio, a_fine)
 		with self._lock:
 			while len(self._voci) >= self._voci_max:
-				vecchia = self._voci.pop(0)
-				vecchia.fine.set()
+				self._chiudi_voce(self._voci.pop(0))
 			self._voci.append(voce)
 		if sync:
 			attesa = None if sync is True else max(0.0, float(sync))
@@ -1078,7 +1084,7 @@ class _MixerCondiviso:
 			self._voci = []
 			pompa = self._pompa
 		for voce in restate:
-			voce.fine.set()
+			self._chiudi_voce(voce)
 		self._ferma.set()
 		try:
 			if pompa is not None and pompa.is_alive():
@@ -1087,6 +1093,16 @@ class _MixerCondiviso:
 			self._ferma.clear()
 
 	# --- Cio' che sta sotto ---
+
+	def _chiudi_voce(self, voce):
+		"""Sveglia chi aspetta la voce e chiama la sua funzione di fine, se
+		ce n'e' una. Un guasto li' dentro non deve fermare il mixer."""
+		voce.fine.set()
+		if voce.a_fine is not None:
+			try:
+				voce.a_fine()
+			except Exception as errore:  # noqa: BLE001 - chi si iscrive alla fine non puo' far cadere il mixer
+				self.ultimo_errore = f"la funzione di fine voce ha sollevato: {errore}"
 
 	def _orologio(self):
 		import time
@@ -1231,7 +1247,7 @@ class _MixerCondiviso:
 			with self._lock:
 				self._voci = [v for v in self._voci if not any(v is f for f in finite)]
 			for voce in finite:
-				voce.fine.set()
+				self._chiudi_voce(voce)
 		if self._volume != 1.0:
 			somma *= self._volume
 		np.clip(somma, -1.0, 1.0, out=somma)
@@ -1250,7 +1266,7 @@ class _MixerCondiviso:
 			self._stream = None
 			self._pompa = None
 		for voce in restate:
-			voce.fine.set()
+			self._chiudi_voce(voce)
 
 
 # L'istanza sola, quella che tutto il parco software condivide: un mixer, uno
