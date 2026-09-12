@@ -10,10 +10,15 @@ poi alla cieca, perche' l'orecchio sa ingannarsi quando conosce la risposta.
 La seconda: i buchi nel suono sotto carico spariscono davvero con la cura?
 Si ascolta lo stesso suono mentre il programma calcola, prima come fa
 Acusticator oggi e poi come farebbe il mixer nuovo.
+Dopo ogni prova si puo' scrivere un commento a caldo: finisce in
+collaudo_mixer_esiti.txt, accanto a questo file, insieme ai numeri che la
+prova ha prodotto. Il file si riempie man mano e non si sovrascrive, quindi
+le prove si possono rifare senza perdere cio' che si e' detto prima.
 Si lancia con
   python collaudo_mixer.py
 Invio fa partire cio' che e' stato appena spiegato, Escape salta.
 """
+import os
 import random
 import sys
 import threading
@@ -22,8 +27,9 @@ import time
 import numpy as np
 import sounddevice as sd
 
-from GBUtils import enter_escape, key
+from GBUtils import dgt, enter_escape, key
 
+ESITI = os.path.join(os.path.dirname(os.path.abspath(__file__)), "collaudo_mixer_esiti.txt")
 FS = 44100
 BLOCCO_PICCOLO = 256
 BLOCCO_GRANDE = 2048
@@ -42,6 +48,27 @@ def riga(testo, larghezza=40):
 			riga_corrente = parola
 	if riga_corrente:
 		print(riga_corrente)
+
+def registra(titolo, misura, commento):
+	"""Scrive l'esito in coda al file, senza mai sovrascrivere quello di prima."""
+	nuovo = not os.path.exists(ESITI)
+	with open(ESITI, "a", encoding="utf-8") as f:
+		if nuovo:
+			f.write("Esiti del collaudo d'ascolto del mixer\n")
+			f.write("Scritti da collaudo_mixer.py, che li aggiunge man mano.\n")
+		f.write(f"\nPROVA: {titolo}\n")
+		f.write(f"Data: {time.strftime('%Y-%m-%d %H:%M')}\n")
+		if misura:
+			f.write(f"Misura: {misura}\n")
+		f.write(f"Commento di Gabriele: {commento if commento else 'nessuno'}\n")
+
+def chiedi_commento(titolo, misura=""):
+	"""Il commento a caldo, subito dopo la prova. Invio da solo lo salta."""
+	riga("Scrivi le tue impressioni e batti Invio. Invio da solo se non hai niente da dire.")
+	commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000)
+	registra(titolo, misura, commento.strip())
+	riga("Annotato.")
+	print()
 
 def suono_breve(durata=0.12, frequenza=880.0):
 	"""Un bip corto e netto, quello che serve per sentire un ritardo."""
@@ -118,6 +145,7 @@ def prova_latenza_dichiarata():
 	print()
 	riga("Se non hai sentito differenza, la latenza nuova va bene e la prova alla cieca lo confermera'.")
 	print()
+	chiedi_commento("1, la latenza dichiarata")
 
 def prova_latenza_alla_cieca():
 	riga("Prova 2, la stessa cosa alla cieca. Dieci volte: premi un tasto, senti il bip, e subito dopo dici se era il ritardo corto o quello lungo. Premi c per corto, l per lungo. Non ti dico la risposta fino alla fine.")
@@ -150,9 +178,12 @@ def prova_latenza_alla_cieca():
 	else:
 		riga("Sei nel caso: il ritardo nuovo non si sente, e il blocco grande si puo' adottare senza pensieri.")
 	print()
+	dettaglio = []
 	for numero, (corto, risposta, indovinato) in enumerate(risposte, 1):
 		print(f"{numero}: era {'corto' if corto else 'lungo'}, hai detto {'corto' if risposta == 'c' else 'lungo'}, {'giusta' if indovinato else 'sbagliata'}")
+		dettaglio.append(f"{numero}:{'corto' if corto else 'lungo'}/{'corto' if risposta == 'c' else 'lungo'}/{'ok' if indovinato else 'no'}")
 	print()
+	chiedi_commento("2, la latenza alla cieca", f"{giusti} giuste su 10. Dettaglio, era/detto/esito: " + " ".join(dettaglio))
 
 def prova_buchi():
 	riga("Prova 3, i buchi nel suono. Una nota tenuta di due secondi e mezzo, mentre il programma calcola come fa Terminal Beast quando annuncia una scuderia nuova. La sentirai tre volte come funziona oggi e tre volte come funzionerebbe dopo la cura, alternate a coppie.")
@@ -170,6 +201,7 @@ def prova_buchi():
 	print()
 	riga("Nella prima di ogni coppia dovresti sentire il suono spezzettarsi. Nella seconda no.")
 	print()
+	chiedi_commento("3, i buchi sotto carico")
 
 def main():
 	riga("Collaudo d'ascolto del mixer.")
@@ -183,6 +215,8 @@ def main():
 	prova_latenza_alla_cieca()
 	prova_buchi()
 	riga("Collaudo finito. Grazie per le orecchie.")
+	if os.path.exists(ESITI):
+		riga(f"Gli esiti stanno in {os.path.basename(ESITI)}, accanto a questo programma.")
 	return 0
 
 if __name__ == "__main__":
