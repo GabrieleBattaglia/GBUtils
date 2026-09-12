@@ -1,0 +1,189 @@
+"""Collaudo d'ascolto del mixer, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode).
+Nato il 12 settembre 2026 per le issue 8, 30 e 1 di GBUtils.
+Le misure hanno detto che il mixer condiviso va a scrittura bloccante con un
+blocco di 2048 campioni invece di 256. Restano due domande a cui rispondono
+soltanto le orecchie, e sono le prove di questo strumento.
+La prima: il blocco piu' grande porta la latenza da 6 a 46 millisecondi, cioe'
+il ritardo fra il momento in cui si preme un tasto e il momento in cui si sente
+il suono. Quel ritardo si nota? Prima si ascolta sapendo cosa si sta sentendo,
+poi alla cieca, perche' l'orecchio sa ingannarsi quando conosce la risposta.
+La seconda: i buchi nel suono sotto carico spariscono davvero con la cura?
+Si ascolta lo stesso suono mentre il programma calcola, prima come fa
+Acusticator oggi e poi come farebbe il mixer nuovo.
+Si lancia con
+  python collaudo_mixer.py
+Invio fa partire cio' che e' stato appena spiegato, Escape salta.
+"""
+import random
+import sys
+import threading
+import time
+
+import numpy as np
+import sounddevice as sd
+
+from GBUtils import enter_escape, key
+
+FS = 44100
+BLOCCO_PICCOLO = 256
+BLOCCO_GRANDE = 2048
+FILI_DI_CARICO = 4
+
+def riga(testo, larghezza=40):
+	"""Il testo in righe da quaranta caratteri, per la lettura sul braille."""
+	parole, riga_corrente = testo.split(), ""
+	for parola in parole:
+		if not riga_corrente:
+			riga_corrente = parola
+		elif len(riga_corrente) + 1 + len(parola) <= larghezza:
+			riga_corrente += " " + parola
+		else:
+			print(riga_corrente)
+			riga_corrente = parola
+	if riga_corrente:
+		print(riga_corrente)
+
+def suono_breve(durata=0.12, frequenza=880.0):
+	"""Un bip corto e netto, quello che serve per sentire un ritardo."""
+	t = np.linspace(0, durata, int(durata * FS), endpoint=False, dtype=np.float32)
+	onda = np.sin(2 * np.pi * frequenza * t).astype(np.float32)
+	# Attacco e coda molto brevi, per non avere schiocchi ai bordi.
+	rampa = int(0.002 * FS)
+	onda[:rampa] *= np.linspace(0, 1, rampa, dtype=np.float32)
+	onda[-rampa:] *= np.linspace(1, 0, rampa, dtype=np.float32)
+	return np.column_stack((onda, onda)) * 0.5
+
+def suono_lungo(durata=2.5, frequenza=440.0):
+	"""Una nota tenuta: e' su questa che i buchi si sentono."""
+	t = np.linspace(0, durata, int(durata * FS), endpoint=False, dtype=np.float32)
+	onda = np.sin(2 * np.pi * frequenza * t).astype(np.float32)
+	rampa = int(0.01 * FS)
+	onda[:rampa] *= np.linspace(0, 1, rampa, dtype=np.float32)
+	onda[-rampa:] *= np.linspace(1, 0, rampa, dtype=np.float32)
+	return np.column_stack((onda, onda)) * 0.4
+
+def riproduci(buffer, blocco):
+	"""Scrittura bloccante, la forma scelta per il mixer nuovo."""
+	stream = sd.OutputStream(samplerate=FS, channels=2, dtype="float32",
+							 blocksize=blocco, latency="low")
+	with stream:
+		for inizio in range(0, len(buffer), blocco):
+			pezzo = buffer[inizio:inizio + blocco]
+			if len(pezzo) < blocco:
+				pezzo = np.vstack((pezzo, np.zeros((blocco - len(pezzo), 2), dtype=np.float32)))
+			stream.write(pezzo)
+
+def riproduci_a_callback(buffer, blocco):
+	"""La forma di Acusticator oggi, che serve solo come termine di paragone."""
+	stato = {"pos": 0, "fine": threading.Event()}
+	def callback(outdata, frames, tempo, stato_audio):
+		da, a = stato["pos"], min(stato["pos"] + frames, len(buffer))
+		outdata.fill(0.0)
+		if a > da:
+			outdata[:a - da] = buffer[da:a]
+		stato["pos"] = a
+		if a >= len(buffer):
+			stato["fine"].set()
+	stream = sd.OutputStream(samplerate=FS, channels=2, dtype="float32",
+							 blocksize=blocco, latency="low", callback=callback)
+	with stream:
+		stato["fine"].wait(timeout=len(buffer) / FS + 2.0)
+
+def carico(secondi, quanti=FILI_DI_CARICO):
+	"""Il programma che calcola mentre suona, come fa Terminal Beast."""
+	fine = time.monotonic() + secondi
+	def lavora():
+		while time.monotonic() < fine:
+			sum(i * i for i in range(2000))
+	for _ in range(quanti):
+		threading.Thread(target=lavora, daemon=True).start()
+
+def aspetta_tasto_e_suona(blocco):
+	"""Aspetta un tasto e suona subito dopo: e' la prova della latenza."""
+	key("\rPremi un tasto\r")
+	# Nessuna stampa fra il tasto e il suono: qualunque cosa aggiungerebbe
+	# ritardo a carico della prova invece che del mixer.
+	riproduci(suono_breve(), blocco)
+
+def prova_latenza_dichiarata():
+	riga("Prova 1, la latenza dichiarata. Premerai un tasto sei volte. Le prime tre suonano con il ritardo di oggi, sei millesimi di secondo. Le altre tre con quello nuovo, quarantasei millesimi. Ogni volta ti dico prima quale stai per sentire.")
+	print()
+	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
+		return
+	for etichetta, blocco in (("oggi, sei millesimi", BLOCCO_PICCOLO), ("nuovo, quarantasei millesimi", BLOCCO_GRANDE)):
+		for numero in (1, 2, 3):
+			riga(f"{etichetta}, {numero} di 3.")
+			aspetta_tasto_e_suona(blocco)
+			time.sleep(0.4)
+	print()
+	riga("Se non hai sentito differenza, la latenza nuova va bene e la prova alla cieca lo confermera'.")
+	print()
+
+def prova_latenza_alla_cieca():
+	riga("Prova 2, la stessa cosa alla cieca. Dieci volte: premi un tasto, senti il bip, e subito dopo dici se era il ritardo corto o quello lungo. Premi c per corto, l per lungo. Non ti dico la risposta fino alla fine.")
+	print()
+	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
+		return
+	sorteggio = random.Random()
+	giusti, sbagliati = 0, 0
+	risposte = []
+	for numero in range(1, 11):
+		corto = sorteggio.choice((True, False))
+		riga(f"Prova {numero} di 10.")
+		aspetta_tasto_e_suona(BLOCCO_PICCOLO if corto else BLOCCO_GRANDE)
+		while True:
+			risposta = key("\rCorto o lungo? c oppure l\r")
+			if risposta in ("c", "l", "C", "L"):
+				break
+		print()
+		indovinato = (risposta.lower() == "c") == corto
+		giusti += indovinato
+		sbagliati += not indovinato
+		risposte.append((corto, risposta.lower(), indovinato))
+		time.sleep(0.3)
+	print()
+	riga(f"Risultato: {giusti} giuste su 10.")
+	if giusti >= 9:
+		riga("Li distingui davvero: il ritardo nuovo si sente, e va deciso cosa farne.")
+	elif giusti >= 7:
+		riga("Forse li distingui: converrebbe rifare la prova per esserne sicuri.")
+	else:
+		riga("Sei nel caso: il ritardo nuovo non si sente, e il blocco grande si puo' adottare senza pensieri.")
+	print()
+	for numero, (corto, risposta, indovinato) in enumerate(risposte, 1):
+		print(f"{numero}: era {'corto' if corto else 'lungo'}, hai detto {'corto' if risposta == 'c' else 'lungo'}, {'giusta' if indovinato else 'sbagliata'}")
+	print()
+
+def prova_buchi():
+	riga("Prova 3, i buchi nel suono. Una nota tenuta di due secondi e mezzo, mentre il programma calcola come fa Terminal Beast quando annuncia una scuderia nuova. La sentirai tre volte come funziona oggi e tre volte come funzionerebbe dopo la cura, alternate a coppie.")
+	print()
+	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
+		return
+	for giro in (1, 2, 3):
+		for etichetta, funzione, blocco in (("oggi", riproduci_a_callback, BLOCCO_PICCOLO), ("dopo la cura", riproduci, BLOCCO_GRANDE)):
+			riga(f"Coppia {giro} di 3, {etichetta}.")
+			nota = suono_lungo()
+			carico(len(nota) / FS + 0.5)
+			time.sleep(0.4)
+			funzione(nota, blocco)
+			time.sleep(1.2)
+	print()
+	riga("Nella prima di ogni coppia dovresti sentire il suono spezzettarsi. Nella seconda no.")
+	print()
+
+def main():
+	riga("Collaudo d'ascolto del mixer.")
+	riga("Tre prove, spiegate una per una. Nessuna parte prima del tuo Invio.")
+	print()
+	riga("Prima di cominciare, alza il volume come lo tieni di solito: le differenze da sentire sono piccole.")
+	print()
+	if not enter_escape("\rInvio per cominciare, Escape per uscire\r"):
+		return 0
+	prova_latenza_dichiarata()
+	prova_latenza_alla_cieca()
+	prova_buchi()
+	riga("Collaudo finito. Grazie per le orecchie.")
+	return 0
+
+if __name__ == "__main__":
+	sys.exit(main())
