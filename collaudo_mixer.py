@@ -152,11 +152,15 @@ def prova_latenza_alla_cieca():
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
 		return
-	sorteggio = random.Random()
+	# Cinque corte e cinque lunghe, mescolate: con il sorteggio libero poteva
+	# capitarne sette di un tipo, e allora chi rispondeva sempre allo stesso
+	# modo faceva sette su dieci senza aver distinto niente. E' successo il
+	# 12 settembre 2026, ed e' il motivo per cui questa prova e' cambiata.
+	ordine = [True] * 5 + [False] * 5
+	random.Random().shuffle(ordine)
 	giusti, sbagliati = 0, 0
 	risposte = []
-	for numero in range(1, 11):
-		corto = sorteggio.choice((True, False))
+	for numero, corto in enumerate(ordine, 1):
 		riga(f"Prova {numero} di 10.")
 		aspetta_tasto_e_suona(BLOCCO_PICCOLO if corto else BLOCCO_GRANDE)
 		while True:
@@ -170,11 +174,21 @@ def prova_latenza_alla_cieca():
 		risposte.append((corto, risposta.lower(), indovinato))
 		time.sleep(0.3)
 	print()
+	# Il totale da solo inganna: chi risponde sempre allo stesso modo prende il
+	# punteggio che il sorteggio gli regala. Cio' che conta e' se ha
+	# riconosciuto le corte quando erano corte e le lunghe quando erano lunghe,
+	# e le due cose vanno guardate separate.
+	corte_giuste = sum(1 for c, r, _ in risposte if c and r == "c")
+	lunghe_giuste = sum(1 for c, r, _ in risposte if not c and r == "l")
+	dette_corte = sum(1 for _, r, _ in risposte if r == "c")
 	riga(f"Risultato: {giusti} giuste su 10.")
-	if giusti >= 9:
+	riga(f"Corte riconosciute {corte_giuste} su 5, lunghe riconosciute {lunghe_giuste} su 5.")
+	if dette_corte in (0, 10):
+		riga("Hai risposto sempre allo stesso modo, quindi non hai distinto niente: il ritardo nuovo non si sente, e il punteggio qui sopra e' solo il conto di come e' caduto il sorteggio.")
+	elif corte_giuste + lunghe_giuste >= 9:
 		riga("Li distingui davvero: il ritardo nuovo si sente, e va deciso cosa farne.")
-	elif giusti >= 7:
-		riga("Forse li distingui: converrebbe rifare la prova per esserne sicuri.")
+	elif corte_giuste >= 4 and lunghe_giuste >= 4:
+		riga("Li distingui quasi sempre: conviene rifare la prova per esserne sicuri.")
 	else:
 		riga("Sei nel caso: il ritardo nuovo non si sente, e il blocco grande si puo' adottare senza pensieri.")
 	print()
@@ -183,7 +197,9 @@ def prova_latenza_alla_cieca():
 		print(f"{numero}: era {'corto' if corto else 'lungo'}, hai detto {'corto' if risposta == 'c' else 'lungo'}, {'giusta' if indovinato else 'sbagliata'}")
 		dettaglio.append(f"{numero}:{'corto' if corto else 'lungo'}/{'corto' if risposta == 'c' else 'lungo'}/{'ok' if indovinato else 'no'}")
 	print()
-	chiedi_commento("2, la latenza alla cieca", f"{giusti} giuste su 10. Dettaglio, era/detto/esito: " + " ".join(dettaglio))
+	chiedi_commento("2, la latenza alla cieca",
+		f"{giusti} giuste su 10, corte riconosciute {corte_giuste} su 5, lunghe {lunghe_giuste} su 5. "
+		f"Dettaglio, era/detto/esito: " + " ".join(dettaglio))
 
 def prova_buchi():
 	riga("Prova 3, i buchi nel suono. Una nota tenuta di due secondi e mezzo, mentre il programma calcola come fa Terminal Beast quando annuncia una scuderia nuova. La sentirai tre volte come funziona oggi e tre volte come funzionerebbe dopo la cura, alternate a coppie.")
@@ -203,17 +219,35 @@ def prova_buchi():
 	print()
 	chiedi_commento("3, i buchi sotto carico")
 
+PROVE = {
+	"1": ("la latenza dichiarata", None),
+	"2": ("la latenza alla cieca", None),
+	"3": ("i buchi sotto carico", None),
+}
+
 def main():
+	PROVE["1"] = (PROVE["1"][0], prova_latenza_dichiarata)
+	PROVE["2"] = (PROVE["2"][0], prova_latenza_alla_cieca)
+	PROVE["3"] = (PROVE["3"][0], prova_buchi)
 	riga("Collaudo d'ascolto del mixer.")
 	riga("Tre prove, spiegate una per una. Nessuna parte prima del tuo Invio.")
+	print()
+	for numero, (titolo, _) in PROVE.items():
+		riga(f"{numero}: {titolo}")
+	print()
+	riga("Scegli quali fare: i numeri attaccati, per esempio 13 per la prima e la terza, oppure Invio per tutte.")
+	scelta = dgt("\rQuali prove\r", kind="s", smin=0, smax=10).strip()
+	volute = [n for n in PROVE if n in scelta] if scelta else list(PROVE)
+	if not volute:
+		riga("Nessuna prova scelta, esco.")
+		return 0
 	print()
 	riga("Prima di cominciare, alza il volume come lo tieni di solito: le differenze da sentire sono piccole.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per uscire\r"):
 		return 0
-	prova_latenza_dichiarata()
-	prova_latenza_alla_cieca()
-	prova_buchi()
+	for numero in volute:
+		PROVE[numero][1]()
 	riga("Collaudo finito. Grazie per le orecchie.")
 	if os.path.exists(ESITI):
 		riga(f"Gli esiti stanno in {os.path.basename(ESITI)}, accanto a questo programma.")
