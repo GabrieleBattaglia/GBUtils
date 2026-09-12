@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V141 di sabato 12 settembre 2026
+	V142 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -17,6 +17,7 @@ Lista utilità contenute in questo pacchetto
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
 	gestisci_aggiornamento V1.1.1 di sabato 12 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo; dalla V1.1.1 gli avanzamenti dello scaricamento sono cinque invece di dieci, uno ogni venti per cento, come Gabriele ha chiesto dopo averli ascoltati
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
+	mixer V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Il mixer condiviso della issue 8, che alimenta la scheda scrivendo invece di rispondere a un callback: sotto carico il callback perde campioni, perché deve entrare in Python nel momento esatto in cui la scheda ha fame e resta in coda per il lucchetto dell'interprete. Misurato il 12 settembre: a callback sette buchi al secondo, a scrittura nessuno. Blocco di 1024 campioni, ventitré millesimi, che è il valore dove i buchi spariscono con margine. Somma fino a trentadue voci con panoramica a potenza costante, ferma una voce o tutte, ricampiona ciò che arriva a un'altra frequenza, sceglie l'uscita più pronta, chiude dopo due minuti di silenzio e si riapre da solo. Per ora nasce accanto ai due mixer esistenti, che passeranno a lui uno alla volta
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Il prompt di fine pagina non parla piu' italiano, e chiude la issue 28: e' il nome passato dal chiamante seguito da (pagina / pagine), fra due ritorni carrello per il display braille, letto con key, con Esc che interrompe e ogni altro tasto che continua; il predefinito di nome e' la stringa vuota. Il file relativo si cerca prima in sys._MEIPASS quando il programma e' congelato e poi nella cartella di chi chiama, mai nella directory di lavoro, e chiude la issue 26; la ricerca sta in _percorso_risorsa, privata, pronta a diventare pubblica con la issue 20
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
 	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode). Non dice piu' una parola di suo, perche' chiamata da tutto il parco software non sa in che lingua parlare, e chiude la issue 19: al posto del conteggio delle voci e del prompt di fine pagina in italiano c'e' un conteggio uguale in ogni lingua, (viste / totale) - (pagina / pagine), che a fine pagina sta fra due ritorni carrello per il display braille; il messaggio di scelta ambigua sparisce e ntf, senza piu' un predefinito italiano, e' l'unica parola che menu pronuncia, quando gliela passa il chiamante. Legge i tasti con la key del pacchetto invece di una copia propria, e chiude la issue 14: i tasti speciali e le combinazioni con Ctrl e Alt vengono ignorati invece di finire nel filtro, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError invece di un'attesa senza fine
@@ -25,7 +26,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "141"
+VERSION = "142"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -902,6 +903,337 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 		break
 	_scelta_audio.update({"fatta": True, "device": scelto, "api": nome})
 	return scelto, nome
+# Il mixer condiviso, nato con la issue 8 il 12 settembre 2026. Sta qui, fra
+# la scelta dell'uscita e CWzator, perche' e' di entrambi: Acusticator e
+# CWzator ne avevano uno per ciascuno, e questo prendera' il posto di tutti e
+# due. Le classi sono private perche' chi le usa non le vede: vede Acusticator
+# e CWzator, che gli passano davanti.
+
+class _Voce:
+	"""Un suono in riproduzione: il buffer, dove siamo arrivati, la panoramica
+	e l'evento con cui chi l'ha mandato puo' aspettarne la fine."""
+
+	__slots__ = ("buffer", "destra", "fermata", "fine", "nata", "pos", "sinistra")
+
+	def __init__(self, buffer, pan, orologio):
+		import math
+		import threading
+		self.buffer = buffer
+		self.pos = 0
+		# Panoramica a potenza costante: al centro i due lati stanno a meno tre
+		# decibel ciascuno, cosi' la somma dei due resta la stessa da qualunque
+		# parte il suono si trovi. Con il guadagno lineare, al centro il suono
+		# sembrerebbe piu' debole che ai lati.
+		angolo = (max(-1.0, min(1.0, float(pan))) + 1.0) * math.pi / 4.0
+		self.sinistra = math.cos(angolo)
+		self.destra = math.sin(angolo)
+		self.fine = threading.Event()
+		self.nata = orologio()
+		self.fermata = False
+
+
+class _MixerCondiviso:
+	"""Alimenta la scheda audio senza mai interrompersi, sommando le voci.
+
+	Tenere lo stream aperto non basta: se fra un suono e l'altro nessuno
+	scrive, il buffer del dispositivo si svuota, la scheda va a secco, e li'
+	nasce lo schiocco. Qui si scrive sempre, le voci attive sommate e silenzio
+	quando non c'e' niente da suonare, finche' il silenzio non dura abbastanza
+	da chiudere e lasciare libera la scheda.
+	Alimenta scrivendo, non rispondendo a un callback, ed e' una scelta
+	misurata: il callback deve entrare in Python nel momento esatto in cui la
+	scheda ha fame, e se un altro filo del programma sta calcolando resta in
+	coda per il lucchetto dell'interprete; scrivendo, invece, ci si porta
+	avanti e il buffer gia' riempito copre l'attesa. Misurato il 12 settembre
+	2026 con quattro fili di calcolo: a callback sette buchi al secondo, a
+	scrittura nessuno.
+	"""
+
+	# Campioni per blocco. A 44100 hertz, 1024 campioni sono ventitre'
+	# millesimi di secondo, ed e' il valore scelto dopo le misure: sotto i 768
+	# i buchi tornano anche scrivendo, e 1024 e' il passo successivo, che
+	# lascia margine per i carichi non provati.
+	BLOCCO = 1024
+	# Dopo quanto silenzio si chiude e si lascia libera la scheda.
+	SILENZIO_MAX = 120.0
+	# Quante voci insieme: oltre questo numero la piu' vecchia lascia il posto,
+	# cosi' l'ultimo evento si sente sempre.
+	VOCI_MAX = 32
+	FS = 44100
+
+	def __init__(self):
+		import threading
+		self._lock = threading.RLock()
+		self._avvio = threading.Lock()
+		self._voci = []
+		self._stream = None
+		self._pompa = None
+		self._ferma = threading.Event()
+		self._fs = self.FS
+		self._device = None
+		self._nome_api = None
+		self._canali = 2
+		self._volume = 1.0
+		self._silenzio = self.SILENZIO_MAX
+		self._voci_max = self.VOCI_MAX
+		self._blocco = self.BLOCCO
+		self._uscita_registrata = False
+		# Cio' che e' andato storto, per chi vuole saperlo senza che il mixer
+		# stampi niente per conto suo.
+		self.ultimo_errore = None
+		self.buchi = 0
+
+	# --- Cio' che serve a chi manda un suono ---
+
+	def suona(self, buffer, fs=None, pan=0.0, sync=False):
+		"""Manda un buffer al mixer. Restituisce la voce, o None se il
+		dispositivo non si apre.
+
+		buffer: array di campioni float32 fra meno uno e piu' uno, mono o
+		  stereo. Il mono viene sdoppiato applicando la panoramica.
+		fs: la frequenza del buffer, se diversa da quella dello stream: viene
+		  riportata a quella giusta.
+		pan: da meno uno, tutto a sinistra, a piu' uno, tutto a destra.
+		sync: vero aspetta che il suono sia finito; un numero aspetta al
+		  massimo quei secondi.
+		"""
+		import numpy as np
+		if buffer is None or len(buffer) == 0:
+			return None
+		buffer = np.asarray(buffer, dtype=np.float32)
+		if buffer.ndim == 1:
+			buffer = buffer.reshape(-1, 1)
+		with self._avvio:
+			if not self._assicura_stream():
+				return None
+		if fs is not None and int(fs) != self._fs:
+			buffer = self._adatta_frequenza(buffer, int(fs))
+		voce = _Voce(buffer, pan, self._orologio)
+		with self._lock:
+			while len(self._voci) >= self._voci_max:
+				vecchia = self._voci.pop(0)
+				vecchia.fine.set()
+			self._voci.append(voce)
+		if sync:
+			attesa = None if sync is True else max(0.0, float(sync))
+			if attesa is None:
+				# Anche l'attesa senza limite ha un limite, ricavato dalla
+				# durata del suono piu' un margine: serve al caso in cui lo
+				# stream smetta di rispondere senza passare da chiudi, per
+				# esempio se il dispositivo sparisce.
+				attesa = len(buffer) / float(self._fs) + 2.0
+			voce.fine.wait(timeout=attesa)
+		return voce
+
+	def ferma(self, voce=None):
+		"""Ferma una voce, o tutte quante se non se ne indica nessuna."""
+		with self._lock:
+			bersagli = list(self._voci) if voce is None else [v for v in self._voci if v is voce]
+			for v in bersagli:
+				v.fermata = True
+		return len(bersagli)
+
+	def stato(self):
+		"""Come sta il mixer adesso, per chi vuole guardarlo."""
+		with self._lock:
+			return {
+				"aperto": self._stream is not None,
+				"voci": len(self._voci),
+				"frequenza": self._fs,
+				"blocco": self._blocco,
+				"canali": self._canali,
+				"buchi": self.buchi,
+				"ultimo_errore": self.ultimo_errore,
+			}
+
+	def chiudi(self, attesa=2.0):
+		"""Ferma tutto e lascia libera la scheda, aspettando che il filo sia
+		davvero uscito da PortAudio.
+
+		Serve prima che l'interprete cominci a smontare i moduli: un filo
+		daemon sorpreso dentro PortAudio fa morire il processo, e su Windows
+		il codice di uscita e' 0xC0000374, corruzione dell'heap. Chiedere
+		l'arresto non basta: bisogna anche aspettarlo.
+		"""
+		with self._lock:
+			restate = list(self._voci)
+			self._voci = []
+			pompa = self._pompa
+		for voce in restate:
+			voce.fine.set()
+		self._ferma.set()
+		try:
+			if pompa is not None and pompa.is_alive():
+				pompa.join(attesa)
+		finally:
+			self._ferma.clear()
+
+	# --- Cio' che sta sotto ---
+
+	def _orologio(self):
+		import time
+		return time.monotonic()
+
+	def _adatta_frequenza(self, buffer, fs):
+		"""Riporta un buffer alla frequenza dello stream."""
+		from fractions import Fraction
+
+		import numpy as np
+		from scipy import signal
+		rapporto = Fraction(self._fs, int(fs)).limit_denominator(1000)
+		adattato = signal.resample_poly(buffer, rapporto.numerator,
+										rapporto.denominator, axis=0)
+		return np.clip(adattato, -1.0, 1.0).astype(np.float32)
+
+	def _assicura_stream(self):
+		"""Lo stream esiste e la pompa gira, altrimenti li avvia."""
+		if self._stream is not None and self._pompa is not None and self._pompa.is_alive():
+			return True
+		if not self._apri_stream():
+			return False
+		if not self._uscita_registrata:
+			import atexit
+			atexit.register(self.chiudi)
+			self._uscita_registrata = True
+		import threading
+		self._ferma.clear()
+		self._pompa = threading.Thread(target=self._pompa_audio, daemon=True,
+									   name="GBUtils-mixer")
+		self._pompa.start()
+		return True
+
+	def scegli_uscita(self, api=None, riprova=False):
+		"""Sceglie il dispositivo e l'interfaccia audio su cui suonare.
+
+		Senza argomenti prende la piu' pronta fra quelle che puntano al
+		dispositivo scelto nel sistema; con api si chiede un'interfaccia per
+		nome, per esempio WASAPI, o un dispositivo per numero. La scelta vale
+		dalla prossima apertura: se il mixer sta suonando, si chiude prima.
+		"""
+		device, nome_api = scegli_dispositivo_audio(api, riprova)
+		if device != self._device or nome_api != self._nome_api:
+			self.chiudi()
+			self._device = device
+			self._nome_api = nome_api
+		return device, nome_api
+
+	def _apri_stream(self):
+		"""Apre lo stream, provando il mono se il dispositivo rifiuta lo stereo."""
+		import sounddevice as sd
+		if self._device is None and self._nome_api is None:
+			# Alla prima apertura si chiede al sistema qual e' l'uscita piu'
+			# pronta; se la scelta fallisce si lascia decidere a PortAudio.
+			try:
+				self._device, self._nome_api = scegli_dispositivo_audio()
+			except Exception:  # noqa: BLE001 - senza una scelta si va con il predefinito di PortAudio
+				self._device, self._nome_api = None, None
+		ultimo = None
+		for canali in (2, 1):
+			try:
+				extra = None
+				if self._nome_api and "WASAPI" in self._nome_api:
+					# Senza questo WASAPI accetta soltanto la frequenza
+					# impostata in Windows, e delle dodici che cwapu offre ne
+					# passerebbe una sola.
+					extra = sd.WasapiSettings(auto_convert=True)
+				stream = sd.OutputStream(
+					samplerate=self._fs, channels=canali, dtype="float32",
+					blocksize=self._blocco, latency="low", device=self._device,
+					extra_settings=extra)
+				stream.start()
+				self._stream = stream
+				self._canali = canali
+				return True
+			except Exception as errore:  # noqa: BLE001 - il dispositivo audio fallisce in molti modi
+				ultimo = errore
+		self.ultimo_errore = f"apertura del dispositivo audio non riuscita: {ultimo}"
+		return False
+
+	def _pompa_audio(self):
+		"""Il filo che scrive senza mai interrompersi, finche' c'e' qualcosa da
+		suonare o finche' il silenzio non e' durato abbastanza."""
+		import numpy as np
+		import sounddevice as sd
+		stream = self._stream
+		silenzio = np.zeros((self._blocco, self._canali), dtype=np.float32)
+		ultimo_suono = self._orologio()
+		try:
+			while not self._ferma.is_set():
+				blocco = self._prepara_blocco()
+				adesso = self._orologio()
+				if blocco is None:
+					if adesso - ultimo_suono > self._silenzio > 0:
+						break
+					blocco = silenzio
+				else:
+					ultimo_suono = adesso
+				# write dice vero quando la scheda e' rimasta a secco: e' il
+				# segnale che il codice di prima non guardava mai, ed e' per
+				# questo che un difetto del genere si scopriva solo a orecchio.
+				if stream.write(blocco):
+					self.buchi += 1
+		except sd.PortAudioError as errore:
+			self.ultimo_errore = f"PortAudioError durante la riproduzione: {errore}"
+		except Exception as errore:  # noqa: BLE001 - il filo del mixer non deve morire in silenzio
+			self.ultimo_errore = f"errore durante la riproduzione: {errore}"
+		finally:
+			self._smonta(stream)
+
+	def _prepara_blocco(self):
+		"""La somma delle voci attive, o None quando non c'e' niente da suonare."""
+		import numpy as np
+		with self._lock:
+			voci = list(self._voci)
+		if not voci:
+			return None
+		somma = np.zeros((self._blocco, self._canali), dtype=np.float32)
+		finite = []
+		for voce in voci:
+			if voce.fermata:
+				finite.append(voce)
+				continue
+			pezzo = voce.buffer[voce.pos:voce.pos + self._blocco]
+			quanti = len(pezzo)
+			if quanti:
+				if pezzo.shape[1] == 1:
+					mono = pezzo[:, 0]
+					if self._canali == 2:
+						somma[:quanti, 0] += mono * voce.sinistra
+						somma[:quanti, 1] += mono * voce.destra
+					else:
+						somma[:quanti, 0] += mono
+				elif self._canali == 2:
+					somma[:quanti] += pezzo
+				else:
+					somma[:quanti, 0] += pezzo.mean(axis=1)
+			voce.pos += self._blocco
+			if voce.pos >= len(voce.buffer):
+				finite.append(voce)
+		if finite:
+			with self._lock:
+				self._voci = [v for v in self._voci if not any(v is f for f in finite)]
+			for voce in finite:
+				voce.fine.set()
+		if self._volume != 1.0:
+			somma *= self._volume
+		np.clip(somma, -1.0, 1.0, out=somma)
+		return somma
+
+	def _smonta(self, stream):
+		"""Chiude lo stream e sveglia chi stava aspettando una voce."""
+		try:
+			stream.abort()
+			stream.close()
+		except Exception:  # noqa: BLE001, S110 - si sta chiudendo: uno stream che non si chiude non ha piu' niente da dire
+			pass
+		with self._lock:
+			restate = list(self._voci)
+			self._voci = []
+			self._stream = None
+			self._pompa = None
+		for voce in restate:
+			voce.fine.set()
+
 def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None):
 	"""
 	CWzator V10.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
