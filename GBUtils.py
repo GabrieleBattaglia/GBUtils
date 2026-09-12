@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V139 di sabato 12 settembre 2026
+	V140 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -25,7 +25,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "139"
+VERSION = "140"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -858,7 +858,9 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 	seconda chiamata e' in cache e costa nulla."""
 	import sounddevice as sd
 	if isinstance(api, bool):
-		raise ValueError("api non puo' essere un valore logico")
+		# ValueError e non TypeError: e' il contratto dichiarato nella
+		# docstring, ed e' quello che CWzator cattura quando chiama.
+		raise ValueError("api non puo' essere un valore logico")  # noqa: TRY004
 	if isinstance(api, int):
 		return api, None
 	if api is not None:
@@ -874,7 +876,7 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 		return _scelta_audio["device"], _scelta_audio["api"]
 	try:
 		predefinito = sd.query_devices(sd.default.device[1])["name"]
-	except Exception:
+	except Exception:  # noqa: BLE001 - il dispositivo audio fallisce in molti modi, e qui si puo' fare senza
 		predefinito = None
 	candidati = []
 	for h in sd.query_hostapis():
@@ -894,7 +896,7 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 			prova = sd.OutputStream(device=d, samplerate=44100, channels=2, dtype="int16",
 									blocksize=256, latency="low", extra_settings=extra)
 			prova.start(); prova.abort(); prova.close()
-		except Exception:
+		except Exception:  # noqa: BLE001, S112 - un'interfaccia che non si apre si scarta e si prova la prossima
 			continue
 		scelto, nome = d, nome_api
 		break
@@ -1305,7 +1307,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 										 dtype=np.int16, blocksize=block_size, latency='low',
 										 extra_settings=extra)
 				stream.start()
-			except Exception as e:
+			except Exception as e:  # noqa: BLE001 - il dispositivo audio fallisce in molti modi, e il guasto va riferito, non propagato dal thread
 				_guasto_mixer(f"apertura del dispositivo audio non riuscita: {e}")
 				with CWzator._stream_lock:
 					CWzator._pompa = None
@@ -1363,13 +1365,13 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 					stream.write(blocco)
 			except sd.PortAudioError as pae:
 				_guasto_mixer(f"PortAudioError durante la riproduzione: {pae}")
-			except Exception as e:
+			except Exception as e:  # noqa: BLE001 - il thread del mixer non deve morire in silenzio: qualunque guasto si riferisce
 				_guasto_mixer(f"errore durante la riproduzione: {e}")
 			finally:
 				try:
 					stream.abort()
 					stream.close()
-				except Exception:
+				except Exception:  # noqa: BLE001, S110 - si sta chiudendo: uno stream che non si chiude non ha piu' niente da dire
 					pass
 				with CWzator._stream_lock:
 					CWzator._stream = None
@@ -1494,7 +1496,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				"""Cleanup automatico: ferma la riproduzione se l'oggetto viene distrutto."""
 				try:
 					self.is_playing.clear()
-				except Exception:
+				except Exception:  # noqa: BLE001, S110 - __del__ gira anche mentre l'interprete si spegne, e li' non c'e' piu' niente da salvare
 					pass
 		CWzator._PlaybackHandle = _PlaybackHandle
 	# --- Creazione Oggetto e Avvio Playback ---
@@ -1516,7 +1518,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		# e' questa libreria. E la cartella di chi ha chiamato, non la directory
 		# di lavoro: un'utilita' non deve indovinare dove stanno le cose da dove
 		# il programma e' stato lanciato. Sono due richieste del punto 3.8.
-		default_name = f"Morse {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"
+		default_name = f"Morse {datetime.now().strftime('%Y%m%d%H%M%S')}.wav"  # noqa: DTZ005 - ora locale: il nome lo legge chi sta davanti
 		default_dir = _cartella_chiamante(1)
 		if wave_output_path_file is not None:
 			given = wave_output_path_file.strip()
@@ -1542,7 +1544,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				wf.setframerate(fs)
 				wf.writeframes(audio.tobytes())
 			play_obj.file_salvato = os.path.abspath(filename)
-		except Exception as e:
+		except (OSError, ValueError, wave.Error) as e:
 			play_obj.errore = f"salvataggio del file non riuscito: {e}"
 			CWzator.ultimo_errore = play_obj.errore
 			if verbose:
@@ -2766,7 +2768,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 			print(f"Acusticator Warn: Parametri {i} errati. Ignoro. {e}", file=sys.stderr)
 			continue
 		if dur <= 0: continue # Ignora durata non positiva
-		total_note_samples = int(round(dur * fs))
+		total_note_samples = round(dur * fs)
 		if total_note_samples == 0: continue # Ignora durata troppo breve
 		
 		vol_portamento = None
@@ -2843,9 +2845,9 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 					wave = wave[:total_note_samples]
 				elif len(wave) < total_note_samples:
 					wave = np.pad(wave, (0, total_note_samples - len(wave)))
-			attack_samples = int(round(attack_frac * total_note_samples))
-			decay_samples = int(round(decay_frac * total_note_samples))
-			release_samples = int(round(release_frac * total_note_samples))
+			attack_samples = round(attack_frac * total_note_samples)
+			decay_samples = round(decay_frac * total_note_samples)
+			release_samples = round(release_frac * total_note_samples)
 			sustain_samples = total_note_samples - attack_samples - decay_samples - release_samples
 			delta_samples = total_note_samples - (attack_samples + decay_samples + sustain_samples + release_samples)
 			sustain_samples = max(0, sustain_samples + delta_samples)
