@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V136 di venerdì 11 settembre 2026
+	V137 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -13,7 +13,7 @@ Lista utilità contenute in questo pacchetto
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Restituisce il messaggio invece di stamparlo soltanto, con il parametro stampa che per predefinito lo stampa come prima: chi ha una finestra passa falso e lo mostra come vuole. Parametro probabilita, predefinito venti, con cento che forza la comparsa; generatore casuale privato, che non sposta piu' quello del programma; la lingua salvata da polipo si cerca nella cartella di chi chiama e non piu' in argv zero o nella directory di lavoro; le eccezioni intercettate hanno un nome, e l'indirizzo di posta sta in una costante
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
-	gestisci_aggiornamento V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo
+	gestisci_aggiornamento V1.1.1 di sabato 12 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo; dalla V1.1.1 gli avanzamenti dello scaricamento sono cinque invece di dieci, uno ogni venti per cento, come Gabriele ha chiesto dopo averli ascoltati
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Il prompt di fine pagina non parla piu' italiano, e chiude la issue 28: e' il nome passato dal chiamante seguito da (pagina / pagine), fra due ritorni carrello per il display braille, letto con key, con Esc che interrompe e ogni altro tasto che continua; il predefinito di nome e' la stringa vuota. Il file relativo si cerca prima in sys._MEIPASS quando il programma e' congelato e poi nella cartella di chi chiama, mai nella directory di lavoro, e chiude la issue 26; la ricerca sta in _percorso_risorsa, privata, pronta a diventare pubblica con la issue 20
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
@@ -23,7 +23,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "136"
+VERSION = "137"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -510,7 +510,7 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
                            timeout: int = 10, chiedi=None, avvisa=None, traduci=None,
                            solo_se_compilato: bool = True) -> bool:
     """
-    V1.1.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
+    V1.1.1 di sabato 12 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
     Conduce da sola tutta la conversazione dell'aggiornamento: controlla se ce
     n'e' uno, lo riferisce, mostra le novita', chiede se applicarlo, lo scarica
     annunciando a che punto e' e avvia la sostituzione.
@@ -587,16 +587,19 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
 
     # L'avanzamento arriva un punto percentuale alla volta, cioe' centouno
     # volte: annunciarli tutti sarebbe un muro di parole sullo screen reader,
-    # quindi se ne dice uno ogni dieci, in righe corte da leggere anche sul
-    # display braille. Si parte dal dieci: annunciare lo zero ripeterebbe
-    # soltanto la riga che dice che lo scaricamento e' cominciato.
+    # quindi se ne dice uno ogni venti, in righe corte da leggere anche sul
+    # display braille. Si parte dal venti: annunciare lo zero ripeterebbe
+    # soltanto la riga che dice che lo scaricamento e' cominciato. Erano uno
+    # ogni dieci fino alla V1.1.0, e Gabriele li ha contati troppi ascoltando
+    # un aggiornamento vero.
+    PASSO = 20
     ultimo = [0]
 
     def segnala(preso, totale):
         if not totale:
             return
         percento = int(preso * 100 / totale)
-        blocco = percento - percento % 10
+        blocco = percento - percento % PASSO
         if blocco > ultimo[0]:
             ultimo[0] = blocco
             fatti = f"{preso / 1048576:.1f}".replace(".", ",")

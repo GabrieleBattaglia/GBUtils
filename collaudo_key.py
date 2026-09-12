@@ -33,7 +33,14 @@ def main():
 	print("Escape tre volte di seguito per uscire.")
 	escape_di_fila = 0
 	while True:
-		tasto = key()
+		try:
+			tasto = key()
+		except KeyboardInterrupt:
+			# key solleva l'interruzione come qualunque programma da console.
+			# Qui la si raccoglie per uscire dicendolo, invece di lasciare la
+			# traccia dell'errore, che a Gabriele non diceva niente.
+			print("Ctrl+C: collaudo interrotto.")
+			return 0
 		print(descrivi(tasto))
 		escape_di_fila = escape_di_fila + 1 if tasto == "\x1b" else 0
 		if escape_di_fila == 3:
