@@ -3,11 +3,11 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V145 di sabato 12 settembre 2026
+	V146 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V8.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
-	CWzator V11.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Non ha più un mixer suo: usa quello condiviso con Acusticator, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Un messaggio generato a un'altra frequenza di campionamento viene riportato a quella dello stream invece di far riaprire lo stream, quindi cambiare velocità non zittisce più ciò che stava suonando. Verificato che il morse non cambi: punti e spazi della durata giusta a tutte le frequenze, e a 44100 hertz nemmeno un campione diverso. Fino alla V10.0 di domenica 6 settembre 2026, con la fase 1 del refactoring: dissolvenza accorciata invece che scartata sugli elementi corti, velocità fino a 120 wpm, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre, e scelta automatica dell'interfaccia audio più pronta
+	CWzator V11.1.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Non ha più un mixer suo: usa quello condiviso con Acusticator, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Un messaggio generato a un'altra frequenza di campionamento viene riportato a quella dello stream invece di far riaprire lo stream, quindi cambiare velocità non zittisce più ciò che stava suonando. Verificato che il morse non cambi: punti e spazi della durata giusta a tutte le frequenze, e a 44100 hertz nemmeno un campione diverso. Fino alla V10.0 di domenica 6 settembre 2026, con la fase 1 del refactoring: dissolvenza accorciata invece che scartata sugli elementi corti, velocità fino a 120 wpm, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre, e scelta automatica dell'interfaccia audio più pronta Dalla V11.1.0 il trattino basso torna a fare la pausa dentro il messaggio, che dalla V10.0 aveva smesso di fare, e nasce il parametro pausa per chiederla in millesimi invece che in unità: il silenzio non entra nel calcolo della velocità effettiva, quindi una pausa non fa più scendere la velocità annunciata. Chiude la issue 15, nata dalla 10 di cwapu.
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). La lingua dell'utente in due o tre lettere, senza il paese, presa dalle variabili d'ambiente, dall'API di Windows o dal locale, e None quando non si capisce. Era privata e la usavano solo polipo e Donazione; diventa pubblica con la issue 32, perché Tornello e Terminal Beast se la ricavavano con locale.getdefaultlocale, che è deprecata e sparisce con Python 3.15
 	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Il contesto con cui urllib verifica i certificati: archivio di sistema più certifi, perché ognuno dei due conosce radici che l'altro non ha. Nasce dalla issue 40 di Orologic
@@ -26,7 +26,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "145"
+VERSION = "146"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1281,9 +1281,9 @@ def _mixer_condiviso():
 		_MIXER = _MixerCondiviso()
 	return _MIXER
 
-def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None):
+def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None):
 	"""
-	CWzator V11.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
+	CWzator V11.1.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -1368,6 +1368,20 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			di una tutta da un lato. Riguarda solo la riproduzione: l'array in audio_data e il file
 			WAV restano monofonici.
 			Nota: Acusticator per la stessa cosa usa la scala da -1 a +1. La differenza è voluta.
+		pausa (int|float|None): Quanto dura il silenzio che il trattino basso produce dentro
+			il messaggio. None (default) vale uno spazio fra parole alla velocità corrente,
+			cioè sette unità scalate dal peso s: è ciò che il trattino basso faceva fino alla
+			V9.1 e che dalla V10.0 aveva smesso di fare, perché il cambiamento che ha reso
+			esatta la velocità effettiva lo aveva reso muto. Un numero vale quei millesimi di
+			secondo esatti, indipendenti dalla velocità, per chi vuole una pausa per la testa
+			e non per l'orecchio, per esempio fra un esercizio e il successivo.
+			Ogni trattino basso è una pausa, dovunque si trovi: "r _ _" ne produce due.
+			Il silenzio della pausa resta nell'audio ma non entra nel calcolo della velocità
+			effettiva, né fra le unità né nella durata: la velocità annunciata è quella del
+			morse che si sente, non quella diluita dalle attese. Se entrasse da una parte
+			sola, aggiungere una pausa farebbe scendere la velocità pur restando il suono
+			identico.
+			Lo spazio semplice non cambia: resta il separatore di parole di sempre.
 	Returns:
 		dict: Se get_map=True, restituisce una copia del dizionario della mappa Morse.
 		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm, la velocità effettiva in wpm.
@@ -1463,6 +1477,11 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		("ms", ms, (int, float), 0, None),
 		("vol", vol, (int, float), 0.0, 1.0),
 	]
+	if pausa is not None:
+		if not isinstance(pausa, (int, float)) or isinstance(pausa, bool):
+			return _errore(f"pausa ({pausa}) tipo non valido.")
+		if pausa < 0:
+			return _errore(f"pausa ({pausa}) non puo' essere negativa.")
 	for name, val, types, lo, hi in validations:
 		if not isinstance(val, types):
 			return _errore(f"{name} ({val}) tipo non valido.")
@@ -1560,6 +1579,12 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 	seg_intra = _generate_silence(intra_gap)
 	seg_letter = _generate_silence(letter_gap)
 	seg_word = _generate_silence(word_gap)
+	# La pausa che il trattino basso produce. Senza il parametro vale uno
+	# spazio fra parole alla velocita' corrente, cioe' quello che faceva fino
+	# alla V9.1; con il parametro vale quei millesimi esatti, indipendenti
+	# dalla velocita', per chi vuole una pausa per la testa e non per
+	# l'orecchio.
+	seg_pausa = seg_word if pausa is None else _generate_silence(float(pausa) / 1000.0)
 	# --- Primo passaggio: pianifica i segmenti e calcola la lunghezza totale ---
 	words_list = msg.lower().split()
 	# Le parole che producono suono davvero: quelle che contengono almeno un
@@ -1576,7 +1601,20 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 	# sette. E' la misura con cui si definisce la velocita': la parola PARIS
 	# piu' lo spazio finale ne vale cinquanta.
 	standard_units = 0
+	# I campioni di silenzio chiesti con il trattino basso. Restano nell'audio
+	# ma non entrano nel calcolo della velocita' effettiva, ne' fra le unita'
+	# ne' nella durata: se entrassero da una parte sola, la velocita'
+	# annunciata scenderebbe pur restando il suono identico.
+	campioni_di_pausa = 0
 	for w_idx, word in enumerate(words_list):
+		# Ogni trattino basso e' una pausa, dovunque si trovi. Lo spazio
+		# semplice resta il separatore di parole di sempre: nella mappa hanno
+		# tutti e due codice vuoto, ma solo il trattino basso fa pausa.
+		for _ in range(word.count("_")):
+			if seg_pausa.size:
+				plan.append(seg_pausa)
+				total_samples += seg_pausa.size
+				campioni_di_pausa += seg_pausa.size
 		lettere_sonore = [ch for ch in word if MORSE_MAP.get(ch)]
 		for l_idx, letter in enumerate(lettere_sonore):
 			code = MORSE_MAP[letter]
@@ -1638,7 +1676,7 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		# quantizzazione in campioni, sotto il decimo di per cento.
 		rwpm = wpm
 	else:
-		durata = (total_samples - silence_samples_end) / float(fs) if total_samples > 0 else 0.0
+		durata = (total_samples - silence_samples_end - campioni_di_pausa) / float(fs) if total_samples > 0 else 0.0
 		if standard_units > 0 and durata > 0:
 			rwpm = 1.2 * standard_units / durata
 		else:
