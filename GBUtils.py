@@ -3,11 +3,12 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V137 di sabato 12 settembre 2026
+	V138 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	CWzator V10.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Fase 1 del refactoring conclusa, motore di riproduzione rifatto. Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, errori riferiti a chi chiama invece che stampati, scelta automatica dell'interfaccia audio piu' pronta fra quelle che puntano al dispositivo scelto nel sistema, e via il vecchio modo di chiedere la mappa con msg uguale a meno uno
+	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Il contesto con cui urllib verifica i certificati: archivio di sistema più certifi, perché ognuno dei due conosce radici che l'altro non ha. Nasce dalla issue 40 di Orologic
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
@@ -23,7 +24,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "137"
+VERSION = "138"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -57,6 +58,40 @@ def _cartella_chiamante(risalita: int = 1) -> str:
         return os.path.dirname(os.path.abspath(sys._getframe(risalita + 1).f_globals["__file__"]))
     except (AttributeError, KeyError, ValueError):
         return os.getcwd()
+
+def cartella_applicazione(risalita: int = 0) -> str:
+	"""La cartella su cui un'applicazione costruisce i propri percorsi: quella
+	dell'eseguibile quando e' compilata con PyInstaller, quella del file che
+	chiama altrimenti. Mai la directory di lavoro, che dipende da come il
+	programma e' stato avviato e non da dove sta: resta soltanto come ultima
+	risorsa, quando il file di chi chiama non si riesce a determinare.
+	E' il posto dei file che l'applicazione scrive, cioe' salvataggi,
+	impostazioni, log e report. Per i file che l'applicazione legge soltanto, e
+	che da compilata viaggiano dentro il pacchetto, c'e' percorso_risorsa.
+	risalita dice di quanti livelli salire nella pila delle chiamate: zero, il
+	predefinito, da' la cartella di chi chiama direttamente; uno da' quella di
+	chi ha chiamato lui, e serve a chi avvolge questa funzione in una propria,
+	per esempio in un modulo dei percorsi che sta in una sottocartella e deve
+	rispondere per il programma intero.
+	Nasce con la V138 dalla issue 20: la stessa logica era riscritta in dieci
+	progetti del parco software, con nomi diversi e qualita' diverse.
+	"""
+	return _cartella_chiamante(risalita + 1)
+
+def percorso_risorsa(nome_file: str, risalita: int = 0) -> str:
+	"""Dove sta un file in sola lettura che viaggia con l'applicazione, per
+	esempio il manuale o la guida. Un percorso assoluto torna com'e'. Uno
+	relativo si cerca prima fra le risorse del pacchetto PyInstaller, in
+	sys._MEIPASS, quando il programma e' compilato, perche' i file dichiarati
+	nei datas vengono scompattati li' e non accanto all'eseguibile; poi nella
+	cartella di chi chiama, secondo cartella_applicazione. Se non esiste in
+	nessuno dei due torna quello nella cartella di chi chiama, cosi' che
+	l'errore di chi lo apre dica dove lo si aspettava.
+	risalita ha lo stesso significato che in cartella_applicazione.
+	Nasce con la V134 come funzione privata per manuale, e con la V138 diventa
+	pubblica insieme a cartella_applicazione, per la issue 20.
+	"""
+	return _percorso_risorsa(nome_file, risalita + 1)
 
 def _nome_da_api(api_url: str) -> str:
     """Ricava il nome del repository da un indirizzo dell'API di GitHub.
