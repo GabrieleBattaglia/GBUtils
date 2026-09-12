@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V142 di sabato 12 settembre 2026
+	V143 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
-	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Acusticator V8.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
 	CWzator V10.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Fase 1 del refactoring conclusa, motore di riproduzione rifatto. Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, errori riferiti a chi chiama invece che stampati, scelta automatica dell'interfaccia audio piu' pronta fra quelle che puntano al dispositivo scelto nel sistema, e via il vecchio modo di chiedere la mappa con msg uguale a meno uno
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). La lingua dell'utente in due o tre lettere, senza il paese, presa dalle variabili d'ambiente, dall'API di Windows o dal locale, e None quando non si capisce. Era privata e la usavano solo polipo e Donazione; diventa pubblica con la issue 32, perché Tornello e Terminal Beast se la ricavavano con locale.getdefaultlocale, che è deprecata e sparisce con Python 3.15
 	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
@@ -26,7 +26,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "142"
+VERSION = "143"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1033,6 +1033,24 @@ class _MixerCondiviso:
 				v.fermata = True
 		return len(bersagli)
 
+	def aspetta_uscita(self):
+		"""Il tempo che i campioni gia' consegnati impiegano a uscire.
+
+		Quando una voce finisce, i suoi campioni sono usciti dal mixer ma non
+		ancora dalle casse: restano nel buffer del dispositivo per un tempo
+		pari alla latenza. Chi aspetta la fine di un suono di congedo, prima
+		di chiudere il programma, deve aspettare anche questo, altrimenti
+		l'ultima nota viene troncata.
+		"""
+		import time
+		ritardo = 0.05
+		try:
+			if self._stream is not None:
+				ritardo = float(self._stream.latency) + 0.02
+		except (AttributeError, TypeError, ValueError):
+			pass
+		time.sleep(min(ritardo, 0.5))
+
 	def stato(self):
 		"""Come sta il mixer adesso, per chi vuole guardarlo."""
 		with self._lock:
@@ -1233,6 +1251,19 @@ class _MixerCondiviso:
 			self._pompa = None
 		for voce in restate:
 			voce.fine.set()
+
+
+# L'istanza sola, quella che tutto il parco software condivide: un mixer, uno
+# stream, una scheda audio. Nasce alla prima richiesta, perche' crearla costa
+# e chi importa GBUtils per dgt o per menu non deve pagarla.
+_MIXER = None
+
+def _mixer_condiviso():
+	"""Il mixer di tutti, creato alla prima richiesta."""
+	global _MIXER
+	if _MIXER is None:
+		_MIXER = _MixerCondiviso()
+	return _MIXER
 
 def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None):
 	"""
@@ -3357,7 +3388,9 @@ class _Acusticator:
 
     NOME_COLLEZIONE = "Acu_Collection.json"
     BASE_VOL = 0.5
-    VOCI_MAX = 16
+    # Quante voci insieme: erano 16 finche' il mixer era solo di Acusticator,
+    # e dal mixer condiviso sono quelle che bastano anche a CWzator.
+    VOCI_MAX = 32
     # Quanto si concede a un suono oltre la sua durata, prima di considerare
     # che il mixer si sia fermato. Comprende la latenza del dispositivo, che
     # sulle schede lente arriva a un decimo di secondo, e un po' di respiro.
@@ -3366,23 +3399,11 @@ class _Acusticator:
     BLOCCO = 256
 
     def __init__(self):
-        import threading
+        # Lo stato del mixer non sta piu' qui: sta nel mixer condiviso, che
+        # Acusticator usa senza possederlo. Qui resta cio' che e' suo, cioe'
+        # la collezione dei preset.
         self._cache = {}
         self._locali = []
-        # Stato del mixer
-        self._volume = 1.0
-        self._voci_max = self.VOCI_MAX
-        self._silenzio = self.SILENZIO_MAX
-        self._fs = 44100
-        self._device = None
-        self._canali = 2
-        self._voci = []
-        self._stream = None
-        self._guardiano = None
-        self._silenzio_da = None
-        self._uscita_registrata = False
-        self._lock = threading.Lock()
-        self._avvio = threading.RLock()
 
     def __call__(self, score, kind=1, adsr=None, fs=44100, sync=False):
         """Sintetizza uno score e lo manda al mixer. Vedi la classe per lo score.
@@ -3401,18 +3422,25 @@ class _Acusticator:
         return self.riproduci(buffer, fs=fs, sync=sync)
 
     # --- Il mixer -------------------------------------------------------
-    # Un solo stream tenuto aperto, invece di aprirne e chiuderne uno per
-    # ogni suono: l'apertura da sola costava 160 ms misurati, pagati da
-    # ogni singolo effetto sonoro di ogni applicazione.
+    # Il mixer e' quello condiviso, uno solo per tutto il parco software:
+    # Acusticator ne aveva uno a callback e CWzator uno a scrittura, e dal
+    # 12 settembre 2026 ne esiste uno solo, a scrittura, per la issue 8.
+    # Il callback perdeva campioni quando il programma calcolava mentre il
+    # suono suonava, perche' doveva entrare in Python nel momento esatto in
+    # cui la scheda aveva fame e restava in coda per il lucchetto
+    # dell'interprete: sette buchi al secondo, misurati, contro nessuno.
 
     def setup(self, volume=None, voci_max=None, silenzio=None, fs=None, device=None):
         """Imposta il mixer, di solito una volta sola all'avvio dell'applicazione.
 
         volume    volume generale da 0 a 1, applicato a tutto cio' che suona.
                   Impostandolo qui non serve piu' passarlo a ogni chiamata.
-        voci_max  quanti suoni possono sovrapporsi, 16 di partenza. Quando
+        voci_max  quanti suoni possono sovrapporsi, 32 di partenza. Quando
                   sono tutte occupate, la voce piu' vecchia lascia il posto
-                  alla nuova, cosi' l'ultimo evento si sente sempre.
+                  alla nuova, cosi' l'ultimo evento si sente sempre. Erano 16
+                  finche' il mixer era solo di Acusticator; adesso e'
+                  condiviso e il numero e' quello che serviva al piu' esigente
+                  dei due.
         silenzio  secondi di silenzio dopo i quali lo stream viene chiuso e
                   la scheda audio liberata, 120 di partenza. Si riapre da
                   solo al suono successivo.
@@ -3420,130 +3448,27 @@ class _Acusticator:
         device    dispositivo di uscita, None per quello di sistema.
         Cambiare fs o device chiude lo stream in corso, che si riaprira'
         con i valori nuovi. Restituisce le impostazioni in vigore.
+        Le impostazioni valgono per il mixer condiviso, quindi anche per chi
+        altro lo stia usando.
         """
+        mixer = _mixer_condiviso()
         if volume is not None:
-            self._volume = max(0.0, min(1.0, float(volume)))
+            mixer._volume = max(0.0, min(1.0, float(volume)))
         if voci_max is not None:
-            self._voci_max = max(1, int(voci_max))
+            mixer._voci_max = max(1, int(voci_max))
         if silenzio is not None:
-            self._silenzio = max(0.0, float(silenzio))
+            mixer._silenzio = max(0.0, float(silenzio))
         riapri = False
-        if fs is not None and int(fs) != self._fs:
-            self._fs = int(fs)
+        if fs is not None and int(fs) != mixer._fs:
+            mixer._fs = int(fs)
             riapri = True
-        if device is not None and device != self._device:
-            self._device = device
+        if device is not None and device != mixer._device:
+            mixer._device = device
             riapri = True
         if riapri:
-            self.close()
-        return {"volume": self._volume, "voci_max": self._voci_max,
-                "silenzio": self._silenzio, "fs": self._fs, "device": self._device}
-
-    def _adatta_frequenza(self, buffer, fs):
-        """Riporta un buffer alla frequenza dello stream, se serve."""
-        if fs == self._fs:
-            return buffer
-        from fractions import Fraction
-
-        import numpy as np
-        from scipy import signal
-        rapporto = Fraction(self._fs, int(fs)).limit_denominator(1000)
-        adattato = signal.resample_poly(buffer, rapporto.numerator,
-                                        rapporto.denominator, axis=0)
-        return np.clip(adattato, -1.0, 1.0).astype(np.float32)
-
-    def _callback(self, outdata, frames, tempo, stato):
-        """Somma le voci attive. Gira nel thread audio: niente di lento qui."""
-        import numpy as np
-        outdata.fill(0.0)
-        with self._lock:
-            # Niente list.remove(voce): confrontare due voci per uguaglianza
-            # confronta anche i loro buffer, e numpy solleva ValueError se le
-            # forme non combaciano invece di dire semplicemente "diverso".
-            attive_voci = []
-            for voce in self._voci:
-                dati = voce["buffer"]
-                da = voce["pos"]
-                a = min(da + frames, len(dati))
-                quanti = a - da
-                if quanti > 0:
-                    outdata[:quanti] += dati[da:a]
-                voce["pos"] = a
-                if a >= len(dati):
-                    voce["fine"].set()
-                else:
-                    attive_voci.append(voce)
-            self._voci = attive_voci
-            attive = len(self._voci)
-        if self._volume != 1.0:
-            outdata *= self._volume
-        np.clip(outdata, -1.0, 1.0, out=outdata)
-        if attive == 0:
-            self._silenzio_da = self._silenzio_da or self._orologio()
-        else:
-            self._silenzio_da = None
-
-    def _orologio(self):
-        import time
-        return time.monotonic()
-
-    def _apri_stream(self):
-        """Apre lo stream, provando il mono se il dispositivo rifiuta lo stereo."""
-        import sys
-
-        import sounddevice as sd
-        for canali in (2, 1):
-            try:
-                stream = sd.OutputStream(
-                    samplerate=self._fs, channels=canali, dtype="float32",
-                    blocksize=self.BLOCCO, latency="low", device=self._device,
-                    callback=self._callback)
-                stream.start()
-                self._canali = canali
-                return stream
-            except Exception as e:  # noqa: BLE001 - il dispositivo audio fallisce in molti modi
-                ultimo = e
-        print(f"Acusticator: non riesco ad aprire l'uscita audio: {ultimo}", file=sys.stderr)
-        return None
-
-    def _assicura_stream(self):
-        """Lo stream esiste ed e' attivo, altrimenti lo apre."""
-        if self._stream is not None:
-            return True
-        self._stream = self._apri_stream()
-        if self._stream is None:
-            return False
-        if not self._uscita_registrata:
-            # Alla fine del programma lo stream va chiuso, altrimenti la scheda
-            # audio resta impegnata: il guardiano e' un thread daemon e in
-            # chiusura non fa in tempo ad accorgersene.
-            import atexit
-            atexit.register(self.close)
-            self._uscita_registrata = True
-        self._avvia_guardiano()
-        return True
-
-    def _avvia_guardiano(self):
-        """Il thread che chiude lo stream dopo abbastanza silenzio."""
-        import threading
-        if self._guardiano is not None and self._guardiano.is_alive():
-            return
-        self._guardiano = threading.Thread(target=self._guardia, daemon=True,
-                                           name="Acusticator-guardiano")
-        self._guardiano.start()
-
-    def _guardia(self):
-        import time
-        while True:
-            time.sleep(1.0)
-            if self._stream is None:
-                return
-            if self._silenzio <= 0:
-                continue
-            da = self._silenzio_da
-            if da is not None and self._orologio() - da >= self._silenzio:
-                self.close()
-                return
+            mixer.chiudi()
+        return {"volume": mixer._volume, "voci_max": mixer._voci_max,
+                "silenzio": mixer._silenzio, "fs": mixer._fs, "device": mixer._device}
 
     def riproduci(self, buffer, fs=None, sync=False):
         """Manda al mixer un buffer gia' pronto, stereo float32 fra -1 e 1.
@@ -3552,98 +3477,25 @@ class _Acusticator:
         sintetizza l'audio per conto suo e vuole comunque passare dal
         mixer condiviso.
         """
-        import threading
-
-        import numpy as np
-        if buffer is None or len(buffer) == 0:
+        mixer = _mixer_condiviso()
+        voce = mixer.suona(buffer, fs=fs, sync=sync)
+        if voce is None:
             return False
-        buffer = np.asarray(buffer, dtype=np.float32)
-        if buffer.ndim == 1:
-            buffer = np.column_stack((buffer, buffer))
-        if fs is not None:
-            buffer = self._adatta_frequenza(buffer, fs)
-        with self._avvio:
-            if not self._assicura_stream():
-                return False
-            if self._canali == 1:
-                buffer = buffer.mean(axis=1, keepdims=True).astype(np.float32)
-        fine = threading.Event()
-        voce = {"buffer": buffer, "pos": 0, "fine": fine, "nata": self._orologio()}
-        with self._lock:
-            # Voci esaurite: la piu' vecchia lascia il posto, cosi' l'ultimo
-            # evento si sente sempre. Chi la stava aspettando viene svegliato.
-            while len(self._voci) >= self._voci_max:
-                vecchia = self._voci.pop(0)
-                vecchia["fine"].set()
-            self._voci.append(voce)
-            self._silenzio_da = None
-        if sync is not False and sync is not None:
-            if sync is True:
-                # Anche l'attesa senza limite ha un limite, ricavato dalla durata
-                # del suono stesso piu' un margine: in condizioni normali non
-                # scatta mai. Serve per il caso in cui lo stream smetta di
-                # rispondere senza passare da stop o close, per esempio se il
-                # dispositivo sparisce o il driver si pianta: allora il callback
-                # non gira piu', la voce non finisce mai, e senza questo limite
-                # il chiamante resterebbe appeso per sempre.
-                attesa = len(buffer) / float(self._fs) + self.MARGINE_ATTESA
-            else:
-                attesa = max(0.0, float(sync))
-            finito = fine.wait(timeout=attesa)
-            if not finito:
-                self._attesa_scaduta(voce)
-                return True
-            if sync is True:
-                # I campioni sono usciti dal mixer ma non ancora dalle casse:
-                # senza questa attesa un suono di congedo verrebbe troncato.
-                self._aspetta_uscita()
+        if sync is True:
+            # I campioni sono usciti dal mixer ma non ancora dalle casse:
+            # senza questa attesa un suono di congedo verrebbe troncato.
+            mixer.aspetta_uscita()
         return True
-
-    def _attesa_scaduta(self, voce):
-        """Il suono non ha segnalato la fine entro il tempo massimo.
-
-        Vuol dire che il mixer si e' fermato. La voce va tolta, altrimenti
-        occuperebbe per sempre uno dei posti disponibili, e lo stream va
-        chiuso: il suono successivo ne riaprira' uno sano, cosi' un guasto
-        permanente diventa un inciampo di un suono solo.
-        """
-        import sys
-        with self._lock:
-            # Si confronta per identita' e non per uguaglianza: due voci si
-            # confrontano anche nei loro buffer, e numpy solleva ValueError
-            # quando le forme non combaciano invece di dire "diverso". E' lo
-            # stesso motivo per cui il callback non usa list.remove.
-            self._voci = [v for v in self._voci if v is not voce]
-            voce["fine"].set()
-        print("Acusticator: l'uscita audio non ha risposto, la richiudo. "
-              "Il suono successivo la riaprira'.", file=sys.stderr)
-        self.close()
-
-    def _aspetta_uscita(self):
-        """Il tempo che i campioni gia' consegnati impiegano a uscire."""
-        import time
-        ritardo = 0.05
-        try:
-            if self._stream is not None:
-                ritardo = float(self._stream.latency) + 0.02
-        except (AttributeError, TypeError, ValueError):
-            pass
-        time.sleep(min(ritardo, 0.5))
 
     def stop(self):
         """Zittisce subito tutto quello che sta suonando, senza chiudere nulla.
 
         Lo stream resta aperto e pronto: e' quello che serve quando l'utente
         preme Esc e vuole silenzio immediato. Restituisce quante voci ha
-        interrotto.
+        interrotto. Zittisce il mixer condiviso, quindi anche cio' che vi
+        stesse suonando qualcun altro.
         """
-        with self._lock:
-            quante = len(self._voci)
-            for voce in self._voci:
-                voce["fine"].set()
-            self._voci.clear()
-            self._silenzio_da = self._orologio()
-        return quante
+        return _mixer_condiviso().ferma()
 
     def close(self):
         """Zittisce e chiude lo stream, liberando la scheda audio.
@@ -3652,28 +3504,20 @@ class _Acusticator:
         dopo il silenzio impostato con setup lo stream si chiude da solo, e
         al suono successivo si riapre. Restituisce True se c'era da chiudere.
         """
-        self.stop()
-        with self._avvio:
-            stream = self._stream
-            self._stream = None
-            self._guardiano = None
-        if stream is None:
-            return False
-        try:
-            stream.stop()
-            stream.close()
-        except Exception:  # noqa: BLE001, S110 - in chiusura non c'e' piu' niente da salvare
-            pass
-        return True
+        mixer = _mixer_condiviso()
+        c_era = mixer.stato()["aperto"]
+        mixer.chiudi()
+        return c_era
 
     def stato(self):
         """Come sta il mixer adesso, come dizionario. Utile per capire i guai."""
-        with self._lock:
-            attive = len(self._voci)
-        return {"stream_aperto": self._stream is not None, "voci_attive": attive,
-                "voci_max": self._voci_max, "volume": self._volume,
-                "silenzio": self._silenzio, "fs": self._fs,
-                "canali": self._canali, "device": self._device}
+        mixer = _mixer_condiviso()
+        dentro = mixer.stato()
+        return {"stream_aperto": dentro["aperto"], "voci_attive": dentro["voci"],
+                "voci_max": mixer._voci_max, "volume": mixer._volume,
+                "silenzio": mixer._silenzio, "fs": dentro["frequenza"],
+                "canali": dentro["canali"], "device": mixer._device,
+                "buchi": dentro["buchi"]}
 
     def _avvisa(self, messaggio):
         import sys
