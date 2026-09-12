@@ -6,7 +6,8 @@ qualunque peso, le spaziature coincidono con ARRL e il carattere e' identico
 campione per campione. Cio' che il banco non sa dire e' se all'orecchio il
 Farnsworth sia quello vero, cioe' se la lettera suoni sempre allo stesso modo
 mentre attorno a lei si fa spazio. E' quello che si prova qui.
-Tutto suona al tre per cento di volume, come chiesto: si sente senza disturbare.
+Tutto suona al venti per cento di volume: si sente comodamente senza
+riempire la stanza.
 Dopo ogni gruppo si scrive cosa si e' sentito, e finisce in
 collaudo_farnsworth_esiti.txt accanto a questo file.
 Si lancia con
@@ -20,7 +21,7 @@ from GBUtils import CWzator, dgt, enter_escape
 
 QUI = os.path.dirname(os.path.abspath(__file__))
 ESITI = os.path.join(QUI, "collaudo_farnsworth_esiti.txt")
-VOL = 0.03
+VOL = 0.20
 # I pesi su cui si ascolta: gli standard, quelli che Gabriele usa davvero e
 # due combinazioni che tirano da parti opposte.
 PESI = [(30, 50, 50, "standard"), (32, 53, 34, "i tuoi"),
@@ -76,7 +77,7 @@ def main():
 	print()
 	riga("Il Farnsworth manda i caratteri gia' alla velocita' a cui vuoi arrivare e ti da' tempo allargando soltanto lo spazio fra una lettera e l'altra. Dentro il carattere non tocca niente, quindi i tuoi pesi restano quelli.")
 	print()
-	riga("Tutto suona al tre per cento di volume. Ogni ascolto dice prima cosa manda e poi che velocita' CWzator ha restituito.")
+	riga("Tutto suona al venti per cento di volume. Ogni ascolto dice prima cosa manda e poi che velocita' CWzator ha restituito.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per uscire\r"):
 		return 0
