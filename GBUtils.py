@@ -1407,16 +1407,13 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		niente da fare; va chiamata a mano solo da chi esca per vie che saltano atexit, per esempio
 		os._exit, oppure da una interfaccia grafica che chiuda la finestra mentre un messaggio suona.
 	"""
-	import atexit
 	import os
 	import sys
 	import threading
-	import time
 	import wave
 	from datetime import datetime
 
 	import numpy as np
-	import sounddevice as sd
 	if wv != 1:
 		from scipy import signal as scipy_signal
 	BLOCK_SIZE = 256
@@ -1646,166 +1643,42 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			rwpm = 1.2 * standard_units / durata
 		else:
 			rwpm = wpm
-	# --- Mixer e riproduzione, costruiti una volta sola ---
+	# --- Riproduzione, costruita una volta sola ---
+	# Il mixer non e' piu' suo: dalla tappa 3 della issue 8, il 12 settembre
+	# 2026, CWzator usa quello condiviso con Acusticator. Qui resta soltanto
+	# l'oggetto che tiene lo stato di ogni messaggio, cioe' se sta suonando,
+	# dove e' finito il file e cosa e' andato storto.
 	if not hasattr(CWzator, '_PlaybackHandle'):
 		CWzator._attivi = set()
 		CWzator._attivi_lock = threading.Lock()
-		CWzator._stream = None
-		CWzator._stream_fs = None
-		CWzator._stream_lock = threading.RLock()
-		CWzator._voci = []
-		CWzator._pompa = None
-		CWzator._stream_device = None
-		CWzator._stop_pompa = threading.Event()
-		def _guasto_mixer(testo):
-			"""Un guasto del mixer si riferisce a chi sta suonando, non si
-			stampa: chi ha chiamato lo trova in errore del suo PlaybackHandle,
-			e l'ultimo resta in CWzator.ultimo_errore."""
-			CWzator.ultimo_errore = testo
-			with CWzator._stream_lock:
-				voci = list(CWzator._voci)
-			for voce in voci:
-				voce[2].errore = testo
-		def _pompa_audio(sample_rate, block_size, device, nome_api):
-			"""Alimenta lo stream senza mai interrompersi, sommando le voci.
-			Tenere lo stream aperto non basta: se fra un messaggio e l'altro
-			nessuno scrive, il buffer si svuota, il dispositivo va in underrun,
-			ed e' li' che nasce lo schiocco. L'ascolto lo ha dimostrato, perche'
-			spariva soltanto quando venivano scritte anche le pause. Qui quindi
-			si scrive sempre: le voci attive sommate, e silenzio quando non c'e'
-			niente da suonare, finche' il silenzio non dura abbastanza da
-			chiudere e lasciare libera la scheda."""
-			silenzio = np.zeros((block_size, 2), dtype=np.int16)
-			try:
-				extra = None
-				if nome_api and "WASAPI" in nome_api:
-					# Senza questo WASAPI accetta soltanto la frequenza impostata in
-					# Windows, e delle dodici che cwapu offre ne passerebbe una sola.
-					extra = sd.WasapiSettings(auto_convert=True)
-				stream = sd.OutputStream(device=device, samplerate=sample_rate, channels=2,
-										 dtype=np.int16, blocksize=block_size, latency='low',
-										 extra_settings=extra)
-				stream.start()
-			except Exception as e:  # noqa: BLE001 - il dispositivo audio fallisce in molti modi, e il guasto va riferito, non propagato dal thread
-				_guasto_mixer(f"apertura del dispositivo audio non riuscita: {e}")
-				with CWzator._stream_lock:
-					CWzator._pompa = None
-					for voce in CWzator._voci:
-						voce[2]._segna_fine()
-					CWzator._voci = []
-				return
-			with CWzator._stream_lock:
-				CWzator._stream = stream
-				CWzator._stream_fs = sample_rate
-				CWzator._stream_device = device
-			ultimo_suono = time.monotonic()
-			da_chiudere = []
-			try:
-				while not CWzator._stop_pompa.is_set():
-					adesso = time.monotonic()
-					# Una voce si dichiara conclusa non quando finiscono i suoi
-					# campioni, ma quando sono usciti davvero dal dispositivo,
-					# cioe' una latenza piu' tardi. E' quello che aspetta chi
-					# ha chiesto sync.
-					if da_chiudere:
-						rimasti = []
-						for quando, handle in da_chiudere:
-							if adesso >= quando:
-								handle._segna_fine()
-							else:
-								rimasti.append((quando, handle))
-						da_chiudere = rimasti
-					with CWzator._stream_lock:
-						voci = list(CWzator._voci)
-					if voci:
-						ultimo_suono = adesso
-						somma = np.zeros((block_size, 2), dtype=np.float32)
-						finite = []
-						for voce in voci:
-							dati = voce[0]
-							pezzo = dati[voce[1]:voce[1] + block_size]
-							if pezzo.size:
-								somma[:pezzo.size, 0] += pezzo * voce[3]
-								somma[:pezzo.size, 1] += pezzo * voce[4]
-							voce[1] += block_size
-							if voce[1] >= dati.size:
-								finite.append(voce)
-						if finite:
-							with CWzator._stream_lock:
-								CWzator._voci = [v for v in CWzator._voci
-												 if not any(v is f for f in finite)]
-							for v in finite:
-								da_chiudere.append((adesso + stream.latency, v[2]))
-						blocco = np.clip(somma, -32768, 32767).astype(np.int16)
-					else:
-						blocco = silenzio
-						if not da_chiudere and adesso - ultimo_suono > CWzator.SILENZIO_MAX:
-							break
-					stream.write(blocco)
-			except sd.PortAudioError as pae:
-				_guasto_mixer(f"PortAudioError durante la riproduzione: {pae}")
-			except Exception as e:  # noqa: BLE001 - il thread del mixer non deve morire in silenzio: qualunque guasto si riferisce
-				_guasto_mixer(f"errore durante la riproduzione: {e}")
-			finally:
-				try:
-					stream.abort()
-					stream.close()
-				except Exception:  # noqa: BLE001, S110 - si sta chiudendo: uno stream che non si chiude non ha piu' niente da dire
-					pass
-				with CWzator._stream_lock:
-					CWzator._stream = None
-					CWzator._stream_fs = None
-					CWzator._pompa = None
-					restate = list(CWzator._voci)
-					CWzator._voci = []
-				for voce in restate:
-					voce[2]._segna_fine()
-				for _quando, handle in da_chiudere:
-					handle._segna_fine()
-		def _ferma_pompa(attesa=2.0):
-			"""Ferma il mixer e libera la scheda, aspettando che il suo thread
-			sia davvero uscito da PortAudio."""
-			with CWzator._stream_lock:
-				pompa = CWzator._pompa
-				restate = list(CWzator._voci)
-				CWzator._voci = []
-			for voce in restate:
-				voce[2]._segna_fine()
-			CWzator._stop_pompa.set()
-			try:
-				if pompa is not None and pompa.is_alive():
-					pompa.join(attesa)
-			finally:
-				CWzator._stop_pompa.clear()
 		def _chiudi_riproduzioni(attesa=2.0):
-			"""Ferma le riproduzioni in corso, ne aspetta la fine e chiude il
-			mixer.
-			Serve prima che l'interprete cominci a smontare i moduli: un thread
-			daemon sorpreso dentro PortAudio fa morire il processo, e su Windows
-			il codice di uscita e' 0xC0000374, corruzione dell'heap. Chiedere
-			l'arresto non basta, perche' il thread ha comunque bisogno del suo
-			tempo per uscire dallo stream: bisogna anche attenderlo.
-			Registrata con atexit, e disponibile al chiamante che voglia
-			chiudere in modo ordinato prima di uscire per conto suo."""
-			_ferma_pompa(attesa)
+			"""Ferma le riproduzioni in corso e chiude il mixer condiviso.
+
+			Resta per chi la chiamava: e' esportata come
+			CWzator.chiudi_riproduzioni e serviva a non farsi sorprendere
+			dall'interprete che si spegne con un filo dentro PortAudio. Adesso
+			quel lavoro lo fa il mixer condiviso, che si registra da solo
+			all'uscita; questa chiude anche lui, per chi vuole farlo prima.
+			"""
+			_mixer_condiviso().chiudi(attesa)
 		CWzator.chiudi_riproduzioni = staticmethod(_chiudi_riproduzioni)
-		atexit.register(_chiudi_riproduzioni)
 		class _PlaybackHandle:
+			"""Lo stato di un messaggio: se sta suonando, dove e' finito il
+			file, cosa e' andato storto. La riproduzione la fa il mixer
+			condiviso, e questo oggetto e' il filo che lo lega a chi chiama."""
 			def __init__(self, audio_data, sample_rate, block_size, pan=0, device=None, nome_api=None):
 				self.audio_data = audio_data
 				self.sample_rate = sample_rate
 				self._block_size = block_size
-				# Legge a potenza costante: al centro i due lati stanno a meno
-				# tre decibel ciascuno, cosi' la somma dei due resta la stessa
-				# a qualunque posizione e una stazione al centro non si sente
-				# piu' debole di una tutta da un lato.
-				angolo = (max(-100.0, min(100.0, float(pan))) / 100.0 + 1.0) * (np.pi / 4.0)
+				# La panoramica del mixer condiviso va da meno uno a piu' uno;
+				# quella di CWzator da meno cento a piu' cento, ed e' una
+				# differenza voluta che resta nella sua firma.
 				self.pan = pan
+				self._pan_mixer = max(-100.0, min(100.0, float(pan))) / 100.0
 				self.device = device
 				self.nome_api = nome_api
-				self._gain_sx = np.float32(np.cos(angolo))
-				self._gain_dx = np.float32(np.sin(angolo))
 				self.stream = None
+				self._voce = None
 				# Cio' che il chiamante deve poter sapere senza leggere stderr:
 				# se qualcosa e' andato storto, e dove e' finito il file WAV.
 				self.errore = None
@@ -1824,12 +1697,13 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				with CWzator._attivi_lock:
 					CWzator._attivi.discard(self)
 			def play(self):
-				"""Aggiunge il messaggio al mixer, che lo somma agli altri.
-				Piu' messaggi possono suonare insieme, fino a VOCI_MAX, e non
-				si interrompono a vicenda: e' cosi' che si puo' simulare un
-				pile-up. Cambiando frequenza di campionamento il mixer si rifa',
-				perche' quella non si cambia a stream aperto, e le riproduzioni
-				in corso si fermano."""
+				"""Manda il messaggio al mixer condiviso, che lo somma agli
+				altri. Piu' messaggi possono suonare insieme e non si
+				interrompono a vicenda: e' cosi' che si simula un pile-up.
+				Un messaggio generato a un'altra frequenza di campionamento
+				viene riportato a quella dello stream, invece di farlo
+				riaprire: cosi' cambiare velocita' non zittisce piu' cio' che
+				stava suonando."""
 				with self._lock:
 					if self.is_playing.is_set():
 						return
@@ -1840,27 +1714,27 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 					self._finito.clear()
 				with CWzator._attivi_lock:
 					CWzator._attivi.add(self)
-				with CWzator._stream_lock:
-					pompa = CWzator._pompa
-					fs_attuale = CWzator._stream_fs
-					dev_attuale = getattr(CWzator, "_stream_device", None)
-				if pompa is not None and pompa.is_alive() and (
-						(fs_attuale is not None and fs_attuale != self.sample_rate)
-						or dev_attuale != self.device):
-					_ferma_pompa()
-				with CWzator._stream_lock:
-					while len(CWzator._voci) >= CWzator.VOCI_MAX:
-						vecchia = CWzator._voci.pop(0)
-						vecchia[2]._segna_fine()
-					CWzator._voci.append([self.audio_data, 0, self, self._gain_sx, self._gain_dx])
-					self.stream = CWzator._stream
-					if CWzator._pompa is None or not CWzator._pompa.is_alive():
-						CWzator._stream_device = self.device
-						CWzator._pompa = threading.Thread(
-							target=_pompa_audio,
-							args=(self.sample_rate, self._block_size, self.device, self.nome_api),
-							daemon=True)
-						CWzator._pompa.start()
+				mixer = _mixer_condiviso()
+				# Le due costanti di CWzator restano il posto dove si
+				# impostano, e valgono sul mixer di tutti: chi le cambia
+				# all'avvio, come ha sempre fatto, viene ascoltato.
+				mixer._voci_max = max(1, int(CWzator.VOCI_MAX))
+				mixer._silenzio = max(0.0, float(CWzator.SILENZIO_MAX))
+				if self.device is not None and self.device != mixer._device:
+					mixer._device = self.device
+					mixer._nome_api = self.nome_api
+					mixer.chiudi()
+				# Il morse nasce in interi a sedici bit, il mixer lavora in
+				# decimali fra meno uno e piu' uno: la divisione e' esatta e
+				# non cambia un campione.
+				dati = self.audio_data.astype(np.float32) / 32768.0
+				self._voce = mixer.suona(dati, fs=self.sample_rate,
+										 pan=self._pan_mixer, a_fine=self._segna_fine)
+				self.stream = mixer._stream
+				if self._voce is None:
+					self.errore = mixer.ultimo_errore or "il mixer non ha accettato il messaggio"
+					CWzator.ultimo_errore = self.errore
+					self._segna_fine()
 			def wait_done(self, timeout=None):
 				"""Attende la fine della riproduzione corrente.
 				Con timeout in secondi smette di attendere allo scadere e
@@ -1868,8 +1742,8 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				self._finito.wait(timeout)
 			def stop(self):
 				"""Toglie questo messaggio dal mixer. Gli altri proseguono."""
-				with CWzator._stream_lock:
-					CWzator._voci = [v for v in CWzator._voci if v[2] is not self]
+				if self._voce is not None:
+					_mixer_condiviso().ferma(self._voce)
 				self._segna_fine()
 			def __del__(self):
 				"""Cleanup automatico: ferma la riproduzione se l'oggetto viene distrutto."""
@@ -1940,7 +1814,8 @@ CWzator.scegli_dispositivo = staticmethod(scegli_dispositivo_audio)
 # piu' vecchia lascia il posto, cosi' l'ultimo messaggio si sente sempre.
 # Sta qui e non dentro la funzione perche' chi la cambia lo fa all'avvio,
 # prima di suonare: nascendo alla prima riproduzione si sarebbe vista
-# sovrascrivere senza accorgersene.
+# sovrascrivere senza accorgersene. Dal 12 settembre 2026 vale sul mixer
+# condiviso, quindi anche su cio' che vi suona Acusticator.
 CWzator.VOCI_MAX = 32
 # Dopo questo silenzio lo stream si chiude e la scheda torna libera; al
 # messaggio successivo riapre da solo. Tenerlo aperto non costa CPU, misurato
