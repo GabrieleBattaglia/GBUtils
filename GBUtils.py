@@ -3,11 +3,11 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V147 di sabato 12 settembre 2026
+	V148 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V8.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
-	CWzator V11.1.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Non ha più un mixer suo: usa quello condiviso con Acusticator, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Un messaggio generato a un'altra frequenza di campionamento viene riportato a quella dello stream invece di far riaprire lo stream, quindi cambiare velocità non zittisce più ciò che stava suonando. Verificato che il morse non cambi: punti e spazi della durata giusta a tutte le frequenze, e a 44100 hertz nemmeno un campione diverso. Fino alla V10.0 di domenica 6 settembre 2026, con la fase 1 del refactoring: dissolvenza accorciata invece che scartata sugli elementi corti, velocità fino a 120 wpm, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre, e scelta automatica dell'interfaccia audio più pronta Dalla V11.1.0 il trattino basso torna a fare la pausa dentro il messaggio, che dalla V10.0 aveva smesso di fare, e nasce il parametro pausa per chiederla in millesimi invece che in unità: il silenzio non entra nel calcolo della velocità effettiva, quindi una pausa non fa più scendere la velocità annunciata. Chiude la issue 15, nata dalla 10 di cwapu.
+	CWzator V11.2.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Dalla V11.2.0 c'è il Farnsworth vero, che chiude la issue 16: il parametro farnsworth vuole la velocità effettiva in parole al minuto, i caratteri restano a wpm con i pesi l, s e p intatti campione per campione, e ad allungarsi sono soltanto lo spazio fra lettere e quello fra parole. Le due spaziature si calcolano una volta sola sulla parola campione PARIS e non dipendono da cosa il messaggio contiene, che è il punto del metodo: è la formula ARRL, scritta in modo da non presupporre i pesi standard, e con quelli standard ne dà gli stessi numeri a sette millesimi di per cento. Con il Farnsworth acceso la velocità restituita è l'effettiva, misurata su quanto durerebbe PARIS con i segmenti generati, quindi la stessa su qualunque testo; quella del singolo testo resta leggibile in wpm_del_messaggio del PlaybackHandle, accanto a wpm_caratteri, wpm_effettiva e farnsworth. Senza il parametro non cambia un campione, verificato su 240 combinazioni di pesi, messaggi e velocità. Non ha più un mixer suo: usa quello condiviso con Acusticator, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Un messaggio generato a un'altra frequenza di campionamento viene riportato a quella dello stream invece di far riaprire lo stream, quindi cambiare velocità non zittisce più ciò che stava suonando. Verificato che il morse non cambi: punti e spazi della durata giusta a tutte le frequenze, e a 44100 hertz nemmeno un campione diverso. Fino alla V10.0 di domenica 6 settembre 2026, con la fase 1 del refactoring: dissolvenza accorciata invece che scartata sugli elementi corti, velocità fino a 120 wpm, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre, e scelta automatica dell'interfaccia audio più pronta Dalla V11.1.0 il trattino basso torna a fare la pausa dentro il messaggio, che dalla V10.0 aveva smesso di fare, e nasce il parametro pausa per chiederla in millesimi invece che in unità: il silenzio non entra nel calcolo della velocità effettiva, quindi una pausa non fa più scendere la velocità annunciata. Chiude la issue 15, nata dalla 10 di cwapu.
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). La lingua dell'utente in due o tre lettere, senza il paese, presa dalle variabili d'ambiente, dall'API di Windows o dal locale, e None quando non si capisce. Era privata e la usavano solo polipo e Donazione; diventa pubblica con la issue 32, perché Tornello e Terminal Beast se la ricavavano con locale.getdefaultlocale, che è deprecata e sparisce con Python 3.15
 	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Il contesto con cui urllib verifica i certificati: archivio di sistema più certifi, perché ognuno dei due conosce radici che l'altro non ha. Nasce dalla issue 40 di Orologic
@@ -1281,9 +1281,9 @@ def _mixer_condiviso():
 		_MIXER = _MixerCondiviso()
 	return _MIXER
 
-def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None):
+def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None, farnsworth=None):
 	"""
-	CWzator V11.1.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
+	CWzator V11.2.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -1395,12 +1395,58 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			sola, aggiungere una pausa farebbe scendere la velocità pur restando il suono
 			identico.
 			Lo spazio semplice non cambia: resta il separatore di parole di sempre.
+		farnsworth (int|float|None): Velocità effettiva in parole al minuto, cioè quella
+			d'insieme del messaggio (default None, cioè niente Farnsworth e tutto come prima).
+			Il metodo di Russell Farnsworth serve a imparare il Morse senza dover reimparare i
+			caratteri quando si accelera: i caratteri si trasmettono fin da subito alla velocità
+			finale, così l'orecchio impara il loro suono vero, quello compatto, e il tempo per
+			riconoscerli si guadagna lasciando molto più silenzio fra una lettera e l'altra.
+			Quindi wpm è la velocità dei caratteri e farnsworth quella d'insieme, e la seconda
+			è sempre minore o uguale alla prima. È il modo in cui il Farnsworth si esprime
+			dappertutto: due numeri, per esempio 18 wpm di carattere e 5 effettivi.
+			Cosa non tocca: dentro il carattere non cambia niente. Punto, linea e spazio fra
+			simboli restano esattamente quelli che i pesi p, l e s hanno deciso, e la forma
+			della singola lettera è la stessa campione per campione, con e senza Farnsworth.
+			Ad allungarsi sono soltanto lo spazio fra lettere e quello fra parole.
+			Come lo ottiene: le due spaziature si calcolano una volta sola, sulla parola
+			campione PARIS con il suo spazio finale, e non dipendono da cosa il messaggio
+			contiene. È il punto del metodo, perché chi impara deve sentire sempre la stessa
+			distanza fra le lettere, che gli si mandino delle e o degli zeri.
+			Delle cinquanta unità di PARIS, trentuno stanno dentro i caratteri, cioè dieci
+			punti, quattro linee e nove spazi fra simboli, e diciannove stanno nelle spaziature,
+			cioè tre per ognuno dei quattro spazi fra lettere e sette per quello fra parole.
+			Il tempo dei caratteri lo decidono i pesi; quanto manca per far durare PARIS 1,2 per
+			cinquanta diviso farnsworth si divide in quelle diciannove quote.
+			È la formula ARRL, scritta in modo da non presupporre i pesi standard: con l 30,
+			s 50 e p 50 dà esattamente i suoi stessi numeri, e con pesi qualsiasi continua a
+			valere perché il tempo dei caratteri lo misura invece di darlo per noto.
+			Un messaggio di un carattere solo non ha spaziature: lì il Farnsworth non ha dove
+			agire e non cambia niente, senza che questo sia un errore.
+			Quando pausa è None, la pausa del trattino basso vale uno spazio fra parole, quindi
+			segue anche lei l'allargamento; con pausa a un numero resta quei millesimi esatti.
+			Errori: farnsworth maggiore di wpm non viene suonato, perché il Farnsworth rallenta
+			e non accelera. Non viene suonato nemmeno quando il peso s ha già allargato le
+			spaziature oltre quello che la velocità effettiva chiesta consentirebbe, perché per
+			accontentarla bisognerebbe stringerle sotto il peso: in quel caso il messaggio
+			d'errore dice fin dove si può arrivare con quei pesi.
 	Returns:
 		dict: Se get_map=True, restituisce una copia del dizionario della mappa Morse.
 		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm, la velocità effettiva in wpm.
 			rwpm si ricava dalla durata davvero prodotta secondo la definizione PARIS, cioè
 			velocità uguale 1,2 per le unità standard del messaggio diviso la durata in secondi.
 			Con i pesi standard, cioè l 30, s 50 e p 50, coincide con wpm.
+			Con farnsworth è la velocità effettiva, cioè quella d'insieme, e non quella dei
+			caratteri. Lì rwpm cambia significato per una ragione precisa: le spaziature
+			del Farnsworth non sono proporzionali al testo, quindi la velocità di questo
+			testo non è più la velocità, e lo stesso settaggio darebbe 4,60 wpm su un
+			messaggio di e e 12,39 su uno di zeri. Si torna allora alla definizione, che
+			nel Morse è sempre stata la parola PARIS: rwpm è quanto PARIS durerebbe con i
+			segmenti davvero generati, e coincide quindi con farnsworth a meno della
+			quantizzazione in campioni.
+			Il PlaybackHandle espone tutte e quattro le grandezze: wpm_caratteri, cioè wpm;
+			wpm_effettiva, cioè rwpm; farnsworth, cioè il valore chiesto; e
+			wpm_del_messaggio, cioè 1,2 per le unità diviso la durata di questo testo, che
+			senza Farnsworth coincide con rwpm e con il Farnsworth no.
 			Il PlaybackHandle espone play, stop, wait_done(timeout=None) e l'array audio_data.
 			Finché suona resta nel registro delle riproduzioni attive, quindi non serve
 			conservarne il riferimento per impedire che il garbage collector lo distrugga.
@@ -1502,6 +1548,13 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			return _errore(f"{name} ({val}) sotto il minimo [{lo}].")
 		if hi is not None and val > hi:
 			return _errore(f"{name} ({val}) sopra il massimo [{hi}].")
+	if farnsworth is not None:
+		if not isinstance(farnsworth, (int, float)) or isinstance(farnsworth, bool):
+			return _errore(f"farnsworth ({farnsworth}) tipo non valido.")
+		if farnsworth < 5 or farnsworth > 120:
+			return _errore(f"farnsworth ({farnsworth}) fuori intervallo [5, 120].")
+		if farnsworth > wpm:
+			return _errore(f"farnsworth ({farnsworth}) non puo' superare wpm ({wpm}): il Farnsworth allarga le spaziature, quindi la velocita' effettiva sta sotto a quella dei caratteri, mai sopra.")
 	if not (isinstance(wv, int) and wv in (1, 2, 3, 4)):
 		return _errore(f"wv ({wv}) non valido [1-4].")
 	if fade_mode not in ("fisso", "proporzionale", "compensato"):
@@ -1524,6 +1577,41 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 	intra_gap = T * (s / 50.0)
 	letter_gap = 3.0 * T * (s / 50.0)
 	word_gap = 7.0 * T * (s / 50.0)
+	# --- Farnsworth: caratteri veloci, spaziature larghe ---
+	# I caratteri suonano gia' alla velocita' a cui si vuole arrivare, cosi'
+	# l'orecchio impara il loro suono vero, e il tempo per riconoscerli si
+	# guadagna dilatando soltanto lo spazio fra lettere e fra parole. Dentro il
+	# carattere non cambia niente: punto, linea e spazio fra simboli restano
+	# quelli che i pesi p, l e s hanno deciso, e la forma della lettera e' la
+	# stessa con e senza Farnsworth.
+	# Le due spaziature si calcolano una volta sola, sulla parola campione, e
+	# non dipendono da cosa il messaggio contiene: e' il punto del metodo.
+	# Calcolarle sul messaggio, come si e' provato prima di arrivare qui, le
+	# faceva variare da 1163 a 4470 millesimi con le stesse impostazioni, a
+	# seconda che si mandassero delle e o degli zeri; chi impara deve invece
+	# sentire sempre la stessa distanza fra le lettere.
+	# La parola campione e' PARIS con il suo spazio finale, che vale cinquanta
+	# unita': trentuno stanno dentro i caratteri, cioe' dieci punti, quattro
+	# linee e nove spazi fra simboli, e diciannove stanno nelle spaziature,
+	# cioe' tre per ognuno dei quattro spazi fra lettere e sette per quello fra
+	# parole. Il tempo dei caratteri lo decidono i pesi; il resto, cioe' quanto
+	# manca per far durare la parola campione 1,2 per cinquanta diviso la
+	# velocita' effettiva, si divide in diciannove quote. E' la formula ARRL,
+	# scritta in modo da non presupporre i pesi standard: con l 30, s 50 e p 50
+	# da' esattamente i suoi stessi numeri, e con pesi qualsiasi continua a
+	# valere perche' il tempo dei caratteri lo misura invece di darlo per noto.
+	if farnsworth is not None:
+		caratteri_paris = 10.0 * dot_duration + 4.0 * dash_duration + 9.0 * intra_gap
+		quota = (1.2 * 50.0 / float(farnsworth) - caratteri_paris) / 19.0
+		# Una quota piu' corta di uno spazio fra simboli vorrebbe dire stringere
+		# le spaziature sotto quello che i pesi hanno deciso, cioe' mettere le
+		# mani su s. Non si fa: si dice fin dove si puo' arrivare e decide chi
+		# ha chiamato.
+		if quota < intra_gap * (1.0 - 1e-9):
+			massima = 60.0 / (caratteri_paris + 19.0 * intra_gap)
+			return _errore(f"farnsworth ({farnsworth}) non raggiungibile: con l {l}, s {s} e p {p} la velocita' effettiva non puo' superare {massima:.2f} wpm, e per arrivarci bisognerebbe stringere le spaziature sotto i pesi.")
+		letter_gap = 3.0 * quota
+		word_gap = 7.0 * quota
 	# --- Dissolvenza: quanto dura e quanto costa ---
 	# Una rampa lunga n toglie all'elemento meta' di se' per lato, cioe' in
 	# tutto quanto dura la rampa stessa. Vale per la lineare e vale identico
@@ -1684,16 +1772,34 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 	# codice vuoto in coda a una parola, e i messaggi di tre caratteri o meno,
 	# per i quali il calcolo veniva saltato del tutto e si restituiva la
 	# velocita' nominale anche quando i pesi erano tutt'altro.
-	if (l, s, p) == (30, 50, 50):
-		# Pesi standard: la velocita' e' quella chiesta, e l'unico scarto e' la
-		# quantizzazione in campioni, sotto il decimo di per cento.
-		rwpm = wpm
+	if farnsworth is None and (l, s, p) == (30, 50, 50):
+		# Pesi standard e niente Farnsworth: la velocita' e' quella chiesta, e
+		# l'unico scarto e' la quantizzazione in campioni, sotto il decimo di
+		# per cento.
+		rwpm = wpm_del_messaggio = wpm
 	else:
 		durata = (total_samples - silence_samples_end - campioni_di_pausa) / float(fs) if total_samples > 0 else 0.0
 		if standard_units > 0 and durata > 0:
-			rwpm = 1.2 * standard_units / durata
+			wpm_del_messaggio = 1.2 * standard_units / durata
 		else:
-			rwpm = wpm
+			wpm_del_messaggio = wpm
+		rwpm = wpm_del_messaggio
+	if farnsworth is not None:
+		# Con il Farnsworth le spaziature non sono piu' proporzionali al testo,
+		# e allora la velocita' di questo testo non e' piu' la velocita': lo
+		# stesso messaggio a venti caratteri e otto effettivi darebbe 4,60 wpm
+		# fatto di e e 12,39 fatto di zeri. La velocita' nel Morse e' per
+		# definizione quella della parola PARIS, ed e' quella che si misura
+		# qui, sui campioni dei segmenti davvero generati: dieci punti, quattro
+		# linee, nove spazi fra simboli, quattro spazi fra lettere e uno fra
+		# parole. Non e' il parametro ricopiato, e' cio' che la parola campione
+		# durerebbe davvero se la si mandasse con questi segmenti.
+		# La velocita' di questo singolo testo non si perde: sta in
+		# wpm_del_messaggio del PlaybackHandle.
+		campioni_paris = (10 * seg_dot.size + 4 * seg_dash.size + 9 * seg_intra.size
+			+ 4 * seg_letter.size + seg_word.size)
+		if campioni_paris > 0:
+			rwpm = 1.2 * 50.0 * float(fs) / campioni_paris
 	# --- Riproduzione, costruita una volta sola ---
 	# Il mixer non e' piu' suo: dalla tappa 3 della issue 8, il 12 settembre
 	# 2026, CWzator usa quello condiviso con Acusticator. Qui resta soltanto
@@ -1734,6 +1840,15 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				# se qualcosa e' andato storto, e dove e' finito il file WAV.
 				self.errore = None
 				self.file_salvato = None
+				# Le velocita' del messaggio. Quella restituita da CWzator e'
+				# sempre l'effettiva; qui si rileggono anche quella dei
+				# caratteri, che con il Farnsworth e' un'altra cosa, il valore
+				# chiesto, e la velocita' di questo singolo testo, che con il
+				# Farnsworth non coincide piu' con l'effettiva.
+				self.wpm_caratteri = None
+				self.wpm_effettiva = None
+				self.wpm_del_messaggio = None
+				self.farnsworth = None
 				self.is_playing = threading.Event()
 				# Parte gia' concluso: chi chiede sync senza aver mai avviato
 				# la riproduzione, per esempio con play a falso, non deve
@@ -1810,6 +1925,10 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 	except ValueError as e:
 		return _errore(str(e))
 	play_obj = PlaybackHandle(audio, fs, BLOCK_SIZE, pan, device, nome_api)
+	play_obj.wpm_caratteri = wpm
+	play_obj.wpm_effettiva = rwpm
+	play_obj.wpm_del_messaggio = wpm_del_messaggio
+	play_obj.farnsworth = farnsworth
 	# Il registro delle riproduzioni attive, che play riempie e il thread
 	# svuota, tiene vivo l'oggetto finche' suona e serve alla chiusura
 	# ordinata. Sostituisce _last_play_obj, che teneva in memoria l'ultimo

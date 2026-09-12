@@ -1,0 +1,25 @@
+Esiti del collaudo d'ascolto del mixer
+Scritti da collaudo_mixer.py, che li aggiunge man mano.
+
+PROVA: 1, la latenza dichiarata
+Data: 2026-09-12 12:36
+Commento di Gabriele: Nessuna differenza percepita.
+
+PROVA: 2, la latenza alla cieca
+Data: 2026-09-12 12:38
+Misura: 7 giuste su 10. Dettaglio, era/detto/esito: 1:corto/corto/ok 2:corto/corto/ok 3:lungo/corto/no 4:lungo/corto/no 5:corto/corto/ok 6:corto/corto/ok 7:lungo/corto/no 8:corto/corto/ok 9:corto/corto/ok 10:corto/corto/ok
+Commento di Gabriele: Mi parevano tutte buone, cioè corte. Però hai ragione, andrebbe rifatta. Magari nel passaggio 2, togli quelle che hanno già detto qualcosa di utile e questa la lasci che la rifaccio.
+
+PROVA: 3, i buchi sotto carico
+Data: 2026-09-12 12:40
+Commento di Gabriele: Questa è decisiva. Nelle coppie le prime note erano un disastro, soprattutto nella loro parte iniziale mentre alla fine erano pulite. Le seconde note delle coppie tutte assolutamente perfette.
+
+PROVA: 2, la latenza alla cieca
+Data: 2026-09-12 12:46
+Misura: 9 giuste su 10, corte riconosciute 5 su 5, lunghe 4 su 5. Dettaglio, era/detto/esito: 1:lungo/lungo/ok 2:corto/corto/ok 3:lungo/corto/no 4:corto/corto/ok 5:lungo/lungo/ok 6:corto/corto/ok 7:corto/corto/ok 8:lungo/lungo/ok 9:lungo/lungo/ok 10:corto/corto/ok
+Commento di Gabriele: Sono differenze veramente piccolissime. Diciamo che lo sento davvero pochissimo. Potremmo strutturare la prova in maniera diversa, se è possibile. Trasformiamo il ritardo da misurare in un silenzio fra 2 note. Poi chiedimi quale silenzio è lungo e quale è corto. Forse così è più facile.
+
+PROVA: 4, il ritardo come silenzio fra due note
+Data: 2026-09-12 13:53
+Misura: 9 giuste su 10, corte riconosciute 4 su 5, lunghe 5 su 5. Dettaglio, era/detto/esito: 1:corto/corto/ok 2:corto/corto/ok 3:corto/corto/ok 4:corto/corto/ok 5:lungo/lungo/ok 6:lungo/lungo/ok 7:lungo/lungo/ok 8:lungo/lungo/ok 9:lungo/lungo/ok 10:corto/lungo/no
+Commento di Gabriele: Questa volta è più facile distinguere, ne ho sbagliata 1 ma avrei potuto prendere tutte. Puoi considerarle tutte giuste

@@ -1,0 +1,18 @@
+Esiti del collaudo d'ascolto di Acusticator col mixer condiviso
+Scritti da collaudo_acusticator.py, che li aggiunge man mano.
+
+GRUPPO: i suoni di batnav
+Data: 2026-09-12 15:01
+Commento di Gabriele: perfetto
+
+GRUPPO: i suoni di Terminal Beast e dei giochi
+Data: 2026-09-12 15:02
+Commento di Gabriele: tutti identici
+
+GRUPPO: i suoni lunghi, dove un buco si sente
+Data: 2026-09-12 15:03
+Commento di Gabriele: perfetto ma con un piccolissimo click ad inizio e fine, però identico in entrambe i suoni.
+
+GRUPPO: la raffica di suoni ravvicinati
+Data: 2026-09-12 15:03
+Commento di Gabriele: Va tutto bene, sono identici.

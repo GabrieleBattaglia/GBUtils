@@ -15,6 +15,16 @@ Le prove che chiedono velocita' oltre la soglia di lettura si ascoltano
 rallentate: l'audio e' generato alla velocita' vera e riprodotto a una
 frequenza di campionamento ridotta, quindi le proporzioni fra punto, linea
 e spazi restano esatte e cambia soltanto l'altezza della nota.
+
+Stato al 12 settembre 2026: le diciassette prove nate dal refactoring di
+fase 1 sono state fatte tutte, in sei sessioni, e sono tutte superate; il
+registro degli esiti e' stato cancellato perche' aveva esaurito il suo
+compito. Lo strumento pero' resta, e servira' di nuovo: quando si tocchera'
+Acusticator e quando si estrarra' il mixer condiviso, le prove sul suono si
+rifanno da capo. Le prove si riconoscono dal titolo e non dal numero, quindi
+aggiungerne una in mezzo non fa saltare quelle gia' fatte. Questa nota
+arriva da collaudo.txt, che il 12 settembre 2026 si e' svuotato e, come
+prescrive il metodo, e' stato cancellato.
 """
 
 import os
