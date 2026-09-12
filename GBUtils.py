@@ -3,9 +3,9 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V140 di sabato 12 settembre 2026
+	V141 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
-	Acu_Maker V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
+	Acu_Maker V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V7.3.0 di venerdì 4 settembre 2026. Oggetto chiamabile, collezione dei suoni, mixer a 16 voci e rumore a quattro colori con banda che scorre. Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	CWzator V10.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, modalità auto). Fase 1 del refactoring conclusa, motore di riproduzione rifatto. Dissolvenza accorciata invece che scartata sugli elementi corti, forma e rapporto della dissolvenza scegliibili, velocità fino a 120 wpm, chiusura ordinata delle riproduzioni, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre e mixer stereo a trentadue voci con stream sempre alimentato, che toglie lo schiocco e permette il pile-up con le stazioni distribuite fra i due altoparlanti, errori riferiti a chi chiama invece che stampati, scelta automatica dell'interfaccia audio piu' pronta fra quelle che puntano al dispositivo scelto nel sistema, e via il vecchio modo di chiedere la mappa con msg uguale a meno uno
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). La lingua dell'utente in due o tre lettere, senza il paese, presa dalle variabili d'ambiente, dall'API di Windows o dal locale, e None quando non si capisce. Era privata e la usavano solo polipo e Donazione; diventa pubblica con la issue 32, perché Tornello e Terminal Beast se la ricavavano con locale.getdefaultlocale, che è deprecata e sparisce con Python 3.15
@@ -25,7 +25,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "140"
+VERSION = "141"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None

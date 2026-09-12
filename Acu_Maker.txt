@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.6.0)
+Manuale Utente: Acu_Maker (v1.6.1)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:

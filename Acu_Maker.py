@@ -1,17 +1,17 @@
-import sys
 import json
 import math
 import os
 import re
+import sys
 import textwrap
 
 # Aggiungo la cartella corrente al path per importare GBUtils
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from GBUtils import menu, Acusticator, parse_pan_parts, dgt
+from GBUtils import Acusticator, dgt, menu, parse_pan_parts
 
-VERSION = "1.6.0" # Doppioni rifiutati, nome proposto, statistiche in uscita
+VERSION = "1.6.1" # I tredici rilievi di ruff, senza cambiare cio' che il programma fa
 APP_NAME = "Acu_Maker"
-APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)"
+APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)"
 RELEASE_DATE = "5 settembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
@@ -328,8 +328,8 @@ def get_keypress():
         return ch
     else:
         import select
-        import tty
         import termios
+        import tty
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
@@ -417,8 +417,7 @@ def transpose_note(note_str, semitones):
     midi_num = 12 + semitone + 12 * octave
     new_midi = midi_num + semitones
     
-    if new_midi < 0: new_midi = 0
-    if new_midi > 127: new_midi = 127
+    new_midi = max(0, min(127, new_midi))
     
     new_octave = (new_midi // 12) - 1
     new_note = NOMI_NOTE[new_midi % 12]
@@ -449,11 +448,11 @@ class EditorState:
 def pan_to_user(val):
     if is_portamento(val):
         parts = parse_pan_parts(val)
-        p1 = int(round(float(parts[0]) * 100))
-        p2 = int(round(float(parts[1]) * 100))
+        p1 = round(float(parts[0]) * 100)
+        p2 = round(float(parts[1]) * 100)
         return f"{p1}.{p2}"
     else:
-        return str(int(round(float(val) * 100)))
+        return str(round(float(val) * 100))
 
 def user_to_pan(val_str):
     val_str = str(val_str).strip()
@@ -471,11 +470,11 @@ def user_to_pan(val_str):
 def vol_to_user(val):
     if is_portamento(val):
         parts = parse_pan_parts(val)
-        v1 = int(round((DEFAULT_VOL + float(parts[0])) * 100))
-        v2 = int(round((DEFAULT_VOL + float(parts[1])) * 100))
+        v1 = round((DEFAULT_VOL + float(parts[0])) * 100)
+        v2 = round((DEFAULT_VOL + float(parts[1])) * 100)
         return f"{v1}.{v2}"
     else:
-        v = int(round((DEFAULT_VOL + float(val)) * 100))
+        v = round((DEFAULT_VOL + float(val)) * 100)
         return str(max(0, min(100, v)))
 
 def user_to_vol(val_str):
@@ -865,10 +864,9 @@ def edit_mode(db, preset_name):
                       "farla scorrere", end="", flush=True)
             continue
         elif key in ('1', '2', '3'):
-            if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
-                if is_portamento(
-                        state.preset['score'][state.focus_idx][state.focus_param]):
-                    state.port_focus = int(key)
+            if (state.focus_type == 'score' and state.focus_param in (0, 2, 3)
+                    and is_portamento(state.preset['score'][state.focus_idx][state.focus_param])):
+                state.port_focus = int(key)
         elif key == '4':
             if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
                 param_idx = state.focus_param
@@ -1292,7 +1290,7 @@ def main():
                 print("Nessun preset trovato corrispondente alla ricerca.")
                 continue
             elif len(risultati) == 1:
-                scelta = list(risultati.keys())[0]
+                scelta = next(iter(risultati))
                 print(f"\nTrovato 1 preset: '{scelta}'")
             else:
                 print(f"\nTrovati {len(risultati)} preset. Scegli uno (Esc/Invio per annullare):")
