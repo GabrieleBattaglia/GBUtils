@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V146 di sabato 12 settembre 2026
+	V147 di sabato 12 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V8.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
@@ -26,7 +26,7 @@ Lista utilità contenute in questo pacchetto
 	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
 '''
-VERSION = "146"
+VERSION = "147"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1369,7 +1369,20 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			WAV restano monofonici.
 			Nota: Acusticator per la stessa cosa usa la scala da -1 a +1. La differenza è voluta.
 		pausa (int|float|None): Quanto dura il silenzio che il trattino basso produce dentro
-			il messaggio. None (default) vale uno spazio fra parole alla velocità corrente,
+			il messaggio. Attenzione a cosa fa e cosa non fa: questo parametro decide la
+			durata, non la posizione. Dove cade la pausa lo dice il messaggio, mettendoci un
+			trattino basso; senza trattini bassi, questo parametro non produce alcun
+			silenzio, né all'inizio, né alla fine, né fra le lettere.
+			Esempi, a 25 parole al minuto:
+				CWzator("ciao", pausa=500) dura quanto CWzator("ciao"): nessuna pausa.
+				CWzator("ciao _ mondo", pausa=500) mette mezzo secondo fra le due parole,
+					che si somma allo spazio fra parole di 333 millesimi già previsto dal
+					morse, per un silenzio complessivo di 833.
+				CWzator("ciao mondo _", pausa=500) la mette in coda.
+				CWzator("_ ciao mondo", pausa=500) la mette davanti.
+				CWzator("ciao _ _ mondo", pausa=300) ne mette due di fila, cioè 600
+					millesimi più lo spazio fra parole.
+			None (default) vale uno spazio fra parole alla velocità corrente,
 			cioè sette unità scalate dal peso s: è ciò che il trattino basso faceva fino alla
 			V9.1 e che dalla V10.0 aveva smesso di fare, perché il cambiamento che ha reso
 			esatta la velocità effettiva lo aveva reso muto. Un numero vale quei millesimi di
