@@ -34,6 +34,13 @@ FS = 44100
 BLOCCO_PICCOLO = 256
 BLOCCO_GRANDE = 2048
 FILI_DI_CARICO = 4
+# I due ritardi messi a confronto, in millesimi di secondo: quello di oggi,
+# con il blocco da 256 campioni, e quello del mixer nuovo con 1024. Il blocco
+# minimo che regge e' 768, cioe' diciassette millesimi, misurato anche con il
+# triplo del carico; 1024 e' il passo successivo e da' il margine per i
+# carichi che non sono stati provati.
+SILENZIO_CORTO_MS = 6
+SILENZIO_LUNGO_MS = 23
 
 def riga(testo, larghezza=40):
 	"""Il testo in righe da quaranta caratteri, per la lettura sul braille."""
@@ -223,19 +230,83 @@ PROVE = {
 	"1": ("la latenza dichiarata", None),
 	"2": ("la latenza alla cieca", None),
 	"3": ("i buchi sotto carico", None),
+	"4": ("il ritardo come silenzio fra due note", None),
 }
+
+
+def coppia_di_note(silenzio_ms, durata_nota=0.1, frequenza=880.0):
+	"""Due bip separati da un silenzio della lunghezza voluta."""
+	nota = suono_breve(durata_nota, frequenza)
+	quiete = np.zeros((int(silenzio_ms / 1000 * FS), 2), dtype=np.float32)
+	return np.vstack((nota, quiete, nota))
+
+def prova_silenzio_alla_cieca():
+	riga("Prova 4, il ritardo come silenzio. La proposta e' tua: invece di premere un tasto e aspettare il suono, senti due note separate da un silenzio, e dici se il silenzio era corto o lungo. Il corto vale sei millesimi, cioe' il ritardo di oggi, e il lungo ventitre', che e' quello del mixer nuovo: sono meno della meta' della differenza di prima, perche' le misure hanno detto che non serve arrivare a quarantasei. Messi in fila fra due note il confronto e' piu' facile che con il tasto.")
+	print()
+	riga("Prima tre coppie dichiarate, per farti l'orecchio: corto, lungo, corto. Poi dieci alla cieca, cinque per parte mescolate.")
+	print()
+	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
+		return
+	for etichetta, silenzio in (("corto", SILENZIO_CORTO_MS), ("lungo", SILENZIO_LUNGO_MS), ("corto", SILENZIO_CORTO_MS)):
+		riga(f"Silenzio {etichetta}.")
+		riproduci(coppia_di_note(silenzio), BLOCCO_GRANDE)
+		time.sleep(0.8)
+	print()
+	riga("Ora le dieci alla cieca. Premi c per corto, l per lungo. Se vuoi risentire la coppia prima di rispondere, premi r.")
+	print()
+	if not enter_escape("\rInvio quando sei pronto, Escape per saltare\r"):
+		return
+	ordine = [True] * 5 + [False] * 5
+	random.Random().shuffle(ordine)
+	risposte = []
+	for numero, corto in enumerate(ordine, 1):
+		riga(f"Coppia {numero} di 10.")
+		while True:
+			riproduci(coppia_di_note(SILENZIO_CORTO_MS if corto else SILENZIO_LUNGO_MS), BLOCCO_GRANDE)
+			risposta = key("\rCorto, lungo o risenti? c l r\r")
+			print()
+			if risposta.lower() in ("c", "l"):
+				break
+		indovinato = (risposta.lower() == "c") == corto
+		risposte.append((corto, risposta.lower(), indovinato))
+		time.sleep(0.4)
+	giusti = sum(1 for _, _, i in risposte if i)
+	corte_giuste = sum(1 for c, r, _ in risposte if c and r == "c")
+	lunghe_giuste = sum(1 for c, r, _ in risposte if not c and r == "l")
+	dette_corte = sum(1 for _, r, _ in risposte if r == "c")
+	print()
+	riga(f"Risultato: {giusti} giuste su 10.")
+	riga(f"Corte riconosciute {corte_giuste} su 5, lunghe riconosciute {lunghe_giuste} su 5.")
+	if dette_corte in (0, 10):
+		riga("Hai risposto sempre allo stesso modo, quindi non hai distinto niente.")
+	elif corte_giuste + lunghe_giuste >= 9:
+		riga("Li distingui anche cosi': diciassette millesimi di silenzio sono dentro la tua risoluzione, e allora conviene scendere al blocco piu' piccolo che regge.")
+	elif corte_giuste >= 4 and lunghe_giuste >= 4:
+		riga("Li distingui quasi sempre.")
+	else:
+		riga("Sei nel caso: nemmeno nel confronto diretto la differenza si coglie.")
+	print()
+	dettaglio = []
+	for numero, (corto, risposta, indovinato) in enumerate(risposte, 1):
+		print(f"{numero}: era {'corto' if corto else 'lungo'}, hai detto {'corto' if risposta == 'c' else 'lungo'}, {'giusta' if indovinato else 'sbagliata'}")
+		dettaglio.append(f"{numero}:{'corto' if corto else 'lungo'}/{'corto' if risposta == 'c' else 'lungo'}/{'ok' if indovinato else 'no'}")
+	print()
+	chiedi_commento("4, il ritardo come silenzio fra due note",
+		f"{giusti} giuste su 10, corte riconosciute {corte_giuste} su 5, lunghe {lunghe_giuste} su 5. "
+		f"Dettaglio, era/detto/esito: " + " ".join(dettaglio))
 
 def main():
 	PROVE["1"] = (PROVE["1"][0], prova_latenza_dichiarata)
 	PROVE["2"] = (PROVE["2"][0], prova_latenza_alla_cieca)
 	PROVE["3"] = (PROVE["3"][0], prova_buchi)
+	PROVE["4"] = (PROVE["4"][0], prova_silenzio_alla_cieca)
 	riga("Collaudo d'ascolto del mixer.")
 	riga("Tre prove, spiegate una per una. Nessuna parte prima del tuo Invio.")
 	print()
 	for numero, (titolo, _) in PROVE.items():
 		riga(f"{numero}: {titolo}")
 	print()
-	riga("Scegli quali fare: i numeri attaccati, per esempio 13 per la prima e la terza, oppure Invio per tutte.")
+	riga("Scegli quali fare: i numeri attaccati, per esempio 14 per la prima e la quarta, oppure Invio per tutte.")
 	scelta = dgt("\rQuali prove\r", kind="s", smin=0, smax=10).strip()
 	volute = [n for n in PROVE if n in scelta] if scelta else list(PROVE)
 	if not volute:
