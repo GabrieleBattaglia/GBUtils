@@ -1,0 +1,18 @@
+Esiti del collaudo d'ascolto del tuono che distorce, issue 23
+Scritti da collaudo_tuono.py, che li aggiunge man mano.
+
+GRUPPO: la via del volume, che la issue proponeva
+Data: 2026-09-13 12:16
+Commento di Gabriele: Stranamente, cambiare il volume non influisce minimamente sulla distorsione. Tutto si abbassa ma la quantità di distorsione resta identica, solo più bassa in volume.
+
+GRUPPO: alzare il taglio basso
+Data: 2026-09-13 12:18
+Commento di Gabriele: I suoni vanno migliorando ma solo il 4 è quasi privo di distorsioni ed è accettabile e tutti restano comunque tuoni. Vorrei scegliere il 2 perchè più pieno e corposo ma ha ancora troppi clicks.
+
+GRUPPO: cambiare colore al rumore
+Data: 2026-09-13 12:19
+Commento di Gabriele: Il 3, quasi perfetto, nettamente migliore di tutti gli altri.
+
+GRUPPO: un ultimo confronto, il migliore contro l'originale
+Data: 2026-09-13 12:20
+Commento di Gabriele: In tutti i casi il secondo suono è migliore. Nella coppia 2 il secondo è quasi perfetto. Nelle coppie 1 e 3 il secondo è migliore ma ha ancora qualche clicks.

@@ -63,6 +63,38 @@ def main():
 		return 0
 	prima_del_collaudo = Acusticator.stato()["volume"]
 	Acusticator.setup(volume=VOL)
+	titolo = "la sfida fra i due finalisti"
+	if gruppo(titolo, 6, unita="ascolti"):
+		print("  Dall'ascolto del 13 settembre sono usciti due quasi perfetti che pero' non si erano mai")
+		print("  sentiti uno dopo l'altro: il rosa con il taglio a 100, vincitore del gruppo sul colore, e")
+		print("  il marrone con il taglio a 160, vincitore del confronto finale. Colpa mia: nel gruppo")
+		print("  finale avevo messo il rosa a banda piena invece di quello con il taglio.")
+		print()
+		print("  La misura li separa meno di quanto sembri. Il rosa a 100 comprime il 6,5 per cento dei")
+		print("  campioni e prima del limitatore arriva a 1,4 volte il tetto. Il marrone a 160 ne comprime")
+		print("  l'8, ma prima del limitatore arriva a 5,9 volte: schiaccia meno campioni, e li schiaccia")
+		print("  molto di piu'.")
+		print()
+		print("  Li senti quattro volte a coppie, due volte per verso, cosi' non e' la posizione a")
+		print("  decidere: stamattina il controllo ha mostrato che il secondo suono viene preferito anche")
+		print("  quando e' identico al primo.")
+		def ascolta_sfida():
+			tuono("40-900.40-260", etichetta="l'originale, per ricordarselo")
+			print()
+			print("  coppia 1: prima il rosa, poi il marrone")
+			tuono("100-900.100-260", kind=ROSA, etichetta="rosa con taglio a 100")
+			tuono("160-900.160-260", etichetta="marrone con taglio a 160")
+			print()
+			print("  coppia 2: prima il marrone, poi il rosa")
+			tuono("160-900.160-260", etichetta="marrone con taglio a 160")
+			tuono("100-900.100-260", kind=ROSA, etichetta="rosa con taglio a 100")
+			print()
+		ascolta_sfida()
+		esiti.esito(titolo, ascolta_sfida,
+					"  La domanda: quale dei due tieni, il rosa o il marrone? Scrivilo con c e lo applico.")
+	print("I quattro gruppi che seguono sono quelli di prima, tenuti per il registro.")
+	print("Se hai gia' deciso, Escape li salta uno per uno.")
+	print()
 	titolo = "la via del volume, che la issue proponeva"
 	if gruppo(titolo, 3, unita="ascolti"):
 		print("  La issue proponeva di abbassare lo scarto di volume del preset. Ma il volume si applica")
