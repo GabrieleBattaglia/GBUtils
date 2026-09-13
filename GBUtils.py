@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V150 di domenica 13 settembre 2026
+	V151 di domenica 13 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.7.0 di domenica 13 settembre 2026. La posizione d'ascolto: il tasto p imposta lo spostamento generale di panorama con cui il preset si sente, da -100 a 100 oppure due valori col punto come -100.100 per farlo scorrere, ed e' lo stesso spostamento che un programma ottiene con il parametro pan di Acusticator. Non tocca il preset, compare in coda alla riga di stato come p seguita dal valore, e ogni riproduzione ci passa; il tasto u lo unisce alle quartine e da li' e' del preset. Fino alla V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
-	Acusticator V8.1.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Dalla V8.1.0 il panorama si sposta da fuori, con il parametro pan di play, preset e dell'oggetto chiamabile, e chiude la issue 18: un numero fra -1 e 1, oppure una coppia come (-1, 1) che fa scorrere il suono da un lato all'altro lungo tutta la sua durata, con la stessa grammatica del panorama delle quartine. È uno spostamento e non una sostituzione: il panorama che il preset ha di suo resta e si stringe soltanto quanto serve a non uscire dai bordi, così volo_radente spostato a 0,6 vola da 0,2 a 1 invece di appiattirsi contro il bordo a metà volo. Sommare e tagliare, come la issue proponeva, avrebbe appiattito cinquantuno dei centocinque preset che si muovono. Con pan a zero non cambia un campione, verificato su 243 preset intonati, e sui 21 a rumore il panorama resta identico. Corretta anche un'ombra in preset, dove il panorama della quartina si chiamava come il parametro e lo copriva. Prima della V8.1.0, con la V8.0.0 Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
+	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Dalla V8.2.0 l'onda prosegue da dove era arrivata invece di ripartire da fase zero a ogni nota, e chiude la issue 34: fra due note contigue il segnale saltava dal valore a cui la prima era arrivata allo zero da cui la seconda cominciava, ed era il motore a inventare quel gradino dove nessuno lo aveva chiesto. La fase si porta avanti soltanto se la nota finisce con il suono ancora acceso: dopo una pausa, dopo un rumore o dopo un inviluppo che l'ha gia' spenta si riparte da zero, altrimenti la nota seguente comincerebbe a meta' onda dopo il silenzio. L'inviluppo non e' toccato, e non lo sara': un attacco a zero fa lo schiocco che chi lo sceglie si aspetta, e ammorbidirlo di nascosto vorrebbe dire riscrivere quello che l'autore del preset ha voluto. All'ascolto del 13 settembre le sirene, che erano il caso peggiore, sono risultate completamente guarite. Prima della V8.2.0, con la V8.1.0 Dalla V8.1.0 il panorama si sposta da fuori, con il parametro pan di play, preset e dell'oggetto chiamabile, e chiude la issue 18: un numero fra -1 e 1, oppure una coppia come (-1, 1) che fa scorrere il suono da un lato all'altro lungo tutta la sua durata, con la stessa grammatica del panorama delle quartine. È uno spostamento e non una sostituzione: il panorama che il preset ha di suo resta e si stringe soltanto quanto serve a non uscire dai bordi, così volo_radente spostato a 0,6 vola da 0,2 a 1 invece di appiattirsi contro il bordo a metà volo. Sommare e tagliare, come la issue proponeva, avrebbe appiattito cinquantuno dei centocinque preset che si muovono. Con pan a zero non cambia un campione, verificato su 243 preset intonati, e sui 21 a rumore il panorama resta identico. Corretta anche un'ombra in preset, dove il panorama della quartina si chiamava come il parametro e lo copriva. Prima della V8.1.0, con la V8.0.0 Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
 	CWzator V11.2.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Dalla V11.2.0 c'è il Farnsworth vero, che chiude la issue 16: il parametro farnsworth vuole la velocità effettiva in parole al minuto, i caratteri restano a wpm con i pesi l, s e p intatti campione per campione, e ad allungarsi sono soltanto lo spazio fra lettere e quello fra parole. Le due spaziature si calcolano una volta sola sulla parola campione PARIS e non dipendono da cosa il messaggio contiene, che è il punto del metodo: è la formula ARRL, scritta in modo da non presupporre i pesi standard, e con quelli standard ne dà gli stessi numeri a sette millesimi di per cento. Con il Farnsworth acceso la velocità restituita è l'effettiva, misurata su quanto durerebbe PARIS con i segmenti generati, quindi la stessa su qualunque testo; quella del singolo testo resta leggibile in wpm_del_messaggio del PlaybackHandle, accanto a wpm_caratteri, wpm_effettiva e farnsworth. Senza il parametro non cambia un campione, verificato su 240 combinazioni di pesi, messaggi e velocità. Non ha più un mixer suo: usa quello condiviso con Acusticator, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Un messaggio generato a un'altra frequenza di campionamento viene riportato a quella dello stream invece di far riaprire lo stream, quindi cambiare velocità non zittisce più ciò che stava suonando. Verificato che il morse non cambi: punti e spazi della durata giusta a tutte le frequenze, e a 44100 hertz nemmeno un campione diverso. Fino alla V10.0 di domenica 6 settembre 2026, con la fase 1 del refactoring: dissolvenza accorciata invece che scartata sugli elementi corti, velocità fino a 120 wpm, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre, e scelta automatica dell'interfaccia audio più pronta Dalla V11.1.0 il trattino basso torna a fare la pausa dentro il messaggio, che dalla V10.0 aveva smesso di fare, e nasce il parametro pausa per chiederla in millesimi invece che in unità: il silenzio non entra nel calcolo della velocità effettiva, quindi una pausa non fa più scendere la velocità annunciata. Chiude la issue 15, nata dalla 10 di cwapu.
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). La lingua dell'utente in due o tre lettere, senza il paese, presa dalle variabili d'ambiente, dall'API di Windows o dal locale, e None quando non si capisce. Era privata e la usavano solo polipo e Donazione; diventa pubblica con la issue 32, perché Tornello e Terminal Beast se la ricavavano con locale.getdefaultlocale, che è deprecata e sparisce con Python 3.15
 	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
@@ -3231,6 +3231,22 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	release_frac = r_pct / 100.0
 	segments = []
 	rumore = kind in _RUMORE_ESPONENTE
+	# La fase con cui comincia la nota seguente. Fino alla V8.1.0 ogni nota
+	# ripartiva da zero, e fra due note contigue il segnale saltava dal valore
+	# a cui la prima era arrivata allo zero da cui la seconda cominciava: e'
+	# il gradino che si sentiva come uno schiocco, presente in cinquantuno
+	# preset della collezione. Adesso l'onda prosegue da dove era arrivata, e
+	# la saldatura non si sente perche' non c'e' niente da sentire.
+	# Non e' una rampa nascosta e non tocca l'inviluppo: quello resta quello
+	# che l'autore del preset ha scritto, e un attacco a zero continua a fare
+	# lo schiocco che chi lo sceglie si aspetta. Qui si cura soltanto il
+	# gradino che il motore stesso creava dove nessuno lo aveva chiesto.
+	# La fase si porta avanti a una condizione sola: che la nota finisca con
+	# il suono ancora acceso. Se l'inviluppo l'ha gia' spenta, o se prima c'e'
+	# una pausa o un rumore, la nota seguente riparte da zero, altrimenti
+	# comincerebbe a meta' onda dopo il silenzio e il gradino lo creeremmo
+	# noi dove non c'era.
+	fase_portata = 0.0
 	for i in range(0, len(score), 4):
 		# La conversione della nota sta dentro il try insieme al resto della
 		# quartina: un nome di nota sbagliato deve far saltare quella quartina
@@ -3268,17 +3284,22 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 		
 		if freq is None: # Pausa
 			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
+			fase_portata = 0.0
 		else: # Nota, portamento o rumore
+			fase_dopo = 0.0
 			if rumore:
 				wave = _genera_rumore(kind, banda, total_note_samples, fs)
 			elif kind == 1:
 				if isinstance(freq, tuple):
 					f_start, f_end = freq
 					freq_array = np.linspace(f_start, f_end, total_note_samples, endpoint=False)
-					phase = 2.0 * np.pi * np.cumsum(freq_array.astype(np.float64) / fs)
+					passi = 2.0 * np.pi * freq_array.astype(np.float64) / fs
+					phase = fase_portata + np.cumsum(passi)
+					fase_dopo = phase[-1] + passi[-1]
 				else:
 					t = np.linspace(0, dur, total_note_samples, endpoint=False)
-					phase = 2.0 * np.pi * freq * t
+					phase = fase_portata + 2.0 * np.pi * freq * t
+					fase_dopo = fase_portata + 2.0 * np.pi * freq * total_note_samples / fs
 				wave = np.sin(phase).astype(np.float32)
 			else:
 				# PolyBLEP + Oversampling 8x con filtro Kaiser stretto per Synth-Grade Anti-Aliasing
@@ -3290,11 +3311,14 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 					f_start, f_end = freq
 					freq_array_ovs = np.linspace(f_start, f_end, total_ovs_samples, endpoint=False)
 					dt_ovs = freq_array_ovs / fs_ovs
-					phase_ovs = 2.0 * np.pi * np.cumsum(freq_array_ovs.astype(np.float64) / fs_ovs)
+					passi_ovs = 2.0 * np.pi * freq_array_ovs.astype(np.float64) / fs_ovs
+					phase_ovs = fase_portata + np.cumsum(passi_ovs)
+					fase_dopo = phase_ovs[-1] + passi_ovs[-1]
 				else:
 					dt_ovs = np.full(total_ovs_samples, freq / fs_ovs, dtype=np.float64)
 					t_ovs = np.linspace(0, dur, total_ovs_samples, endpoint=False)
-					phase_ovs = 2.0 * np.pi * freq * t_ovs
+					phase_ovs = fase_portata + 2.0 * np.pi * freq * t_ovs
+					fase_dopo = fase_portata + 2.0 * np.pi * freq * total_ovs_samples / fs_ovs
 				
 				t_phase = (phase_ovs / (2.0 * np.pi)) % 1.0
 				dt_ovs = np.clip(dt_ovs, 1e-8, 0.5)
@@ -3376,6 +3400,10 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 				right_gain = np.sin(pan_angle + np.pi / 4.0)
 			stereo_segment[:, 0] = wave * left_gain
 			stereo_segment[:, 1] = wave * right_gain
+			# Si porta avanti solo se qui il suono e' ancora acceso: se
+			# l'inviluppo l'ha spento, la nota seguente deve ripartire da zero
+			# come ha sempre fatto.
+			fase_portata = float(fase_dopo % (2.0 * np.pi)) if not rumore and float(envelope[-1]) > 1e-4 else 0.0
 		segments.append(stereo_segment)
 	if not segments: return None
 	full_signal_float = np.concatenate(segments, axis=0)
@@ -3383,7 +3411,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.1.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+    """V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 
     Motore audio e libreria dei suoni del parco software.
 

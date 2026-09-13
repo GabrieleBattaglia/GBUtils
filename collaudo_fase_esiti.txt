@@ -1,0 +1,18 @@
+Esiti del collaudo d'ascolto della continuita' di fase, issue 34
+Scritti da collaudo_fase.py, che li aggiunge man mano.
+
+GRUPPO: quelli che la misura dice guariti
+Data: 2026-09-13 11:44
+Commento di Gabriele: Sparito! ottimo lavoro.
+
+GRUPPO: quelli che la misura dice peggiorati
+Data: 2026-09-13 11:46
+Commento di Gabriele: Allora qui c'è una cosa strana. Le sirene, tutte quelle di questo gruppo sono completamente guarite: le seconde sono perfette. L'effetto invece che non è una sirena, mi pare il 3, è identico: ha gli stessi click uguali nelle 2 versioni.
+
+GRUPPO: un ultimo gruppo
+Data: 2026-09-13 11:48
+Commento di Gabriele: Qui capita che nelle coppie 1 e 2 non noto differenze. Nella coppia 3 il suono migliore è il secondo e nella 4 migliora il secondo
+
+GRUPPO: un ultimo gruppo
+Data: 2026-09-13 11:50
+Commento di Gabriele: Coppie 1 e 2, non noto differenze, la 3 migliora nel secondo suono e forse anche un pochino nella 4 ma differenza molto lieve. In generale, tutti buoni i suoni.

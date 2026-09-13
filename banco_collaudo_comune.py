@@ -41,6 +41,11 @@ def leggi(percorso):
 	with open(percorso, encoding="utf-8") as f:
 		return f.read()
 
+QUI = os.path.dirname(os.path.abspath(__file__))
+# Le date dei registri veri prima di cominciare: alla fine devono essere le
+# stesse, altrimenti il banco ha scritto dove non doveva.
+PRIMA = {n: os.path.getmtime(os.path.join(QUI, n)) for n in os.listdir(QUI) if n.endswith("_esiti.txt")}
+
 print("Banco del menu di fine gruppo. Nessun suono, nessuna tastiera, nessun file vero toccato.\n")
 
 with tempfile.TemporaryDirectory() as cartella:
@@ -101,10 +106,13 @@ with tempfile.TemporaryDirectory() as cartella:
 		prova(f"chiudendo con {tasti[-1]!r} restituisce {atteso}",
 			  esiti.esito("t", None, "") == atteso)
 
-	# 6. Il file dei collaudi veri non e' stato toccato.
-	qui = os.path.dirname(os.path.abspath(__file__))
-	sporcati = [n for n in os.listdir(qui) if n.endswith("_esiti.txt") and os.path.getmtime(os.path.join(qui, n)) > os.path.getmtime(__file__)]
-	prova("nessun registro vero e' stato scritto dal banco", not sporcati, sporcati)
+	# 6. I registri dei collaudi veri non sono stati toccati.
+	#    Si confrontano le date prese prima di cominciare, non quella del
+	#    banco: un collaudo fatto ieri ha comunque una data piu' recente del
+	#    banco, e il controllo gridava al lupo per quello.
+	adesso = {n: os.path.getmtime(os.path.join(QUI, n)) for n in os.listdir(QUI) if n.endswith("_esiti.txt")}
+	sporcati = [n for n, quando in adesso.items() if PRIMA.get(n) != quando]
+	prova(f"nessuno dei {len(adesso)} registri veri e' stato scritto dal banco", not sporcati, sporcati)
 
 print(f"\nProve {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)
