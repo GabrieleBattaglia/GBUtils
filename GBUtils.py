@@ -2807,7 +2807,12 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 	    pageup, pagedown, insert, delete, e con ctrl o alt davanti, per esempio
 	    ctrl-left o alt-home;
 	  le stesse sul tastierino a blocco numerico spento con pad davanti, per
-	    esempio pad-up o ctrl-pad-home, e pad-center per il 5;
+	    esempio pad-up o ctrl-pad-home, e pad-center per il 5, che pero' con
+	    uno screen reader acceso non arrivano: NVDA usa quel tastierino per il
+	    suo navigatore a oggetti e se li tiene, quindi un programma pensato
+	    per chi legge con lo screen reader non deve dare comandi ai nomi pad-,
+	    e nemmeno usarli come scorciatoie alternative, perche' non si
+	    premerebbero mai. Con Alt davanti invece passano;
 	  i tasti funzione come f1 fino a f12, anche con shift, ctrl e alt davanti;
 	  Alt piu' lettera o cifra come alt-a o alt-1, e su Windows anche ctrl-tab
 	    e ctrl-backspace;

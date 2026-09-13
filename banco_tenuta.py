@@ -17,6 +17,14 @@ import ctypes.wintypes as w
 import sys
 import time
 
+REGISTRO = "banco_tenuta_esiti.txt"
+righe = []
+
+def dillo(testo=""):
+	"""Stampa e tiene da parte: il registro serve a rileggere la prova."""
+	print(testo)
+	righe.append(testo)
+
 k = ctypes.windll.kernel32
 KEY_EVENT = 1
 
@@ -70,9 +78,9 @@ def nome(vk, carattere):
 def riassumi(raccolti):
 	giu = [r for r in raccolti if r["giu"]]
 	su = [r for r in raccolti if not r["giu"]]
-	print(f"   record arrivati: {len(raccolti)}, di cui {len(giu)} pressioni e {len(su)} rilasci")
+	dillo(f"   record arrivati: {len(raccolti)}, di cui {len(giu)} pressioni e {len(su)} rilasci")
 	if not raccolti:
-		print("   nessun record: la console non ha consegnato niente")
+		dillo("   nessun record: la console non ha consegnato niente")
 		return
 	tasti = {}
 	for r in raccolti:
@@ -80,18 +88,18 @@ def riassumi(raccolti):
 		voce["giu" if r["giu"] else "su"] += 1
 		voce["ripetizioni"] += r["ripetizioni"] if r["giu"] else 0
 	for vk, voce in tasti.items():
-		print(f"   {nome(vk, voce['carattere']):10} pressioni {voce['giu']:3}, "
+		dillo(f"   {nome(vk, voce['carattere']):10} pressioni {voce['giu']:3}, "
 			f"ripetizioni dichiarate {voce['ripetizioni']:3}, rilasci {voce['su']:2}")
 	if len(giu) > 1:
 		distanze = [giu[i]["quando"] - giu[i - 1]["quando"] for i in range(1, len(giu))]
 		media = sum(distanze) / len(distanze) * 1000.0
-		print(f"   fra una pressione e la seguente, in media {media:.0f} millesimi di secondo")
+		dillo(f"   fra una pressione e la seguente, in media {media:.0f} millesimi di secondo")
 	if giu and su:
-		print(f"   prima pressione a {giu[0]['quando'] * 1000:.0f} ms, "
+		dillo(f"   prima pressione a {giu[0]['quando'] * 1000:.0f} ms, "
 			f"ultimo rilascio a {su[-1]['quando'] * 1000:.0f} ms")
 
 def prova(manico, titolo, istruzioni, durata):
-	print(titolo)
+	dillo(titolo)
 	for riga in istruzioni:
 		print(f"   {riga}")
 	print(f"\rInvio quando sei pronto, poi hai {durata:.0f} secondi\r", end="", flush=True)
@@ -104,7 +112,13 @@ def prova(manico, titolo, istruzioni, durata):
 	raccolti = raccogli(manico, durata)
 	print(" " * 50)
 	riassumi(raccolti)
+	# Il dettaglio non si stampa, che sarebbero decine di righe da ascoltare,
+	# ma nel registro ci va: e' li' che si vede se un rilascio manca.
+	for r in raccolti:
+		righe.append(f"      {r['quando'] * 1000:7.0f} ms  {'giu' if r['giu'] else 'su '}  "
+			f"vk 0x{r['vk']:02x}  ripetizioni {r['ripetizioni']}  carattere {r['carattere']!r}")
 	print()
+	righe.append("")
 	return raccolti
 
 def main():
@@ -124,24 +138,29 @@ def main():
 		 "poi lasciale tutte insieme"], 5.0)
 	prova(manico, "Prova 3, due note in successione veloce.",
 		["batti q e poi w, alternandole in fretta", "per un paio di secondi"], 4.0)
-	print("Cosa se ne ricava.")
+	dillo("Cosa se ne ricava.")
 	rilasci_uno = sum(1 for r in uno if not r["giu"])
 	if rilasci_uno:
-		print("   Il rilascio arriva: una nota puo' durare")
-		print("   quanto il dito resta giu'.")
+		dillo("   Il rilascio arriva: una nota puo' durare")
+		dillo("   quanto il dito resta giu'.")
 	else:
-		print("   Il rilascio NON arriva: dentro questo")
-		print("   terminale una nota tenuta non si puo' fare,")
-		print("   e va provato in una console propria.")
+		dillo("   Il rilascio NON arriva: dentro questo")
+		dillo("   terminale una nota tenuta non si puo' fare,")
+		dillo("   e va provato in una console propria.")
 	tasti_due = {r["vk"] for r in due if r["giu"]}
-	print(f"   Nella prova dell'accordo si sono distinti {len(tasti_due)} tasti.")
+	dillo(f"   Nella prova dell'accordo si sono distinti {len(tasti_due)} tasti.")
 	if len(tasti_due) >= 3:
-		print("   Tre tasti insieme si distinguono: la")
-		print("   polifonia e' possibile.")
+		dillo("   Tre tasti insieme si distinguono: la")
+		dillo("   polifonia e' possibile.")
 	elif tasti_due:
-		print("   Meno di tre: puo' essere il limite della")
-		print("   tastiera, che non registra piu' di due o tre")
-		print("   tasti insieme, e non dipende dal programma.")
+		dillo("   Meno di tre: puo' essere il limite della")
+		dillo("   tastiera, che non registra piu' di due o tre")
+		dillo("   tasti insieme, e non dipende dal programma.")
+	with open(REGISTRO, "w", encoding="utf-8") as f:
+		f.write("Banco della tenuta dei tasti, " + time.strftime("%Y-%m-%d %H:%M") + "\n")
+		f.write("\n".join(righe) + "\n")
+	print()
+	print(f"Il dettaglio e' in {REGISTRO}.")
 	return 0
 
 if __name__ == "__main__":

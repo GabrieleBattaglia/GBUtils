@@ -1,0 +1,12 @@
+Collaudo di key V8.0.0, la lettura dei record della console.
+Ogni riga e' una prova in cui la tastiera ha detto qualcosa di diverso da cio' che ci si aspettava.
+
+PROVA: Home del tastierino, con il blocco numerico spento
+Data: 2026-09-13 21:16
+Misura: atteso pad-home, avuto r
+Commento di Gabriele: data per buona
+
+PROVA: il 5 del tastierino, con il blocco numerico spento
+Data: 2026-09-13 21:17
+Misura: atteso pad-center
+Commento di Gabriele: saltata, aveva risposto right

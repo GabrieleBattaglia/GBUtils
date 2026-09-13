@@ -34,15 +34,21 @@ RIPARATE = [
 	("Maiusc e Canc del blocco dedicato", "shift-delete", "delete"),
 	("Maiusc e Tab", "shift-tab", "\t"),
 	("Ctrl, Maiusc e freccia destra", "shift-ctrl-right", "ctrl-right"),
-	("Alt e Home del tastierino, con il blocco numerico spento", "alt-pad-home", "niente"),
+]
+# Il tastierino a blocco numerico spento e' del navigatore a oggetti di NVDA,
+# che se lo tiene: queste prove riescono solo con lo screen reader spento, e
+# percio' stanno da parte e si saltano in blocco. Con Alt davanti invece NVDA
+# lascia passare, e infatti quella prova il 13 settembre 2026 e' riuscita.
+TASTIERINO = [
+	("Alt e Home del tastierino", "alt-pad-home"),
+	("Home del tastierino", "pad-home"),
+	("il 5 del tastierino", "pad-center"),
 ]
 # Le prove di controllo: qui la V8.0.0 non deve aver cambiato niente, perche'
 # sono i nomi che i quaranta programmi che chiamano key confrontano davvero.
 INVARIATE = [
 	("la freccia su del blocco dedicato", "up"),
 	("Ctrl e freccia sinistra", "ctrl-left"),
-	("Home del tastierino, con il blocco numerico spento", "pad-home"),
-	("il 5 del tastierino, con il blocco numerico spento", "pad-center"),
 	("Ctrl e A", "ctrl-a"),
 	("Ctrl e Backspace", "ctrl-backspace"),
 	("Invio", "\r"),
@@ -91,9 +97,10 @@ def prova(richiesta, atteso, vecchio=""):
 def main():
 	print("Collaudo di key V8.0.0.")
 	print("Serve una tastiera con il blocco dedicato di")
-	print("navigazione e il tastierino numerico. Dove un")
-	print("tasto non c'e', si preme qualunque cosa e poi")
-	print("si sceglie s per saltare la prova.")
+	print("navigazione. Dove un tasto non c'e', o non")
+	print("arriva perche' lo prende lo screen reader, si")
+	print("preme qualunque cosa e poi si sceglie s per")
+	print("saltare la prova.")
 	print()
 	print("Parte 1, le combinazioni che la V8.0.0 ripara.")
 	giuste = saltate = 0
@@ -110,7 +117,25 @@ def main():
 		else:
 			saltate += 1
 	print()
-	print("Parte 3, i tasti che non sono un tasto.")
+	print("Parte 3, il tastierino a blocco numerico spento.")
+	print("Con NVDA acceso questi tasti non arrivano, che")
+	print("li usa il suo navigatore a oggetti: la parte ha")
+	print("senso solo con lo screen reader spento.")
+	tastierino = 0
+	if key("\rInvio per provarli, s per saltarli\r") != "s":
+		print()
+		for richiesta, atteso in TASTIERINO:
+			if prova(richiesta, atteso):
+				giuste += 1
+				tastierino += 1
+			else:
+				saltate += 1
+	else:
+		print()
+		print("parte saltata")
+		saltate += len(TASTIERINO)
+	print()
+	print("Parte 4, i tasti che non sono un tasto.")
 	print("Premi e rilascia Maiusc tre volte, poi Ctrl due")
 	print("volte, poi il tasto Windows: key non deve")
 	print("rispondere. Quando hai finito, premi la lettera a.")
@@ -122,7 +147,7 @@ def main():
 		print(f"qualcosa ha svegliato key: ha risposto {leggibile(avuto)}")
 		ESITI.registra("modificatori premuti da soli", "hanno svegliato key", f"risposta {leggibile(avuto)}")
 	print()
-	print("Parte 4, Ctrl+C durante l'attesa.")
+	print("Parte 5, Ctrl+C durante l'attesa.")
 	print("E' la prova piu' importante della riscrittura:")
 	print("la V8.0.0 dorme dentro il sistema, e deve")
 	print("accorgersi lo stesso di Ctrl+C. Premilo adesso.")
@@ -134,7 +159,7 @@ def main():
 		print("Ctrl+C ha interrotto l'attesa, giusto")
 		giuste += 1
 	print()
-	totale = len(RIPARATE) + len(INVARIATE) + 2
+	totale = len(RIPARATE) + len(INVARIATE) + len(TASTIERINO) + 2
 	print(f"Prove {totale}, giuste {giuste}, saltate {saltate}.")
 	if saltate or giuste < totale:
 		print("Le differenze sono in collaudo_key_esiti.txt.")
