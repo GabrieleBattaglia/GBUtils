@@ -26,6 +26,7 @@ import time
 
 import numpy as np
 import sounddevice as sd
+from collaudo_comune import Esiti
 
 from GBUtils import dgt, enter_escape, key
 
@@ -56,26 +57,9 @@ def riga(testo, larghezza=40):
 	if riga_corrente:
 		print(riga_corrente)
 
-def registra(titolo, misura, commento):
-	"""Scrive l'esito in coda al file, senza mai sovrascrivere quello di prima."""
-	nuovo = not os.path.exists(ESITI)
-	with open(ESITI, "a", encoding="utf-8") as f:
-		if nuovo:
-			f.write("Esiti del collaudo d'ascolto del mixer\n")
-			f.write("Scritti da collaudo_mixer.py, che li aggiunge man mano.\n")
-		f.write(f"\nPROVA: {titolo}\n")
-		f.write(f"Data: {time.strftime('%Y-%m-%d %H:%M')}\n")
-		if misura:
-			f.write(f"Misura: {misura}\n")
-		f.write(f"Commento di Gabriele: {commento if commento else 'nessuno'}\n")
-
-def chiedi_commento(titolo, misura=""):
-	"""Il commento a caldo, subito dopo la prova. Invio da solo lo salta."""
-	riga("Scrivi le tue impressioni e batti Invio. Invio da solo se non hai niente da dire.")
-	commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000)
-	registra(titolo, misura, commento.strip())
-	riga("Annotato.")
-	print()
+esiti = Esiti(ESITI, "Esiti del collaudo d'ascolto del mixer\n"
+					 "Scritti da collaudo_mixer.py, che li aggiunge man mano.",
+			  etichetta="PROVA")
 
 def suono_breve(durata=0.12, frequenza=880.0):
 	"""Un bip corto e netto, quello che serve per sentire un ritardo."""
@@ -144,15 +128,16 @@ def prova_latenza_dichiarata():
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
 		return
-	for etichetta, blocco in (("oggi, sei millesimi", BLOCCO_PICCOLO), ("nuovo, quarantasei millesimi", BLOCCO_GRANDE)):
-		for numero in (1, 2, 3):
-			riga(f"{etichetta}, {numero} di 3.")
-			aspetta_tasto_e_suona(blocco)
-			time.sleep(0.4)
-	print()
-	riga("Se non hai sentito differenza, la latenza nuova va bene e la prova alla cieca lo confermera'.")
-	print()
-	chiedi_commento("1, la latenza dichiarata")
+	def ascolta():
+		for etichetta, blocco in (("oggi, sei millesimi", BLOCCO_PICCOLO), ("nuovo, quarantasei millesimi", BLOCCO_GRANDE)):
+			for numero in (1, 2, 3):
+				riga(f"{etichetta}, {numero} di 3.")
+				aspetta_tasto_e_suona(blocco)
+				time.sleep(0.4)
+		print()
+	ascolta()
+	esiti.esito("1, la latenza dichiarata", ascolta,
+				"Se non hai sentito differenza, la latenza nuova va bene e la prova alla cieca lo confermera'.")
 
 def prova_latenza_alla_cieca():
 	riga("Prova 2, la stessa cosa alla cieca. Dieci volte: premi un tasto, senti il bip, e subito dopo dici se era il ritardo corto o quello lungo. Premi c per corto, l per lungo. Non ti dico la risposta fino alla fine.")
@@ -204,7 +189,8 @@ def prova_latenza_alla_cieca():
 		print(f"{numero}: era {'corto' if corto else 'lungo'}, hai detto {'corto' if risposta == 'c' else 'lungo'}, {'giusta' if indovinato else 'sbagliata'}")
 		dettaglio.append(f"{numero}:{'corto' if corto else 'lungo'}/{'corto' if risposta == 'c' else 'lungo'}/{'ok' if indovinato else 'no'}")
 	print()
-	chiedi_commento("2, la latenza alla cieca",
+	esiti.esito("2, la latenza alla cieca", None,
+		"La domanda: il risultato ti convince?", misura=
 		f"{giusti} giuste su 10, corte riconosciute {corte_giuste} su 5, lunghe {lunghe_giuste} su 5. "
 		f"Dettaglio, era/detto/esito: " + " ".join(dettaglio))
 
@@ -213,18 +199,19 @@ def prova_buchi():
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
 		return
-	for giro in (1, 2, 3):
-		for etichetta, funzione, blocco in (("oggi", riproduci_a_callback, BLOCCO_PICCOLO), ("dopo la cura", riproduci, BLOCCO_GRANDE)):
-			riga(f"Coppia {giro} di 3, {etichetta}.")
-			nota = suono_lungo()
-			carico(len(nota) / FS + 0.5)
-			time.sleep(0.4)
-			funzione(nota, blocco)
-			time.sleep(1.2)
-	print()
-	riga("Nella prima di ogni coppia dovresti sentire il suono spezzettarsi. Nella seconda no.")
-	print()
-	chiedi_commento("3, i buchi sotto carico")
+	def ascolta():
+		for giro in (1, 2, 3):
+			for etichetta, funzione, blocco in (("oggi", riproduci_a_callback, BLOCCO_PICCOLO), ("dopo la cura", riproduci, BLOCCO_GRANDE)):
+				riga(f"Coppia {giro} di 3, {etichetta}.")
+				nota = suono_lungo()
+				carico(len(nota) / FS + 0.5)
+				time.sleep(0.4)
+				funzione(nota, blocco)
+				time.sleep(1.2)
+		print()
+	ascolta()
+	esiti.esito("3, i buchi sotto carico", ascolta,
+				"Nella prima di ogni coppia dovresti sentire il suono spezzettarsi. Nella seconda no.")
 
 PROVE = {
 	"1": ("la latenza dichiarata", None),
@@ -291,7 +278,8 @@ def prova_silenzio_alla_cieca():
 		print(f"{numero}: era {'corto' if corto else 'lungo'}, hai detto {'corto' if risposta == 'c' else 'lungo'}, {'giusta' if indovinato else 'sbagliata'}")
 		dettaglio.append(f"{numero}:{'corto' if corto else 'lungo'}/{'corto' if risposta == 'c' else 'lungo'}/{'ok' if indovinato else 'no'}")
 	print()
-	chiedi_commento("4, il ritardo come silenzio fra due note",
+	esiti.esito("4, il ritardo come silenzio fra due note", None,
+		"La domanda: il risultato ti convince?", misura=
 		f"{giusti} giuste su 10, corte riconosciute {corte_giuste} su 5, lunghe {lunghe_giuste} su 5. "
 		f"Dettaglio, era/detto/esito: " + " ".join(dettaglio))
 

@@ -31,8 +31,9 @@ import sys
 import time
 
 import numpy as np
+from collaudo_comune import Esiti, gruppo
 
-from GBUtils import Acusticator, _sintetizza, dgt, enter_escape, key
+from GBUtils import Acusticator, _sintetizza, dgt, enter_escape
 
 QUI = os.path.dirname(os.path.abspath(__file__))
 ESITI = os.path.join(QUI, "collaudo_click_esiti.txt")
@@ -44,51 +45,8 @@ SECCHI = ["colpo_d_impatto_1", "il_gioco_alto", "espelli", "eliminato", "gabrysc
 PENDENZE = ["melodia_del_campanello_1", "jingle_perde_1", "lista"]
 CONTROLLO = ["jingle_missione_fallita", "arpeggio_pensoso", "super_salita", "pokermachine_record_perdita"]
 
-def registra(titolo, commento):
-	nuovo = not os.path.exists(ESITI)
-	with open(ESITI, "a", encoding="utf-8") as f:
-		if nuovo:
-			f.write("Esiti del collaudo d'ascolto dei click, issue 34\n")
-			f.write("Scritti da collaudo_click.py, che li aggiunge man mano.\n")
-		f.write(f"\nGRUPPO: {titolo}\n")
-		f.write(f"Data: {time.strftime('%Y-%m-%d %H:%M')}\n")
-		f.write(f"Commento di Gabriele: {commento if commento else 'nessuno'}\n")
-
-def esito(titolo, riproduci, domanda):
-	"""Chiude un gruppo: si riascolta, si commenta o si passa oltre.
-
-	Torna al menu dopo ogni scelta, cosi' si puo' riascoltare, poi commentare,
-	poi riascoltare ancora, e chiudere solo quando si e' pronti.
-	"""
-	annotato = False
-	while True:
-		print(domanda)
-		scelta = key("\rr ripeti, c commenta, Invio ok\r")
-		print()
-		if scelta in ("r", "R"):
-			riproduci()
-		elif scelta in ("c", "C"):
-			commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000).strip()
-			registra(titolo, commento)
-			annotato = True
-			print("Annotato.")
-			print()
-		elif scelta == "\r":
-			if not annotato:
-				registra(titolo, "test superato, nessun commento")
-			print("Segnato come superato.")
-			print()
-			return
-		elif scelta == "\x1b":
-			if not annotato:
-				registra(titolo, "chiuso senza giudizio")
-			print("Chiuso.")
-			print()
-			return
-
-def gruppo(titolo, quante):
-	print(f"Gruppo: {titolo}. Sono {quante} coppie, cioe' {quante * 2} ascolti.")
-	return enter_escape("\rInvio per questo gruppo, Escape per saltarlo\r")
+esiti = Esiti(ESITI, "Esiti del collaudo d'ascolto dei click, issue 34\n"
+				  "Scritti da collaudo_click.py, che li aggiunge man mano.")
 
 def corretto(nome, minimo_ms):
 	"""Il preset con la rampa minima, costruito qui e non salvato da nessuna
@@ -169,7 +127,7 @@ def main():
 				coppia(nome, 1.0)
 			print()
 		ascolta_gradini()
-		esito(titolo, ascolta_gradini,
+		esiti.esito(titolo, ascolta_gradini,
 			  "  La domanda: nella prima di ogni coppia senti uno schiocco che nella seconda non c'e'?")
 	titolo = "i colpi secchi e i tic corti"
 	if gruppo(titolo, len(SECCHI)):
@@ -181,7 +139,7 @@ def main():
 				coppia(nome, 1.0)
 			print()
 		ascolta_secchi()
-		esito(titolo, ascolta_secchi,
+		esiti.esito(titolo, ascolta_secchi,
 			  "  La domanda: la seconda di ogni coppia ha perso mordente, o e' identica?")
 	titolo = "i lunghi con pendenza ripida"
 	if gruppo(titolo, len(PENDENZE)):
@@ -192,7 +150,7 @@ def main():
 				coppia(nome, 1.0)
 			print()
 		ascolta_pendenze()
-		esito(titolo, ascolta_pendenze,
+		esiti.esito(titolo, ascolta_pendenze,
 			  "  La domanda: qui una differenza c'e', oppure e' solo matematica?")
 	titolo = "quanto deve essere lunga la rampa"
 	if gruppo(titolo, 3):
@@ -203,7 +161,7 @@ def main():
 			for nome in ("sirena_d_allarme_9", "colpo_d_impatto_1"):
 				scala(nome)
 		ascolta_scala()
-		esito(titolo, ascolta_scala,
+		esiti.esito(titolo, ascolta_scala,
 			  "  La domanda: da quale valore in poi il click sparisce, e da quale in poi il colpo si ammorbidisce?")
 	titolo = "l'ultimo gruppo"
 	if gruppo(titolo, len(CONTROLLO)):
@@ -213,7 +171,7 @@ def main():
 				coppia(nome, 0.0, etichetta_dopo="la seconda volta")
 			print()
 		ascolta_controllo()
-		esito(titolo, ascolta_controllo,
+		esiti.esito(titolo, ascolta_controllo,
 			  "  La domanda: senti differenza fra le due di ogni coppia?")
 		print("Una cosa che non ti avevo detto: in quest'ultimo gruppo le due di ogni coppia erano")
 		print("identiche. Nessuna rampa, nessuna correzione, lo stesso suono due volte, e la seconda")
@@ -222,7 +180,7 @@ def main():
 		print("niente, allora le differenze degli altri gruppi sono vere.")
 		print()
 		commento = dgt("\rVuoi aggiungere qualcosa\r", kind="s", smin=0, smax=2000)
-		registra("l'ultimo gruppo, dopo aver saputo che era di controllo", commento.strip())
+		esiti.registra("l'ultimo gruppo, dopo aver saputo che era di controllo", commento.strip())
 		print()
 	Acusticator.setup(volume=prima_del_collaudo)
 	Acusticator.close()

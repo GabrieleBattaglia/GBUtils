@@ -9,21 +9,24 @@ prova qui.
 Ogni preset si sente due volte di fila, prima con il motore di prima, preso
 da git, e poi con quello di adesso. Sono gli stessi suoni che i programmi
 usano davvero, non note di prova.
-Dopo ogni gruppo si scrive cosa si e' sentito, e finisce in
-collaudo_acusticator_esiti.txt accanto a questo file.
+In fondo a ogni gruppo: r riascolta il gruppo intero, c apre il posto dove
+scrivere, Invio lo da' per superato, Escape lo chiude senza annotare. Quello
+che si scrive finisce in collaudo_acusticator_esiti.txt accanto a questo file.
 Si lancia con
   python collaudo_acusticator.py
 """
+import contextlib
 import importlib.util
 import os
 import subprocess
 import sys
 import time
 
-from GBUtils import Acusticator, dgt, enter_escape
+from collaudo_comune import Esiti, gruppo
+
+from GBUtils import Acusticator, enter_escape
 
 QUI = os.path.dirname(os.path.abspath(__file__))
-ESITI = os.path.join(QUI, "collaudo_acusticator_esiti.txt")
 # I preset che i programmi di Gabriele usano davvero, raccolti dai loro
 # dizionari dei suoni: due giochi, un'utilita' e il feedback dei tasti.
 GRUPPI = {
@@ -34,36 +37,9 @@ GRUPPI = {
 	"i suoni lunghi, dove un buco si sente": ["gabryscola_sconfitta", "jingle_missione_fallita"],
 }
 
-def riga(testo, larghezza=40):
-	"""Il testo in righe da quaranta caratteri, per la lettura sul braille."""
-	parole, corrente = testo.split(), ""
-	for parola in parole:
-		if not corrente:
-			corrente = parola
-		elif len(corrente) + 1 + len(parola) <= larghezza:
-			corrente += " " + parola
-		else:
-			print(corrente)
-			corrente = parola
-	if corrente:
-		print(corrente)
-
-def registra(titolo, commento):
-	nuovo = not os.path.exists(ESITI)
-	with open(ESITI, "a", encoding="utf-8") as f:
-		if nuovo:
-			f.write("Esiti del collaudo d'ascolto di Acusticator col mixer condiviso\n")
-			f.write("Scritti da collaudo_acusticator.py, che li aggiunge man mano.\n")
-		f.write(f"\nGRUPPO: {titolo}\n")
-		f.write(f"Data: {time.strftime('%Y-%m-%d %H:%M')}\n")
-		f.write(f"Commento di Gabriele: {commento if commento else 'nessuno'}\n")
-
-def chiedi_commento(titolo):
-	riga("Scrivi cosa hai sentito e batti Invio. Invio da solo se non hai niente da dire.")
-	commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000)
-	registra(titolo, commento.strip())
-	riga("Annotato.")
-	print()
+esiti = Esiti(os.path.join(QUI, "collaudo_acusticator_esiti.txt"),
+			  "Esiti del collaudo d'ascolto di Acusticator col mixer condiviso\n"
+			  "Scritti da collaudo_acusticator.py, che li aggiunge man mano.")
 
 def carica_vecchio():
 	"""Acusticator com'era prima del mixer condiviso, preso dall'ultimo commit."""
@@ -78,52 +54,62 @@ def carica_vecchio():
 	return modulo, percorso
 
 def main():
-	riga("Collaudo d'ascolto di Acusticator.")
+	print("Collaudo d'ascolto di Acusticator.")
 	print()
-	riga("Acusticator adesso suona con il mixer condiviso, a scrittura, invece del suo mixer a callback. I suoni dovrebbero essere identici: questo serve a sentire se lo sono davvero.")
+	print("Acusticator adesso suona con il mixer condiviso, a scrittura, invece del suo mixer a callback.")
+	print("I suoni dovrebbero essere identici: questo serve a sentire se lo sono davvero.")
 	print()
-	riga("Ogni preset si sente due volte di fila: prima come suonava stamattina, poi come suona adesso. Fra le due c'e' mezzo secondo. Ascolta se cambia qualcosa, in particolare l'attacco, il volume e la posizione fra i due altoparlanti.")
+	print("Ogni preset si sente due volte di fila: prima come suonava stamattina, poi come suona adesso.")
+	print("Fra le due c'e' mezzo secondo. Ascolta se cambia qualcosa, in particolare l'attacco, il volume")
+	print("e la posizione fra i due altoparlanti.")
+	print()
+	print("In fondo a ogni gruppo: r riascolta, c commenta, Invio lo da' per superato.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per uscire\r"):
 		return 0
 	vecchio, temporaneo = carica_vecchio()
 	try:
 		for titolo, preset in GRUPPI.items():
-			riga(f"Gruppo: {titolo}. Sono {len(preset)} suoni, ognuno due volte.")
-			print()
-			if not enter_escape("\rInvio per questo gruppo, Escape per saltarlo\r"):
+			if not gruppo(titolo, len(preset)):
 				continue
-			for nome in preset:
-				riga(f"{nome}: prima.")
-				vecchio.Acusticator.play(nome, sync=True)
-				time.sleep(0.5)
-				riga(f"{nome}: adesso.")
-				Acusticator.play(nome, sync=True)
-				time.sleep(0.9)
-			vecchio.Acusticator.close()
-			Acusticator.close()
-			print()
-			chiedi_commento(titolo)
-		riga("Ultimo ascolto: molti suoni insieme, come in una battaglia. Prima con il motore di stamattina, poi con quello nuovo.")
-		print()
-		if enter_escape("\rInvio per l'ultimo ascolto, Escape per saltare\r"):
-			for etichetta, motore in (("prima", vecchio.Acusticator), ("adesso", Acusticator)):
-				riga(f"Raffica, {etichetta}.")
-				for nome in ("passaggio_veloce", "scudisciata", "doppio_tic_conferma",
-							 "errore_secco", "written_ok", "apertura"):
-					motore.play(nome)
-					time.sleep(0.12)
-				time.sleep(2.0)
-				motore.close()
-				time.sleep(0.8)
-			print()
-			chiedi_commento("la raffica di suoni ravvicinati")
+			def ascolta(preset=preset):
+				for nome in preset:
+					print(f"  {nome}: prima.")
+					vecchio.Acusticator.play(nome, sync=True)
+					time.sleep(0.5)
+					print(f"  {nome}: adesso.")
+					Acusticator.play(nome, sync=True)
+					time.sleep(0.9)
+				vecchio.Acusticator.close()
+				Acusticator.close()
+				print()
+			ascolta()
+			esiti.esito(titolo, ascolta,
+						"  La domanda: il secondo di ogni coppia suona identico al primo?")
+		titolo = "la raffica di suoni ravvicinati"
+		if gruppo(titolo, 2):
+			print("  Molti suoni insieme, come in una battaglia. Prima con il motore di stamattina, poi con")
+			print("  quello nuovo.")
+			def ascolta_raffica():
+				for etichetta, motore in (("prima", vecchio.Acusticator), ("adesso", Acusticator)):
+					print(f"  Raffica, {etichetta}.")
+					for nome in ("passaggio_veloce", "scudisciata", "doppio_tic_conferma",
+								 "errore_secco", "written_ok", "apertura"):
+						motore.play(nome)
+						time.sleep(0.12)
+					time.sleep(2.0)
+					motore.close()
+					time.sleep(0.8)
+				print()
+			ascolta_raffica()
+			esiti.esito(titolo, ascolta_raffica,
+						"  La domanda: nella seconda raffica senti buchi, scatti o suoni che mancano?")
 	finally:
-		with __import__("contextlib").suppress(OSError):
+		with contextlib.suppress(OSError):
 			os.remove(temporaneo)
-	riga("Collaudo finito. Grazie per le orecchie.")
-	if os.path.exists(ESITI):
-		riga(f"Gli esiti stanno in {os.path.basename(ESITI)}.")
+	print("Collaudo finito. Grazie per le orecchie.")
+	if os.path.exists(esiti.percorso):
+		print(f"Gli esiti stanno in {os.path.basename(esiti.percorso)}.")
 	return 0
 
 if __name__ == "__main__":

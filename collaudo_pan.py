@@ -13,8 +13,9 @@ spostamento generale, che puo' essere fermo a sinistra o a destra o in
 portamento nei due versi. Gli incroci contrari, cioe' quartina che va a destra
 dentro un generale che va a sinistra, sono il caso piu' interessante.
 Tutto suona al trenta per cento di volume.
-Dopo ogni gruppo si scrive cosa si e' sentito, e finisce in
-collaudo_pan_esiti.txt accanto a questo file.
+In fondo a ogni gruppo: r riascolta il gruppo intero, c apre il posto dove
+scrivere, Invio lo da' per superato, Escape lo chiude senza annotare. Quello
+che si scrive finisce in collaudo_pan_esiti.txt accanto a questo file.
 Si lancia con
   python collaudo_pan.py
 """
@@ -22,10 +23,11 @@ import os
 import sys
 import time
 
-from GBUtils import Acusticator, dgt, enter_escape
+from collaudo_comune import Esiti, gruppo
+
+from GBUtils import Acusticator, enter_escape
 
 QUI = os.path.dirname(os.path.abspath(__file__))
-ESITI = os.path.join(QUI, "collaudo_pan_esiti.txt")
 VOL = 0.30
 DURATA = 1.6
 ADSR = [3.0, 0.0, 100.0, 8.0]
@@ -44,26 +46,9 @@ QUARTINE = [
 	((1.0, -1.0), "in portamento da destra a sinistra"),
 ]
 
-def registra(titolo, commento):
-	nuovo = not os.path.exists(ESITI)
-	with open(ESITI, "a", encoding="utf-8") as f:
-		if nuovo:
-			f.write("Esiti del collaudo d'ascolto dello spostamento di panorama\n")
-			f.write("Scritti da collaudo_pan.py, che li aggiunge man mano.\n")
-		f.write(f"\nGRUPPO: {titolo}\n")
-		f.write(f"Data: {time.strftime('%Y-%m-%d %H:%M')}\n")
-		f.write(f"Commento di Gabriele: {commento if commento else 'nessuno'}\n")
-
-def chiedi_commento(titolo):
-	print("Scrivi cosa hai sentito e batti Invio. Invio da solo se non hai niente da dire.")
-	commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000)
-	registra(titolo, commento.strip())
-	print("Annotato.")
-	print()
-
-def gruppo(titolo, quante):
-	print(f"Gruppo: {titolo}. Sono {quante} coppie, cioe' {quante * 2} ascolti.")
-	return enter_escape("\rInvio per questo gruppo, Escape per saltarlo\r")
+esiti = Esiti(os.path.join(QUI, "collaudo_pan_esiti.txt"),
+			  "Esiti del collaudo d'ascolto dello spostamento di panorama\n"
+			  "Scritti da collaudo_pan.py, che li aggiunge man mano.")
 
 def coppia(etichetta, score, spostamento, kind=1):
 	"""Prima il suono com'e', poi lo stesso spostato."""
@@ -90,6 +75,7 @@ def main():
 	print("deve continuare a volare in uno spazio piu' stretto, non appiattirsi contro il bordo.")
 	print()
 	print("Tutto a coppie: prima il suono com'e', poi lo stesso spostato. Volume al trenta per cento.")
+	print("In fondo a ogni gruppo: r riascolta, c commenta, Invio lo da' per superato.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per uscire\r"):
 		return 0
@@ -105,61 +91,69 @@ def main():
 		if not gruppo(titolo, len(GENERALI)):
 			continue
 		print(f"  Il suono di partenza e' un la tenuto, con panorama {come}.")
-		for spostamento, descrizione in GENERALI:
-			print(f"  {descrizione}")
-			coppia(f"quartina {come}", ["a4", DURATA, interno, VOL], spostamento)
-		print()
+		def ascolta(interno=interno, come=come):
+			for spostamento, descrizione in GENERALI:
+				print(f"  {descrizione}")
+				coppia(f"quartina {come}", ["a4", DURATA, interno, VOL], spostamento)
+			print()
+		ascolta()
 		if interno == 0.0:
-			print("  La domanda: il suono va dove dice lo spostamento, e nei due portamenti attraversa tutto il fronte?")
+			domanda = "  La domanda: il suono va dove dice lo spostamento, e nei due portamenti attraversa tutto il fronte?"
 		elif isinstance(interno, tuple):
-			print("  La domanda: il volo si sente ancora come un volo, anche quando lo spazio si stringe?")
-			print("  E negli incroci contrari, cioe' quartina e generale che vanno da parti opposte, cosa succede?")
+			domanda = ("  La domanda: il volo si sente ancora come un volo, anche quando lo spazio si stringe?\n"
+					   "  E negli incroci contrari, cioe' quartina e generale che vanno da parti opposte, cosa succede?")
 		else:
-			print("  La domanda: il suono si sposta di quanto si e' chiesto, partendo da dove stava?")
-		print()
-		chiedi_commento(titolo)
+			domanda = "  La domanda: il suono si sposta di quanto si e' chiesto, partendo da dove stava?"
+		esiti.esito(titolo, ascolta, domanda)
 	# I preset veri della collezione, quelli la cui identita' e' il movimento.
-	if gruppo("i preset veri, quelli che si muovono", 6):
+	titolo = "i preset veri che si muovono"
+	if gruppo(titolo, 6):
 		print("  volo_radente e passaggio_veloce percorrono tutto il fronte: spostarli e' il caso difficile.")
-		for nome in ("volo_radente", "passaggio_veloce"):
-			for spostamento in (0.6, -0.6, (1.0, -1.0)):
-				print(f"  {nome}, spostamento {spostamento}")
-				coppia_preset(nome, spostamento)
-		print()
-		print("  La domanda: il volo resta un volo, spostato di lato? E il verso e' quello che ti aspetti?")
-		print()
-		chiedi_commento("i preset veri che si muovono")
+		def ascolta_veri():
+			for nome in ("volo_radente", "passaggio_veloce"):
+				for spostamento in (0.6, -0.6, (1.0, -1.0)):
+					print(f"  {nome}, spostamento {spostamento}")
+					coppia_preset(nome, spostamento)
+			print()
+		ascolta_veri()
+		esiti.esito(titolo, ascolta_veri,
+					"  La domanda: il volo resta un volo, spostato di lato? E il verso e' quello che ti aspetti?")
 	# Un preset fermo al centro, che e' il caso d'uso di gabryscola.
-	if gruppo("un preset fermo, messo a sinistra e a destra", 3):
+	titolo = "un preset fermo messo di lato"
+	if gruppo(titolo, 3):
 		print("  E' il caso per cui la issue e' nata: lo stesso suono a sinistra quando lo fa il giocatore")
 		print("  e a destra quando lo fa il calcolatore. gabryscola userebbe piu' o meno 0,6.")
-		for spostamento in (-0.6, 0.6, (-1.0, 1.0)):
-			print(f"  spostamento {spostamento}")
-			coppia_preset("conferma", spostamento)
-		print()
-		print("  La domanda: i due lati si distinguono bene senza che il suono perda corpo?")
-		print()
-		chiedi_commento("un preset fermo messo di lato")
+		def ascolta_fermo():
+			for spostamento in (-0.6, 0.6, (-1.0, 1.0)):
+				print(f"  spostamento {spostamento}")
+				coppia_preset("conferma", spostamento)
+			print()
+		ascolta_fermo()
+		esiti.esito(titolo, ascolta_fermo,
+					"  La domanda: i due lati si distinguono bene senza che il suono perda corpo?")
 	# I casi limite, dove lo spazio finisce.
-	if gruppo("i casi limite, dove lo spazio finisce", 3):
+	titolo = "i casi limite"
+	if gruppo(titolo, 3):
 		print("  Con lo spostamento al bordo esatto non resta spazio per il movimento, che si annulla:")
 		print("  il suono si sente tutto da un lato. E' voluto, ma va sentito.")
-		print("  spostamento +1, tutto a destra")
-		coppia("quartina che vola da sinistra a destra", ["a4", DURATA, (-1.0, 1.0), VOL], 1.0)
-		print("  spostamento -1, tutto a sinistra")
-		coppia("quartina che vola da sinistra a destra", ["a4", DURATA, (-1.0, 1.0), VOL], -1.0)
-		print("  Due portamenti uguali e opposti si annullano: il suono resta fermo al centro.")
-		print("  quartina da sinistra a destra, generale da +0,5 a -0,5")
-		coppia("quartina che vola da sinistra a destra", ["a4", DURATA, (-1.0, 1.0), VOL], (0.5, -0.5))
-		print()
-		print("  La domanda: nei primi due il suono sta davvero tutto da un lato, e nel terzo sta fermo al centro?")
-		print()
-		chiedi_commento("i casi limite")
+		def ascolta_limiti():
+			volo = ["a4", DURATA, (-1.0, 1.0), VOL]
+			print("  spostamento +1, tutto a destra")
+			coppia("quartina che vola da sinistra a destra", volo, 1.0)
+			print("  spostamento -1, tutto a sinistra")
+			coppia("quartina che vola da sinistra a destra", volo, -1.0)
+			print("  due portamenti uguali e opposti si annullano: quartina da sinistra a destra,")
+			print("  generale da +0,5 a -0,5, e il suono resta fermo al centro")
+			coppia("quartina che vola da sinistra a destra", volo, (0.5, -0.5))
+			print()
+		ascolta_limiti()
+		esiti.esito(titolo, ascolta_limiti,
+					"  La domanda: nei primi due il suono sta davvero tutto da un lato, e nel terzo sta fermo al centro?")
 	Acusticator.setup(volume=prima_del_collaudo)
 	Acusticator.close()
 	print("Collaudo finito. Grazie per le orecchie.")
-	if os.path.exists(ESITI):
-		print(f"Gli esiti stanno in {os.path.basename(ESITI)}.")
+	if os.path.exists(esiti.percorso):
+		print(f"Gli esiti stanno in {os.path.basename(esiti.percorso)}.")
 	return 0
 
 if __name__ == "__main__":

@@ -518,11 +518,13 @@ def conduci(numero, titolo, spiegazione, osservare, funzione):
 	while True:
 		funzione()
 		print("Ascolto finito.")
-		scelta = key(prompt="r per riascoltare, b se va bene, c per commentare, q per uscire: ")
+		# Gli stessi tasti di tutti gli altri collaudi, cosi' le dita imparano
+		# una volta sola: r riascolta, c commenta, Invio da' per buono.
+		scelta = key(prompt="\rr ripeti, c commenta, Invio ok, q esci\r")
 		s = scelta.lower()
 		if s == "r":
 			continue
-		if s == "b":
+		if scelta in ("\r", "\n"):
 			registra(numero, titolo, "superata", "")
 			print("Prova superata, registrata.")
 			return "superata"
@@ -539,8 +541,8 @@ def conduci(numero, titolo, spiegazione, osservare, funzione):
 def main():
 	print("Collaudo d'ascolto di CWzator")
 	print("Ogni prova ti dice prima cosa sentirai e cosa osservare, poi aspetta")
-	print("che tu prema Invio. Dopo l'ascolto puoi riascoltare quante volte")
-	print("vuoi, dichiarare che va bene, oppure lasciare un commento.")
+	print("che tu prema Invio. Dopo l'ascolto: r riascolta, c commenta,")
+	print("Invio da' la prova per superata, q esce.")
 	print(f"Gli esiti finiscono in {ESITI}")
 	fatte = leggi_fatte()
 	if fatte:
