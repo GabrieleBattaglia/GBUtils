@@ -19,7 +19,9 @@ come la versione corretta viene costruita, da un risultato identico campione
 per campione alla sintesi normale su tutti e 243 i preset intonati. Quindi
 l'unica differenza che si sente e' la rampa, e non il modo di costruirlo.
 Tutto al trenta per cento di volume.
-Dopo ogni gruppo si scrive cosa si e' sentito, e finisce in
+In fondo a ogni gruppo si sceglie con un tasto: r riascolta il gruppo intero,
+c apre il posto dove scrivere le impressioni, Invio lo da' per superato, Escape
+lo chiude senza annotare niente. Quello che si scrive finisce in
 collaudo_click_esiti.txt accanto a questo file.
 Si lancia con
   python collaudo_click.py
@@ -30,7 +32,7 @@ import time
 
 import numpy as np
 
-from GBUtils import Acusticator, _sintetizza, dgt, enter_escape
+from GBUtils import Acusticator, _sintetizza, dgt, enter_escape, key
 
 QUI = os.path.dirname(os.path.abspath(__file__))
 ESITI = os.path.join(QUI, "collaudo_click_esiti.txt")
@@ -52,12 +54,37 @@ def registra(titolo, commento):
 		f.write(f"Data: {time.strftime('%Y-%m-%d %H:%M')}\n")
 		f.write(f"Commento di Gabriele: {commento if commento else 'nessuno'}\n")
 
-def chiedi_commento(titolo):
-	print("Scrivi cosa hai sentito e batti Invio. Invio da solo se non hai niente da dire.")
-	commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000)
-	registra(titolo, commento.strip())
-	print("Annotato.")
-	print()
+def esito(titolo, riproduci, domanda):
+	"""Chiude un gruppo: si riascolta, si commenta o si passa oltre.
+
+	Torna al menu dopo ogni scelta, cosi' si puo' riascoltare, poi commentare,
+	poi riascoltare ancora, e chiudere solo quando si e' pronti.
+	"""
+	annotato = False
+	while True:
+		print(domanda)
+		scelta = key("\rr ripeti, c commenta, Invio ok\r")
+		print()
+		if scelta in ("r", "R"):
+			riproduci()
+		elif scelta in ("c", "C"):
+			commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000).strip()
+			registra(titolo, commento)
+			annotato = True
+			print("Annotato.")
+			print()
+		elif scelta == "\r":
+			if not annotato:
+				registra(titolo, "test superato, nessun commento")
+			print("Segnato come superato.")
+			print()
+			return
+		elif scelta == "\x1b":
+			if not annotato:
+				registra(titolo, "chiuso senza giudizio")
+			print("Chiuso.")
+			print()
+			return
 
 def gruppo(titolo, quante):
 	print(f"Gruppo: {titolo}. Sono {quante} coppie, cioe' {quante * 2} ascolti.")
@@ -99,6 +126,19 @@ def coppia(nome, minimo_ms, etichetta_dopo=None):
 		Acusticator.riproduci(buffer, fs=FS, sync=True)
 	time.sleep(0.8)
 
+def scala(nome):
+	"""Lo stesso suono com'e' e poi con tre rampe diverse."""
+	print(f"  {nome}, com'e' adesso")
+	Acusticator.play(nome, sync=True)
+	time.sleep(0.45)
+	for minimo in (0.5, 1.0, 2.0):
+		print(f"  {nome}, rampa da {minimo} millesimi")
+		buffer = corretto(nome, minimo)
+		if buffer is not None:
+			Acusticator.riproduci(buffer, fs=FS, sync=True)
+		time.sleep(0.45)
+	print()
+
 def main():
 	print("Collaudo d'ascolto dei click nella collezione.")
 	print()
@@ -107,6 +147,9 @@ def main():
 	print()
 	print("Ogni prova e' una coppia: prima il preset com'e' adesso, poi lo stesso con la rampa minima.")
 	print("La domanda e' sempre la stessa: senti una differenza, e se la senti, quale delle due preferisci?")
+	print()
+	print("In fondo a ogni gruppo: r riascolta tutto il gruppo, c apre il posto dove scrivere,")
+	print("Invio lo da' per superato, Escape lo chiude senza annotare.")
 	print()
 	print("Tutto al trenta per cento di volume.")
 	print()
@@ -117,59 +160,61 @@ def main():
 	# e i sette che hanno uno scarto di -0,3 o piu' basso diventerebbero muti.
 	prima_del_collaudo = Acusticator.stato()["volume"]
 	Acusticator.setup(volume=VOL)
-	if gruppo("i gradini grossi, sui suoni lunghi", len(GRADINI)):
+	titolo = "i gradini grossi sui suoni lunghi"
+	if gruppo(titolo, len(GRADINI)):
 		print("  Questi cinque hanno un gradino vero: il segnale salta da un valore pieno al silenzio in un")
 		print("  campione solo. Se il click esiste, e' qui che si deve sentire.")
-		for nome in GRADINI:
-			coppia(nome, 1.0)
-		print()
-		print("  La domanda: nella prima di ogni coppia senti uno schiocco che nella seconda non c'e'?")
-		print()
-		chiedi_commento("i gradini grossi sui suoni lunghi")
-	if gruppo("i colpi secchi e i tic corti", len(SECCHI)):
+		def ascolta_gradini():
+			for nome in GRADINI:
+				coppia(nome, 1.0)
+			print()
+		ascolta_gradini()
+		esito(titolo, ascolta_gradini,
+			  "  La domanda: nella prima di ogni coppia senti uno schiocco che nella seconda non c'e'?")
+	titolo = "i colpi secchi e i tic corti"
+	if gruppo(titolo, len(SECCHI)):
 		print("  Qui il rischio e' l'opposto: questi suoni devono essere secchi, e la rampa potrebbe")
 		print("  ammorbidirli. Sono brevi, da cinquanta a cento millesimi, quindi un millesimo di rampa")
 		print("  pesa fra l'uno e il due per cento della loro durata.")
-		for nome in SECCHI:
-			coppia(nome, 1.0)
-		print()
-		print("  La domanda: la seconda di ogni coppia ha perso mordente, o e' identica?")
-		print()
-		chiedi_commento("i colpi secchi e i tic corti")
-	if gruppo("i lunghi senza gradino ma con pendenza ripida", len(PENDENZE)):
+		def ascolta_secchi():
+			for nome in SECCHI:
+				coppia(nome, 1.0)
+			print()
+		ascolta_secchi()
+		esito(titolo, ascolta_secchi,
+			  "  La domanda: la seconda di ogni coppia ha perso mordente, o e' identica?")
+	titolo = "i lunghi con pendenza ripida"
+	if gruppo(titolo, len(PENDENZE)):
 		print("  Questi non hanno nessun gradino: l'inviluppo arriva a zero. Ma ci arriva in meno di un")
 		print("  decimo di millesimo, e secondo la misura anche quello si sente.")
-		for nome in PENDENZE:
-			coppia(nome, 1.0)
-		print()
-		print("  La domanda: qui una differenza c'e', oppure e' solo matematica?")
-		print()
-		chiedi_commento("i lunghi con pendenza ripida")
-	if gruppo("quanto deve essere lunga la rampa", 3):
-		print("  Due suoni, uno con il gradino piu' grosso della collezione e uno che deve restare secco,")
-		print("  sentiti con tre rampe diverse. Serve a scegliere il valore, se decidiamo di metterlo.")
-		for nome in ("sirena_d_allarme_9", "colpo_d_impatto_1"):
-			print(f"  {nome}, com'e' adesso")
-			Acusticator.play(nome, sync=True)
-			time.sleep(0.45)
-			for minimo in (0.5, 1.0, 2.0):
-				print(f"  {nome}, rampa da {minimo} millesimi")
-				buffer = corretto(nome, minimo)
-				if buffer is not None:
-					Acusticator.riproduci(buffer, fs=FS, sync=True)
-				time.sleep(0.45)
+		def ascolta_pendenze():
+			for nome in PENDENZE:
+				coppia(nome, 1.0)
 			print()
-		print("  La domanda: da quale valore in poi il click sparisce, e da quale in poi il colpo si ammorbidisce?")
-		print()
-		chiedi_commento("quanto deve essere lunga la rampa")
-	if gruppo("un ultimo gruppo", len(CONTROLLO)):
+		ascolta_pendenze()
+		esito(titolo, ascolta_pendenze,
+			  "  La domanda: qui una differenza c'e', oppure e' solo matematica?")
+	titolo = "quanto deve essere lunga la rampa"
+	if gruppo(titolo, 3):
+		print("  Due suoni, uno con il gradino piu' grosso della collezione e uno che deve restare secco,")
+		print("  sentiti com'e' adesso e poi con tre rampe diverse: mezzo millesimo, uno e due.")
+		print("  Serve a scegliere il valore, se decidiamo di metterlo.")
+		def ascolta_scala():
+			for nome in ("sirena_d_allarme_9", "colpo_d_impatto_1"):
+				scala(nome)
+		ascolta_scala()
+		esito(titolo, ascolta_scala,
+			  "  La domanda: da quale valore in poi il click sparisce, e da quale in poi il colpo si ammorbidisce?")
+	titolo = "l'ultimo gruppo"
+	if gruppo(titolo, len(CONTROLLO)):
 		print("  Quattro preset lunghi. Stessa forma delle prove di prima: prima e dopo.")
-		for nome in CONTROLLO:
-			coppia(nome, 0.0, etichetta_dopo="la seconda volta")
-		print()
-		print("  La domanda: senti differenza fra le due di ogni coppia?")
-		print()
-		chiedi_commento("l'ultimo gruppo")
+		def ascolta_controllo():
+			for nome in CONTROLLO:
+				coppia(nome, 0.0, etichetta_dopo="la seconda volta")
+			print()
+		ascolta_controllo()
+		esito(titolo, ascolta_controllo,
+			  "  La domanda: senti differenza fra le due di ogni coppia?")
 		print("Una cosa che non ti avevo detto: in quest'ultimo gruppo le due di ogni coppia erano")
 		print("identiche. Nessuna rampa, nessuna correzione, lo stesso suono due volte, e la seconda")
 		print("passata per la stessa strada che costruisce le versioni corrette degli altri gruppi.")
