@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V151 di domenica 13 settembre 2026
+	V152 di domenica 13 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.7.0 di domenica 13 settembre 2026. La posizione d'ascolto: il tasto p imposta lo spostamento generale di panorama con cui il preset si sente, da -100 a 100 oppure due valori col punto come -100.100 per farlo scorrere, ed e' lo stesso spostamento che un programma ottiene con il parametro pan di Acusticator. Non tocca il preset, compare in coda alla riga di stato come p seguita dal valore, e ogni riproduzione ci passa; il tasto u lo unisce alle quartine e da li' e' del preset. Fino alla V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Dalla V8.2.0 l'onda prosegue da dove era arrivata invece di ripartire da fase zero a ogni nota, e chiude la issue 34: fra due note contigue il segnale saltava dal valore a cui la prima era arrivata allo zero da cui la seconda cominciava, ed era il motore a inventare quel gradino dove nessuno lo aveva chiesto. La fase si porta avanti soltanto se la nota finisce con il suono ancora acceso: dopo una pausa, dopo un rumore o dopo un inviluppo che l'ha gia' spenta si riparte da zero, altrimenti la nota seguente comincerebbe a meta' onda dopo il silenzio. L'inviluppo non e' toccato, e non lo sara': un attacco a zero fa lo schiocco che chi lo sceglie si aspetta, e ammorbidirlo di nascosto vorrebbe dire riscrivere quello che l'autore del preset ha voluto. All'ascolto del 13 settembre le sirene, che erano il caso peggiore, sono risultate completamente guarite. Prima della V8.2.0, con la V8.1.0 Dalla V8.1.0 il panorama si sposta da fuori, con il parametro pan di play, preset e dell'oggetto chiamabile, e chiude la issue 18: un numero fra -1 e 1, oppure una coppia come (-1, 1) che fa scorrere il suono da un lato all'altro lungo tutta la sua durata, con la stessa grammatica del panorama delle quartine. È uno spostamento e non una sostituzione: il panorama che il preset ha di suo resta e si stringe soltanto quanto serve a non uscire dai bordi, così volo_radente spostato a 0,6 vola da 0,2 a 1 invece di appiattirsi contro il bordo a metà volo. Sommare e tagliare, come la issue proponeva, avrebbe appiattito cinquantuno dei centocinque preset che si muovono. Con pan a zero non cambia un campione, verificato su 243 preset intonati, e sui 21 a rumore il panorama resta identico. Corretta anche un'ombra in preset, dove il panorama della quartina si chiamava come il parametro e lo copriva. Prima della V8.1.0, con la V8.0.0 Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
@@ -11,6 +11,7 @@ Lista utilità contenute in questo pacchetto
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). La lingua dell'utente in due o tre lettere, senza il paese, presa dalle variabili d'ambiente, dall'API di Windows o dal locale, e None quando non si capisce. Era privata e la usavano solo polipo e Donazione; diventa pubblica con la issue 32, perché Tornello e Terminal Beast se la ricavavano con locale.getdefaultlocale, che è deprecata e sparisce con Python 3.15
 	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Il contesto con cui urllib verifica i certificati: archivio di sistema più certifi, perché ognuno dei due conosce radici che l'altro non ha. Nasce dalla issue 40 di Orologic
+	elenco_dispositivi_audio e elenco_interfacce_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Cosa c'è su questa macchina per suonare, pronto da presentare a chi sceglie: indice da passare al parametro api di CWzator, nome del dispositivo e dell'interfaccia, canali, latenza dichiarata, se è il predefinito di sistema e se porta la stessa scheda. Nasce dalla issue 7, perché CWzator sapeva scegliere l'uscita e obbedire a chi gliene imponeva una, ma non elencarle, e cwapu avrebbe dovuto importarsi sounddevice per conto suo. L'elenco dei dispositivi può provare ad aprirli davvero invece di fidarsi di quello che dichiarano, e non è un lusso: su questa macchina sei dispositivi su ventuno non si aprono, fra cui tutti quelli WDM-KS. Di partenza prova solo quelli che portano alla scheda in uso, che costano ottanta millesimi in tutto; con tutti si arriva a duecentotrenta. L'ordine mette davanti i dispositivi che portano dove si sta già ascoltando
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Restituisce il messaggio invece di stamparlo soltanto, con il parametro stampa che per predefinito lo stampa come prima: chi ha una finestra passa falso e lo mostra come vuole. Parametro probabilita, predefinito venti, con cento che forza la comparsa; generatore casuale privato, che non sposta piu' quello del programma; la lingua salvata da polipo si cerca nella cartella di chi chiama e non piu' in argv zero o nella directory di lavoro; le eccezioni intercettate hanno un nome, e l'indirizzo di posta sta in una costante
@@ -903,6 +904,191 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 		break
 	_scelta_audio.update({"fatta": True, "device": scelto, "api": nome})
 	return scelto, nome
+# Le interfacce che prendono il dispositivo in esclusiva: finche' uno le usa,
+# nessun altro puo' suonare su quella scheda. Non e' una misura ma una
+# proprieta' nota dell'interfaccia, e serve a chi presenta la lista: su una
+# macchina con una scheda sola, sceglierle vuol dire zittire il lettore di
+# schermo.
+_API_ESCLUSIVE = ("ASIO", "WDM-KS")
+
+def _prova_apertura(indice, nome_api):
+	"""Prova davvero ad aprire un dispositivo, come lo aprirebbe CWzator.
+
+	Restituisce (True, None) se si e' aperto, (False, motivo) altrimenti.
+	Costa una cinquantina di millesimi di secondo, e su un'interfaccia
+	esclusiva gia' occupata fallisce: e' l'informazione piu' utile da dare a
+	chi deve scegliere, perche' e' esattamente quello che succederebbe al
+	momento di suonare.
+	"""
+	import sounddevice as sd
+	try:
+		extra = sd.WasapiSettings(auto_convert=True) if "WASAPI" in (nome_api or "") else None
+		prova = sd.OutputStream(device=indice, samplerate=44100, channels=2, dtype="int16",
+								blocksize=256, latency="low", extra_settings=extra)
+		prova.start()
+		prova.abort()
+		prova.close()
+	except Exception as e:  # noqa: BLE001 - qui si vuole sapere se si apre, non perche' non si apre
+		return False, f"{type(e).__name__}: {e}"
+	return True, None
+
+def _ordine_api(nome_api):
+	"""Dove sta un'interfaccia nella scala di preferenza, in coda se non c'e'."""
+	corto = (nome_api or "").replace("Windows ", "")
+	return _PREFERENZA_API.index(corto) if corto in _PREFERENZA_API else len(_PREFERENZA_API)
+
+def elenco_dispositivi_audio(prova="predefinito"):
+	"""I dispositivi di uscita di questa macchina, pronti da presentare a chi sceglie.
+
+	Nasce dalla issue 7: CWzator sapeva scegliere l'uscita e sapeva obbedire a
+	chi gliene imponeva una, ma non sapeva elencare le possibilita', e
+	un'applicazione che volesse offrirle all'utente doveva importarsi
+	sounddevice per conto suo.
+	prova dice quanto verificare, perche' quello che il sistema dichiara e
+	quello che si riesce davvero ad aprire non sempre coincidono:
+	  "predefinito"  il predefinito, e tutti quelli che portano il suo stesso
+	                 nome, vengono davvero aperti e chiusi; degli altri si
+	                 riporta quello che il sistema dichiara. E' il valore di
+	                 partenza: sono pochi e sono quelli che contano.
+	  "tutti"        si prova ad aprire ogni dispositivo. Costa una cinquantina
+	                 di millesimi ciascuno, quindi oltre un secondo dove i
+	                 dispositivi sono venti, e per un istante occupa anche
+	                 quelli che nessuno stava usando.
+	  "nessuno"      non si apre niente, si riporta solo quello che il sistema
+	                 dichiara. Immediato.
+	Restituisce una lista di dizionari, ordinata mettendo davanti i dispositivi
+	che portano dove si sta gia' ascoltando, cioe' quelli con stessa_scheda, e
+	dentro ogni gruppo per preferenza di interfaccia e poi per indice. Cosi' il
+	primo della lista e' il modo piu' pronto di raggiungere la scheda che
+	l'utente sta gia' usando, che e' quasi sempre la scelta che vuole. Ogni
+	voce contiene:
+	  indice         il numero da passare al parametro api di CWzator.
+	  dispositivo    il nome del dispositivo, come lo scrive il sistema.
+	  interfaccia    il nome dell'interfaccia, per esempio "Windows WASAPI".
+	  breve          lo stesso senza "Windows", per esempio "WASAPI": e' la
+	                 forma che il parametro api accetta come nome.
+	  canali         quanti canali di uscita ha.
+	  frequenza      la frequenza di campionamento che dichiara di preferire.
+	  latenza        la latenza bassa dichiarata, in millesimi di secondo.
+	  predefinito    vero per il dispositivo che il sistema riporta come uscita
+	                 predefinita, che e' uno solo in tutta la lista. Attenzione
+	                 a non fraintenderlo: e' quel dispositivo visto da una
+	                 interfaccia sola, di solito MME, e non e' detto che sia la
+	                 via migliore per arrivare a quella scheda. Su questa
+	                 macchina il predefinito e' l'indice 4, su MME, ma gli
+	                 stessi altoparlanti si raggiungono anche con WASAPI, che
+	                 ha tre millesimi di latenza invece di novanta. Per quello
+	                 c'e' stessa_scheda.
+	  stessa_scheda  vero se porta lo stesso nome del predefinito di sistema,
+	                 cioe' se con ogni probabilita' e' la stessa scheda vista
+	                 da un'altra interfaccia. E' un confronto di nomi e non una
+	                 certezza: la stessa scheda puo' avere nomi diversi sotto
+	                 interfacce diverse, per esempio "Realtek ASIO" e
+	                 "Speakers (Realtek HD Audio output)".
+	  esclusiva      vero se l'interfaccia prende il dispositivo in esclusiva.
+	  apribile       vero o falso se e' stato provato, None se non lo si e'
+	                 provato.
+	  motivo         perche' non si e' aperto, quando apribile e' falso.
+	Il dato che conta di piu' e' predefinito, insieme a stessa_scheda: chi
+	presenta la lista deve poter dire all'utente quale scelta lo porta dove
+	sta gia' ascoltando, altrimenti gli fa cambiare scheda senza volerlo.
+	Solleva ValueError se prova non e' uno dei tre valori previsti.
+	"""
+	import sounddevice as sd
+	if prova not in ("predefinito", "tutti", "nessuno"):
+		raise ValueError(f"prova ({prova}) non valido: predefinito, tutti o nessuno")
+	try:
+		nome_predefinito = sd.query_devices(sd.default.device[1])["name"]
+		indice_predefinito = sd.default.device[1]
+	except Exception:  # noqa: BLE001 - senza predefinito si elenca lo stesso, senza poterlo segnalare
+		nome_predefinito, indice_predefinito = None, None
+	api = [h["name"] for h in sd.query_hostapis()]
+	voci = []
+	for dispositivo in sd.query_devices():
+		if dispositivo["max_output_channels"] <= 0:
+			continue
+		nome_api = api[dispositivo["hostapi"]] if dispositivo["hostapi"] < len(api) else ""
+		corto = nome_api.replace("Windows ", "")
+		stessa = nome_predefinito is not None and dispositivo["name"] == nome_predefinito
+		voci.append({
+			"indice": dispositivo["index"],
+			"dispositivo": dispositivo["name"],
+			"interfaccia": nome_api,
+			"breve": corto,
+			"canali": int(dispositivo["max_output_channels"]),
+			"frequenza": float(dispositivo["default_samplerate"]),
+			"latenza": float(dispositivo["default_low_output_latency"]) * 1000.0,
+			"predefinito": dispositivo["index"] == indice_predefinito,
+			"stessa_scheda": stessa,
+			"esclusiva": corto in _API_ESCLUSIVE,
+			"apribile": None,
+			"motivo": None,
+		})
+	for voce in voci:
+		if prova == "nessuno" or (prova == "predefinito" and not voce["stessa_scheda"]):
+			continue
+		voce["apribile"], voce["motivo"] = _prova_apertura(voce["indice"], voce["interfaccia"])
+	# Davanti chi porta dove si sta gia' ascoltando: e' la scelta che ha senso
+	# nella grande maggioranza dei casi, e chi vuole un altro ordine riordina.
+	voci.sort(key=lambda v: (not v["stessa_scheda"], _ordine_api(v["interfaccia"]), v["indice"]))
+	return voci
+
+def elenco_interfacce_audio():
+	"""Le interfacce audio di questa macchina, con il dispositivo a cui puntano.
+
+	Serve a chi vuole far scegliere il protocollo invece del singolo
+	dispositivo: il nome breve di ogni voce e' quello che il parametro api di
+	CWzator accetta.
+	Restituisce una lista di dizionari, ordinata per preferenza, cioe' dalla
+	piu' pronta alla piu' lenta, e poi per nome. Ogni voce contiene:
+	  nome           il nome come lo scrive il sistema, per esempio "Windows WASAPI".
+	  breve          lo stesso senza "Windows": e' la forma da passare ad api.
+	  indice         l'indice dell'interfaccia, che serve di rado.
+	  dispositivo    l'indice del suo dispositivo di uscita predefinito, None se
+	                 quell'interfaccia non ne ha uno.
+	  nome_dispositivo  il nome di quel dispositivo.
+	  quanti         quanti dispositivi di uscita offre in tutto.
+	  latenza        la latenza bassa dichiarata dal suo predefinito, in
+	                 millesimi di secondo, None se non ha dispositivi.
+	  stessa_scheda  vero se il suo predefinito porta lo stesso nome del
+	                 predefinito di sistema. Vedi elenco_dispositivi_audio per
+	                 quanto ci si possa fidare di un confronto di nomi.
+	  esclusiva      vero se prende il dispositivo in esclusiva.
+	  preferenza     la posizione nella scala con cui CWzator sceglie da sola,
+	                 zero per la piu' pronta, None per quelle fuori scala.
+	Non prova ad aprire niente: e' immediata. Per sapere se un dispositivo si
+	apre davvero c'e' elenco_dispositivi_audio.
+	"""
+	import sounddevice as sd
+	try:
+		nome_predefinito = sd.query_devices(sd.default.device[1])["name"]
+	except Exception:  # noqa: BLE001 - senza predefinito si elenca lo stesso
+		nome_predefinito = None
+	dispositivi = list(sd.query_devices())
+	voci = []
+	for indice, h in enumerate(sd.query_hostapis()):
+		corto = h["name"].replace("Windows ", "")
+		uscita = h["default_output_device"]
+		uscita = uscita if uscita is not None and uscita >= 0 else None
+		quanti = sum(1 for d in dispositivi
+					 if d["hostapi"] == indice and d["max_output_channels"] > 0)
+		nome_uscita = dispositivi[uscita]["name"] if uscita is not None else None
+		voci.append({
+			"nome": h["name"],
+			"breve": corto,
+			"indice": indice,
+			"dispositivo": uscita,
+			"nome_dispositivo": nome_uscita,
+			"quanti": quanti,
+			"latenza": (float(dispositivi[uscita]["default_low_output_latency"]) * 1000.0
+						if uscita is not None else None),
+			"stessa_scheda": nome_predefinito is not None and nome_uscita == nome_predefinito,
+			"esclusiva": corto in _API_ESCLUSIVE,
+			"preferenza": _PREFERENZA_API.index(corto) if corto in _PREFERENZA_API else None,
+		})
+	voci.sort(key=lambda v: (_ordine_api(v["nome"]), v["nome"]))
+	return voci
+
 # Il mixer condiviso, nato con la issue 8 il 12 settembre 2026. Sta qui, fra
 # la scelta dell'uscita e CWzator, perche' e' di entrambi: Acusticator e
 # CWzator ne avevano uno per ciascuno, e questo prendera' il posto di tutti e
