@@ -5589,13 +5589,13 @@
         "descrizione": "tuono che rotola in lontananza, o esplosione remota",
         "score": [
             [
-                "40-900.40-260",
+                "100-900.100-260",
                 1.8,
                 "0.2.-0.2",
                 0.1
             ]
         ],
-        "kind": 7,
+        "kind": 6,
         "adsr": [
             2.0,
             0.0,
