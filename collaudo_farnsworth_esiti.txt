@@ -1,0 +1,26 @@
+Esiti del collaudo d'ascolto del Farnsworth di CWzator
+Scritti da collaudo_farnsworth.py, che li aggiunge man mano.
+
+GRUPPO: il carattere non cambia, pesi standard
+Data: 2026-09-13 08:30
+Commento di Gabriele: Confermo. le lettere sono tutte ok, cambiano solo gli spazzi fra caratteri. test superato.
+
+GRUPPO: i pesi restano i tuoi
+Data: 2026-09-13 08:31
+Commento di Gabriele: Si, tutto ok. Riconosco perfettamente la firma sonora.
+
+GRUPPO: le due velocita'
+Data: 2026-09-13 08:32
+Commento di Gabriele: Sì, tutto bene, comoda e perfetta.
+
+GRUPPO: la stessa distanza, qualunque testo
+Data: 2026-09-13 08:33
+Commento di Gabriele: sì, sempre uguale. prova ok
+
+GRUPPO: il peso s contro il Farnsworth
+Data: 2026-09-13 08:34
+Commento di Gabriele: sì, tutto ok. test ok
+
+GRUPPO: cosa CWzator rifiuta
+Data: 2026-09-13 08:35
+Commento di Gabriele: Corretto, non ho sentito niente.
