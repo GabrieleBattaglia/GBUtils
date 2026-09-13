@@ -17,7 +17,7 @@ import sys
 
 import numpy as np
 
-from GBUtils import Acusticator, _panorama_spostato, _sintetizza, parse_pan_values
+from GBUtils import Acusticator, _sintetizza, panorama_spostato, parse_pan_values
 
 totale = passate = 0
 
@@ -121,7 +121,7 @@ prova("un preset centrato si sposta esattamente dove si chiede", esatti)
 # 5. Quando c'e' posto, il movimento non si stringe affatto.
 #    Un preset che sta fra -0,2 e 0,2 spostato di 0,3 ha ancora posto.
 score_stretto = ["c4", 0.1, -0.2, 0.5, "e4", 0.1, 0.0, 0.5, "g4", 0.1, 0.2, 0.5]
-spostato = _panorama_spostato(score_stretto, 0.3)
+spostato = panorama_spostato(score_stretto, 0.3)
 larghezza_prima = max(panorami(score_stretto)) - min(panorami(score_stretto))
 larghezza_dopo = max(panorami(spostato)) - min(panorami(spostato))
 prova("con posto a sufficienza il movimento non si stringe",
@@ -133,20 +133,20 @@ prova("e si sposta tutto di quanto si e' chiesto",
 # 6. Quando non c'e' posto, si stringe quel tanto e non di piu'.
 #    volo_radente va da -1 a 1: spostato di 0,6 deve stare fra 0,2 e 1.
 score_largo = ["c4", 0.1, -1.0, 0.5, "e4", 0.1, 0.0, 0.5, "g4", 0.1, 1.0, 0.5]
-spostato = _panorama_spostato(score_largo, 0.6)
+spostato = panorama_spostato(score_largo, 0.6)
 prova("senza posto il movimento si stringe fino al bordo, non oltre",
 	  abs(max(panorami(spostato)) - 1.0) < 1e-9 and abs(min(panorami(spostato)) - 0.2) < 1e-9,
 	  panorami(spostato))
 prova("e il movimento resta un movimento, non si appiattisce",
 	  max(panorami(spostato)) - min(panorami(spostato)) > 0.7,
 	  max(panorami(spostato)) - min(panorami(spostato)))
-spostato = _panorama_spostato(score_largo, 1.0)
+spostato = panorama_spostato(score_largo, 1.0)
 prova("al bordo esatto il movimento si annulla, tutto da un lato",
 	  all(abs(v - 1.0) < 1e-9 for v in panorami(spostato)), panorami(spostato))
 
 # 7. La coppia fa scorrere il centro lungo tutto il suono, non dentro ogni nota.
 score_centrato = ["c4", 0.1, 0, 0.5, "e4", 0.1, 0, 0.5, "g4", 0.1, 0, 0.5, "b4", 0.1, 0, 0.5]
-spostato = _panorama_spostato(score_centrato, (-1.0, 1.0))
+spostato = panorama_spostato(score_centrato, (-1.0, 1.0))
 valori = panorami(spostato)
 prova("la coppia parte dal primo valore", abs(valori[0] + 1.0) < 1e-9, valori[0])
 prova("la coppia arriva al secondo", abs(valori[-1] - 1.0) < 1e-9, valori[-1])
@@ -157,7 +157,7 @@ prova("le note di mezzo stanno dove il tempo dice",
 
 # 8. I portamenti contrari si sommano invece di annullarsi a caso.
 score_lr = ["c4", 0.4, (-1.0, 1.0), 0.5]
-contrario = _panorama_spostato(score_lr, (1.0, -1.0))
+contrario = panorama_spostato(score_lr, (1.0, -1.0))
 prova("quartina che va a destra dentro un generale che va a sinistra: resta dentro i bordi",
 	  all(-1.0 - 1e-9 <= v <= 1.0 + 1e-9 for v in panorami(contrario)), panorami(contrario))
 # Con il generale ai due estremi non c'e' spazio in nessun istante, quindi il
@@ -169,32 +169,32 @@ prova("con il generale ai bordi resta solo il movimento generale",
 # Con un generale piu' mite i due movimenti si incontrano a meta' strada e,
 # essendo uguali e opposti, si annullano: il suono resta fermo al centro. Non
 # e' un caso trattato a parte, e' la somma che viene zero.
-mite = _panorama_spostato(score_lr, (0.5, -0.5))
+mite = panorama_spostato(score_lr, (0.5, -0.5))
 valori_mite = panorami(mite)
 prova("due portamenti uguali e opposti si annullano in un panorama fermo",
 	  len(valori_mite) == 1 and abs(valori_mite[0]) < 1e-9, valori_mite)
 # Se invece il generale e' meno ampio del movimento interno, vince il movimento
 # interno e il verso resta il suo.
-meno_ampio = _panorama_spostato(score_lr, (0.25, -0.25))
+meno_ampio = panorama_spostato(score_lr, (0.25, -0.25))
 valori_meno = panorami(meno_ampio)
 prova("con un generale meno ampio vince il verso della quartina",
 	  len(valori_meno) == 2 and valori_meno[0] < valori_meno[1], valori_meno)
-solo_generale = _panorama_spostato(["c4", 0.4, 0, 0.5], (0.5, -0.5))
+solo_generale = panorama_spostato(["c4", 0.4, 0, 0.5], (0.5, -0.5))
 prova("e da soli il generale fa quello che dice",
 	  panorami(solo_generale) == [0.5, -0.5], panorami(solo_generale))
 score_rl = ["c4", 0.4, (1.0, -1.0), 0.5]
-concorde = _panorama_spostato(score_rl, (1.0, -1.0))
+concorde = panorama_spostato(score_rl, (1.0, -1.0))
 prova("quartina e generale che vanno dalla stessa parte restano dentro i bordi",
 	  all(-1.0 - 1e-9 <= v <= 1.0 + 1e-9 for v in panorami(concorde)), panorami(concorde))
 
 # 9. Le tre porte danno lo stesso risultato.
 nome = "conferma" if "conferma" in NOMI else NOMI[0]
 da_preset, kind, adsr = Acusticator.preset(nome, pan=0.6)
-da_mano = _panorama_spostato(Acusticator.preset(nome)[0], 0.6)
+da_mano = panorama_spostato(Acusticator.preset(nome)[0], 0.6)
 prova("preset e la funzione danno lo stesso score", panorami(da_preset) == panorami(da_mano))
 buffer_preset = _sintetizza(da_preset, kind, adsr, 44100)
 score_base, kind_base, adsr_base = Acusticator.preset(nome)
-buffer_chiamabile = _sintetizza(_panorama_spostato(score_base, 0.6), kind_base, adsr_base, 44100)
+buffer_chiamabile = _sintetizza(panorama_spostato(score_base, 0.6), kind_base, adsr_base, 44100)
 prova("e l'oggetto chiamabile produce lo stesso suono",
 	  np.array_equal(buffer_preset, buffer_chiamabile))
 

@@ -7,12 +7,12 @@ import textwrap
 
 # Aggiungo la cartella corrente al path per importare GBUtils
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from GBUtils import Acusticator, dgt, menu, parse_pan_parts
+from GBUtils import Acusticator, dgt, menu, panorama_spostato, parse_pan_parts
 
-VERSION = "1.6.1" # I tredici rilievi di ruff, senza cambiare cio' che il programma fa
+VERSION = "1.7.0" # La posizione d'ascolto, cioe' lo spostamento generale di panorama
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)"
-RELEASE_DATE = "5 settembre 2026"
+RELEASE_DATE = "13 settembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -444,6 +444,12 @@ class EditorState:
         }
         self.modified = False
         self.running = True
+        # La posizione d'ascolto: lo spostamento generale di panorama con cui
+        # si sente il preset, come farebbe il programma che lo suona. Non fa
+        # parte del preset e non viene salvata: serve a sentire se il suono
+        # regge quando qualcuno lo mette di lato. Con u si puo' pero' unire
+        # alle quartine, e allora diventa parte del preset.
+        self.posizione = None
 
 def pan_to_user(val):
     if is_portamento(val):
@@ -466,6 +472,46 @@ def user_to_pan(val_str):
     else:
         fval = float(val_str) / 100.0
         return max(-1.0, min(1.0, round(fval, 2)))
+
+def leggi_posizione(scritto):
+    """Traduce in posizione d'ascolto cio' che si e' scritto.
+
+    Restituisce la coppia (valore, errore). Valore None vuol dire nessuna
+    posizione, cioe' il preset si sente dov'e' scritto.
+    """
+    scritto = str(scritto).strip()
+    if not scritto:
+        return None, None
+    # La forma si controlla prima di tradurre: parse_pan_parts, quando non
+    # riconosce niente, spezza sul primo punto e restituisce comunque due
+    # pezzi, cosi' che 1.2.3.4.x diventava una posizione da 1 a 2 senza che
+    # nessuno protestasse. Qui il punto vuol dire sempre scivolata, mai
+    # decimale, come nel campo del panorama e in quello della banda.
+    if not re.fullmatch(r"-?\d+(\.-?\d+)?", scritto):
+        return None, ("Non l'ho capito. Serve un numero da -100 a 100, oppure due numeri "
+                      "uniti dal punto come -100.100 per farlo scorrere.")
+    try:
+        valore = user_to_pan(scritto)
+    except (TypeError, ValueError):
+        return None, ("Non l'ho capito. Serve un numero da -100 a 100, oppure due numeri "
+                      "uniti dal punto come -100.100 per farlo scorrere.")
+    if isinstance(valore, float) and abs(valore) < 1e-9:
+        return None, None
+    return valore, None
+
+def posizione_breve(valore):
+    """La posizione d'ascolto come codice corto per la riga di stato."""
+    return "" if valore is None else f" p{pan_to_user(valore)}"
+
+def pan_in_file(valore):
+    """Il panorama nella forma con cui il file lo scrive: un numero quando sta
+    fermo, due numeri uniti dal punto quando scorre."""
+    def breve(x):
+        x = round(float(x), 2)
+        return str(int(x)) if float(x).is_integer() else str(x)
+    if isinstance(valore, (tuple, list)):
+        return f"{breve(valore[0])}.{breve(valore[1])}"
+    return round(float(valore), 2)
 
 def vol_to_user(val):
     if is_portamento(val):
@@ -546,13 +592,16 @@ def get_status_string(state):
         adsr = list(state.preset['adsr'])
         adsr[state.focus_param] = f"<{adsr[state.focus_param]}>"
         s = f"ADSR: {adsr[0]} {adsr[1]} {adsr[2]} {adsr[3]}"
-    return s
+    return s + posizione_breve(state.posizione)
 
 def handle_print(state, force_newline=False):
     s = get_status_string(state)
     if force_newline:
         print()
-    clear_line = " " * 50
+    # Sessanta e non cinquanta: con la posizione d'ascolto in coda la riga
+    # puo' arrivare piu' in la', e quel che resta della precedente si legge
+    # sul display braille come se fosse ancora li'.
+    clear_line = " " * 60
     print(f"\r{clear_line}\r{s}", end="", flush=True)
 
 def play_preset(state):
@@ -567,7 +616,8 @@ def play_preset(state):
         else:
             vol_param = max(0.0, min(1.0, DEFAULT_VOL + float(vol_delta)))
         score_flat.extend([note, dur, pan, vol_param])
-    Acusticator(score_flat, kind=state.preset['kind'], adsr=state.preset['adsr'], sync=False)
+    Acusticator(score_flat, kind=state.preset['kind'], adsr=state.preset['adsr'],
+                sync=False, pan=state.posizione)
 
 def play_quad(state):
     q = state.preset['score'][state.focus_idx]
@@ -579,7 +629,8 @@ def play_quad(state):
         vol_param = (v1, v2)
     else:
         vol_param = max(0.0, min(1.0, DEFAULT_VOL + float(vol_delta)))
-    Acusticator([note, dur, pan, vol_param], kind=state.preset['kind'], adsr=state.preset['adsr'], sync=False)
+    Acusticator([note, dur, pan, vol_param], kind=state.preset['kind'],
+                adsr=state.preset['adsr'], sync=False, pan=state.posizione)
 
 def transpose_single(val_str, direction, step):
     if val_str.lower() == 'p': return 'p'
@@ -1028,6 +1079,42 @@ def edit_mode(db, preset_name):
                 state.modified = True
                 print(f"\r{' ' * 50}\rEliminato. Ora Sc.{state.focus_idx+1}", end="", flush=True)
                 continue
+        elif key == 'p':
+            print("\nPosizione d'ascolto: sposta tutto il preset fra i due altoparlanti, come farebbe il programma che lo suona.")
+            print("Da -100, tutto a sinistra, a 100, tutto a destra. Due valori uniti dal punto, per esempio -100.100, lo fanno")
+            print("scorrere da un lato all'altro lungo tutta la durata del preset.")
+            print("Il panorama scritto nelle quartine non viene cancellato ma spostato, e si stringe soltanto quanto serve a non")
+            print("uscire dai bordi: un suono che vola continua a volare, in uno spazio piu' stretto.")
+            print("Il preset non cambia: e' solo il modo in cui lo stai ascoltando. Invio senza scrivere niente la toglie.")
+            valore, errore = leggi_posizione(input("\rPosizione\r"))
+            if errore:
+                print(errore)
+            else:
+                state.posizione = valore
+                if valore is None:
+                    print("Posizione tolta: il preset torna a sentirsi dov'e' scritto.")
+                else:
+                    print(f"Posizione {pan_to_user(valore)}. Il preset non e' cambiato: con u la rendi sua.")
+                play_preset(state)
+            handle_print(state, force_newline=True)
+            continue
+        elif key == 'u':
+            if state.posizione is None:
+                print(f"\r{' ' * 60}\rNessuna posizione da unire", end="", flush=True)
+                continue
+            # La posizione entra nelle quartine e smette di essere solo un modo
+            # di ascoltare: da qui in poi il preset porta con se' quello
+            # spostamento, e chi lo suona potra' spostarlo ancora.
+            piatto = []
+            for q in state.preset['score']:
+                piatto.extend(q)
+            piatto = panorama_spostato(piatto, state.posizione)
+            for i, q in enumerate(state.preset['score']):
+                q[2] = pan_in_file(piatto[i * 4 + 2])
+            state.posizione = None
+            state.modified = True
+            print(f"\r{' ' * 60}\rPosizione unita alle quartine", end="", flush=True)
+            continue
         elif key == 'l':
             print("\n--- Lista Score ---")
             for i, q in enumerate(state.preset['score']):
@@ -1074,6 +1161,15 @@ def edit_mode(db, preset_name):
             print("f / j: Inserisce nuova quartina prima / dopo quella corrente")
             print("g / h: Sposta il cursore alla quartina precedente / successiva e riproduce")
             print("e: Elimina la quartina corrente")
+            print("p: Posizione d'ascolto, cioe' lo spostamento generale del panorama.")
+            print("   Da -100 a 100, oppure due valori col punto come -100.100 per farlo")
+            print("   scorrere da un lato all'altro lungo tutta la durata del preset.")
+            print("   Sposta il panorama delle quartine invece di cancellarlo, e lo stringe")
+            print("   solo quanto serve a non uscire dai bordi: un suono che vola continua")
+            print("   a volare. Non tocca il preset, e' il modo in cui lo ascolti. Invio a")
+            print("   vuoto la toglie. E' lo stesso spostamento che un programma ottiene")
+            print("   con il parametro pan di Acusticator.play.")
+            print("u: Unisce la posizione d'ascolto alle quartine, e da li' e' del preset")
             print("l: Mostra la lista completa delle quartine")
             print("?: Mostra questa lista di tasti rapidi")
             print("Esc: Esce dall'editor")

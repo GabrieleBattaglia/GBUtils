@@ -1,0 +1,30 @@
+Esiti del collaudo d'ascolto dello spostamento di panorama
+Scritti da collaudo_pan.py, che li aggiunge man mano.
+
+GRUPPO: quartina ferma al centro
+Data: 2026-09-13 09:32
+Commento di Gabriele: nessuno
+
+GRUPPO: quartina ferma fuori centro, a -0,5
+Data: 2026-09-13 09:33
+Commento di Gabriele: nessuno
+
+GRUPPO: quartina in portamento da sinistra a destra
+Data: 2026-09-13 09:33
+Commento di Gabriele: nessuno
+
+GRUPPO: quartina in portamento da destra a sinistra
+Data: 2026-09-13 09:33
+Commento di Gabriele: nessuno
+
+GRUPPO: i preset veri che si muovono
+Data: 2026-09-13 09:34
+Commento di Gabriele: nessuno
+
+GRUPPO: un preset fermo messo di lato
+Data: 2026-09-13 09:34
+Commento di Gabriele: nessuno
+
+GRUPPO: i casi limite
+Data: 2026-09-13 09:34
+Commento di Gabriele: nessuno

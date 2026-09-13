@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.6.1)
+Manuale Utente: Acu_Maker (v1.7.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -69,6 +69,22 @@ Con [w] si gira fra le otto forme d'onda. Quando si attraversa il confine fra le
 
 Andando dalla nota alla banda e tornando indietro si ritrova la nota di partenza. Nell'altro verso la larghezza della banda non si può conservare, perché una nota non ha larghezza: tornando al rumore si ottiene una banda larga un'ottava centrata dov'era centrata quella di prima.
 
+# La posizione d'ascolto
+
+Dalla V8.1.0 Acusticator sa spostare un preset fra i due altoparlanti al momento di suonarlo, con il parametro pan di play, di preset e dell'oggetto chiamabile. È il modo con cui un programma fa arrivare lo stesso suono da sinistra quando lo produce il giocatore e da destra quando lo produce il calcolatore, senza scrivere due preset gemelli.
+
+Acu_Maker permette di sentire in anticipo come il preset si comporta in quella situazione. Il tasto [p] chiede la posizione d'ascolto: un numero da -100, tutto a sinistra, a 100, tutto a destra, oppure due numeri uniti dal punto, per esempio -100.100, che lo fanno scorrere da un lato all'altro lungo tutta la durata del preset. Invio senza scrivere niente la toglie. Appena impostata il preset si sente subito, e da lì in poi ogni riproduzione, sia dell'intero preset con [Spazio] sia della singola quartina con [g] e [h], passa da quella posizione.
+
+La posizione compare in coda alla riga di stato come una p seguita dal valore, per esempio p-60 oppure p-100.100, così si sa sempre da dove si sta ascoltando.
+
+Il punto importante è che non è una sostituzione. Il panorama scritto nelle quartine non viene cancellato: viene spostato, e si stringe soltanto quel tanto che serve a non uscire dai bordi. Un preset che vola da -100 a 100, ascoltato a 60, vola da 20 a 100: più stretto, ma è ancora un volo. Se invece il panorama del preset ha già posto dove lo si manda, non si stringe affatto e si sposta e basta. Alla posizione estrema, cioè 100 o -100, non resta spazio per il movimento e il suono si sente tutto da un lato: è voluto, ed è il modo per accorgersi che un preset in quel punto perde il suo carattere.
+
+Due portamenti contrari si compongono invece di litigare. Una quartina che va da sinistra a destra dentro una posizione che va da destra a sinistra, se i due sono uguali e opposti, si annullano e il suono resta fermo al centro; se la posizione è meno ampia del movimento della quartina, vince il verso della quartina.
+
+La posizione non fa parte del preset e non viene salvata: è soltanto il modo in cui lo stai ascoltando. Se però quello che senti ti piace e vuoi che diventi il preset, il tasto [u] lo unisce alle quartine, che vengono riscritte con il panorama spostato; la posizione si azzera, il preset risulta modificato e alla prossima uscita verrà proposto il salvataggio. Da quel momento è il preset ad avere quel panorama, e un programma potrà comunque spostarlo ancora.
+
+Un avvertimento sull'uso: un preset destinato a essere spostato dai programmi conviene tenerlo centrato, perché è il programma a sapere dove il suono deve arrivare. Il tasto [u] serve ai suoni che di loro natura vivono da un lato, non a fissare una posizione che il chiamante saprebbe scegliere meglio.
+
 # Le statistiche di chiusura
 
 Uscendo da Acu_Maker, subito dopo il salvataggio della libreria, compaiono nove righe di numeri sulla collezione: quanti preset e quante quartine contiene e quanto suono fanno in tutto; la media di quartine e di durata per preset; come si dividono in percentuale le quattro onde intonate; quanti preset usano i rumori e di che colore; qual è il più lungo, quale il più corto e quale ha più quartine; quante quartine hanno una scivolata, divise fra nota, banda e panoramica; quanti preset muovono lo stereo e quanti lo tengono fermo ma fuori centro; da quale nota a quale nota arriva la collezione, con quante ottave di escursione, e qual è la famiglia di preset più numerosa.
@@ -80,6 +96,8 @@ Usa questi tasti per interagire con i parametri:
 
 ## Riproduzione
 - [Spazio]   : Riproduce l'intero preset in background.
+- [p]        : Imposta la posizione d'ascolto, cioè lo spostamento generale del panorama. Vedi il capitolo dedicato.
+- [u]        : Unisce la posizione d'ascolto alle quartine, rendendola parte del preset.
 
 ## Navigazione Focus
 - [z]                : Sposta il focus sul parametro precedente della quartina (o dell'ADSR).
