@@ -43,20 +43,6 @@ FILI_DI_CARICO = 4
 SILENZIO_CORTO_MS = 6
 SILENZIO_LUNGO_MS = 23
 
-def riga(testo, larghezza=40):
-	"""Il testo in righe da quaranta caratteri, per la lettura sul braille."""
-	parole, riga_corrente = testo.split(), ""
-	for parola in parole:
-		if not riga_corrente:
-			riga_corrente = parola
-		elif len(riga_corrente) + 1 + len(parola) <= larghezza:
-			riga_corrente += " " + parola
-		else:
-			print(riga_corrente)
-			riga_corrente = parola
-	if riga_corrente:
-		print(riga_corrente)
-
 esiti = Esiti(ESITI, "Esiti del collaudo d'ascolto del mixer\n"
 					 "Scritti da collaudo_mixer.py, che li aggiunge man mano.",
 			  etichetta="PROVA")
@@ -124,14 +110,14 @@ def aspetta_tasto_e_suona(blocco):
 	riproduci(suono_breve(), blocco)
 
 def prova_latenza_dichiarata():
-	riga("Prova 1, la latenza dichiarata. Premerai un tasto sei volte. Le prime tre suonano con il ritardo di oggi, sei millesimi di secondo. Le altre tre con quello nuovo, quarantasei millesimi. Ogni volta ti dico prima quale stai per sentire.")
+	print("Prova 1, la latenza dichiarata. Premerai un tasto sei volte. Le prime tre suonano con il ritardo di oggi, sei millesimi di secondo. Le altre tre con quello nuovo, quarantasei millesimi. Ogni volta ti dico prima quale stai per sentire.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
 		return
 	def ascolta():
 		for etichetta, blocco in (("oggi, sei millesimi", BLOCCO_PICCOLO), ("nuovo, quarantasei millesimi", BLOCCO_GRANDE)):
 			for numero in (1, 2, 3):
-				riga(f"{etichetta}, {numero} di 3.")
+				print(f"{etichetta}, {numero} di 3.")
 				aspetta_tasto_e_suona(blocco)
 				time.sleep(0.4)
 		print()
@@ -140,7 +126,7 @@ def prova_latenza_dichiarata():
 				"Se non hai sentito differenza, la latenza nuova va bene e la prova alla cieca lo confermera'.")
 
 def prova_latenza_alla_cieca():
-	riga("Prova 2, la stessa cosa alla cieca. Dieci volte: premi un tasto, senti il bip, e subito dopo dici se era il ritardo corto o quello lungo. Premi c per corto, l per lungo. Non ti dico la risposta fino alla fine.")
+	print("Prova 2, la stessa cosa alla cieca. Dieci volte: premi un tasto, senti il bip, e subito dopo dici se era il ritardo corto o quello lungo. Premi c per corto, l per lungo. Non ti dico la risposta fino alla fine.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
 		return
@@ -153,7 +139,7 @@ def prova_latenza_alla_cieca():
 	giusti, sbagliati = 0, 0
 	risposte = []
 	for numero, corto in enumerate(ordine, 1):
-		riga(f"Prova {numero} di 10.")
+		print(f"Prova {numero} di 10.")
 		aspetta_tasto_e_suona(BLOCCO_PICCOLO if corto else BLOCCO_GRANDE)
 		while True:
 			risposta = key("\rCorto o lungo? c oppure l\r")
@@ -173,16 +159,16 @@ def prova_latenza_alla_cieca():
 	corte_giuste = sum(1 for c, r, _ in risposte if c and r == "c")
 	lunghe_giuste = sum(1 for c, r, _ in risposte if not c and r == "l")
 	dette_corte = sum(1 for _, r, _ in risposte if r == "c")
-	riga(f"Risultato: {giusti} giuste su 10.")
-	riga(f"Corte riconosciute {corte_giuste} su 5, lunghe riconosciute {lunghe_giuste} su 5.")
+	print(f"Risultato: {giusti} giuste su 10.")
+	print(f"Corte riconosciute {corte_giuste} su 5, lunghe riconosciute {lunghe_giuste} su 5.")
 	if dette_corte in (0, 10):
-		riga("Hai risposto sempre allo stesso modo, quindi non hai distinto niente: il ritardo nuovo non si sente, e il punteggio qui sopra e' solo il conto di come e' caduto il sorteggio.")
+		print("Hai risposto sempre allo stesso modo, quindi non hai distinto niente: il ritardo nuovo non si sente, e il punteggio qui sopra e' solo il conto di come e' caduto il sorteggio.")
 	elif corte_giuste + lunghe_giuste >= 9:
-		riga("Li distingui davvero: il ritardo nuovo si sente, e va deciso cosa farne.")
+		print("Li distingui davvero: il ritardo nuovo si sente, e va deciso cosa farne.")
 	elif corte_giuste >= 4 and lunghe_giuste >= 4:
-		riga("Li distingui quasi sempre: conviene rifare la prova per esserne sicuri.")
+		print("Li distingui quasi sempre: conviene rifare la prova per esserne sicuri.")
 	else:
-		riga("Sei nel caso: il ritardo nuovo non si sente, e il blocco grande si puo' adottare senza pensieri.")
+		print("Sei nel caso: il ritardo nuovo non si sente, e il blocco grande si puo' adottare senza pensieri.")
 	print()
 	dettaglio = []
 	for numero, (corto, risposta, indovinato) in enumerate(risposte, 1):
@@ -195,14 +181,14 @@ def prova_latenza_alla_cieca():
 		f"Dettaglio, era/detto/esito: " + " ".join(dettaglio))
 
 def prova_buchi():
-	riga("Prova 3, i buchi nel suono. Una nota tenuta di due secondi e mezzo, mentre il programma calcola come fa Terminal Beast quando annuncia una scuderia nuova. La sentirai tre volte come funziona oggi e tre volte come funzionerebbe dopo la cura, alternate a coppie.")
+	print("Prova 3, i buchi nel suono. Una nota tenuta di due secondi e mezzo, mentre il programma calcola come fa Terminal Beast quando annuncia una scuderia nuova. La sentirai tre volte come funziona oggi e tre volte come funzionerebbe dopo la cura, alternate a coppie.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
 		return
 	def ascolta():
 		for giro in (1, 2, 3):
 			for etichetta, funzione, blocco in (("oggi", riproduci_a_callback, BLOCCO_PICCOLO), ("dopo la cura", riproduci, BLOCCO_GRANDE)):
-				riga(f"Coppia {giro} di 3, {etichetta}.")
+				print(f"Coppia {giro} di 3, {etichetta}.")
 				nota = suono_lungo()
 				carico(len(nota) / FS + 0.5)
 				time.sleep(0.4)
@@ -228,18 +214,18 @@ def coppia_di_note(silenzio_ms, durata_nota=0.1, frequenza=880.0):
 	return np.vstack((nota, quiete, nota))
 
 def prova_silenzio_alla_cieca():
-	riga("Prova 4, il ritardo come silenzio. La proposta e' tua: invece di premere un tasto e aspettare il suono, senti due note separate da un silenzio, e dici se il silenzio era corto o lungo. Il corto vale sei millesimi, cioe' il ritardo di oggi, e il lungo ventitre', che e' quello del mixer nuovo: sono meno della meta' della differenza di prima, perche' le misure hanno detto che non serve arrivare a quarantasei. Messi in fila fra due note il confronto e' piu' facile che con il tasto.")
+	print("Prova 4, il ritardo come silenzio. La proposta e' tua: invece di premere un tasto e aspettare il suono, senti due note separate da un silenzio, e dici se il silenzio era corto o lungo. Il corto vale sei millesimi, cioe' il ritardo di oggi, e il lungo ventitre', che e' quello del mixer nuovo: sono meno della meta' della differenza di prima, perche' le misure hanno detto che non serve arrivare a quarantasei. Messi in fila fra due note il confronto e' piu' facile che con il tasto.")
 	print()
-	riga("Prima tre coppie dichiarate, per farti l'orecchio: corto, lungo, corto. Poi dieci alla cieca, cinque per parte mescolate.")
+	print("Prima tre coppie dichiarate, per farti l'orecchio: corto, lungo, corto. Poi dieci alla cieca, cinque per parte mescolate.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per saltare\r"):
 		return
 	for etichetta, silenzio in (("corto", SILENZIO_CORTO_MS), ("lungo", SILENZIO_LUNGO_MS), ("corto", SILENZIO_CORTO_MS)):
-		riga(f"Silenzio {etichetta}.")
+		print(f"Silenzio {etichetta}.")
 		riproduci(coppia_di_note(silenzio), BLOCCO_GRANDE)
 		time.sleep(0.8)
 	print()
-	riga("Ora le dieci alla cieca. Premi c per corto, l per lungo. Se vuoi risentire la coppia prima di rispondere, premi r.")
+	print("Ora le dieci alla cieca. Premi c per corto, l per lungo. Se vuoi risentire la coppia prima di rispondere, premi r.")
 	print()
 	if not enter_escape("\rInvio quando sei pronto, Escape per saltare\r"):
 		return
@@ -247,7 +233,7 @@ def prova_silenzio_alla_cieca():
 	random.Random().shuffle(ordine)
 	risposte = []
 	for numero, corto in enumerate(ordine, 1):
-		riga(f"Coppia {numero} di 10.")
+		print(f"Coppia {numero} di 10.")
 		while True:
 			riproduci(coppia_di_note(SILENZIO_CORTO_MS if corto else SILENZIO_LUNGO_MS), BLOCCO_GRANDE)
 			risposta = key("\rCorto, lungo o risenti? c l r\r")
@@ -262,16 +248,16 @@ def prova_silenzio_alla_cieca():
 	lunghe_giuste = sum(1 for c, r, _ in risposte if not c and r == "l")
 	dette_corte = sum(1 for _, r, _ in risposte if r == "c")
 	print()
-	riga(f"Risultato: {giusti} giuste su 10.")
-	riga(f"Corte riconosciute {corte_giuste} su 5, lunghe riconosciute {lunghe_giuste} su 5.")
+	print(f"Risultato: {giusti} giuste su 10.")
+	print(f"Corte riconosciute {corte_giuste} su 5, lunghe riconosciute {lunghe_giuste} su 5.")
 	if dette_corte in (0, 10):
-		riga("Hai risposto sempre allo stesso modo, quindi non hai distinto niente.")
+		print("Hai risposto sempre allo stesso modo, quindi non hai distinto niente.")
 	elif corte_giuste + lunghe_giuste >= 9:
-		riga("Li distingui anche cosi': diciassette millesimi di silenzio sono dentro la tua risoluzione, e allora conviene scendere al blocco piu' piccolo che regge.")
+		print("Li distingui anche cosi': diciassette millesimi di silenzio sono dentro la tua risoluzione, e allora conviene scendere al blocco piu' piccolo che regge.")
 	elif corte_giuste >= 4 and lunghe_giuste >= 4:
-		riga("Li distingui quasi sempre.")
+		print("Li distingui quasi sempre.")
 	else:
-		riga("Sei nel caso: nemmeno nel confronto diretto la differenza si coglie.")
+		print("Sei nel caso: nemmeno nel confronto diretto la differenza si coglie.")
 	print()
 	dettaglio = []
 	for numero, (corto, risposta, indovinato) in enumerate(risposte, 1):
@@ -288,28 +274,28 @@ def main():
 	PROVE["2"] = (PROVE["2"][0], prova_latenza_alla_cieca)
 	PROVE["3"] = (PROVE["3"][0], prova_buchi)
 	PROVE["4"] = (PROVE["4"][0], prova_silenzio_alla_cieca)
-	riga("Collaudo d'ascolto del mixer.")
-	riga("Tre prove, spiegate una per una. Nessuna parte prima del tuo Invio.")
+	print("Collaudo d'ascolto del mixer.")
+	print("Tre prove, spiegate una per una. Nessuna parte prima del tuo Invio.")
 	print()
 	for numero, (titolo, _) in PROVE.items():
-		riga(f"{numero}: {titolo}")
+		print(f"{numero}: {titolo}")
 	print()
-	riga("Scegli quali fare: i numeri attaccati, per esempio 14 per la prima e la quarta, oppure Invio per tutte.")
+	print("Scegli quali fare: i numeri attaccati, per esempio 14 per la prima e la quarta, oppure Invio per tutte.")
 	scelta = dgt("\rQuali prove\r", kind="s", smin=0, smax=10).strip()
 	volute = [n for n in PROVE if n in scelta] if scelta else list(PROVE)
 	if not volute:
-		riga("Nessuna prova scelta, esco.")
+		print("Nessuna prova scelta, esco.")
 		return 0
 	print()
-	riga("Prima di cominciare, alza il volume come lo tieni di solito: le differenze da sentire sono piccole.")
+	print("Prima di cominciare, alza il volume come lo tieni di solito: le differenze da sentire sono piccole.")
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per uscire\r"):
 		return 0
 	for numero in volute:
 		PROVE[numero][1]()
-	riga("Collaudo finito. Grazie per le orecchie.")
+	print("Collaudo finito. Grazie per le orecchie.")
 	if os.path.exists(ESITI):
-		riga(f"Gli esiti stanno in {os.path.basename(ESITI)}, accanto a questo programma.")
+		print(f"Gli esiti stanno in {os.path.basename(ESITI)}, accanto a questo programma.")
 	return 0
 
 if __name__ == "__main__":
