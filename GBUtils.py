@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V153 di domenica 13 settembre 2026
+	V154 di domenica 13 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.7.0 di domenica 13 settembre 2026. La posizione d'ascolto: il tasto p imposta lo spostamento generale di panorama con cui il preset si sente, da -100 a 100 oppure due valori col punto come -100.100 per farlo scorrere, ed e' lo stesso spostamento che un programma ottiene con il parametro pan di Acusticator. Non tocca il preset, compare in coda alla riga di stato come p seguita dal valore, e ogni riproduzione ci passa; il tasto u lo unisce alle quartine e da li' e' del preset. Fino alla V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Dalla V8.2.0 l'onda prosegue da dove era arrivata invece di ripartire da fase zero a ogni nota, e chiude la issue 34: fra due note contigue il segnale saltava dal valore a cui la prima era arrivata allo zero da cui la seconda cominciava, ed era il motore a inventare quel gradino dove nessuno lo aveva chiesto. La fase si porta avanti soltanto se la nota finisce con il suono ancora acceso: dopo una pausa, dopo un rumore o dopo un inviluppo che l'ha gia' spenta si riparte da zero, altrimenti la nota seguente comincerebbe a meta' onda dopo il silenzio. L'inviluppo non e' toccato, e non lo sara': un attacco a zero fa lo schiocco che chi lo sceglie si aspetta, e ammorbidirlo di nascosto vorrebbe dire riscrivere quello che l'autore del preset ha voluto. All'ascolto del 13 settembre le sirene, che erano il caso peggiore, sono risultate completamente guarite. Prima della V8.2.0, con la V8.1.0 Dalla V8.1.0 il panorama si sposta da fuori, con il parametro pan di play, preset e dell'oggetto chiamabile, e chiude la issue 18: un numero fra -1 e 1, oppure una coppia come (-1, 1) che fa scorrere il suono da un lato all'altro lungo tutta la sua durata, con la stessa grammatica del panorama delle quartine. È uno spostamento e non una sostituzione: il panorama che il preset ha di suo resta e si stringe soltanto quanto serve a non uscire dai bordi, così volo_radente spostato a 0,6 vola da 0,2 a 1 invece di appiattirsi contro il bordo a metà volo. Sommare e tagliare, come la issue proponeva, avrebbe appiattito cinquantuno dei centocinque preset che si muovono. Con pan a zero non cambia un campione, verificato su 243 preset intonati, e sui 21 a rumore il panorama resta identico. Corretta anche un'ombra in preset, dove il panorama della quartina si chiamava come il parametro e lo copriva. Prima della V8.1.0, con la V8.0.0 Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
@@ -17,6 +17,7 @@ Lista utilità contenute in questo pacchetto
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Restituisce il messaggio invece di stamparlo soltanto, con il parametro stampa che per predefinito lo stampa come prima: chi ha una finestra passa falso e lo mostra come vuole. Parametro probabilita, predefinito venti, con cento che forza la comparsa; generatore casuale privato, che non sposta piu' quello del programma; la lingua salvata da polipo si cerca nella cartella di chi chiama e non piu' in argv zero o nella directory di lavoro; le eccezioni intercettate hanno un nome, e l'indirizzo di posta sta in una costante
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
 	gestisci_aggiornamento V1.1.1 di sabato 12 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo; dalla V1.1.1 gli avanzamenti dello scaricamento sono cinque invece di dieci, uno ogni venti per cento, come Gabriele ha chiesto dopo averli ascoltati
+	key V8.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Su Windows legge i record della console invece di passare da getwch, e aspetta dentro il sistema invece di guardare la tastiera cento volte al secondo: l'attesa non consuma piu' processore, misurata a zero contro lo 0,52 per cento di prima, e il tasto arriva in 0,13 millesimi di secondo invece di 5,50, con il peggiore a 2 invece che a 12. La scadenza ha un cronometro suo, ad alta risoluzione, perche' aspettare sul solo manico della console arrotonderebbe ai tick del sistema e chi chiede due millesimi, come il motore di orologic, ne aspetterebbe sedici: cosi' invece lo scarto medio e' di mezzo millesimo a ogni valore provato, da zero a cinquanta. Con i record arrivano anche i modificatori, quindi Ctrl+PagSu non e' piu' confuso con F12, Shift con le frecce e la navigazione si distingue, Alt con il tastierino non viene piu' ingoiato, Shift+Tab diventa shift-tab come su Unix, e i tasti da F13 a F24 hanno un nome: il banco a iniezione passa da 120 righe giuste su 144 a 144 su 144, e con le prove nuove fa 160 su 160. Il ramo Unix, che aspettava gia' con select, non e' stato toccato. La V7.0.0 e' qui sotto.
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
 	mixer V1.1.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Il mixer condiviso della issue 8, che alimenta la scheda scrivendo invece di rispondere a un callback: sotto carico il callback perde campioni, perché deve entrare in Python nel momento esatto in cui la scheda ha fame e resta in coda per il lucchetto dell'interprete. Misurato il 12 settembre: a callback sette buchi al secondo, a scrittura nessuno. Blocco di 1024 campioni, ventitré millesimi, che è il valore dove i buchi spariscono con margine. Somma fino a trentadue voci con panoramica a potenza costante, ferma una voce o tutte, ricampiona ciò che arriva a un'altra frequenza, sceglie l'uscita più pronta, chiude dopo due minuti di silenzio e si riapre da solo. Dalla V1.1.0 chi manda un suono puo' chiedere di essere avvisato quando finisce, e l'avviso arriva anche se il suono e' stato fermato, se ha lasciato il posto a un altro o se il mixer si chiude: serve a chi tiene un oggetto per ogni suono, come CWzator. Acusticator lo usa dalla V8.0.0; CWzator ha ancora il suo
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Il prompt di fine pagina non parla piu' italiano, e chiude la issue 28: e' il nome passato dal chiamante seguito da (pagina / pagine), fra due ritorni carrello per il display braille, letto con key, con Esc che interrompe e ogni altro tasto che continua; il predefinito di nome e' la stringa vuota. Il file relativo si cerca prima in sys._MEIPASS quando il programma e' congelato e poi nella cartella di chi chiama, mai nella directory di lavoro, e chiude la issue 26; la ricerca sta in _percorso_risorsa, privata, pronta a diventare pubblica con la issue 20
@@ -2529,53 +2530,29 @@ class Mazzo:
 # con e senza modificatori, Ctrl e Alt con i tasti dedicati di navigazione,
 # che la libreria di runtime manda con questo prefisso quando c'e' Alt, e Alt
 # con lettere e cifre.
-_KEY_WINDOWS_00 = {
-	'H': 'pad-up', 'P': 'pad-down', 'K': 'pad-left', 'M': 'pad-right',
-	'G': 'pad-home', 'O': 'pad-end', 'I': 'pad-pageup', 'Q': 'pad-pagedown',
-	'R': 'pad-insert', 'S': 'pad-delete', 'L': 'pad-center',
-	';': 'f1', '<': 'f2', '=': 'f3', '>': 'f4', '?': 'f5', '@': 'f6',
-	'A': 'f7', 'B': 'f8', 'C': 'f9', 'D': 'f10', '\x85': 'f11', '\x86': 'f12',
-	'T': 'shift-f1', 'U': 'shift-f2', 'V': 'shift-f3', 'W': 'shift-f4',
-	'X': 'shift-f5', 'Y': 'shift-f6', 'Z': 'shift-f7', '[': 'shift-f8',
-	'\\': 'shift-f9', ']': 'shift-f10', '\x87': 'shift-f11', '\x88': 'shift-f12',
-	'^': 'ctrl-f1', '_': 'ctrl-f2', '`': 'ctrl-f3', 'a': 'ctrl-f4',
-	'b': 'ctrl-f5', 'c': 'ctrl-f6', 'd': 'ctrl-f7', 'e': 'ctrl-f8',
-	'f': 'ctrl-f9', 'g': 'ctrl-f10', '\x89': 'ctrl-f11', '\x8a': 'ctrl-f12',
-	'h': 'alt-f1', 'i': 'alt-f2', 'j': 'alt-f3', 'k': 'alt-f4',
-	'l': 'alt-f5', 'm': 'alt-f6', 'n': 'alt-f7', 'o': 'alt-f8',
-	'p': 'alt-f9', 'q': 'alt-f10', '\x8b': 'alt-f11', '\x8c': 'alt-f12',
-	'w': 'ctrl-pad-home', 'u': 'ctrl-pad-end', '\x84': 'ctrl-pad-pageup', 'v': 'ctrl-pad-pagedown',
-	'\x8d': 'ctrl-pad-up', '\x91': 'ctrl-pad-down', 's': 'ctrl-pad-left', 't': 'ctrl-pad-right',
-	'\x92': 'ctrl-pad-insert', '\x93': 'ctrl-pad-delete',
-	'\x94': 'ctrl-tab',
-	'\x97': 'alt-home', '\x9f': 'alt-end', '\x99': 'alt-pageup', '\xa1': 'alt-pagedown',
-	'\x98': 'alt-up', '\xa0': 'alt-down', '\x9b': 'alt-left', '\x9d': 'alt-right',
-	'\xa2': 'alt-insert', '\xa3': 'alt-delete',
+# Windows, codici di tasto virtuale: ogni record della console porta il
+# codice del tasto, lo stato dei modificatori e il carattere gia' tradotto,
+# quindi non serve piu' la tabella di codici che getwch ereditava dal DOS.
+_KEY_VK_BASE = {
+	0x26: 'up', 0x28: 'down', 0x25: 'left', 0x27: 'right',
+	0x24: 'home', 0x23: 'end', 0x21: 'pageup', 0x22: 'pagedown',
+	0x2d: 'insert', 0x2e: 'delete', 0x0c: 'center',
+	0x0d: 'enter', 0x1b: 'esc', 0x08: 'backspace', 0x09: 'tab',
 }
-# Alt con lettere e cifre: la libreria di runtime li codifica per posizione
-# fisica del tasto, quindi le lettere valgono per le tastiere QWERTY.
-for _lettere, _primo in (("qwertyuiop", 0x10), ("asdfghjkl", 0x1e), ("zxcvbnm", 0x2c), ("1234567890", 0x78)):
-	for _posizione, _lettera in enumerate(_lettere):
-		_KEY_WINDOWS_00[chr(_primo + _posizione)] = f"alt-{_lettera}"
-del _lettere, _primo, _posizione, _lettera
-# Windows, prefisso \xe0: tasti dedicati di navigazione, da soli e con Ctrl,
-# e F11 e F12 con tutti i modificatori. Ctrl+PagSu dedicato arriva con \x86,
-# lo stesso codice di F12: e' un limite della libreria di runtime e non si
-# puo' distinguere da qui. Le voci con Alt restano per le versioni della
-# libreria che li mandassero con questo prefisso invece che con \x00.
-_KEY_WINDOWS_E0 = {
-	'H': 'up', 'P': 'down', 'K': 'left', 'M': 'right',
-	'G': 'home', 'O': 'end', 'I': 'pageup', 'Q': 'pagedown',
-	'R': 'insert', 'S': 'delete',
-	'\x85': 'f11', '\x86': 'f12', '\x87': 'shift-f11', '\x88': 'shift-f12',
-	'\x89': 'ctrl-f11', '\x8a': 'ctrl-f12', '\x8b': 'alt-f11', '\x8c': 'alt-f12',
-	'\x8d': 'ctrl-up', '\x91': 'ctrl-down', 's': 'ctrl-left', 't': 'ctrl-right',
-	'w': 'ctrl-home', 'u': 'ctrl-end', 'v': 'ctrl-pagedown',
-	'\x92': 'ctrl-insert', '\x93': 'ctrl-delete', '\x94': 'ctrl-tab',
-	'\x98': 'alt-up', '\xa0': 'alt-down', '\x9b': 'alt-left', '\x9d': 'alt-right',
-	'\x97': 'alt-home', '\x9f': 'alt-end', '\x99': 'alt-pageup', '\xa1': 'alt-pagedown',
-	'\xa2': 'alt-insert', '\xa3': 'alt-delete',
-}
+for _numero in range(1, 25):
+	_KEY_VK_BASE[0x6f + _numero] = f"f{_numero}"
+del _numero
+# I tasti di navigazione esistono in due esemplari: quelli dedicati portano
+# il contrassegno di tasto esteso, quelli del tastierino a blocco numerico
+# spento no, e sono gli unici che prendono il prefisso pad.
+_KEY_VK_TASTIERINO = frozenset(('up', 'down', 'left', 'right', 'home', 'end',
+	'pageup', 'pagedown', 'insert', 'delete', 'center'))
+# I quattro tasti di servizio, premuti da soli, tornano come caratteri.
+_KEY_VK_SERVIZIO = {0x0d: '\r', 0x1b: '\x1b', 0x08: '\x08', 0x09: '\t'}
+# Cio' che da solo non e' un tasto: modificatori, blocchi e tasti di sistema.
+# Premerli non deve svegliare chi aspetta.
+_KEY_VK_SOLO_MODIFICATORE = frozenset((0x00, 0x10, 0x11, 0x12, 0x14, 0x90, 0x91,
+	0x5b, 0x5c, 0x5d, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5))
 # Unix: sequenze che seguono un Escape, nelle forme di xterm, di vt e di rxvt.
 _KEY_ANSI = {
 	'[A': 'up', '[B': 'down', '[C': 'right', '[D': 'left',
@@ -2633,6 +2610,167 @@ def _key_carattere(ch):
 		return f"ctrl-{chr(ord(ch) + 96)}"
 	return ch
 
+def _key_con_modificatori(base, shift, alt, ctrl):
+	"""I prefissi nell'ordine shift, alt, ctrl, che e' quello che il ramo Unix
+	usa gia' per le sue sequenze, cosi' i due sistemi dicono lo stesso nome."""
+	if ctrl:
+		base = f"ctrl-{base}"
+	if alt:
+		base = f"alt-{base}"
+	if shift:
+		base = f"shift-{base}"
+	return base
+
+def _key_nome_windows(vk, stato, carattere):
+	"""Il nome di un tasto a partire da cio' che la console riferisce: codice
+	del tasto, stato dei modificatori e carattere gia' tradotto.
+	Restituisce None per cio' che non va consegnato a chi aspetta, cioe' i
+	modificatori premuti da soli e i tasti morti, che danno prima un record
+	senza carattere e poi un secondo record con il carattere composto.
+	L'ordine delle regole conta: ognuna copre un caso che le successive
+	rovinerebbero, ed e' scelto per restituire gli stessi nomi della V7.0.0
+	ovunque quella sapesse darne uno."""
+	if vk in _KEY_VK_SOLO_MODIFICATORE:
+		return None
+	shift = bool(stato & 0x0010)
+	ctrl = bool(stato & 0x000c)
+	alt = bool(stato & 0x0003)
+	esteso = bool(stato & 0x0100)
+	# AltGr e' Ctrl sinistro piu' Alt destro, e sulle tastiere italiane fa la
+	# chiocciola, il cancelletto e le parentesi quadre: e' un simbolo, non una
+	# combinazione, e va riconosciuto prima di ogni altra regola.
+	if (stato & 0x0001) and (stato & 0x0008) and carattere >= ' ':
+		return carattere
+	# Ctrl piu' lettera arriva gia' come carattere di controllo, e da li'
+	# viene anche ctrl-j di Ctrl+Invio, che la V7.0.0 dava cosi'. Backspace,
+	# Tab e Invio sono esclusi perche' hanno un nome proprio, piu' avanti.
+	if ctrl and '\x01' <= carattere <= '\x1a' and carattere not in ('\x08', '\t', '\r'):
+		return _key_carattere(carattere)
+	base = _KEY_VK_BASE.get(vk)
+	if base is not None:
+		if not (shift or alt or ctrl):
+			nudo = _KEY_VK_SERVIZIO.get(vk)
+			if nudo is not None:
+				return nudo
+		if base in _KEY_VK_TASTIERINO and not esteso:
+			base = f"pad-{base}" if base != 'center' else "pad-center"
+		return _key_con_modificatori(base, shift, alt, ctrl)
+	# Alt o Ctrl con una lettera o una cifra non producono carattere, quindi
+	# il nome si costruisce dal codice del tasto.
+	if (alt or ctrl) and (0x30 <= vk <= 0x39 or 0x41 <= vk <= 0x5a):
+		return _key_con_modificatori(chr(vk).lower(), shift, alt, ctrl)
+	if carattere and carattere != '\x00':
+		return _key_carattere(carattere)
+	# Senza carattere e senza modificatori non c'e' niente da consegnare: e'
+	# un tasto morto, che sara' seguito dal record con il carattere composto,
+	# o un tasto che la console non traduce, come quelli multimediali, che
+	# getwch non consegnava affatto. Con un modificatore invece il nome si
+	# da' lo stesso, cosi' un tasto nuovo si scopre premendolo.
+	if not (shift or alt or ctrl):
+		return None
+	return _key_con_modificatori(f"special-vk-{vk:02x}", shift, alt, ctrl)
+
+_KEY_CONSOLE = None
+
+def _key_strutture():
+	"""Le strutture della console di Windows, costruite una volta sola alla
+	prima chiamata: in GBUtils gli import stanno dentro le funzioni, quindi
+	ctypes non e' disponibile quando il modulo viene letto.
+	Restituisce la libreria di sistema, il manico della console e la classe
+	del record. Solleva EOFError se una console non c'e'."""
+	global _KEY_CONSOLE
+	import ctypes
+	import ctypes.wintypes as w
+	if _KEY_CONSOLE is None:
+		class _KeyUChar(ctypes.Union):
+			_fields_ = [("UnicodeChar", w.WCHAR), ("AsciiChar", ctypes.c_char)]
+		class _KeyEvent(ctypes.Structure):
+			_fields_ = [("bKeyDown", w.BOOL), ("wRepeatCount", w.WORD),
+				("wVirtualKeyCode", w.WORD), ("wVirtualScanCode", w.WORD),
+				("uChar", _KeyUChar), ("dwControlKeyState", w.DWORD)]
+		class _KeyRecordUnione(ctypes.Union):
+			_fields_ = [("KeyEvent", _KeyEvent), ("riempimento", ctypes.c_byte * 16)]
+		class _KeyRecord(ctypes.Structure):
+			_fields_ = [("EventType", w.WORD), ("Event", _KeyRecordUnione)]
+		kernel = ctypes.windll.kernel32
+		# CONIN$ invece del canale di ingresso standard, che potrebbe essere
+		# dirottato altrove: e' la console vera, la stessa che leggeva getwch.
+		manico = kernel.CreateFileW("CONIN$", 0x80000000 | 0x40000000, 1 | 2, None, 3, 0, None)
+		if manico == w.HANDLE(-1).value:
+			raise EOFError("key: nessuna console da cui leggere")
+		# Il cronometro della scadenza. Aspettare sul solo manico della
+		# console arrotonderebbe ai tick del sistema, quindici millesimi e
+		# mezzo, e chi chiede due millesimi ne aspetterebbe sedici; questo
+		# invece sveglia al millesimo giusto, e senza alzare la frequenza del
+		# timer di tutto il sistema come farebbe timeBeginPeriod. Dove non
+		# c'e', cioe' prima di Windows 10 1803, si ripiega su quello comune,
+		# che e' preciso quanto l'attesa di prima.
+		kernel.CreateWaitableTimerExW.restype = w.HANDLE
+		cronometro = kernel.CreateWaitableTimerExW(None, None, 0x00000002, 0x1F0003)
+		if not cronometro:
+			kernel.CreateWaitableTimerW.restype = w.HANDLE
+			cronometro = kernel.CreateWaitableTimerW(None, False, None)
+		attesi = (w.HANDLE * 2)(w.HANDLE(manico), w.HANDLE(cronometro))
+		_KEY_CONSOLE = (kernel, manico, cronometro, attesi, _KeyRecord)
+	return _KEY_CONSOLE
+
+def _key_windows(attesa, alla_scadenza):
+	"""Aspetta un tasto leggendo i record della console. L'attesa avviene
+	dentro il kernel: finche' non succede niente il processo non gira affatto,
+	dove la V7.0.0 guardava la tastiera cento volte al secondo.
+	L'attesa e' pero' spezzata in fette da un decimo di secondo, perche'
+	Ctrl+C arriva al processo come evento e non come record, e Python lo
+	trasforma in eccezione solo quando torna a eseguire il proprio codice:
+	senza le fette un Ctrl+C premuto durante l'attesa resterebbe appeso fino
+	al tasto seguente. Dieci risvegli al secondo costano un centesimo di
+	quello che costavano i cento sguardi, e ne' il tasto ne' la scadenza
+	aspettano la fine della fetta: tutti e due svegliano l'attesa da soli."""
+	import ctypes
+	kernel, manico, cronometro, attesi, _KeyRecord = _key_strutture()
+	record = _KeyRecord()
+	letti = ctypes.c_ulong(0)
+	sguardo = attesa is not None and attesa <= 0
+	if attesa is None or sguardo:
+		quanti = 1
+	else:
+		quanti = 2
+		# Un valore negativo e' un tempo relativo, contato in decimilionesimi
+		# di secondo.
+		scadenza = ctypes.c_longlong(-int(attesa * 10000000.0))
+		if not kernel.SetWaitableTimer(cronometro, ctypes.byref(scadenza), 0, None, None, False):
+			raise EOFError("key: non si riesce ad armare la scadenza")
+	while True:
+		# La fetta da un decimo di secondo non serve alla scadenza, che ha il
+		# suo cronometro, ma a lasciare che Python veda i segnali. Quando due
+		# oggetti sono pronti insieme vince quello di indice minore, cioe' la
+		# console: un tasto gia' in coda viene letto anche se la scadenza e'
+		# scaduta nello stesso istante.
+		esito = kernel.WaitForMultipleObjects(quanti, attesi, False, 0 if sguardo else 100)
+		if esito == 0x102:
+			# Con l'attesa a zero lo sguardo e' uno solo: se la console non
+			# aveva niente da dare, si torna senza aspettare.
+			if sguardo:
+				return alla_scadenza
+			continue
+		if esito == 1:
+			return alla_scadenza
+		if esito != 0:
+			raise EOFError("key: la console non e' piu' leggibile")
+		if not kernel.ReadConsoleInputW(manico, ctypes.byref(record), 1, ctypes.byref(letti)):
+			raise EOFError("key: la console non e' piu' leggibile")
+		if letti.value == 0:
+			continue
+		# Tutto cio' che non e' un tasto premuto si scarta: il rilascio, il
+		# mouse, il ridimensionamento della finestra e il cambio di fuoco. La
+		# V7.0.0 non li vedeva perche' getwch li scartava per conto suo.
+		if record.EventType != 1 or not record.Event.KeyEvent.bKeyDown:
+			continue
+		evento = record.Event.KeyEvent
+		nome = _key_nome_windows(evento.wVirtualKeyCode, evento.dwControlKeyState,
+			evento.uChar.UnicodeChar)
+		if nome is not None:
+			return nome
+
 def _key_console_windows():
 	"""Solleva EOFError se il processo non ha una console: senza, kbhit non
 	vede mai niente e key resterebbe in attesa per sempre, per esempio in
@@ -2646,7 +2784,7 @@ def _key_console_windows():
 		raise EOFError("key: nessuna console da cui leggere")
 
 def key(prompt="", attesa=None, alla_scadenza=""):
-	"""V7.0.0 di martedi' 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalita' auto)
+	"""V8.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
 	Legge un tasto singolo senza aspettare Invio, riconosce i tasti speciali,
 	il tastierino a blocco numerico spento e i modificatori, e riferisce ogni
 	tasto con un nome leggibile, uguale su Windows e su Unix.
@@ -2673,18 +2811,32 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 	  i tasti funzione come f1 fino a f12, anche con shift, ctrl e alt davanti;
 	  Alt piu' lettera o cifra come alt-a o alt-1, e su Windows anche ctrl-tab
 	    e ctrl-backspace;
-	  un codice non riconosciuto come special-00-xx o special-e0-xx su Windows
-	    e come esc- piu' la sequenza su Unix, cosi' che si scopra premendolo.
-	Limiti della libreria di runtime di Windows, che da qui non si aggirano:
-	Ctrl+PagSu dedicato arriva con lo stesso codice di F12 e viene riferito
-	come f12; Shift con le frecce e i tasti di navigazione arriva senza il
-	modificatore; Alt con i tasti del tastierino non arriva affatto.
+	  una combinazione non riconosciuta come special-vk- piu' il codice del
+	    tasto su Windows e come esc- piu' la sequenza su Unix, cosi' che si
+	    scopra premendola.
+	I modificatori valgono per ogni tasto e si accumulano nel nome nell'ordine
+	shift, alt, ctrl: shift-left, shift-ctrl-home, alt-pad-home, shift-tab.
+	Con le lettere lo shift non compare, perche' e' gia' nella maiuscola, e
+	nemmeno con Ctrl piu' lettera, che resta ctrl-a anche premendo lo shift.
+	Un tasto premuto e poi rilasciato da' un tasto solo: il rilascio non viene
+	riferito, e nemmeno i modificatori premuti da soli.
 	Ctrl+C interrompe il programma con KeyboardInterrupt, come in qualunque
 	programma da console, e non viene mai restituito come tasto.
 	Solleva EOFError quando il processo non ha una console o un terminale da
 	cui leggere, per esempio un'applicazione con interfaccia grafica avviata
 	senza terminale, invece di restare in attesa per sempre; solleva TypeError
 	se attesa non e' None e non e' un numero.
+	Dalla V8.0.0 su Windows i tasti si leggono dai record della console con
+	ReadConsoleInputW, invece che da getwch, e l'attesa avviene dentro il
+	sistema invece di guardare la tastiera cento volte al secondo: aspettare
+	non consuma piu' processore e un tasto arriva in un decimo di millesimo di
+	secondo invece di cinque millesimi e mezzo. Ne viene anche che Ctrl+PagSu
+	non e' piu' confuso con F12, che Shift con le frecce, Home, Fine, le
+	pagine, Ins e Canc si distingue dal tasto nudo, che Alt con il tastierino
+	non viene piu' ingoiato, che Shift+Tab torna shift-tab come gia' faceva su
+	Unix invece di confondersi con Tab, e che i tasti da F13 a F24 hanno un
+	nome. Chi confrontava '\t' per riconoscere Shift+Tab su Windows deve ora
+	confrontare anche shift-tab.
 	Dalla V7.0.0 i quattro tasti di servizio tornano come caratteri anche su
 	Unix, dove prima tornavano come parole; l'attesa predefinita e' senza
 	limite, dove prima era di 99999 secondi con una stringa vuota alla
@@ -2705,30 +2857,10 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 		except (TypeError, ValueError) as errore:
 			raise TypeError("key: attesa deve essere None o un numero di secondi") from errore
 	if os.name == 'nt':
-		import msvcrt
 		_key_console_windows()
 		if prompt:
 			print(prompt, end="", flush=True)
-		inizio = time.monotonic()
-		while True:
-			if msvcrt.kbhit():
-				ch = msvcrt.getwch()
-				if ch == '\x00':
-					ch2 = msvcrt.getwch()
-					return _KEY_WINDOWS_00.get(ch2, f"special-00-{ord(ch2):02x}")
-				if ch == '\xe0':
-					ch2 = msvcrt.getwch()
-					return _KEY_WINDOWS_E0.get(ch2, f"special-e0-{ord(ch2):02x}")
-				if ch == '\x7f':
-					return 'ctrl-backspace'
-				return _key_carattere(ch)
-			if attesa is None:
-				time.sleep(0.01)
-				continue
-			residuo = attesa - (time.monotonic() - inizio)
-			if residuo <= 0:
-				return alla_scadenza
-			time.sleep(min(0.01, residuo))
+		return _key_windows(attesa, alla_scadenza)
 	import select
 	import termios
 	import tty

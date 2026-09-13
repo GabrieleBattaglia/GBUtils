@@ -1,5 +1,6 @@
 """Banco di prova di key su Windows, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalita' auto).
-Nato con la revisione 1 di key, l'8 settembre 2026.
+Nato con la revisione 1 di key, l'8 settembre 2026, aggiornato alla V8.0.0
+il 13 settembre 2026, quando il ramo Windows ha smesso di passare da getwch.
 Inietta eventi di tastiera nel buffer della console con WriteConsoleInputW,
 poi chiama key e stampa cosa restituisce, una riga per tasto. Gli eventi
 passano dalla stessa tabella di traduzione che usa getwch, quindi la prova
@@ -77,6 +78,17 @@ class Banco:
 		if not k.WriteConsoleInputW(self.hin, ctypes.byref(rec), 1, ctypes.byref(scritti)):
 			raise OSError(f"WriteConsoleInput fallita, errore {ctypes.GetLastError()}")
 
+	def rilascio(self, etichetta, vk, stato=0, ch=0):
+		"""Un tasto rilasciato e basta: la V8.0.0 legge i record e deve
+		scartarlo, come faceva getwch che i rilasci non li vedeva."""
+		k.FlushConsoleInputBuffer(self.hin)
+		self.inietta(vk, stato, ch, premuto=False)
+		esito = key(attesa=0.3)
+		self.totale += 1
+		if esito == etichetta:
+			self.uguali += 1
+		print(f"rilascio: {esito!r}")
+
 	def prova(self, etichetta, vk, stato=0, ch=0):
 		k.FlushConsoleInputBuffer(self.hin)
 		self.inietta(vk, stato, ch)
@@ -108,9 +120,12 @@ def main():
 	b.serie("alt-", nav, ALT | ENH)
 	b.serie("shift-", nav, SHIFT | ENH)
 	print("Tastierino a blocco numerico spento, senza il flag enhanced")
-	b.serie("pad-", nav + ["clear"], 0)
-	b.serie("ctrl-pad-", nav + ["clear"], CTRL)
-	b.serie("alt-pad-", nav + ["clear"], ALT)
+	b.serie("pad-", nav, 0)
+	b.serie("ctrl-pad-", nav, CTRL)
+	b.serie("alt-pad-", nav, ALT)
+	b.prova("pad-center", VK["clear"], 0)
+	b.prova("ctrl-pad-center", VK["clear"], CTRL)
+	b.prova("alt-pad-center", VK["clear"], ALT)
 	print("Altre combinazioni")
 	b.prova("ctrl-tab", VK["tab"], CTRL)
 	b.prova("ctrl-backspace", VK["back"], CTRL, 0x7F)
@@ -119,6 +134,25 @@ def main():
 		b.prova(f"alt-{lettera}", ord(lettera.upper()), ALT)
 	for cifra in "1590":
 		b.prova(f"alt-{cifra}", ord(cifra), ALT)
+	print("Cio' che la V7.0.0 non sapeva distinguere")
+	b.prova("ctrl-pageup", VK["pageup"], CTRL | ENH)
+	b.prova("f12", VK["f12"], 0)
+	b.prova("shift-tab", VK["tab"], SHIFT, 9)
+	b.prova("shift-ctrl-left", VK["left"], SHIFT | CTRL | ENH)
+	b.prova("shift-alt-home", VK["home"], SHIFT | ALT | ENH)
+	b.prova("alt-pad-end", VK["end"], ALT)
+	b.prova("f13", 0x7C, 0)
+	b.prova("f24", 0x87, 0)
+	print("Cio' che non deve svegliare chi aspetta")
+	b.prova("", 0x10, SHIFT)
+	b.prova("", 0x11, CTRL)
+	b.prova("", 0x5B, 0)
+	b.prova("", 0xBA, 0)
+	b.rilascio("", ord("A"), 0, ord("a"))
+	print("Il tasto composto e AltGr")
+	b.prova("è", 0xBA, 0, ord("è"))
+	b.prova("@", 0x33, 0x08 | 0x01, ord("@"))
+	b.prova("[", 0xDD, 0x08 | 0x01, ord("["))
 	print("Tasti normali e di controllo")
 	b.prova("\r", VK["enter"], 0, 13)
 	b.prova("\x1b", VK["esc"], 0, 27)
