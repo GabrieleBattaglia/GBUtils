@@ -96,6 +96,10 @@ def prova(manico, titolo, istruzioni, durata):
 		print(f"   {riga}")
 	print(f"\rInvio quando sei pronto, poi hai {durata:.0f} secondi\r", end="", flush=True)
 	input()
+	# L'Invio che ha dato il via lascia dietro di se' il proprio rilascio, che
+	# arriva qualche millesimo dopo: senza questa pausa finirebbe nel conteggio
+	# e farebbe credere che i rilasci arrivino anche dove non arrivano.
+	time.sleep(0.3)
 	print(f"\rVai, {durata:.0f} secondi\r", end="", flush=True)
 	raccolti = raccogli(manico, durata)
 	print(" " * 50)
