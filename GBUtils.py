@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V148 di sabato 12 settembre 2026
+	V149 di domenica 13 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
-	Acusticator V8.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
+	Acusticator V8.1.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Dalla V8.1.0 il panorama si sposta da fuori, con il parametro pan di play, preset e dell'oggetto chiamabile, e chiude la issue 18: un numero fra -1 e 1, oppure una coppia come (-1, 1) che fa scorrere il suono da un lato all'altro lungo tutta la sua durata, con la stessa grammatica del panorama delle quartine. È uno spostamento e non una sostituzione: il panorama che il preset ha di suo resta e si stringe soltanto quanto serve a non uscire dai bordi, così volo_radente spostato a 0,6 vola da 0,2 a 1 invece di appiattirsi contro il bordo a metà volo. Sommare e tagliare, come la issue proponeva, avrebbe appiattito cinquantuno dei centocinque preset che si muovono. Con pan a zero non cambia un campione, verificato su 243 preset intonati, e sui 21 a rumore il panorama resta identico. Corretta anche un'ombra in preset, dove il panorama della quartina si chiamava come il parametro e lo copriva. Prima della V8.1.0, con la V8.0.0 Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
 	CWzator V11.2.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Dalla V11.2.0 c'è il Farnsworth vero, che chiude la issue 16: il parametro farnsworth vuole la velocità effettiva in parole al minuto, i caratteri restano a wpm con i pesi l, s e p intatti campione per campione, e ad allungarsi sono soltanto lo spazio fra lettere e quello fra parole. Le due spaziature si calcolano una volta sola sulla parola campione PARIS e non dipendono da cosa il messaggio contiene, che è il punto del metodo: è la formula ARRL, scritta in modo da non presupporre i pesi standard, e con quelli standard ne dà gli stessi numeri a sette millesimi di per cento. Con il Farnsworth acceso la velocità restituita è l'effettiva, misurata su quanto durerebbe PARIS con i segmenti generati, quindi la stessa su qualunque testo; quella del singolo testo resta leggibile in wpm_del_messaggio del PlaybackHandle, accanto a wpm_caratteri, wpm_effettiva e farnsworth. Senza il parametro non cambia un campione, verificato su 240 combinazioni di pesi, messaggi e velocità. Non ha più un mixer suo: usa quello condiviso con Acusticator, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Un messaggio generato a un'altra frequenza di campionamento viene riportato a quella dello stream invece di far riaprire lo stream, quindi cambiare velocità non zittisce più ciò che stava suonando. Verificato che il morse non cambi: punti e spazi della durata giusta a tutte le frequenze, e a 44100 hertz nemmeno un campione diverso. Fino alla V10.0 di domenica 6 settembre 2026, con la fase 1 del refactoring: dissolvenza accorciata invece che scartata sugli elementi corti, velocità fino a 120 wpm, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre, e scelta automatica dell'interfaccia audio più pronta Dalla V11.1.0 il trattino basso torna a fare la pausa dentro il messaggio, che dalla V10.0 aveva smesso di fare, e nasce il parametro pausa per chiederla in millesimi invece che in unità: il silenzio non entra nel calcolo della velocità effettiva, quindi una pausa non fa più scendere la velocità annunciata. Chiude la issue 15, nata dalla 10 di cwapu.
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). La lingua dell'utente in due o tre lettere, senza il paese, presa dalle variabili d'ambiente, dall'API di Windows o dal locale, e None quando non si capisce. Era privata e la usavano solo polipo e Donazione; diventa pubblica con la issue 32, perché Tornello e Terminal Beast se la ricavavano con locale.getdefaultlocale, che è deprecata e sparisce con Python 3.15
 	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
@@ -2787,6 +2787,65 @@ def parse_pan_values(pan_param):
 			pass
 	return 0.0
 
+def _panorama_spostato(score, pan):
+	"""Sposta il panorama di uno score piatto senza sostituirlo.
+
+	pan e' uno spostamento, con la stessa grammatica del panorama delle
+	quartine: un numero, cioe' fermo per tutto il suono, oppure una coppia,
+	cioe' che scorre da un valore all'altro lungo l'intero suono, non dentro
+	ogni nota.
+	Il panorama che lo score ha di suo non viene cancellato ma spostato, e si
+	stringe soltanto quel tanto che serve a non uscire dai bordi. E' la
+	differenza che conta: sommare e tagliare, come si era proposto nella issue
+	18, appiattirebbe contro il bordo cinquantuno preset su centocinque con
+	uno spostamento di 0,6, e fra questi volo_radente, passaggio_veloce e le
+	spazzate aliene, cioe' proprio quelli la cui identita' e' il movimento.
+	Con pan a zero non cambia un campione, e non e' un caso trattato a parte:
+	viene dalla formula, perche' il fattore di restringimento vale uno quando
+	non c'e' niente da restringere.
+	Restituisce uno score nuovo, senza toccare quello ricevuto.
+	"""
+	spostamento = parse_pan_values(pan)
+	c1, c2 = (spostamento, spostamento) if isinstance(spostamento, float) else spostamento
+	interni, durate = [], []
+	for i in range(0, len(score) - 3, 4):
+		valore = parse_pan_values(score[i + 2])
+		interni.append((valore, valore) if isinstance(valore, float) else valore)
+		try:
+			durate.append(max(0.0, float(score[i + 1])))
+		except (TypeError, ValueError):
+			durate.append(0.0)
+	if not interni:
+		return list(score)
+	# Quanto si puo' spostare senza sbattere: il fattore e' il piu' stretto
+	# fra quello che tiene dentro il bordo destro e quello del sinistro, e
+	# non supera mai uno, perche' il movimento si stringe, non si allarga.
+	estremi = [x for coppia in interni for x in coppia]
+	minimo, massimo = min(estremi), max(estremi)
+	centro_min, centro_max = min(c1, c2), max(c1, c2)
+	fattore = 1.0
+	if massimo > 0:
+		fattore = min(fattore, (1.0 - centro_max) / massimo)
+	if minimo < 0:
+		fattore = min(fattore, (-1.0 - centro_min) / minimo)
+	fattore = max(0.0, fattore)
+	totale = sum(durate)
+	nuovo = list(score)
+	trascorso = 0.0
+	for indice, (v1, v2) in enumerate(interni):
+		if totale > 0:
+			centro1 = c1 + (c2 - c1) * (trascorso / totale)
+			centro2 = c1 + (c2 - c1) * ((trascorso + durate[indice]) / totale)
+		else:
+			centro1 = centro2 = c1
+		trascorso += durate[indice]
+		p1 = centro1 + v1 * fattore
+		p2 = centro2 + v2 * fattore
+		# Un numero quando il panorama sta fermo, una coppia quando scorre:
+		# e' la stessa forma che il motore si aspetta dalle quartine.
+		nuovo[indice * 4 + 2] = p1 if abs(p1 - p2) < 1e-12 else (p1, p2)
+	return nuovo
+
 def parse_vol_values(vol_param):
 	"""
 	Parsa il parametro vol (float, int, str, tuple, list).
@@ -3324,7 +3383,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V7.3.0 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    """V8.1.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -3396,6 +3455,8 @@ class _Acusticator:
 
         Acusticator.play("conferma")            suona un preset
         Acusticator.play("conferma", volume=.8) lo stesso, piu' forte
+        Acusticator.play("conferma", pan=-0.6)  lo stesso, da sinistra
+        Acusticator.play("conferma", pan=(-1,1)) lo stesso, che passa davanti
         Acusticator.list("vittoria")            cerca fra nomi e descrizioni
         Acusticator.preset("conferma")          restituisce (score, kind, adsr)
         Acusticator.info()                      due conti sulla collezione
@@ -3466,7 +3527,7 @@ class _Acusticator:
         self._cache = {}
         self._locali = []
 
-    def __call__(self, score, kind=1, adsr=None, fs=44100, sync=False):
+    def __call__(self, score, kind=1, adsr=None, fs=44100, sync=False, pan=None):
         """Sintetizza uno score e lo manda al mixer. Vedi la classe per lo score.
 
         sync dice quanto aspettare prima di restituire il controllo:
@@ -3475,8 +3536,12 @@ class _Acusticator:
           numero  aspetta al massimo quei secondi, poi torna comunque.
         La scadenza e' una rete di sicurezza: se il dispositivo audio si
         pianta, il chiamante non resta appeso per sempre.
+        pan sposta il panorama di tutto lo score, vedi play per come si
+        comporta; None, il predefinito, lo lascia com'e'.
         Restituisce True se il suono e' stato accodato.
         """
+        if pan is not None:
+            score = self._sposta(score, pan)
         buffer = _sintetizza(score, kind, adsr, fs)
         if buffer is None:
             return False
@@ -3580,6 +3645,21 @@ class _Acusticator:
                 "canali": dentro["canali"], "device": mixer._device,
                 "buchi": dentro["buchi"]}
 
+    def _sposta(self, score, pan):
+        """Applica lo spostamento di panorama, dopo aver controllato che sia
+        chiedibile. Un pan senza senso non zittisce il suono: lo si segnala e
+        si suona il preset dov'era, perche' un avviso di posizione non vale
+        la perdita del suono."""
+        va_bene = isinstance(pan, (int, float)) and not isinstance(pan, bool)
+        if not va_bene and isinstance(pan, (tuple, list)) and len(pan) == 2:
+            va_bene = all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in pan)
+        if not va_bene and isinstance(pan, str):
+            va_bene = pan.strip() != ""
+        if not va_bene:
+            self._avvisa(f"pan ({pan!r}) non valido: un numero fra -1 e 1, una coppia, o la forma con il punto come '-1.1'. Lo ignoro.")
+            return score
+        return _panorama_spostato(score, pan)
+
     def _avvisa(self, messaggio):
         import sys
         print(f"Acusticator: {messaggio}", file=sys.stderr)
@@ -3655,14 +3735,17 @@ class _Acusticator:
                 return dati[nome], percorso
         return None, None
 
-    def preset(self, nome, volume=None):
+    def preset(self, nome, volume=None, pan=None):
         """Restituisce (score, kind, adsr) pronti da passare al motore.
 
         Lo score torna appiattito e con i volumi assoluti, cioe' gia'
         convertiti dagli scarti scritti nel file. volume, se dato,
         sostituisce la base 0.5 su cui gli scarti si applicano: e' il modo
         di rispettare il volume scelto dall'utente nelle impostazioni.
+        pan sposta il panorama dello score che esce, vedi play.
         Restituisce (None, None, None) se il preset non esiste.
+        Attenzione a non chiederlo due volte: uno score gia' spostato qui e
+        poi passato all'oggetto chiamabile con un altro pan si sposta ancora.
         """
         dati, _ = self._cerca(nome)
         if dati is None:
@@ -3672,7 +3755,11 @@ class _Acusticator:
         piatto = []
         for quartina in dati.get("score", []):
             try:
-                nota, dur, pan, scarto = quartina
+                # Il panorama della quartina si chiama panorama e non pan:
+                # il parametro pan e' un'altra cosa, e chiamarli uguale lo
+                # copriva, cosi' che lo spostamento chiesto veniva ignorato e
+                # al suo posto si usava il panorama dell'ultima quartina.
+                nota, dur, panorama, scarto = quartina
             except (TypeError, ValueError):
                 self._avvisa(f"preset {nome}: quartina malformata, la salto")
                 continue
@@ -3680,12 +3767,30 @@ class _Acusticator:
                 assoluto = scarto
             else:
                 assoluto = max(0.0, min(1.0, base + float(scarto)))
-            piatto.extend([nota, dur, pan, assoluto])
+            piatto.extend([nota, dur, panorama, assoluto])
+        if pan is not None:
+            piatto = self._sposta(piatto, pan)
         return piatto, dati.get("kind", 1), dati.get("adsr")
 
-    def play(self, nome, sync=False, volume=None):
-        """Suona un preset della collezione. Vero se e' partito."""
-        score, kind, adsr = self.preset(nome, volume=volume)
+    def play(self, nome, sync=False, volume=None, pan=None):
+        """Suona un preset della collezione. Vero se e' partito.
+
+        pan sposta il preset fra i due altoparlanti, e ha la stessa
+        grammatica del panorama delle quartine: un numero fra -1, tutto a
+        sinistra, e 1, tutto a destra, oppure una coppia come (-1, 1), che
+        fa scorrere il suono da un lato all'altro lungo tutta la sua durata.
+        None, il predefinito, lascia il preset dov'e'.
+          play("conferma", pan=-0.6)     la conferma arriva da sinistra
+          play("conferma", pan=(-1, 1))  la conferma passa davanti
+        E' uno spostamento, non una sostituzione: il panorama che il preset
+        ha di suo resta, e si stringe soltanto quel tanto che serve a non
+        uscire dai bordi. volo_radente spostato a 0,6 vola da 0,2 a 1
+        invece di appiattirsi contro il bordo destro a meta' volo, che e'
+        cio' che sarebbe successo sommando e tagliando: dei centocinque
+        preset che si muovono, cinquantuno ci sbattevano.
+        Con pan a zero non cambia un campione rispetto a chiamarlo senza.
+        """
+        score, kind, adsr = self.preset(nome, volume=volume, pan=pan)
         if not score:
             return False
         self(score, kind=kind, adsr=adsr, sync=sync)
