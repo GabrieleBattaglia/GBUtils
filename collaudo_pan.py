@@ -76,10 +76,10 @@ def coppia(etichetta, score, spostamento, kind=1):
 
 def coppia_preset(nome, spostamento):
 	print(f"  prima, senza spostamento: {nome}")
-	Acusticator.play(nome, sync=True, volume=VOL)
+	Acusticator.play(nome, sync=True)
 	time.sleep(0.35)
 	print(f"  dopo, spostamento {spostamento}")
-	Acusticator.play(nome, sync=True, volume=VOL, pan=spostamento)
+	Acusticator.play(nome, sync=True, pan=spostamento)
 	time.sleep(0.7)
 
 def main():
@@ -93,6 +93,11 @@ def main():
 	print()
 	if not enter_escape("\rInvio per cominciare, Escape per uscire\r"):
 		return 0
+	# Il volume si abbassa sul mixer e non passandolo a play: quello
+	# sostituirebbe la base su cui si applicano gli scarti scritti nei preset,
+	# e i sette che hanno uno scarto di -0,3 o piu' basso diventerebbero muti.
+	prima_del_collaudo = Acusticator.stato()["volume"]
+	Acusticator.setup(volume=VOL)
 	# I quattro gruppi della matrice: ogni panorama di quartina contro ogni
 	# spostamento generale.
 	for interno, come in QUARTINE:
@@ -150,6 +155,7 @@ def main():
 		print("  La domanda: nei primi due il suono sta davvero tutto da un lato, e nel terzo sta fermo al centro?")
 		print()
 		chiedi_commento("i casi limite")
+	Acusticator.setup(volume=prima_del_collaudo)
 	Acusticator.close()
 	print("Collaudo finito. Grazie per le orecchie.")
 	if os.path.exists(ESITI):
