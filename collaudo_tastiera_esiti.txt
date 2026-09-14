@@ -1,0 +1,7 @@
+Collaudo del 14/09/2026 alle 18:11.
+Tasti diversi provati 4.
+Massimo insieme 6: b c n v x z.
+La tastiera regge un accordo di quattro note.
+Nessun rilascio perso.
+Tenute misurate 5, media 1760 ms, la piu' lunga 4109 ms.
+Auto-ripetizione trapelata: nessuna, come deve essere.
