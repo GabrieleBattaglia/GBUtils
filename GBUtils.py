@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V158 di lunedì 14 settembre 2026
+	V159 di lunedì 14 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
@@ -18,7 +18,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode)
 	formatta_dimensione V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	formatta_durata V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	gestisci_aggiornamento V1.1.1 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	gestisci_aggiornamento V1.2.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	key V8.0.1 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
@@ -32,7 +32,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "158"
+VERSION = "159"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -681,9 +681,10 @@ def perform_update(download_url: str, app_name: str = "App", avanzamento=None, t
 
 def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
                            timeout: int = 10, chiedi=None, avvisa=None, traduci=None,
-                           solo_se_compilato: bool = True) -> bool:
+                           solo_se_compilato: bool = True, proponi=None,
+                           avanzamento=None) -> bool:
     """
-    V1.1.1 di sabato 12 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+    V1.2.0 di lunedì 14 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
     Conduce da sola tutta la conversazione dell'aggiornamento: controlla se ce
     n'e' uno, lo riferisce, mostra le novita', chiede se applicarlo, lo scarica
     annunciando a che punto e' e avvia la sostituzione.
@@ -708,6 +709,22 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     restano tali, senza che niente si rompa.
     solo_se_compilato lascia perdere quando si gira da sorgente, che e' il caso
     in cui l'aggiornamento non potrebbe comunque essere applicato.
+    proponi e' la porta per le interfacce grafiche, dove ogni avvisa e' una
+    finestra modale e la conversazione della console diventa tre o quattro
+    finestre a ogni avvio, anche quando non c'e' niente da fare. Quando c'e',
+    la funzione tace: niente annuncio del controllo, niente hai gia' l'ultima
+    versione, niente aggiornamento rimandato. Se un aggiornamento c'e',
+    proponi(versione_attuale, versione_nuova, note) riceve i tre dati insieme e
+    risponde vero o falso; la finestra la fa il chiamante come vuole, e a
+    avvisa restano i soli esiti. Chi la chiama da un thread, che e' la regola
+    nelle interfacce grafiche, deve portare la domanda sul thread della
+    finestra e aspettare li' la risposta: proponi e' sincrona, e il suo valore
+    di ritorno e' la decisione dell'utente.
+    avanzamento, se indicata, riceve i byte presi e il totale durante lo
+    scaricamento, come vuole perform_update, e prende il posto degli annunci a
+    percentuale. Senza di lei e senza proponi restano gli annunci di sempre;
+    senza di lei ma con proponi lo scaricamento e' muto, perche' cinque
+    finestre modali di fila sarebbero peggio del silenzio.
     """
     import sys
 
@@ -719,6 +736,13 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
             avvisa(testo)
         else:
             print(testo)
+
+    def cortesia(testo):
+        # Le frasi che accompagnano il controllo: su console fanno compagnia,
+        # in una finestra modale sono un intralcio. Chi passa proponi le
+        # ha gia' dichiarate non gradite.
+        if proponi is None:
+            dillo(testo)
 
     def domanda(testo):
         if chiedi:
@@ -733,30 +757,36 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     # vedrebbero come chiamante questa stessa libreria, il file finirebbe
     # accanto a GBUtils.py invece che accanto al programma.
     cartella_log = _cartella_chiamante(1)
-    dillo(tr("Controllo aggiornamenti."))
+    cortesia(tr("Controllo aggiornamenti."))
     disponibile, versione, indirizzo, changelog = update_checker(
         current_version, api_url, timeout, cartella_log)
     if not disponibile:
         if versione:
-            dillo(tr("Hai gia' l'ultima versione,") + f" {versione}.")
+            cortesia(tr("Hai gia' l'ultima versione,") + f" {versione}.")
         else:
-            dillo(tr("Controllo non riuscito, si prosegue."))
+            cortesia(tr("Controllo non riuscito, si prosegue."))
         return False
     if not indirizzo:
         dillo(tr("Disponibile la versione") + f" {versione}, "
               + tr("ma il pacchetto non e' ancora pronto."))
         return False
-    dillo(tr("Disponibile la versione") + f" {versione}.")
-    dillo(tr("Tu hai la") + f" {current_version}.")
-    if changelog:
-        dillo(tr("Novita' di questa versione:"))
-        if avvisa:
-            dillo(changelog.strip())
-        else:
-            manuale(testo=changelog.strip(), nome=tr("Novita'"))
-    if not domanda(tr("Vuoi aggiornare adesso?")):
-        dillo(tr("Aggiornamento rimandato."))
-        return False
+    if proponi is not None:
+        # Versioni e novita' in un colpo solo: il chiamante ne fa una finestra
+        # sola, con le note dove si possono leggere con calma.
+        if not proponi(current_version, versione, changelog):
+            return False
+    else:
+        dillo(tr("Disponibile la versione") + f" {versione}.")
+        dillo(tr("Tu hai la") + f" {current_version}.")
+        if changelog:
+            dillo(tr("Novita' di questa versione:"))
+            if avvisa:
+                dillo(changelog.strip())
+            else:
+                manuale(testo=changelog.strip(), nome=tr("Novita'"))
+        if not domanda(tr("Vuoi aggiornare adesso?")):
+            dillo(tr("Aggiornamento rimandato."))
+            return False
 
     # L'avanzamento arriva un punto percentuale alla volta, cioe' centouno
     # volte: annunciarli tutti sarebbe un muro di parole sullo screen reader,
@@ -779,8 +809,10 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
             tutti = f"{totale / 1048576:.1f}".replace(".", ",")
             dillo(f"{percento}%, {fatti} MB su {tutti}.")
 
-    dillo(tr("Scarico l'aggiornamento."))
-    if perform_update(indirizzo, app_name, avanzamento=segnala, cartella_log=cartella_log):
+    cortesia(tr("Scarico l'aggiornamento."))
+    if avanzamento is None and proponi is None:
+        avanzamento = segnala
+    if perform_update(indirizzo, app_name, avanzamento=avanzamento, cartella_log=cartella_log):
         dillo(tr("Aggiornamento pronto, il programma si chiude per applicarlo."))
         return True
     dillo(tr("Aggiornamento non riuscito, si prosegue con questa versione."))
