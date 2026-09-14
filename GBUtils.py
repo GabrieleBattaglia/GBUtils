@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V155 di lunedì 14 settembre 2026
+	V156 di lunedì 14 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.7.0 di domenica 13 settembre 2026. La posizione d'ascolto: il tasto p imposta lo spostamento generale di panorama con cui il preset si sente, da -100 a 100 oppure due valori col punto come -100.100 per farlo scorrere, ed e' lo stesso spostamento che un programma ottiene con il parametro pan di Acusticator. Non tocca il preset, compare in coda alla riga di stato come p seguita dal valore, e ogni riproduzione ci passa; il tasto u lo unisce alle quartine e da li' e' del preset. Fino alla V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Dalla V8.2.0 l'onda prosegue da dove era arrivata invece di ripartire da fase zero a ogni nota, e chiude la issue 34: fra due note contigue il segnale saltava dal valore a cui la prima era arrivata allo zero da cui la seconda cominciava, ed era il motore a inventare quel gradino dove nessuno lo aveva chiesto. La fase si porta avanti soltanto se la nota finisce con il suono ancora acceso: dopo una pausa, dopo un rumore o dopo un inviluppo che l'ha gia' spenta si riparte da zero, altrimenti la nota seguente comincerebbe a meta' onda dopo il silenzio. L'inviluppo non e' toccato, e non lo sara': un attacco a zero fa lo schiocco che chi lo sceglie si aspetta, e ammorbidirlo di nascosto vorrebbe dire riscrivere quello che l'autore del preset ha voluto. All'ascolto del 13 settembre le sirene, che erano il caso peggiore, sono risultate completamente guarite. Prima della V8.2.0, con la V8.1.0 Dalla V8.1.0 il panorama si sposta da fuori, con il parametro pan di play, preset e dell'oggetto chiamabile, e chiude la issue 18: un numero fra -1 e 1, oppure una coppia come (-1, 1) che fa scorrere il suono da un lato all'altro lungo tutta la sua durata, con la stessa grammatica del panorama delle quartine. È uno spostamento e non una sostituzione: il panorama che il preset ha di suo resta e si stringe soltanto quanto serve a non uscire dai bordi, così volo_radente spostato a 0,6 vola da 0,2 a 1 invece di appiattirsi contro il bordo a metà volo. Sommare e tagliare, come la issue proponeva, avrebbe appiattito cinquantuno dei centocinque preset che si muovono. Con pan a zero non cambia un campione, verificato su 243 preset intonati, e sui 21 a rumore il panorama resta identico. Corretta anche un'ombra in preset, dove il panorama della quartina si chiamava come il parametro e lo copriva. Prima della V8.1.0, con la V8.0.0 Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
@@ -12,6 +12,7 @@ Lista utilità contenute in questo pacchetto
 	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Il contesto con cui urllib verifica i certificati: archivio di sistema più certifi, perché ognuno dei due conosce radici che l'altro non ha. Nasce dalla issue 40 di Orologic
 	elenco_dispositivi_audio e elenco_interfacce_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Cosa c'è su questa macchina per suonare, pronto da presentare a chi sceglie: indice da passare al parametro api di CWzator, nome del dispositivo e dell'interfaccia, canali, latenza dichiarata, se è il predefinito di sistema e se porta la stessa scheda. Nasce dalla issue 7, perché CWzator sapeva scegliere l'uscita e obbedire a chi gliene imponeva una, ma non elencarle, e cwapu avrebbe dovuto importarsi sounddevice per conto suo. L'elenco dei dispositivi può provare ad aprirli davvero invece di fidarsi di quello che dichiarano, e non è un lusso: su questa macchina sei dispositivi su ventuno non si aprono, fra cui tutti quelli WDM-KS. Di partenza prova solo quelli che portano alla scheda in uso, che costano ottanta millesimi in tutto; con tutti si arriva a duecentotrenta. L'ordine mette davanti i dispositivi che portano dove si sta già ascoltando
+	formatta_dimensione, formatta_durata e accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Le tre formattazioni della issue 9, che stavano riscritte in ogni programma che ne aveva bisogno: una quantità di byte con l'unità adatta alla sua grandezza, 1.40 GB, con i decimali, il separatore, i nomi delle unità e i byte interi sotto il chilo a scelta di chi chiama, e il segno meno davanti alle variazioni negative; una durata in cifre, 01:02:03 oppure 03:30 quando le ore sono zero, con le ore che non si fermano a ventiquattro perché una durata non è un orario; e un testo ridotto alla larghezza voluta togliendogli la pancia, la testa o la coda. Nessuna delle tre stampa niente e nessuna parla una lingua: le durate dette a parole restano ai programmi, perché i nomi delle unità, i plurali e la congiunzione dell'ultimo pezzo sono lingua. Le adottano scriba, che le aveva tutte e tre, e Cartella, che aveva la dimensione
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Restituisce il messaggio invece di stamparlo soltanto, con il parametro stampa che per predefinito lo stampa come prima: chi ha una finestra passa falso e lo mostra come vuole. Parametro probabilita, predefinito venti, con cento che forza la comparsa; generatore casuale privato, che non sposta piu' quello del programma; la lingua salvata da polipo si cerca nella cartella di chi chiama e non piu' in argv zero o nella directory di lavoro; le eccezioni intercettate hanno un nome, e l'indirizzo di posta sta in una costante
@@ -4416,6 +4417,116 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 			print(f"Troppo alto, accettato {massimo}.")
 			return massimo
 		return valore
+# Le tre formattazioni della issue 9: una dimensione, una durata e un testo
+# troppo lungo, scritti allo stesso modo da tutto il parco software invece che
+# riscritti in ogni programma. Non stampano niente e non sanno dove finira'
+# cio' che restituiscono: la stringa torna a chi ha chiamato, che decide se
+# metterla in una riga di avanzamento, in un report o in una finestra.
+def formatta_dimensione(byte, decimali=2, separatore=".", unita=("B", "KB", "MB", "GB", "TB", "PB"), byte_interi=False):
+	"""V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Una quantita' di byte con l'unita' adatta alla sua grandezza: 1.40 GB.
+	Sale di unita' ogni 1024, si ferma sull'ultima che ha a disposizione e
+	mette il segno meno davanti ai valori negativi, che servono a chi mostra
+	di quanto una misura e' cambiata rispetto a prima. Il piu' davanti ai
+	positivi non c'e', e lo aggiunge chi chiama se gli serve: una dimensione,
+	di solito, e' soltanto una dimensione.
+	  byte: la quantita' da scrivere, anche negativa e anche con la virgola.
+	  decimali: quante cifre dopo il separatore. Due come nasce, che e' la
+	    forma con cui scriba la scriveva; su un display braille sono spesso
+	    rumore e uno basta.
+	  separatore: il punto decimale, predefinito il punto. Chi scrive in
+	    italiano passa la virgola.
+	  unita: i nomi delle unita', dalla piu' piccola alla piu' grande. Quelli
+	    predefiniti sono le sigle internazionali, che non parlano nessuna
+	    lingua; chi vuole byte per esteso, o i nomi di un'altra lingua, passa
+	    la propria sequenza. Oltre l'ultima non si sale: con le predefinite,
+	    una quantita' enorme resta in PB.
+	  byte_interi: sotto il chilo niente decimali, 980 byte invece di
+	    980.00 byte, perche' mezzo byte non esiste. Sopra il chilo non cambia
+	    niente.
+	Restituisce la stringa, con l'unita' staccata dal numero da uno spazio.
+	Solleva ValueError se le unita' sono una sequenza vuota o se i decimali
+	sono negativi.
+	Nasce dalla issue 9, dove la stessa formula era riscritta in scriba, in
+	Cartella e a mano in Tornello e in orologic."""
+	if not unita:
+		raise ValueError("formatta_dimensione: serve almeno un nome di unita'")
+	if decimali < 0:
+		raise ValueError(f"formatta_dimensione: decimali negativi: {decimali}")
+	valore = float(byte)
+	segno = "-" if valore < 0 else ""
+	valore = abs(valore)
+	ultima = len(unita) - 1
+	posto = 0
+	while valore >= 1024.0 and posto < ultima:
+		valore /= 1024.0
+		posto += 1
+	if posto == 0 and byte_interi:
+		return f"{segno}{int(valore)} {unita[0]}"
+	numero = f"{valore:.{decimali}f}"
+	if separatore != ".":
+		numero = numero.replace(".", separatore)
+	return f"{segno}{numero} {unita[posto]}"
+def formatta_durata(secondi, compatta=True, vuoto="--:--"):
+	"""V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Una durata in cifre, come la mostra un cronometro: un'ora, due minuti e tre
+	secondi diventano 01:02:03, e tre minuti e mezzo diventano 03:30.
+	  secondi: quanti ne sono passati, o quanti ne mancano. I decimi si
+	    scartano invece di arrotondare, cosi' una durata non viene mai
+	    annunciata piu' lunga di quello che e'.
+	  compatta: le ore compaiono soltanto quando ci sono. Falso le scrive
+	    sempre, anche a zero, e serve a chi incolonna piu' durate una sotto
+	    l'altra, dove una riga piu' corta delle altre si legge male.
+	  vuoto: cosa rispondere quando la durata non c'e', cioe' quando secondi e'
+	    None o non e' positivo. Una durata che non si conosce non e' una durata
+	    di zero, e chi la mostra deve poterle dare l'aspetto che preferisce.
+	Le ore non si fermano a ventiquattro: due giorni fanno 48:00:00, perche'
+	questa e' una durata e non un orario.
+	Restituisce la stringa. Le durate dette a parole, con le unita' scritte per
+	esteso, restano a chi chiama: i nomi delle unita', i plurali e la
+	congiunzione che unisce l'ultimo pezzo sono lingua, e questo pacchetto,
+	chiamato da tutto il parco software, non sa in che lingua parlare.
+	Nasce dalla issue 9, dove la stessa formula era scritta due volte dentro
+	scriba."""
+	if secondi is None or secondi <= 0:
+		return vuoto
+	minuti, avanzo = divmod(int(secondi), 60)
+	ore, minuti = divmod(minuti, 60)
+	if ore or not compatta:
+		return f"{ore:02d}:{minuti:02d}:{avanzo:02d}"
+	return f"{minuti:02d}:{avanzo:02d}"
+def accorcia(testo, lunghezza, posizione="centro"):
+	"""V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Un testo ridotto alla larghezza voluta, con tre puntini al posto di cio'
+	che e' stato tolto. Un testo che ci sta gia' torna intatto.
+	  testo: quello da accorciare.
+	  lunghezza: quanti caratteri puo' occupare. Il risultato non li supera
+	    mai, e puo' venire piu' corto di uno quando lo spazio da dividere fra
+	    testa e coda e' dispari.
+	  posizione: da dove togliere. "centro", il predefinito, tiene la testa e
+	    la coda e leva la pancia, ed e' la forma giusta per un percorso, dove
+	    il nome del file sta in fondo ed e' quello che interessa; "fine" tiene
+	    la testa, "inizio" tiene la coda.
+	Sotto i quattro caratteri i puntini non starebbero insieme a nient'altro, e
+	il testo viene tagliato e basta; con lunghezza zero o negativa torna la
+	stringa vuota.
+	Solleva ValueError se la posizione non e' una delle tre.
+	Nasce dalla issue 9, per le righe di avanzamento che devono stare nei
+	quaranta caratteri di un display braille."""
+	if posizione not in ("centro", "inizio", "fine"):
+		raise ValueError(f"accorcia: posizione sconosciuta: {posizione!r}")
+	if lunghezza <= 0:
+		return ""
+	if len(testo) <= lunghezza:
+		return testo
+	if lunghezza <= 3:
+		return testo[:lunghezza]
+	if posizione == "inizio":
+		return "..." + testo[-(lunghezza - 3):]
+	meta = (lunghezza - 3) // 2
+	if posizione == "fine" or meta < 1:
+		return testo[:lunghezza - 3] + "..."
+	return f"{testo[:meta]}...{testo[-meta:]}"
 def _percorso_risorsa(nome_file, risalita=1):
 	"""Dove sta un file in sola lettura che viaggia con l'applicazione, per
 	esempio la guida. Un percorso assoluto torna com'e'. Uno relativo si cerca
