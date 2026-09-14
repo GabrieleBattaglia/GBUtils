@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V159 di lunedì 14 settembre 2026
+	V160 di lunedì 14 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
@@ -19,7 +19,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	formatta_dimensione V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	formatta_durata V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	gestisci_aggiornamento V1.2.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	key V8.0.1 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
+	key V8.0.2 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
@@ -30,9 +30,10 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	scegli_dispositivo_audio V1.0.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
+	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "159"
+VERSION = "160"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -2919,17 +2920,25 @@ def _key_cronometro(kernel, manico):
 		_KEY_CRONOMETRI.coppia = suo
 	return suo
 
-def _key_windows(attesa, alla_scadenza):
-	"""Aspetta un tasto leggendo i record della console. L'attesa avviene
-	dentro il kernel: finche' non succede niente il processo non gira affatto,
-	dove la V7.0.0 guardava la tastiera cento volte al secondo.
-	L'attesa e' pero' spezzata in fette da un decimo di secondo, perche'
-	Ctrl+C arriva al processo come evento e non come record, e Python lo
-	trasforma in eccezione solo quando torna a eseguire il proprio codice:
-	senza le fette un Ctrl+C premuto durante l'attesa resterebbe appeso fino
-	al tasto seguente. Dieci risvegli al secondo costano un centesimo di
-	quello che costavano i cento sguardi, e ne' il tasto ne' la scadenza
-	aspettano la fine della fetta: tutti e due svegliano l'attesa da soli."""
+def _key_record_windows(attesa):
+	"""I record di tastiera della console, uno alla volta, fino alla scadenza.
+	Produce quintuple (giu, codice, scansione, stato, carattere) e finisce
+	quando l'attesa scade: il rilascio e i modificatori passano tutti, perche'
+	chi legge decide che farsene. Cio' che non e' tastiera, cioe' il mouse, il
+	ridimensionamento della finestra e il cambio di fuoco, resta fuori.
+	attesa None aspetta senza limite, zero da' un solo sguardo, un numero
+	aspetta quei secondi.
+	L'attesa avviene dentro il kernel: finche' non succede niente il processo
+	non gira affatto, dove la V7.0.0 guardava la tastiera cento volte al
+	secondo. E' pero' spezzata in fette da un decimo di secondo, perche' Ctrl+C
+	arriva al processo come evento e non come record, e Python lo trasforma in
+	eccezione solo quando torna a eseguire il proprio codice: senza le fette un
+	Ctrl+C premuto durante l'attesa resterebbe appeso fino al tasto seguente.
+	Dieci risvegli al secondo costano un centesimo di quello che costavano i
+	cento sguardi, e ne' il tasto ne' la scadenza aspettano la fine della
+	fetta: tutti e due svegliano l'attesa da soli.
+	Dalla V8.0.2 sta qui, staccata da key, perche' la usa anche Tastiera: sono
+	due modi di consegnare gli stessi record, e leggerli e' un mestiere solo."""
 	import ctypes
 	kernel, manico, _KeyRecord = _key_strutture()
 	cronometro, attesi = _key_cronometro(kernel, manico)
@@ -2956,26 +2965,36 @@ def _key_windows(attesa, alla_scadenza):
 			# Con l'attesa a zero lo sguardo e' uno solo: se la console non
 			# aveva niente da dare, si torna senza aspettare.
 			if sguardo:
-				return alla_scadenza
+				return
 			continue
 		if esito == 1:
-			return alla_scadenza
+			return
 		if esito != 0:
 			raise EOFError("key: la console non e' piu' leggibile")
 		if not kernel.ReadConsoleInputW(manico, ctypes.byref(record), 1, ctypes.byref(letti)):
 			raise EOFError("key: la console non e' piu' leggibile")
 		if letti.value == 0:
 			continue
-		# Tutto cio' che non e' un tasto premuto si scarta: il rilascio, il
-		# mouse, il ridimensionamento della finestra e il cambio di fuoco. La
-		# V7.0.0 non li vedeva perche' getwch li scartava per conto suo.
-		if record.EventType != 1 or not record.Event.KeyEvent.bKeyDown:
+		if record.EventType != 1:
 			continue
 		evento = record.Event.KeyEvent
-		nome = _key_nome_windows(evento.wVirtualKeyCode, evento.dwControlKeyState,
-			evento.uChar.UnicodeChar)
+		# I campi si copiano subito: la struttura e' una sola e viene riscritta
+		# al giro dopo, quindi chi tenesse il record si ritroverebbe in mano il
+		# tasto seguente.
+		yield (bool(evento.bKeyDown), evento.wVirtualKeyCode, evento.wVirtualScanCode,
+			evento.dwControlKeyState, evento.uChar.UnicodeChar)
+
+def _key_windows(attesa, alla_scadenza):
+	"""Il primo tasto premuto che abbia un nome da consegnare.
+	Il rilascio e i modificatori premuti da soli si scartano qui: la V7.0.0 non
+	li vedeva affatto, perche' getwch li scartava per conto suo."""
+	for giu, vk, _scansione, stato, carattere in _key_record_windows(attesa):
+		if not giu:
+			continue
+		nome = _key_nome_windows(vk, stato, carattere)
 		if nome is not None:
 			return nome
+	return alla_scadenza
 
 def _key_console_windows():
 	"""Solleva EOFError se il processo non ha una console: senza, kbhit non
@@ -2990,7 +3009,7 @@ def _key_console_windows():
 		raise EOFError("key: nessuna console da cui leggere")
 
 def key(prompt="", attesa=None, alla_scadenza=""):
-	"""V8.0.1 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
+	"""V8.0.2 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
 	Legge un tasto singolo senza aspettare Invio, riconosce i tasti speciali,
 	il tastierino a blocco numerico spento e i modificatori, e riferisce ogni
 	tasto con un nome leggibile, uguale su Windows e su Unix.
@@ -3051,6 +3070,11 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 	Unix invece di confondersi con Tab, e che i tasti da F13 a F24 hanno un
 	nome. Chi confrontava '\t' per riconoscere Shift+Tab su Windows deve ora
 	confrontare anche shift-tab.
+	Dalla V8.0.2 solleva RuntimeError se e' aperta una Tastiera, la tastiera a
+	eventi che nasce con la V160: il buffer della console e' uno solo e chi
+	legge per primo consuma, quindi chiamarle tutte e due vorrebbe dire perdere
+	tasti a caso senza capire perche'. Chi ha aperto la Tastiera usa il suo
+	metodo tasto(), che fa lo stesso mestiere di key.
 	Dalla V7.0.0 i quattro tasti di servizio tornano come caratteri anche su
 	Unix, dove prima tornavano come parole; l'attesa predefinita e' senza
 	limite, dove prima era di 99999 secondi con una stringa vuota alla
@@ -3065,6 +3089,8 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 	import os
 	import sys
 	import time
+	if _TASTIERA_APERTA is not None:
+		raise RuntimeError("key: c'e' una Tastiera aperta ed e' lei che legge la console; usa il suo metodo tasto()")
 	if attesa is not None:
 		try:
 			attesa = float(attesa)
@@ -3119,6 +3145,247 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 			return _key_carattere(ch)
 	finally:
 		termios.tcsetattr(fd, termios.TCSADRAIN, vecchie_impostazioni)
+
+_TASTIERA_APERTA = None
+# I modificatori premuti da soli. key non li riferisce, perche' una domanda con
+# una risposta non saprebbe che farsene; la tastiera a eventi si', perche' li'
+# sono tasti come gli altri, che scendono e risalgono. Destro e sinistro danno
+# lo stesso nome: finche' uno dei due e' giu', il nome resta fra i premuti.
+_TASTIERA_MODIFICATORI = {
+	0x10: 'shift', 0xa0: 'shift', 0xa1: 'shift',
+	0x11: 'ctrl', 0xa2: 'ctrl', 0xa3: 'ctrl',
+	0x12: 'alt', 0xa4: 'alt', 0xa5: 'alt',
+	0x5b: 'win', 0x5c: 'win', 0x5d: 'menu',
+	0x14: 'capslock', 0x90: 'numlock', 0x91: 'scrolllock',
+}
+
+class Tastiera:
+	"""V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	La tastiera a eventi: dice quando un tasto scende e quando risale, e quali
+	sono giu' in questo momento.
+	key e' una domanda con una risposta, "qual e' il prossimo tasto?", e una
+	stringa non ha dove dire "e questo e' ancora giu'". Ne viene che con key non
+	si possono fare tre cose: una nota che duri finche' il dito resta sul tasto,
+	un personaggio che cammini finche' la freccia e' premuta, e un accordo, cioe'
+	sapere che due tasti sono premuti insieme. L'informazione pero' c'e': dalla
+	V8.0.0 key legge i record della console, che portano anche il rilascio, ed e'
+	key che lo butta perche' il suo contratto non saprebbe dove metterlo.
+	I nomi dei tasti sono quelli di key, perche' vengono dalla stessa
+	traduzione: chi passa dall'una all'altra non deve reimparare niente.
+	Uso, per il gioco che vuole lo stato:
+	    tastiera = Tastiera()
+	    while gioca:
+	        tastiera.eventi()                       # svuota la coda, senza fermarsi
+	        if "right" in tastiera.premuti: x += passo
+	        if "left" in tastiera.premuti: x -= passo
+	        disegna()
+	Uso, per la musica che vuole il momento:
+	    for nome, azione in tastiera.eventi():
+	        nota = TASTI.get(nome)
+	        if nota is None: continue
+	        if azione == "giu": accendi(nota)
+	        else: spegni(nota)
+	L'auto-ripetizione di Windows, che dopo mezzo secondo di tenuta batte
+	trentadue volte al secondo, sparisce da sola: il registro sa gia' che quel
+	tasto e' giu', e la seconda pressione non produce niente.
+	Tastiera e key non possono leggere insieme: il buffer della console e' uno
+	solo e chi legge per primo consuma. Finche' una Tastiera e' aperta, key si
+	ferma con un errore invece di rubarle i tasti, ed e' per questo che esiste
+	il metodo tasto(), cosi' chi ha aperto la tastiera a eventi non debba
+	tornare a key per un menu. Si chiude con chiudi(), o da sola uscendo da un
+	blocco with.
+	Limiti da sapere prima:
+	  il rollover e' della tastiera fisica, non del programma: tre tasti insieme
+	    passano, ma le tastiere a membrana di solito si fermano fra i due e i
+	    tre, e un accordo di quattro note potrebbe non arrivare tutto;
+	  niente dinamica, perche' la tastiera del PC non misura la forza: tutte le
+	    note escono uguali, e chi vuole la sfumatura si fa due tasti che alzano
+	    e abbassano il volume;
+	  il tastierino resta di NVDA, come in key: i nomi pad- non arriveranno mai
+	    con uno screen reader acceso;
+	  i rilasci avvenuti mentre la finestra non aveva il fuoco non arrivano, e
+	    quel tasto resterebbe giu' per sempre: chi perde il fuoco chiama
+	    rilascia_tutto(), che restituisce i rilasci mancanti da spegnere.
+	Solleva NotImplementedError fuori da Windows, dove un terminale consegna
+	caratteri e non eventi e non sa dire quando un tasto viene lasciato;
+	EOFError se il processo non ha una console; RuntimeError se una Tastiera e'
+	gia' aperta o se si usa dopo averla chiusa.
+	Nasce con la issue 37, misurata il 14 settembre 2026 con banco_tenuta.py: il
+	rilascio arriva puntuale, tre tasti insieme si distinguono con i loro tre
+	rilasci, e suonando veloce non si perde niente, nemmeno le sovrapposizioni.
+	"""
+
+	def __init__(self):
+		import os
+		global _TASTIERA_APERTA
+		if os.name != 'nt':
+			raise NotImplementedError(
+				"Tastiera: i rilasci esistono solo su Windows, perche' un terminale "
+				"consegna caratteri e non eventi e non sa dire quando un tasto viene lasciato")
+		if _TASTIERA_APERTA is not None:
+			raise RuntimeError("Tastiera: ce n'e' gia' una aperta, e il buffer della console e' uno solo")
+		try:
+			_key_console_windows()
+		except EOFError as errore:
+			raise EOFError("Tastiera: nessuna console da cui leggere") from errore
+		# Il registro sta sul tasto fisico, codice piu' scansione, e non sul
+		# nome: premendo z, poi ctrl, e lasciando poi z, il rilascio porta lo
+		# stato dei modificatori di quel momento e si chiamerebbe ctrl-z, un
+		# nome che nessuno aveva mai acceso. Cosi' invece il rilascio ritrova
+		# sempre il nome che era stato dato alla pressione.
+		self._fisici = {}
+		# Quanti tasti fisici tengono giu' ogni nome: i due shift sono due
+		# tasti e un nome solo, e il nome risale quando risale il secondo.
+		self._conteggio = {}
+		# Cio' che tasto() ha letto e non ha restituito: lo prende la prossima
+		# eventi(), invece di perdersi.
+		self._coda = []
+		self._chiusa = False
+		_TASTIERA_APERTA = self
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, *_guai):
+		self.chiudi()
+		return False
+
+	def chiudi(self):
+		"""Restituisce la console a key. Dopo, questa tastiera non si usa piu'."""
+		global _TASTIERA_APERTA
+		self._chiusa = True
+		self._fisici.clear()
+		self._conteggio.clear()
+		self._coda.clear()
+		if _TASTIERA_APERTA is self:
+			_TASTIERA_APERTA = None
+
+	def _controlla(self):
+		if self._chiusa:
+			raise RuntimeError("Tastiera: e' stata chiusa, la console adesso e' di key")
+
+	@property
+	def premuti(self):
+		"""I nomi dei tasti giu' in questo momento, come insieme immutabile.
+		Dice quello che si sapeva all'ultima lettura: si aggiorna chiamando
+		eventi(), che e' il momento in cui i record vengono letti davvero."""
+		return frozenset(self._conteggio)
+
+	def eventi(self, attesa=0):
+		"""Le coppie (nome, 'giu') e (nome, 'su') arrivate, in ordine.
+		Con attesa 0, il predefinito, torna subito con cio' che c'e', anche
+		niente; con un numero aspetta fino a quel tempo il primo evento e poi
+		prende anche tutto quello che gli e' arrivato dietro; con None aspetta
+		senza limite. Quando torna, premuti e' aggiornato."""
+		import time
+		self._controlla()
+		if attesa is not None:
+			try:
+				attesa = float(attesa)
+			except (TypeError, ValueError) as errore:
+				raise TypeError("Tastiera: attesa deve essere None o un numero di secondi") from errore
+		raccolti = self._coda
+		self._coda = []
+		limite = None if attesa is None else time.monotonic() + max(0.0, attesa)
+		while True:
+			if raccolti:
+				# Il primo evento c'e' gia': quello che resta si raccoglie
+				# senza fermarsi, perche' chi aspettava ha gia' la sua risposta.
+				resta = 0.0
+			elif limite is None:
+				resta = None
+			else:
+				resta = max(0.0, limite - time.monotonic())
+			aspettando = resta != 0
+			letto = False
+			for giu, vk, scansione, stato, carattere in _key_record_windows(resta):
+				letto = True
+				evento = self._registra(giu, vk, scansione, stato, carattere)
+				if evento is None:
+					continue
+				raccolti.append(evento)
+				if aspettando:
+					# Questo generatore ha una scadenza addosso: si ricomincia
+					# con uno che non aspetta, per svuotare quel che resta.
+					break
+			if not letto:
+				break
+		return raccolti
+
+	def tasto(self, prompt="", attesa=None, alla_scadenza=""):
+		"""Il primo tasto premuto, come key, per i menu e le domande.
+		I rilasci che incontra aspettando li registra, cosi' premuti resta
+		vero, ma non li riferisce; gli eventi arrivati dietro al tasto li tiene
+		da parte e li da' alla prossima eventi(), invece di perderli."""
+		import time
+		self._controlla()
+		if prompt:
+			print(prompt, end="", flush=True)
+		limite = None if attesa is None else time.monotonic() + max(0.0, float(attesa))
+		while True:
+			resta = None if limite is None else max(0.0, limite - time.monotonic())
+			arrivati = self.eventi(resta)
+			for posto, (nome, azione) in enumerate(arrivati):
+				if azione == "giu":
+					self._coda = arrivati[posto + 1:] + self._coda
+					return nome
+			if limite is not None and time.monotonic() >= limite:
+				return alla_scadenza
+
+	def rilascia_tutto(self):
+		"""Dichiara lasciati tutti i tasti che risultavano giu' e restituisce i
+		loro rilasci, da spegnere uno per uno.
+		Serve quando la finestra perde il fuoco: quello che succede altrove non
+		arriva, e senza questo un tasto resterebbe giu' per sempre, cioe' una
+		nota suonerebbe senza fine."""
+		self._controlla()
+		lasciati = [(nome, "su") for nome in sorted(self._conteggio)]
+		self._fisici.clear()
+		self._conteggio.clear()
+		return lasciati
+
+	def svuota(self):
+		"""Butta via i record accumulati e dimentica i tasti premuti, senza
+		riferire niente. Si chiama all'inizio, per non trovarsi addosso quello
+		che l'utente aveva premuto prima."""
+		self._controlla()
+		for _record in _key_record_windows(0):
+			pass
+		self._fisici.clear()
+		self._conteggio.clear()
+		self._coda.clear()
+
+	def _registra(self, giu, vk, scansione, stato, carattere):
+		"""Aggiorna il registro con un record e dice che evento ne esce, se ne
+		esce uno."""
+		fisico = (vk, scansione)
+		if giu:
+			if fisico in self._fisici:
+				# L'auto-ripetizione di Windows, che sono record separati e non
+				# un record con il conteggio alto: il registro sa gia' che quel
+				# tasto e' giu' e non se ne fa niente.
+				return None
+			nome = _TASTIERA_MODIFICATORI.get(vk)
+			if nome is None:
+				nome = _key_nome_windows(vk, stato, carattere)
+			if nome is None:
+				return None
+			self._fisici[fisico] = nome
+			quanti = self._conteggio.get(nome, 0)
+			self._conteggio[nome] = quanti + 1
+			return (nome, "giu") if quanti == 0 else None
+		nome = self._fisici.pop(fisico, None)
+		if nome is None:
+			# Il rilascio di un tasto che era gia' giu' prima che la tastiera
+			# aprisse, o di uno che non aveva un nome da consegnare.
+			return None
+		quanti = self._conteggio.get(nome, 0) - 1
+		if quanti > 0:
+			self._conteggio[nome] = quanti
+			return None
+		self._conteggio.pop(nome, None)
+		return (nome, "su")
+
 
 # Tetto alla durata di sonify: il segnale si costruisce tutto in memoria, e a
 # 44100 campioni al secondo cinque minuti sono gia' oltre un centinaio di
