@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V160 di lunedì 14 settembre 2026
+	V161 di lunedì 14 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
@@ -18,6 +18,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode)
 	formatta_dimensione V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	formatta_durata V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	frequenza_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	gestisci_aggiornamento V1.2.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	key V8.0.2 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
@@ -29,11 +30,12 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
 	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	scegli_dispositivo_audio V1.0.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	scomponi_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "160"
+VERSION = "161"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -3980,6 +3982,77 @@ def _genera_rumore(kind, banda, campioni, fs):
 		onda[-sfumatura:] = onda[-sfumatura:] * rampa[::-1]
 	return onda.astype(np.float32)
 
+
+# Le tabelle per leggere il nome di una nota. Stanno qui e non dentro la
+# funzione perche' scomponi_nota viene chiamata una volta per ogni nota di uno
+# score, e ricostruirle ogni volta sarebbe lavoro sprecato.
+_NOTA_SEMITONI = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
+# Simboli microtonali in coda al nome, dal piu' lungo al piu' corto per non
+# confondere la doppia tilde con quella singola. Valgono in semitoni.
+_NOTA_MICROTONI = (("~~", 1.5), ("``", -1.5), ("~", 0.5), ("`", -0.5))
+
+def scomponi_nota(nome):
+	"""V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Legge il nome di una nota e lo riduce a un numero.
+	Restituisce la coppia (numero MIDI intero, scostamento in semitoni), oppure
+	None quando il testo non e' una nota, compresa la pausa scritta p.
+	Il nome si scrive con la lettera inglese, da a a g, l'alterazione e il
+	numero di ottava: c4, f#3, eb2. Maiuscole e minuscole sono la stessa cosa,
+	e il trattino vale come la b del bemolle, perche' music21 scrive cosi'.
+	In coda alla lettera possono esserci i simboli microtonali: la tilde alza
+	di un quarto di tono e l'accento grave lo abbassa, doppi per tre quarti.
+	Sono loro la ragione per cui la risposta e' una coppia invece di un numero
+	solo: un quarto di tono non e' un numero MIDI intero, e chi deve mandare la
+	nota a un sintetizzatore MIDI usa la parte intera e ignora il resto, mentre
+	chi la sintetizza da se' li somma e ne ricava la frequenza esatta.
+	E' l'unico punto del parco software in cui si interpreta il nome di una
+	nota. Fino alla V160 stava in Chitabry, e Acusticator ne aveva una seconda
+	copia, piu' povera, che di microtoni non sapeva niente.
+	"""
+	import re
+	if not isinstance(nome, str):
+		return None
+	testo = nome.strip().lower().replace('-', 'b')
+	if testo == 'p':
+		return None
+	ottava = re.search(r"\d+$", testo)
+	if not ottava:
+		return None
+	base = testo[:ottava.start()]
+	micro = 0.0
+	for simbolo, scostamento in _NOTA_MICROTONI:
+		if base.endswith(simbolo):
+			micro = scostamento
+			base = base[:-len(simbolo)]
+			break
+	lettera = re.match(r"^([a-g])([#b]?)$", base)
+	if not lettera:
+		return None
+	nota, alterazione = lettera.groups()
+	semitono = _NOTA_SEMITONI[nota] + {'#': 1, 'b': -1}.get(alterazione, 0)
+	return 12 + semitono + 12 * int(ottava.group()), micro
+
+def frequenza_nota(nota):
+	"""V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	La frequenza in hertz di una nota scritta per nome, con il la a 440.
+	Accetta i nomi che legge scomponi_nota, microtoni compresi; un numero lo
+	prende per una frequenza gia' pronta e lo restituisce com'e'.
+	Risponde 0.0 quando non c'e' niente da suonare, cioe' per la pausa e per un
+	nome che non si riesce a leggere: chi vuole distinguere i due casi, o
+	rifiutare il nome sbagliato invece di tacere, chiami prima scomponi_nota.
+	Un valore logico non e' una frequenza e vale 0.0, perche' in Python True
+	sarebbe un hertz.
+	"""
+	if isinstance(nota, bool):
+		return 0.0
+	if isinstance(nota, (int, float)):
+		return float(nota)
+	scomposta = scomponi_nota(nota)
+	if scomposta is None:
+		return 0.0
+	midi, micro = scomposta
+	return 440.0 * (2.0 ** ((midi + micro - 69) / 12.0))
+
 def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	"""
 	Motore di sintesi di Acusticator, gia' V6.5, ora interno.
@@ -4003,12 +4076,20 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	 - fs (int): frequenza di campionamento (default 44100 Hz).
 	Se sync è False la riproduzione avviene in background, restituendo subito il controllo al chiamante.
 	"""
-	import re
 	import sys
 
 	import numpy as np
 	from scipy import signal
 	def note_to_freq(note):
+		"""La frequenza di una nota della quartina. Un numero e' gia' una
+		frequenza; una stringa di sole cifre pure, ed e' come si scrivono gli
+		hertz in uno score; il punto separa le due note di un portamento; p e'
+		la pausa e vale None.
+		Il nome vero e proprio lo legge frequenza_nota, che dalla V161 sta in
+		GBUtils per tutti: qui c'era una seconda copia del parsing, che non
+		sapeva niente di microtoni e si fermava all'ottava di una cifra sola.
+		Un nome illeggibile continua a far saltare la quartina con ValueError,
+		dove frequenza_nota da sola risponderebbe zero."""
 		if isinstance(note, (int, float)): return float(note)
 		if isinstance(note, str):
 			note_lower = note.lower()
@@ -4016,17 +4097,10 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 			def parse_single(p):
 				if p == 'p': return None
 				if p.isdigit(): return float(p)
-				match = re.match(r"^([a-g])([#b]?)(\d)$", p)
-				if not match: raise ValueError(f"Formato nota non valido: '{p}'.")
-				note_letter, accidental, octave_str = match.groups()
-				try: octave = int(octave_str)
-				except ValueError: raise ValueError(f"Numero ottava non valido: '{octave_str}'")
-				note_base = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
-				semitone = note_base[note_letter]
-				if accidental == '#': semitone += 1
-				elif accidental == 'b': semitone -= 1
-				midi_num = 12 + semitone + 12 * octave
-				return 440.0 * (2.0 ** ((midi_num - 69) / 12.0))
+				freq = frequenza_nota(p)
+				if not freq:
+					raise ValueError(f"Formato nota non valido: '{p}'.")
+				return freq
 			if '.' in note_lower:
 				parts = note_lower.split('.')
 				if len(parts) == 2:
