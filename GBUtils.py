@@ -3,33 +3,35 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V156 di lunedì 14 settembre 2026
-Lista utilità contenute in questo pacchetto
-	Acu_Maker V1.7.0 di domenica 13 settembre 2026. La posizione d'ascolto: il tasto p imposta lo spostamento generale di panorama con cui il preset si sente, da -100 a 100 oppure due valori col punto come -100.100 per farlo scorrere, ed e' lo stesso spostamento che un programma ottiene con il parametro pan di Acusticator. Non tocca il preset, compare in coda alla riga di stato come p seguita dal valore, e ogni riproduzione ci passa; il tasto u lo unisce alle quartine e da li' e' del preset. Fino alla V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
-	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Dalla V8.2.0 l'onda prosegue da dove era arrivata invece di ripartire da fase zero a ogni nota, e chiude la issue 34: fra due note contigue il segnale saltava dal valore a cui la prima era arrivata allo zero da cui la seconda cominciava, ed era il motore a inventare quel gradino dove nessuno lo aveva chiesto. La fase si porta avanti soltanto se la nota finisce con il suono ancora acceso: dopo una pausa, dopo un rumore o dopo un inviluppo che l'ha gia' spenta si riparte da zero, altrimenti la nota seguente comincerebbe a meta' onda dopo il silenzio. L'inviluppo non e' toccato, e non lo sara': un attacco a zero fa lo schiocco che chi lo sceglie si aspetta, e ammorbidirlo di nascosto vorrebbe dire riscrivere quello che l'autore del preset ha voluto. All'ascolto del 13 settembre le sirene, che erano il caso peggiore, sono risultate completamente guarite. Prima della V8.2.0, con la V8.1.0 Dalla V8.1.0 il panorama si sposta da fuori, con il parametro pan di play, preset e dell'oggetto chiamabile, e chiude la issue 18: un numero fra -1 e 1, oppure una coppia come (-1, 1) che fa scorrere il suono da un lato all'altro lungo tutta la sua durata, con la stessa grammatica del panorama delle quartine. È uno spostamento e non una sostituzione: il panorama che il preset ha di suo resta e si stringe soltanto quanto serve a non uscire dai bordi, così volo_radente spostato a 0,6 vola da 0,2 a 1 invece di appiattirsi contro il bordo a metà volo. Sommare e tagliare, come la issue proponeva, avrebbe appiattito cinquantuno dei centocinque preset che si muovono. Con pan a zero non cambia un campione, verificato su 243 preset intonati, e sui 21 a rumore il panorama resta identico. Corretta anche un'ombra in preset, dove il panorama della quartina si chiamava come il parametro e lo copriva. Prima della V8.1.0, con la V8.0.0 Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
-	CWzator V11.3.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Dalla V11.3.0 espone anche i due elenchi audio della issue 7, come CWzator.elenco_dispositivi e CWzator.elenco_interfacce, e la docstring del parametro api spiega come costruirci un menu. Dalla V11.2.0 c'è il Farnsworth vero, che chiude la issue 16: il parametro farnsworth vuole la velocità effettiva in parole al minuto, i caratteri restano a wpm con i pesi l, s e p intatti campione per campione, e ad allungarsi sono soltanto lo spazio fra lettere e quello fra parole. Le due spaziature si calcolano una volta sola sulla parola campione PARIS e non dipendono da cosa il messaggio contiene, che è il punto del metodo: è la formula ARRL, scritta in modo da non presupporre i pesi standard, e con quelli standard ne dà gli stessi numeri a sette millesimi di per cento. Con il Farnsworth acceso la velocità restituita è l'effettiva, misurata su quanto durerebbe PARIS con i segmenti generati, quindi la stessa su qualunque testo; quella del singolo testo resta leggibile in wpm_del_messaggio del PlaybackHandle, accanto a wpm_caratteri, wpm_effettiva e farnsworth. Senza il parametro non cambia un campione, verificato su 240 combinazioni di pesi, messaggi e velocità. Non ha più un mixer suo: usa quello condiviso con Acusticator, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Un messaggio generato a un'altra frequenza di campionamento viene riportato a quella dello stream invece di far riaprire lo stream, quindi cambiare velocità non zittisce più ciò che stava suonando. Verificato che il morse non cambi: punti e spazi della durata giusta a tutte le frequenze, e a 44100 hertz nemmeno un campione diverso. Fino alla V10.0 di domenica 6 settembre 2026, con la fase 1 del refactoring: dissolvenza accorciata invece che scartata sugli elementi corti, velocità fino a 120 wpm, velocità effettiva misurata sulla durata davvero prodotta, parametro play per generare senza riprodurre, e scelta automatica dell'interfaccia audio più pronta Dalla V11.1.0 il trattino basso torna a fare la pausa dentro il messaggio, che dalla V10.0 aveva smesso di fare, e nasce il parametro pausa per chiederla in millesimi invece che in unità: il silenzio non entra nel calcolo della velocità effettiva, quindi una pausa non fa più scendere la velocità annunciata. Chiude la issue 15, nata dalla 10 di cwapu.
-	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). La lingua dell'utente in due o tre lettere, senza il paese, presa dalle variabili d'ambiente, dall'API di Windows o dal locale, e None quando non si capisce. Era privata e la usavano solo polipo e Donazione; diventa pubblica con la issue 32, perché Tornello e Terminal Beast se la ricavavano con locale.getdefaultlocale, che è deprecata e sparisce con Python 3.15
-	cartella_applicazione e percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). I percorsi di un'applicazione, in un posto solo: dove scrive, cioè accanto all'eseguibile o al sorgente e mai nella directory di lavoro, e dove legge, cioè prima dentro il pacchetto PyInstaller. Nascono dalla issue 20, perché la stessa logica era riscritta in dieci progetti del parco software
-	contesto_ssl V1.0.0 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto). Il contesto con cui urllib verifica i certificati: archivio di sistema più certifi, perché ognuno dei due conosce radici che l'altro non ha. Nasce dalla issue 40 di Orologic
-	elenco_dispositivi_audio e elenco_interfacce_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Cosa c'è su questa macchina per suonare, pronto da presentare a chi sceglie: indice da passare al parametro api di CWzator, nome del dispositivo e dell'interfaccia, canali, latenza dichiarata, se è il predefinito di sistema e se porta la stessa scheda. Nasce dalla issue 7, perché CWzator sapeva scegliere l'uscita e obbedire a chi gliene imponeva una, ma non elencarle, e cwapu avrebbe dovuto importarsi sounddevice per conto suo. L'elenco dei dispositivi può provare ad aprirli davvero invece di fidarsi di quello che dichiarano, e non è un lusso: su questa macchina sei dispositivi su ventuno non si aprono, fra cui tutti quelli WDM-KS. Di partenza prova solo quelli che portano alla scheda in uso, che costano ottanta millesimi in tutto; con tutti si arriva a duecentotrenta. L'ordine mette davanti i dispositivi che portano dove si sta già ascoltando
-	formatta_dimensione, formatta_durata e accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Le tre formattazioni della issue 9, che stavano riscritte in ogni programma che ne aveva bisogno: una quantità di byte con l'unità adatta alla sua grandezza, 1.40 GB, con i decimali, il separatore, i nomi delle unità e i byte interi sotto il chilo a scelta di chi chiama, e il segno meno davanti alle variazioni negative; una durata in cifre, 01:02:03 oppure 03:30 quando le ore sono zero, con le ore che non si fermano a ventiquattro perché una durata non è un orario; e un testo ridotto alla larghezza voluta togliendogli la pancia, la testa o la coda. Nessuna delle tre stampa niente e nessuna parla una lingua: le durate dette a parole restano ai programmi, perché i nomi delle unità, i plurali e la congiunzione dell'ultimo pezzo sono lingua. Le adottano scriba, che le aveva tutte e tre, e Cartella, che aveva la dimensione
+	V157 di lunedì 14 settembre 2026
+Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
+	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
-	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto). Il predefinito viene convertito al tipo chiesto e riportato dentro i limiti dichiarati, invece di scavalcarli come faceva dalla nascita; i parametri sbagliati, i limiti incoerenti e la mancanza di un terminale sollevano eccezioni invece di essere stampati o aggirati in silenzio; i messaggi rivolti a chi digita restano, ma sono corti, parlanti e senza riempimenti a spazi
-	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Restituisce il messaggio invece di stamparlo soltanto, con il parametro stampa che per predefinito lo stampa come prima: chi ha una finestra passa falso e lo mostra come vuole. Parametro probabilita, predefinito venti, con cento che forza la comparsa; generatore casuale privato, che non sposta piu' quello del programma; la lingua salvata da polipo si cerca nella cartella di chi chiama e non piu' in argv zero o nella directory di lavoro; le eccezioni intercettate hanno un nome, e l'indirizzo di posta sta in una costante
-	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
-	gestisci_aggiornamento V1.1.1 di sabato 12 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo; dalla V1.1.1 gli avanzamenti dello scaricamento sono cinque invece di dieci, uno ogni venti per cento, come Gabriele ha chiesto dopo averli ascoltati
-	key V8.0.1 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). La V8.0.1 da' un cronometro a ogni thread invece di uno solo per tutto il processo: armarlo lo riazzera, quindi due thread che chiamassero key insieme si ruberebbero la scadenza, e quello con l'attesa piu' lunga finirebbe prima senza che niente lo segnali. Nessun programma del parco lo fa oggi, ma e' una trappola che non da' errore. E la docstring non promette piu' un nome per i tasti nudi che la console non sa tradurre, come quelli multimediali e i tasti morti: quelli non svegliano chi aspetta, come non lo svegliavano con getwch. La V8.0.0 su Windows legge i record della console invece di passare da getwch, e aspetta dentro il sistema invece di guardare la tastiera cento volte al secondo: l'attesa non consuma piu' processore, misurata a zero contro lo 0,52 per cento di prima, e il tasto arriva in 0,13 millesimi di secondo invece di 5,50, con il peggiore a 2 invece che a 12. La scadenza ha un cronometro suo, ad alta risoluzione, perche' aspettare sul solo manico della console arrotonderebbe ai tick del sistema e chi chiede due millesimi, come il motore di orologic, ne aspetterebbe sedici: cosi' invece lo scarto medio e' di mezzo millesimo a ogni valore provato, da zero a cinquanta. Con i record arrivano anche i modificatori, quindi Ctrl+PagSu non e' piu' confuso con F12, Shift con le frecce e la navigazione si distingue, Alt con il tastierino non viene piu' ingoiato, Shift+Tab diventa shift-tab come su Unix, e i tasti da F13 a F24 hanno un nome: il banco a iniezione passa da 120 righe giuste su 144 a 144 su 144, e con le prove nuove fa 160 su 160. Il ramo Unix, che aspettava gia' con select, non e' stato toccato. La V7.0.0 e' qui sotto.
-	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
-	mixer V1.1.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Il mixer condiviso della issue 8, che alimenta la scheda scrivendo invece di rispondere a un callback: sotto carico il callback perde campioni, perché deve entrare in Python nel momento esatto in cui la scheda ha fame e resta in coda per il lucchetto dell'interprete. Misurato il 12 settembre: a callback sette buchi al secondo, a scrittura nessuno. Blocco di 1024 campioni, ventitré millesimi, che è il valore dove i buchi spariscono con margine. Somma fino a trentadue voci con panoramica a potenza costante, ferma una voce o tutte, ricampiona ciò che arriva a un'altra frequenza, sceglie l'uscita più pronta, chiude dopo due minuti di silenzio e si riapre da solo. Dalla V1.1.0 chi manda un suono puo' chiedere di essere avvisato quando finisce, e l'avviso arriva anche se il suono e' stato fermato, se ha lasciato il posto a un altro o se il mixer si chiude: serve a chi tiene un oggetto per ogni suono, come CWzator. Acusticator lo usa dalla V8.0.0; CWzator ha ancora il suo
-	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Il prompt di fine pagina non parla piu' italiano, e chiude la issue 28: e' il nome passato dal chiamante seguito da (pagina / pagine), fra due ritorni carrello per il display braille, letto con key, con Esc che interrompe e ogni altro tasto che continua; il predefinito di nome e' la stringa vuota. Il file relativo si cerca prima in sys._MEIPASS quando il programma e' congelato e poi nella cartella di chi chiama, mai nella directory di lavoro, e chiude la issue 26; la ricerca sta in _percorso_risorsa, privata, pronta a diventare pubblica con la issue 20
-	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode). Parametro lettere_semi, un dizionario da nome del seme a lettera che si sovrappone alla tabella delle abbreviazioni: nasce per gabryscola, che vuole la C delle carte segnate in braille per le Coppe, e chiude la issue 17. Con la V6.0.0 del 7 settembre tornano a funzionare i quattro metodi su dodici che leggevano una lista mai creata e sollevavano AttributeError alla prima chiamata: le carte pescate escono dal mazzo e le tiene chi le ha pescate. Via la definizione doppia del metodo di rimozione, via le due stampe che smentivano la docstring, sostituite dall'attributo ultimo_rimescolo, e riepilogo di stato in trenta caratteri invece che in sessantuno con le barre verticali
-	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode). Non dice piu' una parola di suo, perche' chiamata da tutto il parco software non sa in che lingua parlare, e chiude la issue 19: al posto del conteggio delle voci e del prompt di fine pagina in italiano c'e' un conteggio uguale in ogni lingua, (viste / totale) - (pagina / pagine), che a fine pagina sta fra due ritorni carrello per il display braille; il messaggio di scelta ambigua sparisce e ntf, senza piu' un predefinito italiano, e' l'unica parola che menu pronuncia, quando gliela passa il chiamante. Legge i tasti con la key del pacchetto invece di una copia propria, e chiude la issue 14: i tasti speciali e le combinazioni con Ctrl e Alt vengono ignorati invece di finire nel filtro, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError invece di un'attesa senza fine
-	polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
-	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto). Gli errori tornano a chi chiama: dati non numerici, non finiti o in numero sbagliato, durata e frequenze fuori dai limiti sollevano invece di uscire in silenzio o stampare in inglese; il file wav nasce nella cartella di chi chiama, o dove dice il percorso passato in file, e la funzione ne restituisce il percorso; tetto di cinque minuti alla durata, che prima poteva bloccare la macchina; parametro pan per spegnere o fissare la panoramica e parametri freq_min e freq_max per stringere la scala; meno memoria, perche' i vettori intermedi si liberano man mano
-	update_checker V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	perform_update V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto). Il download verifica i certificati con contesto_ssl
+	CWzator V11.3.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
+	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
+	elenco_dispositivi_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	elenco_interfacce_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode)
+	formatta_dimensione V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	formatta_durata V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	gestisci_aggiornamento V1.1.1 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	key V8.0.1 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
+	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
+	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
+	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode)
+	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	perform_update V1.6.1 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto)
+	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
+	scegli_dispositivo_audio V1.0.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
+	update_checker V1.6.0 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "147"
+VERSION = "157"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -65,7 +67,8 @@ def _cartella_chiamante(risalita: int = 1) -> str:
         return os.getcwd()
 
 def cartella_applicazione(risalita: int = 0) -> str:
-	"""La cartella su cui un'applicazione costruisce i propri percorsi: quella
+	"""V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	La cartella su cui un'applicazione costruisce i propri percorsi: quella
 	dell'eseguibile quando e' compilata con PyInstaller, quella del file che
 	chiama altrimenti. Mai la directory di lavoro, che dipende da come il
 	programma e' stato avviato e non da dove sta: resta soltanto come ultima
@@ -84,7 +87,8 @@ def cartella_applicazione(risalita: int = 0) -> str:
 	return _cartella_chiamante(risalita + 1)
 
 def percorso_risorsa(nome_file: str, risalita: int = 0) -> str:
-	"""Dove sta un file in sola lettura che viaggia con l'applicazione, per
+	"""V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	Dove sta un file in sola lettura che viaggia con l'applicazione, per
 	esempio il manuale o la guida. Un percorso assoluto torna com'e'. Uno
 	relativo si cerca prima fra le risorse del pacchetto PyInstaller, in
 	sys._MEIPASS, quando il programma e' compilato, perche' i file dichiarati
@@ -109,7 +113,8 @@ def _nome_da_api(api_url: str) -> str:
     return "applicazione sconosciuta"
 
 def lingua_di_sistema() -> str | None:
-    """La lingua dell'utente, come codice di due o tre lettere minuscole, per
+    """V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+    La lingua dell'utente, come codice di due o tre lettere minuscole, per
     esempio it, en o pt; None quando non si riesce a capirla.
     Prova nell'ordine le variabili d'ambiente, che sono una scelta esplicita di
     chi usa il programma, poi l'API di Windows, poi locale.getlocale.
@@ -842,7 +847,8 @@ def enter_escape(prompt="", guida="", attesa=None):
 _PREFERENZA_API = ("ASIO", "WASAPI", "WDM-KS", "DirectSound", "MME")
 _scelta_audio = {"fatta": False, "device": None, "api": None}
 def scegli_dispositivo_audio(api=None, riprova=False):
-	"""Il dispositivo audio su cui suonare, e il nome della sua interfaccia.
+	"""V1.0.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Il dispositivo audio su cui suonare, e il nome della sua interfaccia.
 	Con api a None sceglie da sola: fra le interfacce che puntano allo stesso
 	dispositivo scelto nel sistema prende la piu' pronta che si lascia davvero
 	aprire, e poi se lo ricorda. Il vincolo dello stesso dispositivo e' la parte
@@ -940,7 +946,8 @@ def _ordine_api(nome_api):
 	return _PREFERENZA_API.index(corto) if corto in _PREFERENZA_API else len(_PREFERENZA_API)
 
 def elenco_dispositivi_audio(prova="predefinito"):
-	"""I dispositivi di uscita di questa macchina, pronti da presentare a chi sceglie.
+	"""V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	I dispositivi di uscita di questa macchina, pronti da presentare a chi sceglie.
 
 	Nasce dalla issue 7: CWzator sapeva scegliere l'uscita e sapeva obbedire a
 	chi gliene imponeva una, ma non sapeva elencare le possibilita', e
@@ -1036,7 +1043,8 @@ def elenco_dispositivi_audio(prova="predefinito"):
 	return voci
 
 def elenco_interfacce_audio():
-	"""Le interfacce audio di questa macchina, con il dispositivo a cui puntano.
+	"""V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	Le interfacce audio di questa macchina, con il dispositivo a cui puntano.
 
 	Serve a chi vuole far scegliere il protocollo invece del singolo
 	dispositivo: il nome breve di ogni voce e' quello che il parametro api di
@@ -3881,7 +3889,7 @@ class _Acusticator:
     da 4,1 a 0,2 ms, e una chiamata con sync=True su un suono da 100 ms
     da 253 a 227 ms. Il guadagno vero e' altrove: niente piu' apertura e
     chiusura continua del dispositivo, e i suoni che ora si sommano
-    davvero fra loro, fino a sedici per volta, invece di essere otto
+    davvero fra loro, fino a trentadue per volta, invece di essere otto
     stream distinti che il sistema operativo mescola per conto suo.
     Quando le voci sono tutte occupate la piu' vecchia lascia il posto
     alla nuova, cosi' l'ultimo evento si sente sempre.
@@ -3901,6 +3909,17 @@ class _Acusticator:
     aspetta la fine reale del suono, un numero aspetta al massimo quei
     secondi. La scadenza serve da rete di sicurezza, perche' se il
     dispositivo audio si pianta il chiamante non resti appeso.
+
+    Con Acusticator vengono cinque funzioni che parlano soltanto la sua
+    lingua, cioe' la grammatica delle quartine, e che per questo non sono
+    nell'indice del pacchetto: da sole non vorrebbero dire niente.
+      parse_pan_parts    legge uno o due valori di panorama da una stringa
+      parse_pan_values   li riduce a un numero o a una coppia
+      parse_vol_values   fa lo stesso per il volume
+      parse_banda        legge la banda del rumore dal campo della nota
+      panorama_spostato  sposta il panorama di uno score senza sostituirlo
+    Le usa Acu_Maker, per controllare quello che l'utente scrive prima di
+    scriverlo nella collezione.
     """
 
     NOME_COLLEZIONE = "Acu_Collection.json"
