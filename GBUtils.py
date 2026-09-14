@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V154 di domenica 13 settembre 2026
+	V155 di lunedì 14 settembre 2026
 Lista utilità contenute in questo pacchetto
 	Acu_Maker V1.7.0 di domenica 13 settembre 2026. La posizione d'ascolto: il tasto p imposta lo spostamento generale di panorama con cui il preset si sente, da -100 a 100 oppure due valori col punto come -100.100 per farlo scorrere, ed e' lo stesso spostamento che un programma ottiene con il parametro pan di Acusticator. Non tocca il preset, compare in coda alla riga di stato come p seguita dal valore, e ogni riproduzione ci passa; il tasto u lo unisce alle quartine e da li' e' del preset. Fino alla V1.6.1 di sabato 12 settembre 2026. I tredici rilievi di ruff, senza cambiare cio' che il programma fa: sei conversioni di troppo come quelle tolte da Acusticator, gli import in ordine, due if che diventano una riga sola, due if annidati che diventano una condizione sola e il primo risultato di una ricerca preso dall'iteratore. Fino alla V1.6.0 di sabato 5 settembre 2026. Utilità CLI per preset Acusticator, rumore compreso. Uscendo con modifiche rifiuta i doppioni, cioè i preset che suonano identici a uno già in collezione; salvando propone fra parentesi quadre il nome e la descrizione che il preset ha già, come fa dgt; in uscita riepiloga quanti preset ci sono e quanto occupano. Il tasto w non azzera più il primo campo passando fra onde intonate e rumori ma lo converte, e la scivolata sopravvive al cambio, chiudendo la issue 6
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Dalla V8.2.0 l'onda prosegue da dove era arrivata invece di ripartire da fase zero a ogni nota, e chiude la issue 34: fra due note contigue il segnale saltava dal valore a cui la prima era arrivata allo zero da cui la seconda cominciava, ed era il motore a inventare quel gradino dove nessuno lo aveva chiesto. La fase si porta avanti soltanto se la nota finisce con il suono ancora acceso: dopo una pausa, dopo un rumore o dopo un inviluppo che l'ha gia' spenta si riparte da zero, altrimenti la nota seguente comincerebbe a meta' onda dopo il silenzio. L'inviluppo non e' toccato, e non lo sara': un attacco a zero fa lo schiocco che chi lo sceglie si aspetta, e ammorbidirlo di nascosto vorrebbe dire riscrivere quello che l'autore del preset ha voluto. All'ascolto del 13 settembre le sirene, che erano il caso peggiore, sono risultate completamente guarite. Prima della V8.2.0, con la V8.1.0 Dalla V8.1.0 il panorama si sposta da fuori, con il parametro pan di play, preset e dell'oggetto chiamabile, e chiude la issue 18: un numero fra -1 e 1, oppure una coppia come (-1, 1) che fa scorrere il suono da un lato all'altro lungo tutta la sua durata, con la stessa grammatica del panorama delle quartine. È uno spostamento e non una sostituzione: il panorama che il preset ha di suo resta e si stringe soltanto quanto serve a non uscire dai bordi, così volo_radente spostato a 0,6 vola da 0,2 a 1 invece di appiattirsi contro il bordo a metà volo. Sommare e tagliare, come la issue proponeva, avrebbe appiattito cinquantuno dei centocinque preset che si muovono. Con pan a zero non cambia un campione, verificato su 243 preset intonati, e sui 21 a rumore il panorama resta identico. Corretta anche un'ombra in preset, dove il panorama della quartina si chiamava come il parametro e lo copriva. Prima della V8.1.0, con la V8.0.0 Oggetto chiamabile, collezione dei suoni e rumore a quattro colori con banda che scorre. Dalla V8.0.0 non ha più un mixer suo: usa quello condiviso, a scrittura invece che a callback, e con lui spariscono i buchi che si sentivano quando il programma calcolava mentre il suono suonava. Misurato su cinque riproduzioni sotto carico: settantotto campioni persi prima, nessuno adesso. Le voci passano da 16 a 32, quante ne servono anche a CWzator, e stato riferisce pure quanti buchi la scheda ha dichiarato. Il contratto non cambia: setup, riproduci, stop, close, stato, play e la collezione rispondono come prima
@@ -17,7 +17,7 @@ Lista utilità contenute in questo pacchetto
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Restituisce il messaggio invece di stamparlo soltanto, con il parametro stampa che per predefinito lo stampa come prima: chi ha una finestra passa falso e lo mostra come vuole. Parametro probabilita, predefinito venti, con cento che forza la comparsa; generatore casuale privato, che non sposta piu' quello del programma; la lingua salvata da polipo si cerca nella cartella di chi chiama e non piu' in argv zero o nella directory di lavoro; le eccezioni intercettate hanno un nome, e l'indirizzo di posta sta in una costante
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode). Legge il tasto con la key del pacchetto invece di una copia propria, e chiude la issue 29: un tasto speciale non fa piu' dire la guida due volte, Ctrl+C interrompe con KeyboardInterrupt e senza console si riceve EOFError. Nuovo il parametro attesa, senza limite per predefinito, con None alla scadenza. La guida non ha piu' un predefinito italiano: sul tasto sbagliato si ripete il prompt, che e' gia' nella lingua del chiamante, e la guida si aggiunge solo se il chiamante la passa
 	gestisci_aggiornamento V1.1.1 di sabato 12 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Conduce da sola tutta la conversazione dell'aggiornamento, per console e per interfaccia grafica. Dalla V1.1.0 in console le novità della release passano da manuale, una pagina alla volta, invece di scorrere via in un blocco solo; dalla V1.1.1 gli avanzamenti dello scaricamento sono cinque invece di dieci, uno ogni venti per cento, come Gabriele ha chiesto dopo averli ascoltati
-	key V8.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). Su Windows legge i record della console invece di passare da getwch, e aspetta dentro il sistema invece di guardare la tastiera cento volte al secondo: l'attesa non consuma piu' processore, misurata a zero contro lo 0,52 per cento di prima, e il tasto arriva in 0,13 millesimi di secondo invece di 5,50, con il peggiore a 2 invece che a 12. La scadenza ha un cronometro suo, ad alta risoluzione, perche' aspettare sul solo manico della console arrotonderebbe ai tick del sistema e chi chiede due millesimi, come il motore di orologic, ne aspetterebbe sedici: cosi' invece lo scarto medio e' di mezzo millesimo a ogni valore provato, da zero a cinquanta. Con i record arrivano anche i modificatori, quindi Ctrl+PagSu non e' piu' confuso con F12, Shift con le frecce e la navigazione si distingue, Alt con il tastierino non viene piu' ingoiato, Shift+Tab diventa shift-tab come su Unix, e i tasti da F13 a F24 hanno un nome: il banco a iniezione passa da 120 righe giuste su 144 a 144 su 144, e con le prove nuove fa 160 su 160. Il ramo Unix, che aspettava gia' con select, non e' stato toccato. La V7.0.0 e' qui sotto.
+	key V8.0.1 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode). La V8.0.1 da' un cronometro a ogni thread invece di uno solo per tutto il processo: armarlo lo riazzera, quindi due thread che chiamassero key insieme si ruberebbero la scadenza, e quello con l'attesa piu' lunga finirebbe prima senza che niente lo segnali. Nessun programma del parco lo fa oggi, ma e' una trappola che non da' errore. E la docstring non promette piu' un nome per i tasti nudi che la console non sa tradurre, come quelli multimediali e i tasti morti: quelli non svegliano chi aspetta, come non lo svegliavano con getwch. La V8.0.0 su Windows legge i record della console invece di passare da getwch, e aspetta dentro il sistema invece di guardare la tastiera cento volte al secondo: l'attesa non consuma piu' processore, misurata a zero contro lo 0,52 per cento di prima, e il tasto arriva in 0,13 millesimi di secondo invece di 5,50, con il peggiore a 2 invece che a 12. La scadenza ha un cronometro suo, ad alta risoluzione, perche' aspettare sul solo manico della console arrotonderebbe ai tick del sistema e chi chiede due millesimi, come il motore di orologic, ne aspetterebbe sedici: cosi' invece lo scarto medio e' di mezzo millesimo a ogni valore provato, da zero a cinquanta. Con i record arrivano anche i modificatori, quindi Ctrl+PagSu non e' piu' confuso con F12, Shift con le frecce e la navigazione si distingue, Alt con il tastierino non viene piu' ingoiato, Shift+Tab diventa shift-tab come su Unix, e i tasti da F13 a F24 hanno un nome: il banco a iniezione passa da 120 righe giuste su 144 a 144 su 144, e con le prove nuove fa 160 su 160. Il ramo Unix, che aspettava gia' con select, non e' stato toccato. La V7.0.0 e' qui sotto.
 	key V7.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, modalità auto). Invio, Escape, Backspace e Tab tornano come caratteri anche su Unix; l'attesa predefinita e' senza limite, con None, e il parametro alla_scadenza permette di ricevere None invece della stringa vuota; le tabelle dei tasti sono costanti di modulo; Ctrl+C solleva KeyboardInterrupt; senza console solleva EOFError invece di aspettare per sempre. La tabella di Windows e' stata verificata contro la libreria di runtime: Alt con le frecce dedicate non torna piu' con i nomi del tastierino, e in piu' riconosce Ctrl e Alt con Ins e Canc, Ctrl+Tab, Ctrl+Backspace e Alt con lettere e cifre; su Unix i modificatori valgono anche per Home, Fine, le pagine, Ins, Canc e i tasti funzione
 	mixer V1.1.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode). Il mixer condiviso della issue 8, che alimenta la scheda scrivendo invece di rispondere a un callback: sotto carico il callback perde campioni, perché deve entrare in Python nel momento esatto in cui la scheda ha fame e resta in coda per il lucchetto dell'interprete. Misurato il 12 settembre: a callback sette buchi al secondo, a scrittura nessuno. Blocco di 1024 campioni, ventitré millesimi, che è il valore dove i buchi spariscono con margine. Somma fino a trentadue voci con panoramica a potenza costante, ferma una voce o tutte, ricampiona ciò che arriva a un'altra frequenza, sceglie l'uscita più pronta, chiude dopo due minuti di silenzio e si riapre da solo. Dalla V1.1.0 chi manda un suono puo' chiedere di essere avvisato quando finisce, e l'avviso arriva anche se il suono e' stato fermato, se ha lasciato il posto a un altro o se il mixer si chiude: serve a chi tiene un oggetto per ogni suono, come CWzator. Acusticator lo usa dalla V8.0.0; CWzator ha ancora il suo
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode). Il prompt di fine pagina non parla piu' italiano, e chiude la issue 28: e' il nome passato dal chiamante seguito da (pagina / pagine), fra due ritorni carrello per il display braille, letto con key, con Esc che interrompe e ogni altro tasto che continua; il predefinito di nome e' la stringa vuota. Il file relativo si cerca prima in sys._MEIPASS quando il programma e' congelato e poi nella cartella di chi chiama, mai nella directory di lavoro, e chiude la issue 26; la ricerca sta in _percorso_risorsa, privata, pronta a diventare pubblica con la issue 20
@@ -2698,21 +2698,42 @@ def _key_strutture():
 		manico = kernel.CreateFileW("CONIN$", 0x80000000 | 0x40000000, 1 | 2, None, 3, 0, None)
 		if manico == w.HANDLE(-1).value:
 			raise EOFError("key: nessuna console da cui leggere")
-		# Il cronometro della scadenza. Aspettare sul solo manico della
-		# console arrotonderebbe ai tick del sistema, quindici millesimi e
-		# mezzo, e chi chiede due millesimi ne aspetterebbe sedici; questo
-		# invece sveglia al millesimo giusto, e senza alzare la frequenza del
-		# timer di tutto il sistema come farebbe timeBeginPeriod. Dove non
-		# c'e', cioe' prima di Windows 10 1803, si ripiega su quello comune,
-		# che e' preciso quanto l'attesa di prima.
+		_KEY_CONSOLE = (kernel, manico, _KeyRecord)
+	return _KEY_CONSOLE
+
+_KEY_CRONOMETRI = None
+
+def _key_cronometro(kernel, manico):
+	"""Il cronometro della scadenza, uno per thread.
+
+	Aspettare sul solo manico della console arrotonderebbe ai tick del
+	sistema, quindici millesimi e mezzo, e chi chiede due millesimi ne
+	aspetterebbe sedici; questo invece sveglia al millesimo giusto, e senza
+	alzare la frequenza del timer di tutto il sistema come farebbe
+	timeBeginPeriod. Dove non c'e', cioe' prima di Windows 10 1803, si ripiega
+	su quello comune, preciso quanto l'attesa della V7.0.0.
+	Uno per thread e non uno solo, perche' armarlo lo riazzera: due thread che
+	chiamassero key insieme si ruberebbero la scadenza a vicenda, e quello con
+	l'attesa piu' lunga finirebbe prima senza che niente lo segnali.
+	Restituisce il cronometro e l'array dei due oggetti da aspettare, con la
+	console per prima: quando tutti e due sono pronti nello stesso istante
+	vince quella, e un tasto gia' in coda viene letto anche se la scadenza e'
+	scaduta insieme a lui."""
+	global _KEY_CRONOMETRI
+	import ctypes.wintypes as w
+	import threading
+	if _KEY_CRONOMETRI is None:
+		_KEY_CRONOMETRI = threading.local()
+	suo = getattr(_KEY_CRONOMETRI, "coppia", None)
+	if suo is None:
 		kernel.CreateWaitableTimerExW.restype = w.HANDLE
 		cronometro = kernel.CreateWaitableTimerExW(None, None, 0x00000002, 0x1F0003)
 		if not cronometro:
 			kernel.CreateWaitableTimerW.restype = w.HANDLE
 			cronometro = kernel.CreateWaitableTimerW(None, False, None)
-		attesi = (w.HANDLE * 2)(w.HANDLE(manico), w.HANDLE(cronometro))
-		_KEY_CONSOLE = (kernel, manico, cronometro, attesi, _KeyRecord)
-	return _KEY_CONSOLE
+		suo = (cronometro, (w.HANDLE * 2)(w.HANDLE(manico), w.HANDLE(cronometro)))
+		_KEY_CRONOMETRI.coppia = suo
+	return suo
 
 def _key_windows(attesa, alla_scadenza):
 	"""Aspetta un tasto leggendo i record della console. L'attesa avviene
@@ -2726,7 +2747,8 @@ def _key_windows(attesa, alla_scadenza):
 	quello che costavano i cento sguardi, e ne' il tasto ne' la scadenza
 	aspettano la fine della fetta: tutti e due svegliano l'attesa da soli."""
 	import ctypes
-	kernel, manico, cronometro, attesi, _KeyRecord = _key_strutture()
+	kernel, manico, _KeyRecord = _key_strutture()
+	cronometro, attesi = _key_cronometro(kernel, manico)
 	record = _KeyRecord()
 	letti = ctypes.c_ulong(0)
 	sguardo = attesa is not None and attesa <= 0
@@ -2784,7 +2806,7 @@ def _key_console_windows():
 		raise EOFError("key: nessuna console da cui leggere")
 
 def key(prompt="", attesa=None, alla_scadenza=""):
-	"""V8.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
+	"""V8.0.1 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
 	Legge un tasto singolo senza aspettare Invio, riconosce i tasti speciali,
 	il tastierino a blocco numerico spento e i modificatori, e riferisce ogni
 	tasto con un nome leggibile, uguale su Windows e su Unix.
@@ -2816,9 +2838,12 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 	  i tasti funzione come f1 fino a f12, anche con shift, ctrl e alt davanti;
 	  Alt piu' lettera o cifra come alt-a o alt-1, e su Windows anche ctrl-tab
 	    e ctrl-backspace;
-	  una combinazione non riconosciuta come special-vk- piu' il codice del
-	    tasto su Windows e come esc- piu' la sequenza su Unix, cosi' che si
-	    scopra premendola.
+	  una combinazione con modificatori non riconosciuta come special-vk- piu'
+	    il codice del tasto su Windows e come esc- piu' la sequenza su Unix,
+	    cosi' che si scopra premendola. Un tasto premuto nudo che la console
+	    non sa tradurre in nessun carattere, come quelli multimediali o quelli
+	    morti che aspettano la vocale da accentare, non viene invece riferito
+	    affatto e l'attesa prosegue, come faceva getwch.
 	I modificatori valgono per ogni tasto e si accumulano nel nome nell'ordine
 	shift, alt, ctrl: shift-left, shift-ctrl-home, alt-pad-home, shift-tab.
 	Con le lettere lo shift non compare, perche' e' gia' nella maiuscola, e
