@@ -3,13 +3,13 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V157 di lunedì 14 settembre 2026
+	V158 di lunedì 14 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
-	crea_archivio_release V1.0.1 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	CWzator V11.3.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
@@ -27,11 +27,12 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.6.1 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto)
 	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
+	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	scegli_dispositivo_audio V1.0.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
-	update_checker V1.6.0 di venerdì 4 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "157"
+VERSION = "158"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -215,10 +216,115 @@ def _write_update_log(message: str, cartella: str | None = None, app: str | None
         except Exception:  # noqa: BLE001, S110 - senza stderr non resta niente da fare
             pass
 
+_NOME_MANIFESTO = "manifesto.txt"
+
+def pulisci_residui(cartella: str | None = None, app: str | None = None) -> int:
+    """
+    V1.0.0 di lunedì 14 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    Toglie da _internal quello che la versione precedente si e' lasciata dietro.
+    Gli aggiornamenti applicati dalle perform_update fino alla V1.4 copiavano la
+    versione nuova sopra la vecchia senza cancellare niente, quindi cio' che
+    stava in _internal e nella versione nuova non c'e' piu' resta sul disco.
+    Quasi sempre e' innocuo, ma una cartella di pacchetto rimasta con dentro il
+    solo binario Python la importa lo stesso, come pacchetto namespace, e fa
+    ombra al modulo vero: e' successo con simplejson, e requests ha smesso di
+    partire. Per questo la pulizia va fatta prima di qualunque importazione che
+    possa toccare i residui, ed e' la prima cosa che fa update_checker.
+    Si regola sul manifesto che crea_archivio_release scrive nel pacchetto: cio'
+    che sta in _internal e non e' elencato li' viene dalla versione precedente.
+    Non tocca mai niente fuori da _internal, dove vivono salvataggi,
+    impostazioni e log dell'utente, e non fa niente in tre casi: quando si gira
+    da sorgente, quando il pacchetto e' in un pezzo solo e quindi _internal non
+    esiste, e quando il manifesto non c'e' perche' il pacchetto e' anteriore.
+    Rinuncia anche quando il manifesto non descrive questa installazione, cioe'
+    quando un file elencato non e' sul disco: il manifesto viaggia insieme ai
+    file, quindi se ne manca uno non sono la stessa cosa, e cancellare sarebbe
+    un azzardo. Meglio lasciare i residui che togliere cio' che serve.
+    cartella e' l'installazione, quella che contiene _internal; se manca si usa
+    quella dell'eseguibile. app da' il nome all'eventuale riga di log.
+    Restituisce quanti elementi ha tolto, file e cartelle rimaste vuote. Gli
+    errori sui singoli file, per esempio uno in uso, non fermano la pulizia: si
+    scrivono nel log dell'aggiornamento e si va avanti con gli altri.
+    """
+    import os
+    import sys
+
+    if cartella is None:
+        if not getattr(sys, "frozen", False):
+            return 0
+        cartella = os.path.dirname(sys.executable)
+    interna = os.path.join(cartella, "_internal")
+    if not os.path.isdir(interna):
+        return 0
+    percorso_manifesto = os.path.join(interna, _NOME_MANIFESTO)
+    if not os.path.isfile(percorso_manifesto):
+        return 0
+    nome_app = app or os.path.basename(os.path.abspath(cartella))
+    try:
+        with open(percorso_manifesto, encoding="utf-8") as f:
+            righe = f.read().splitlines()
+    except OSError as e:
+        _write_update_log(f"Manifesto del pacchetto illeggibile, pulizia dei residui saltata: {e}", cartella, nome_app)
+        return 0
+    # Le righe di commento servono a chi apre il file per capire che cos'e':
+    # senza saltarle verrebbero prese per nomi di file mancanti e basterebbero
+    # a far rinunciare la pulizia.
+    elencati = {riga.strip().replace("\\", "/").lower() for riga in righe
+                if riga.strip() and not riga.lstrip().startswith("#")}
+    if not elencati:
+        _write_update_log("Manifesto del pacchetto senza nemmeno un file elencato, pulizia dei residui saltata.", cartella, nome_app)
+        return 0
+    elencati.add(_NOME_MANIFESTO)
+
+    presenti = {}
+    for radice, _cartelle, file in os.walk(interna):
+        dentro = os.path.relpath(radice, interna)
+        for nome in file:
+            relativo = nome if dentro == "." else os.path.join(dentro, nome)
+            presenti[relativo.replace("\\", "/").lower()] = os.path.join(radice, nome)
+
+    mancanti = elencati - set(presenti)
+    if mancanti:
+        campione = ", ".join(sorted(mancanti)[:5])
+        _write_update_log(
+            f"Il manifesto non descrive questa installazione: {len(mancanti)} file elencati non ci sono, "
+            f"fra cui {campione}. Pulizia dei residui saltata, non e' stato toccato niente.",
+            cartella, nome_app)
+        return 0
+
+    tolti = 0
+    guai = []
+    for chiave in sorted(set(presenti) - elencati):
+        try:
+            os.remove(presenti[chiave])
+            tolti += 1
+        except OSError as e:
+            guai.append(f"{chiave}: {e}")
+    # Dal fondo verso la radice, cosi' una cartella che conteneva solo residui
+    # sparisce insieme a loro. _internal non si tocca: e' la casa, non un resto.
+    for radice, _cartelle, _file in os.walk(interna, topdown=False):
+        if os.path.abspath(radice) == os.path.abspath(interna):
+            continue
+        try:
+            if not os.listdir(radice):
+                os.rmdir(radice)
+                tolti += 1
+        except OSError as e:
+            guai.append(f"{os.path.relpath(radice, interna)}: {e}")
+    if guai:
+        _write_update_log(
+            f"Pulizia dei residui: {len(guai)} elementi non rimossi, "
+            f"il programma funziona lo stesso. " + "; ".join(guai),
+            cartella, nome_app)
+    return tolti
+
 def update_checker(current_version: str, api_url: str, timeout: int = 10, cartella_log: str | None = None) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.6.0 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    V1.7.0 di lunedì 14 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
+    Prima di ogni altra cosa chiama pulisci_residui, perche' un pacchetto
+    svuotato dalla versione precedente farebbe fallire l'importazione di
+    requests, poche righe piu' sotto, e con lei il controllo aggiornamenti.
     Registra gli errori su file, tranne l'assenza di connessione, che e' un evento
     normale e non un guasto del programma.
     La verifica dei certificati non viene mai disattivata: se il certificato non e'
@@ -236,6 +342,13 @@ def update_checker(current_version: str, api_url: str, timeout: int = 10, cartel
     # dell'applicazione.
     cartella_log = cartella_log or _cartella_chiamante(1)
     nome_app = _nome_da_api(api_url)
+    # Prima di importare qualunque cosa: un aggiornamento fatto dagli script
+    # fino alla V1.4 puo' aver lasciato in _internal un pacchetto svuotato che
+    # fa ombra a quello vero, e requests e' il primo a inciamparci. La pulizia
+    # sta qui e non anche in gestisci_aggiornamento, che passa comunque di qua
+    # subito dopo: due volte vorrebbe dire censire _internal due volte a ogni
+    # avvio.
+    pulisci_residui(app=nome_app)
     try:
         # Fuori da questo try, un import rotto (es. una dipendenza di
         # requests compilata male) farebbe cadere tutto il programma a
@@ -673,8 +786,9 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     dillo(tr("Aggiornamento non riuscito, si prosegue con questa versione."))
     return False
 
-def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=None, silenzioso=False):
-    """V1.0.1 di venerdì 4 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=None, silenzioso=False,
+                          manifesto=True):
+    """V1.1.0 di lunedì 14 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
     Comprime in un solo archivio la cartella prodotta da PyInstaller.
     I file finiscono alla radice dell'archivio, senza cartelle intermedie: e' il
     solo formato che perform_update sa gestire, e che gli strumenti di
@@ -693,6 +807,12 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
             *.danneggiato_*, ed e' applicata ai soli file che stanno accanto
             all'eseguibile.
         silenzioso: se vero non stampa nulla e si limita a restituire il conto.
+        manifesto: se vero, e se il pacchetto ha una cartella _internal, scrive
+            dentro l'archivio _internal/manifesto.txt con l'elenco dei file di
+            _internal che contiene, se stesso compreso. Lo legge pulisci_residui
+            al primo avvio dopo un aggiornamento, per sapere che cosa e' rimasto
+            li' dalla versione precedente. Il file nasce nell'archivio e non
+            nella cartella dist, che resta come l'ha lasciata PyInstaller.
     Le cartelle dei dati dell'utente, cioe' log, settings, pgn, txt e images, si
     saltano a qualunque profondita', perche' nascono provando l'eseguibile prima
     di comprimere e conterrebbero i dati di chi ha compilato.
@@ -704,7 +824,8 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
     Il filtro sulle estensioni e i motivi passati in escludi valgono soltanto per
     i file accanto all'eseguibile.
     Restituisce la coppia (quanti, lasciati), cioe' il numero di file scritti
-    nell'archivio e l'elenco ordinato di quelli lasciati fuori.
+    nell'archivio, manifesto compreso, e l'elenco ordinato di quelli lasciati
+    fuori.
     Solleva FileNotFoundError se la cartella da comprimere non esiste.
     """
     import fnmatch
@@ -749,6 +870,7 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
 
     quanti = 0
     lasciati = []
+    nel_manifesto = []
     radice_assoluta = os.path.abspath(cartella_dist)
     try:
         with zipfile.ZipFile(archivio, "w", zipfile.ZIP_DEFLATED) as zip_out:
@@ -777,8 +899,27 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
                         lasciati.append(nome)
                         continue
                     percorso = os.path.join(radice, nome)
-                    zip_out.write(percorso, os.path.relpath(percorso, cartella_dist))
+                    dentro_archivio = os.path.relpath(percorso, cartella_dist)
+                    zip_out.write(percorso, dentro_archivio)
                     quanti += 1
+                    if manifesto and dentro_internal:
+                        # Il manifesto parla di percorsi relativi a _internal,
+                        # perche' e' li' che vive e li' che si applica.
+                        nel_manifesto.append(dentro_archivio.replace("\\", "/").split("/", 1)[1])
+            if nel_manifesto:
+                # Scritto per ultimo, quando si sa tutto quello che e' entrato, e
+                # direttamente nell'archivio: la cartella dist resta come l'ha
+                # lasciata PyInstaller.
+                voci = sorted([*nel_manifesto, _NOME_MANIFESTO], key=str.lower)
+                spiegazione = (
+                    f"# Elenco dei file di _internal che questo pacchetto contiene, {len(voci)} in tutto.\n"
+                    "# Lo legge pulisci_residui di GBUtils al primo avvio dopo un aggiornamento:\n"
+                    "# cio' che sta in _internal e non e' elencato qui viene dalla versione\n"
+                    "# precedente e si puo' cancellare. Un file per riga, percorso relativo a\n"
+                    "# _internal, barra come separatore. Le righe che cominciano con un\n"
+                    "# cancelletto sono commenti e non contano.\n")
+                zip_out.writestr(f"_internal/{_NOME_MANIFESTO}", spiegazione + "\n".join(voci) + "\n")
+                quanti += 1
     except OSError as e:
         if os.path.exists(archivio):
             try:
@@ -790,6 +931,8 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
     lasciati.sort()
     if not silenzioso:
         print(f"Fatto: {quanti} file archiviati.")
+        if nel_manifesto:
+            print(f"Manifesto con {len(nel_manifesto) + 1} voci di _internal.")
         if lasciati:
             print(f"Lasciati fuori {len(lasciati)} elementi:")
             for voce in lasciati:
