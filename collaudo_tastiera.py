@@ -14,11 +14,23 @@ Tre prove, ognuna si chiude con Esc:
 Si lancia con
   python collaudo_tastiera.py
 """
+import os
 import sys
 import time
+from datetime import datetime
 
 sys.path.insert(0, "E:/git/mine/GBUtils")
 from GBUtils import Tastiera
+
+# Il riepilogo finisce anche qui, accanto al collaudo: a fine prova lo schermo
+# e' pieno di righe e i numeri che contano sono le ultime cinque.
+ESITI = os.path.join(os.path.dirname(os.path.abspath(__file__)), "collaudo_tastiera_esiti.txt")
+verbale = []
+
+def riferisci(riga):
+	"""Stampa e mette da parte, per il file degli esiti."""
+	print(riga)
+	verbale.append(riga)
 
 # I nomi che sono caratteri di controllo si leggono male con lo screen reader:
 # qui prendono la loro parola.
@@ -54,7 +66,13 @@ def prova_accordo(tastiera):
 		for nome, azione in tastiera.eventi(None):
 			if esci(nome, azione):
 				print(f"Massimo insieme {massimo}: {quando}")
-				return massimo, quando
+				# I tasti che risultano ancora giu' quando hai gia' lasciato
+				# tutto sono rilasci che non sono mai arrivati: una tastiera
+				# spinta oltre il suo rollover si mangia anche quelli.
+				appesi = sorted(leggibile(n) for n in tastiera.premuti if n != "\x1b")
+				if appesi:
+					print(f"Rilasci mai arrivati {len(appesi)}: {' '.join(appesi)}")
+				return massimo, quando, appesi
 			insieme = len(tastiera.premuti)
 			if insieme > massimo:
 				massimo = insieme
@@ -101,20 +119,33 @@ def main():
 		return 1
 	with tastiera:
 		visti = prova_nomi(tastiera)
-		massimo, insieme = prova_accordo(tastiera)
+		massimo, insieme, appesi = prova_accordo(tastiera)
 		durate, ripetizioni = prova_tenuta(tastiera)
 	print("\rRiepilogo.")
-	print(f"Tasti diversi provati {len(visti)}.")
-	print(f"Massimo insieme {massimo}" + (f": {insieme}." if insieme else "."))
+	riferisci(f"Collaudo del {datetime.now():%d/%m/%Y alle %H:%M}.")  # noqa: DTZ005 - ora locale, la legge chi era davanti
+	riferisci(f"Tasti diversi provati {len(visti)}.")
+	riferisci(f"Massimo insieme {massimo}" + (f": {insieme}." if insieme else "."))
 	if massimo >= 4:
-		print("La tastiera regge un accordo di quattro note.")
+		riferisci("La tastiera regge un accordo di quattro note.")
 	elif massimo == 3:
-		print("Tre note insieme: e' il limite tipico delle tastiere a membrana.")
+		riferisci("Tre note insieme: e' il limite tipico delle tastiere a membrana.")
 	elif massimo:
-		print("Meno di tre insieme: gli accordi su questa tastiera sono stretti.")
+		riferisci("Meno di tre insieme: gli accordi su questa tastiera sono stretti.")
+	if appesi:
+		riferisci(f"Rilasci mai arrivati {len(appesi)}: {' '.join(appesi)}.")
+		riferisci("Sono tasti che la tastiera non ha riferito di aver lasciato, non eventi persi dal programma.")
+	else:
+		riferisci("Nessun rilascio perso.")
 	if durate:
-		print(f"Tenute misurate {len(durate)}, la piu' lunga {max(durate) * 1000:.0f} ms.")
-	print("Auto-ripetizione trapelata: " + ("nessuna, come deve essere." if not ripetizioni else f"{ripetizioni}, da guardare."))
+		media = sum(durate) / len(durate)
+		riferisci(f"Tenute misurate {len(durate)}, media {media * 1000:.0f} ms, la piu' lunga {max(durate) * 1000:.0f} ms.")
+	riferisci("Auto-ripetizione trapelata: " + ("nessuna, come deve essere." if not ripetizioni else f"{ripetizioni}, da guardare."))
+	try:
+		with open(ESITI, "w", encoding="utf-8") as f:
+			f.write("\n".join(verbale) + "\n")
+		print(f"Riepilogo scritto in {os.path.basename(ESITI)}")
+	except OSError as errore:
+		print(f"Riepilogo non scritto: {errore}")
 	return 0
 
 if __name__ == "__main__":
