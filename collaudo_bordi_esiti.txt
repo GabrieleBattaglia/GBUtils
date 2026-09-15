@@ -1,0 +1,10 @@
+Esiti del collaudo d'ascolto dei bordi smorzati, issue 35
+Scritti da collaudo_bordi.py, che li aggiunge man mano.
+
+GRUPPO: i dieci che cambiano
+Data: 2026-09-15 08:35
+Commento di Gabriele: Pochissima differenza, meglio la seconda.
+
+GRUPPO: un ultimo gruppo
+Data: 2026-09-15 08:35
+Commento di Gabriele: test superato, nessun commento
