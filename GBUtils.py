@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V161 di lunedì 14 settembre 2026
+	V162 di martedì 15 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
@@ -13,7 +13,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	CWzator V11.3.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
-	elenco_dispositivi_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	elenco_dispositivi_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	elenco_interfacce_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode)
 	formatta_dimensione V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -29,13 +29,13 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	perform_update V1.6.1 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto)
 	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
 	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	scegli_dispositivo_audio V1.0.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	scegli_dispositivo_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	scomponi_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "161"
+VERSION = "162"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1023,9 +1023,12 @@ def enter_escape(prompt="", guida="", attesa=None):
 # dispositivo scelto nel sistema, e se un altro programma la tiene in esclusiva
 # la prova di apertura fallisce e si passa oltre.
 _PREFERENZA_API = ("ASIO", "WASAPI", "WDM-KS", "DirectSound", "MME")
-_scelta_audio = {"fatta": False, "device": None, "api": None}
-def scegli_dispositivo_audio(api=None, riprova=False):
-	"""V1.0.0 di domenica 6 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+# La scelta gia' fatta, una per modo di apertura: chi scrive e chi usa il
+# callback non hanno le stesse interfacce a disposizione, quindi non possono
+# dividersi la stessa risposta.
+_scelta_audio = {}
+def scegli_dispositivo_audio(api=None, riprova=False, modo="scrittura"):
+	"""V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Il dispositivo audio su cui suonare, e il nome della sua interfaccia.
 	Con api a None sceglie da sola: fra le interfacce che puntano allo stesso
 	dispositivo scelto nel sistema prende la piu' pronta che si lascia davvero
@@ -1039,12 +1042,24 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 	l'indice di un dispositivo.
 	Con riprova a vero la scelta automatica si rifa' da capo, per esempio dopo
 	che l'utente ha cambiato il dispositivo predefinito del sistema.
+	modo dice come il chiamante aprira' il flusso, perche' la prova si fa nello
+	stesso modo e non tutte le interfacce reggono tutti e due: "scrittura",
+	che e' il predefinito e riguarda il mixer condiviso di questo pacchetto, o
+	"callback", che riguarda chi lascia al dispositivo il compito di chiedere i
+	campioni, come fa il mixer di Chitabry. La differenza non e' teorica:
+	WDM-KS non ha ancora l'API bloccante in PortAudio, quindi a scrittura non
+	si apre mai, mentre a callback si apre e dichiara dieci millesimi di
+	latenza contro i ventidue di WASAPI. Chiedere col modo sbagliato vuol dire
+	scartare un'interfaccia buona o sceglierne una che poi non si aprira'.
 	Restituisce una coppia: indice del dispositivo e nome dell'interfaccia, o
 	(None, None) se non c'e' niente da scegliere e conviene lasciar fare al
-	sistema. Solleva ValueError se l'interfaccia chiesta non esiste.
+	sistema. Solleva ValueError se l'interfaccia chiesta non esiste o se modo
+	non e' uno dei due nomi.
 	Costa 0,07 ms per enumerare e da 3 a 16 per una prova di apertura, ma dalla
-	seconda chiamata e' in cache e costa nulla."""
+	seconda chiamata con lo stesso modo e' in cache e costa nulla."""
 	import sounddevice as sd
+	if modo not in ("scrittura", "callback"):
+		raise ValueError(f"modo di apertura sconosciuto: {modo!r}")
 	if isinstance(api, bool):
 		# ValueError e non TypeError: e' il contratto dichiarato nella
 		# docstring, ed e' quello che CWzator cattura quando chiama.
@@ -1060,8 +1075,8 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 					raise ValueError(f"l'interfaccia audio {api} non ha un dispositivo di uscita")
 				return d, h["name"]
 		raise ValueError(f"interfaccia audio {api} non disponibile")
-	if _scelta_audio["fatta"] and not riprova:
-		return _scelta_audio["device"], _scelta_audio["api"]
+	if modo in _scelta_audio and not riprova:
+		return _scelta_audio[modo]
 	try:
 		predefinito = sd.query_devices(sd.default.device[1])["name"]
 	except Exception:  # noqa: BLE001 - il dispositivo audio fallisce in molti modi, e qui si puo' fare senza
@@ -1079,16 +1094,13 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 		candidati.append((_PREFERENZA_API.index(corto), d, h["name"]))
 	scelto, nome = None, None
 	for _ordine, d, nome_api in sorted(candidati):
-		try:
-			extra = sd.WasapiSettings(auto_convert=True) if "WASAPI" in nome_api else None
-			prova = sd.OutputStream(device=d, samplerate=44100, channels=2, dtype="int16",
-									blocksize=256, latency="low", extra_settings=extra)
-			prova.start(); prova.abort(); prova.close()
-		except Exception:  # noqa: BLE001, S112 - un'interfaccia che non si apre si scarta e si prova la prossima
-			continue
-		scelto, nome = d, nome_api
-		break
-	_scelta_audio.update({"fatta": True, "device": scelto, "api": nome})
+		# La prova si fa come il chiamante aprira' davvero: un'interfaccia che
+		# non regge quel modo si scarta qui, e si passa alla prossima.
+		apribile, _motivo = _prova_apertura(d, nome_api, modo)
+		if apribile:
+			scelto, nome = d, nome_api
+			break
+	_scelta_audio[modo] = (scelto, nome)
 	return scelto, nome
 # Le interfacce che prendono il dispositivo in esclusiva: finche' uno le usa,
 # nessun altro puo' suonare su quella scheda. Non e' una misura ma una
@@ -1097,20 +1109,31 @@ def scegli_dispositivo_audio(api=None, riprova=False):
 # schermo.
 _API_ESCLUSIVE = ("ASIO", "WDM-KS")
 
-def _prova_apertura(indice, nome_api):
-	"""Prova davvero ad aprire un dispositivo, come lo aprirebbe CWzator.
+def _prova_apertura(indice, nome_api, modo="scrittura"):
+	"""Prova davvero ad aprire un dispositivo, come lo aprirebbe chi suona.
 
 	Restituisce (True, None) se si e' aperto, (False, motivo) altrimenti.
 	Costa una cinquantina di millesimi di secondo, e su un'interfaccia
 	esclusiva gia' occupata fallisce: e' l'informazione piu' utile da dare a
 	chi deve scegliere, perche' e' esattamente quello che succederebbe al
 	momento di suonare.
+	modo dice come si prova: "scrittura" apre un flusso da alimentare a mano,
+	che e' come fa il mixer di questo pacchetto, e "callback" ne apre uno che
+	chiede i campioni per conto suo. Non e' un dettaglio: il backend WDM-KS di
+	PortAudio non ha ancora l'API bloccante, quindi a scrittura non si apre mai
+	e a callback a volte si', ed e' la ragione per cui questo parametro esiste.
+	La callback di prova scrive silenzio e quasi sempre non viene nemmeno
+	chiamata, perche' il flusso si chiude subito: quello che conta e' se si e'
+	aperto.
 	"""
 	import sounddevice as sd
+	def muta(fuori, _quanti, _tempo, _stato):
+		fuori.fill(0)
 	try:
 		extra = sd.WasapiSettings(auto_convert=True) if "WASAPI" in (nome_api or "") else None
 		prova = sd.OutputStream(device=indice, samplerate=44100, channels=2, dtype="int16",
-								blocksize=256, latency="low", extra_settings=extra)
+								blocksize=256, latency="low", extra_settings=extra,
+								callback=muta if modo == "callback" else None)
 		prova.start()
 		prova.abort()
 		prova.close()
@@ -1123,8 +1146,8 @@ def _ordine_api(nome_api):
 	corto = (nome_api or "").replace("Windows ", "")
 	return _PREFERENZA_API.index(corto) if corto in _PREFERENZA_API else len(_PREFERENZA_API)
 
-def elenco_dispositivi_audio(prova="predefinito"):
-	"""V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+def elenco_dispositivi_audio(prova="predefinito", modo="scrittura"):
+	"""V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	I dispositivi di uscita di questa macchina, pronti da presentare a chi sceglie.
 
 	Nasce dalla issue 7: CWzator sapeva scegliere l'uscita e sapeva obbedire a
@@ -1214,7 +1237,7 @@ def elenco_dispositivi_audio(prova="predefinito"):
 	for voce in voci:
 		if prova == "nessuno" or (prova == "predefinito" and not voce["stessa_scheda"]):
 			continue
-		voce["apribile"], voce["motivo"] = _prova_apertura(voce["indice"], voce["interfaccia"])
+		voce["apribile"], voce["motivo"] = _prova_apertura(voce["indice"], voce["interfaccia"], modo)
 	# Davanti chi porta dove si sta gia' ascoltando: e' la scelta che ha senso
 	# nella grande maggioranza dei casi, e chi vuole un altro ordine riordina.
 	voci.sort(key=lambda v: (not v["stessa_scheda"], _ordine_api(v["interfaccia"]), v["indice"]))

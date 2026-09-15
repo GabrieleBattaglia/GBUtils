@@ -19,6 +19,7 @@ import time
 
 import sounddevice as sd
 
+import GBUtils
 from GBUtils import (
 	elenco_dispositivi_audio,
 	elenco_interfacce_audio,
@@ -35,6 +36,16 @@ def prova(titolo, condizione, visto=""):
 		print(f"{titolo}: ok")
 	else:
 		print(f"{titolo}: FALLITA {visto}")
+
+def solleva(eccezione, funzione, *argomenti, **chiavi):
+	"""Vero se la chiamata solleva proprio quell'eccezione."""
+	try:
+		funzione(*argomenti, **chiavi)
+	except eccezione:
+		return True
+	except Exception:  # noqa: BLE001
+		return False
+	return False
 
 CHIAVI_DISPOSITIVO = {"indice", "dispositivo", "interfaccia", "breve", "canali", "frequenza",
 					  "latenza", "predefinito", "stessa_scheda", "esclusiva", "apribile", "motivo"}
@@ -169,6 +180,45 @@ for v in interfacce:
 	print(f"  {v['breve']:12} {str(v['nome_dispositivo'])[:32]:34} {v['quanti']:2} uscite  "
 		  f"lat {v['latenza'] if v['latenza'] is None else round(v['latenza'], 1)}  "
 		  f"stessa scheda {v['stessa_scheda']}, esclusiva {v['esclusiva']}")
+
+
+# Il modo di apertura, che nasce con la issue 36. Il mixer di questo pacchetto
+# alimenta la scheda scrivendo, quello di Chitabry lascia che sia il
+# dispositivo a chiedere i campioni, e non tutte le interfacce reggono tutti e
+# due i modi: la prova va fatta nello stesso modo in cui si suonera'.
+prova("un modo di apertura inventato viene rifiutato",
+	  solleva(ValueError, scegli_dispositivo_audio, modo="fantasia"))
+prova("il modo predefinito e' la scrittura",
+	  scegli_dispositivo_audio(riprova=True) == scegli_dispositivo_audio(modo="scrittura", riprova=True))
+
+a_scrittura = scegli_dispositivo_audio(modo="scrittura", riprova=True)
+a_callback = scegli_dispositivo_audio(modo="callback", riprova=True)
+prova("le due scelte sono tutte e due utilizzabili",
+	  all(scelta[0] is None or isinstance(scelta[0], int) for scelta in (a_scrittura, a_callback)),
+	  (a_scrittura, a_callback))
+prova("la cache tiene le due risposte separate",
+	  set(GBUtils._scelta_audio) == {"scrittura", "callback"}, GBUtils._scelta_audio)
+inizio = time.perf_counter()
+scegli_dispositivo_audio(modo="callback")
+prova("dalla cache la risposta costa meno di un millesimo",
+	  (time.perf_counter() - inizio) * 1000 < 1.0)
+
+tutti_scrittura = elenco_dispositivi_audio(prova="tutti", modo="scrittura")
+tutti_callback = elenco_dispositivi_audio(prova="tutti", modo="callback")
+prova("l'elenco prova ogni dispositivo in tutti e due i modi",
+	  all(v["apribile"] is not None for v in tutti_scrittura + tutti_callback))
+prova("i due elenchi parlano degli stessi dispositivi",
+	  [v["indice"] for v in tutti_scrittura] == [v["indice"] for v in tutti_callback])
+
+# Questa non dipende dalla macchina: PortAudio non ha ancora l'API bloccante
+# per WDM-KS, quindi a scrittura non se ne apre nessuno, dovunque.
+wdm_scrittura = [v for v in tutti_scrittura if v["breve"] == "WDM-KS"]
+wdm_callback = [v for v in tutti_callback if v["breve"] == "WDM-KS"]
+if wdm_scrittura:
+	prova(f"nessuno dei {len(wdm_scrittura)} WDM-KS si apre a scrittura",
+		  not [v for v in wdm_scrittura if v["apribile"]],
+		  [v["dispositivo"] for v in wdm_scrittura if v["apribile"]])
+	print(f"  WDM-KS: {sum(1 for v in wdm_callback if v['apribile'])} su {len(wdm_callback)} si aprono a callback")
 
 print(f"\nProve {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)
