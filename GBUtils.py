@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V162 di martedì 15 settembre 2026
+	V163 di martedì 15 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+	Acusticator V8.2.1 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "162"
+VERSION = "163"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -4220,17 +4220,39 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 				OVS = 8
 				fs_ovs = fs * OVS
 				total_ovs_samples = total_note_samples * OVS
+				# Il filtro che resample_poly costruisce per down=8 e' lungo 161
+				# campioni, ottanta per parte. Ai due capi della nota non ha segnale
+				# da cui prendere e vede zeri, quindi ogni nota cominciava e finiva
+				# smorzata per una decina di campioni, qualunque cosa dicesse
+				# l'inviluppo. Si sintetizza allora un margine di ottanta campioni
+				# sovracampionati prima e dopo, preso dalla continuazione naturale
+				# dell'onda, che esiste perche' dalla V149 la fase si porta avanti fra
+				# una nota e l'altra; il margine si butta via dopo il ricampionamento,
+				# e il filtro ha lavorato su segnale vero.
+				# Ottanta e' misurato e non indovinato: con ottanta i bordi coincidono
+				# esattamente, fino all'ultima cifra, con quelli della stessa onda
+				# ricampionata in mezzo a un segnale lungo; con sessantaquattro no.
+				MARGINE_OVS = 80
+				quanti_ovs = total_ovs_samples + 2 * MARGINE_OVS
+				indici_ovs = np.arange(-MARGINE_OVS, total_ovs_samples + MARGINE_OVS, dtype=np.float64)
+				ultimo_vero = MARGINE_OVS + total_ovs_samples - 1
 				
 				if isinstance(freq, tuple):
 					f_start, f_end = freq
-					freq_array_ovs = np.linspace(f_start, f_end, total_ovs_samples, endpoint=False)
+					# La rampa del portamento prosegue oltre i due capi nella stessa
+					# direzione: e' la continuazione naturale, ed e' quello che il
+					# filtro si aspetta di trovare li'.
+					freq_array_ovs = f_start + (f_end - f_start) * indici_ovs / total_ovs_samples
 					dt_ovs = freq_array_ovs / fs_ovs
 					passi_ovs = 2.0 * np.pi * freq_array_ovs.astype(np.float64) / fs_ovs
-					phase_ovs = fase_portata + np.cumsum(passi_ovs)
-					fase_dopo = phase_ovs[-1] + passi_ovs[-1]
+					# Il margine non deve spostare la fase della nota: quella del primo
+					# campione vero resta quella di prima, altrimenti salterebbe la
+					# continuita' di fase della V149.
+					phase_ovs = fase_portata + np.cumsum(passi_ovs) - np.sum(passi_ovs[:MARGINE_OVS])
+					fase_dopo = phase_ovs[ultimo_vero] + passi_ovs[ultimo_vero]
 				else:
-					dt_ovs = np.full(total_ovs_samples, freq / fs_ovs, dtype=np.float64)
-					t_ovs = np.linspace(0, dur, total_ovs_samples, endpoint=False)
+					dt_ovs = np.full(quanti_ovs, freq / fs_ovs, dtype=np.float64)
+					t_ovs = indici_ovs * (dur / total_ovs_samples if total_ovs_samples else 0.0)
 					phase_ovs = fase_portata + 2.0 * np.pi * freq * t_ovs
 					fase_dopo = fase_portata + 2.0 * np.pi * freq * total_ovs_samples / fs_ovs
 				
@@ -4260,6 +4282,10 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 				
 				# Decimazione con filtro anti-aliasing molto più aggressivo
 				wave = signal.resample_poly(wave_ovs, up=1, down=OVS, window=('kaiser', 14.0)).astype(np.float32)
+				# Via il margine: erano campioni che servivano al filtro per avere
+				# contesto, non alla nota.
+				margine_giu = MARGINE_OVS // OVS
+				wave = wave[margine_giu:margine_giu + total_note_samples]
 				
 				# Compensazione per eventuali arrotondamenti di lunghezza
 				if len(wave) > total_note_samples:
@@ -4325,7 +4351,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.2.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
+    """V8.2.1 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
