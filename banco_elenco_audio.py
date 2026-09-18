@@ -155,8 +155,10 @@ for v in interfacce:
 	if indice != v["dispositivo"] or nome != v["nome"]:
 		buoni = False
 prova("il nome breve di ogni interfaccia e' accettato da scegli_dispositivo_audio, e porta dove dice", buoni)
-prova("e l'indice di ogni dispositivo e' accettato come tale",
-	  all(scegli_dispositivo_audio(api=v["indice"]) == (v["indice"], None) for v in dispositivi[:5]))
+prova("e l'indice di ogni dispositivo e' accettato come tale, e porta con se' il nome della sua interfaccia",
+	  all(scegli_dispositivo_audio(api=v["indice"]) == (v["indice"], v["interfaccia"]) for v in dispositivi[:5]))
+prova("un indice che non esiste non solleva qui: lo dira' l'apertura",
+	  scegli_dispositivo_audio(api=9999) == (9999, None))
 
 # 8. Le due liste raccontano la stessa macchina.
 da_dispositivi = {v["interfaccia"] for v in dispositivi}

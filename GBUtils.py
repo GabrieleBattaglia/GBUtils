@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V163 di martedì 15 settembre 2026
+	V164 di venerdì 18 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.2.1 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -29,13 +29,13 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	perform_update V1.6.1 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto)
 	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
 	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	scegli_dispositivo_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	scegli_dispositivo_audio V1.1.1 di venerdì 18 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	scomponi_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "163"
+VERSION = "164"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1028,7 +1028,7 @@ _PREFERENZA_API = ("ASIO", "WASAPI", "WDM-KS", "DirectSound", "MME")
 # dividersi la stessa risposta.
 _scelta_audio = {}
 def scegli_dispositivo_audio(api=None, riprova=False, modo="scrittura"):
-	"""V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	"""V1.1.1 di venerdì 18 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	Il dispositivo audio su cui suonare, e il nome della sua interfaccia.
 	Con api a None sceglie da sola: fra le interfacce che puntano allo stesso
 	dispositivo scelto nel sistema prende la piu' pronta che si lascia davvero
@@ -1039,7 +1039,9 @@ def scegli_dispositivo_audio(api=None, riprova=False, modo="scrittura"):
 	ascolta non se lo aspetta.
 	Con api indicata il chiamante si prende la responsabilita': puo' passare il
 	nome di una interfaccia, per esempio wasapi o asio, oppure direttamente
-	l'indice di un dispositivo.
+	l'indice di un dispositivo. Anche con l'indice si restituisce il nome
+	dell'interfaccia a cui appartiene: il mixer ne ha bisogno per la
+	conversione automatica di WASAPI, e dalla V1.1.0 lo lasciava a None.
 	Con riprova a vero la scelta automatica si rifa' da capo, per esempio dopo
 	che l'utente ha cambiato il dispositivo predefinito del sistema.
 	modo dice come il chiamante aprira' il flusso, perche' la prova si fa nello
@@ -1065,7 +1067,18 @@ def scegli_dispositivo_audio(api=None, riprova=False, modo="scrittura"):
 		# docstring, ed e' quello che CWzator cattura quando chiama.
 		raise ValueError("api non puo' essere un valore logico")  # noqa: TRY004
 	if isinstance(api, int):
-		return api, None
+		# Con l'indice si restituisce anche il nome dell'interfaccia, perche' e'
+		# quello che il mixer legge per accendere la conversione automatica di
+		# WASAPI: senza, un dispositivo che Windows tiene a 48000 non si apriva
+		# a 44100 e la stessa scelta fatta per nome funzionava. Issue 38.
+		# Un indice inesistente fa sollevare a sounddevice un PortAudioError,
+		# non un ValueError: qui si lascia il nome a None e si fallira' piu'
+		# avanti, all'apertura, con il messaggio del mixer, come prima.
+		try:
+			nome = sd.query_hostapis(sd.query_devices(api)["hostapi"])["name"]
+		except Exception:  # noqa: BLE001 - l'indice cattivo lo dira' l'apertura, con il suo messaggio
+			nome = None
+		return api, nome
 	if api is not None:
 		voluta = str(api).strip().lower()
 		for h in sd.query_hostapis():
