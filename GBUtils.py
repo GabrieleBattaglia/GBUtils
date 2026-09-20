@@ -3,14 +3,14 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V164 di venerdì 18 settembre 2026
+	V165 di domenica 20 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.2.1 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Acusticator V8.3.0 di domenica 20 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	CWzator V11.3.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
+	CWzator V11.4.0 di domenica 20 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	elenco_dispositivi_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "164"
+VERSION = "165"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1323,9 +1323,9 @@ class _Voce:
 	"""Un suono in riproduzione: il buffer, dove siamo arrivati, la panoramica
 	e l'evento con cui chi l'ha mandato puo' aspettarne la fine."""
 
-	__slots__ = ("a_fine", "buffer", "destra", "fermata", "fine", "nata", "pos", "sinistra")
+	__slots__ = ("a_fine", "buffer", "ciclo", "destra", "fermata", "fine", "nata", "pos", "sinistra")
 
-	def __init__(self, buffer, pan, orologio, a_fine=None):
+	def __init__(self, buffer, pan, orologio, a_fine=None, ciclo=False):
 		import math
 		import threading
 		self.buffer = buffer
@@ -1343,6 +1343,36 @@ class _Voce:
 		# Cosa fare quando questa voce e' finita, oltre a svegliare chi
 		# aspetta: serve a chi tiene un oggetto per ogni suono, come CWzator.
 		self.a_fine = a_fine
+		# Una voce in ciclo non finisce da sola: arrivata in fondo riparte
+		# dall'inizio, e la ferma soltanto chi l'ha accesa. Serve ai fondi
+		# continui, come il rumore sotto un contest.
+		self.ciclo = bool(ciclo)
+
+
+class _CicloAcceso:
+	"""La maniglia di un suono in ciclo: lo ferma, e ferma soltanto quello.
+
+	Nasce da Acusticator.ciclo. Fermarlo due volte non e' un errore, e chiedere
+	se e' attivo dopo che il mixer si e' chiuso risponde di no.
+	"""
+
+	__slots__ = ("_mixer", "_voce")
+
+	def __init__(self, mixer, voce):
+		self._mixer = mixer
+		self._voce = voce
+
+	@property
+	def attivo(self):
+		"""Vero finche' il ciclo sta suonando."""
+		return not self._voce.fine.is_set()
+
+	def stop(self):
+		"""Ferma questo ciclo, e nient'altro. Restituisce vero se stava suonando."""
+		if self._voce.fine.is_set():
+			return False
+		self._mixer.ferma(self._voce)
+		return True
 
 
 class _MixerCondiviso:
@@ -1398,7 +1428,7 @@ class _MixerCondiviso:
 
 	# --- Cio' che serve a chi manda un suono ---
 
-	def suona(self, buffer, fs=None, pan=0.0, sync=False, a_fine=None):
+	def suona(self, buffer, fs=None, pan=0.0, sync=False, a_fine=None, ciclo=False):
 		"""Manda un buffer al mixer. Restituisce la voce, o None se il
 		dispositivo non si apre.
 
@@ -1413,6 +1443,10 @@ class _MixerCondiviso:
 		  fermato o ha lasciato il posto a un altro. Gira nel filo del mixer,
 		  quindi deve essere breve: se ci mette, la scheda resta a secco. Se
 		  solleva, il guasto finisce in ultimo_errore e il mixer prosegue.
+		ciclo: vero fa ripartire il buffer dall'inizio ogni volta che finisce,
+		  senza un campione di silenzio fra un giro e il seguente. Una voce in
+		  ciclo non finisce mai da sola, quindi non si aspetta con sync: la
+		  ferma chi l'ha accesa, con ferma(voce).
 		"""
 		import numpy as np
 		if buffer is None or len(buffer) == 0:
@@ -1425,7 +1459,7 @@ class _MixerCondiviso:
 				return None
 		if fs is not None and int(fs) != self._fs:
 			buffer = self._adatta_frequenza(buffer, int(fs))
-		voce = _Voce(buffer, pan, self._orologio, a_fine)
+		voce = _Voce(buffer, pan, self._orologio, a_fine, ciclo)
 		with self._lock:
 			while len(self._voci) >= self._voci_max:
 				self._chiudi_voce(self._voci.pop(0))
@@ -1636,7 +1670,14 @@ class _MixerCondiviso:
 			if voce.fermata:
 				finite.append(voce)
 				continue
-			pezzo = voce.buffer[voce.pos:voce.pos + self._blocco]
+			if voce.ciclo:
+				# Il blocco si prende con l'avvolgimento: fra la fine di un giro
+				# e l'inizio del seguente non resta un solo campione di silenzio,
+				# che e' quello che distingue un fondo continuo da un fondo che
+				# schiocca a ogni ripetizione.
+				pezzo = voce.buffer[(voce.pos + np.arange(self._blocco)) % len(voce.buffer)]
+			else:
+				pezzo = voce.buffer[voce.pos:voce.pos + self._blocco]
 			quanti = len(pezzo)
 			if quanti:
 				if pezzo.shape[1] == 1:
@@ -1650,9 +1691,12 @@ class _MixerCondiviso:
 					somma[:quanti] += pezzo
 				else:
 					somma[:quanti, 0] += pezzo.mean(axis=1)
-			voce.pos += self._blocco
-			if voce.pos >= len(voce.buffer):
-				finite.append(voce)
+			if voce.ciclo:
+				voce.pos = (voce.pos + self._blocco) % len(voce.buffer)
+			else:
+				voce.pos += self._blocco
+				if voce.pos >= len(voce.buffer):
+					finite.append(voce)
 		if finite:
 			with self._lock:
 				self._voci = [v for v in self._voci if not any(v is f for f in finite)]
@@ -1691,9 +1735,62 @@ def _mixer_condiviso():
 		_MIXER = _MixerCondiviso()
 	return _MIXER
 
-def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None, farnsworth=None):
+def _guadagno_qsb(quanti, banda, passo, fs, seme=None):
+	"""I guadagni dell'evanescenza, uno ogni passo campioni, come in Morse Runner.
+
+	E' il processo di qsb.py di cwsim: rumore complesso uniforme fra meno uno e
+	piu' uno, tre medie mobili a cascata di navg campioni, il modulo, e la
+	normalizzazione per la radice di tre navg, che porta il guadagno medio
+	attorno a uno. navg e' 0,37 per la frequenza con cui si campiona il
+	guadagno, diviso la banda: ne viene un tempo di correlazione di 0,37 diviso
+	la banda, in secondi, che non dipende da ogni quanti campioni lo si
+	campiona. La banda e' l'unico parametro, come in Morse Runner: da un decimo
+	a sei decimi di hertz e' l'evanescenza lenta, da tre a trentatre e' il
+	flutter delle propagazioni polari.
+	Il guadagno si taglia a uno, ed e' la sola differenza voluta da cwsim, che
+	lo lascia salire fino a tre e poi normalizza la somma di tutte le stazioni
+	con un controllo automatico di guadagno. Qui il messaggio e' uno solo e i
+	suoi campioni sono gia' interi a sedici bit: un guadagno di tre lo farebbe
+	saturare. Tagliando a uno il messaggio non supera mai il livello che
+	avrebbe senza evanescenza, e l'evanescenza si sente dove conta, cioe'
+	quando il segnale scende.
 	"""
-	CWzator V11.3.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, UltraCode)
+	import math
+
+	import numpy as np
+	navg = max(math.ceil(0.37 * fs / (passo * banda)), 1)
+	# La cascata nella forma valida accorcia di navg-1 a ogni passaggio: se ne
+	# generano tre volte tanti in piu', cosi' i guadagni utili sono esattamente
+	# quanti ne servono e nessuno viene dal transitorio iniziale.
+	lunghezza = quanti + 3 * (navg - 1)
+	rng = np.random.default_rng(seme)
+	rumore = (2.0 * rng.random(lunghezza) - 1.0) + 1j * (2.0 * rng.random(lunghezza) - 1.0)
+	if navg > 1:
+		for _ in range(3):
+			somme = np.cumsum(np.insert(rumore, 0, 0.0))
+			rumore = (somme[navg:] - somme[:-navg]) / navg
+	return np.minimum(np.abs(rumore) * math.sqrt(3.0 * navg), 1.0)
+
+
+def _applica_qsb(audio, banda, fs, passo, seme=None):
+	"""Moltiplica il messaggio per l'inviluppo dell'evanescenza.
+
+	Il guadagno si campiona ogni passo campioni e fra un campione e il
+	seguente si interpola per retta, come in cwsim. Tocca soltanto l'ampiezza
+	dei campioni gia' generati: non la velocita' effettiva, che si misura sulle
+	durate, e non la panoramica, che il mixer applica dopo.
+	"""
+	import numpy as np
+	if banda <= 0 or audio.size == 0:
+		return audio
+	guadagni = _guadagno_qsb(audio.size // passo + 2, banda, passo, fs, seme)
+	inviluppo = np.interp(np.arange(audio.size), np.arange(guadagni.size) * passo, guadagni)
+	return (audio.astype(np.float64) * inviluppo).astype(np.int16)
+
+
+def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None, farnsworth=None, qsb=None, qsb_seme=None):
+	"""
+	CWzator V11.4.0 di domenica 20 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, UltraCode)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -1852,6 +1949,28 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			spaziature oltre quello che la velocità effettiva chiesta consentirebbe, perché per
 			accontentarla bisognerebbe stringerle sotto il peso: in quel caso il messaggio
 			d'errore dice fin dove si può arrivare con quei pesi.
+		qsb (int|float|None): L'evanescenza del segnale, cioè la modulazione lenta e casuale
+			dell'ampiezza che in radio fa andare e venire una stazione (default None, cioè
+			niente evanescenza e tutto come prima). Il numero è la banda del processo in hertz,
+			cioè l'inverso del tempo di correlazione: da un decimo a sei decimi è il QSB lento
+			delle propagazioni normali, da tre a trentatré è il flutter di quelle polari, e sono
+			i valori di Morse Runner, che chi fa contest riconosce all'orecchio.
+			Il processo è quello di Morse Runner, passato per qsb.py di cwsim: rumore complesso
+			uniforme, tre medie mobili a cascata, il modulo, normalizzato perché il guadagno medio
+			stia attorno a uno; il guadagno si campiona ogni sessantaquattro campioni e fra un
+			campione e il seguente si interpola per retta.
+			Cosa tocca e cosa no: tocca soltanto l'ampiezza dei campioni già generati, dopo pesi,
+			dissolvenze e Farnsworth; non tocca rwpm, che si misura sulle durate; non tocca il pan,
+			che il mixer applica dopo; e il file WAV di to_file riceve l'audio con l'evanescenza
+			applicata, che è ciò che l'orecchio sente.
+			Una differenza voluta da cwsim: il guadagno si taglia a uno. cwsim lo lascia salire
+			fino a tre e poi normalizza la somma di tutte le stazioni con un controllo automatico
+			di guadagno; qui il messaggio è uno solo e i suoi campioni sono già interi a sedici bit,
+			quindi un guadagno di tre lo farebbe saturare. Tagliando a uno il messaggio non supera
+			mai il livello che avrebbe senza evanescenza.
+		qsb_seme (int|None): Il seme del generatore casuale dell'evanescenza (default None, cioè
+			casuale davvero). Serve alle prove, che con lo stesso seme ottengono lo stesso
+			inviluppo campione per campione.
 	Returns:
 		dict: Se get_map=True, restituisce una copia del dizionario della mappa Morse.
 		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm, la velocità effettiva in wpm.
@@ -2341,6 +2460,13 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 				except Exception:  # noqa: BLE001, S110 - __del__ gira anche mentre l'interprete si spegne, e li' non c'e' piu' niente da salvare
 					pass
 		CWzator._PlaybackHandle = _PlaybackHandle
+	# --- Evanescenza: il QSB e il flutter, sopra il CW già generato ---
+	if qsb is not None:
+		if not isinstance(qsb, (int, float)) or isinstance(qsb, bool):
+			return _errore(f"qsb ({qsb}) tipo non valido.")
+		if not (0 < qsb <= 100):
+			return _errore(f"qsb ({qsb}) fuori intervallo (0, 100].")
+		audio = _applica_qsb(audio, float(qsb), fs, BLOCK_SIZE // 4, qsb_seme)
 	# --- Creazione Oggetto e Avvio Playback ---
 	PlaybackHandle = CWzator._PlaybackHandle
 	try:
@@ -4364,7 +4490,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.2.1 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    """V8.3.0 di domenica 20 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -4473,6 +4599,8 @@ class _Acusticator:
     alla nuova, cosi' l'ultimo evento si sente sempre.
 
         Acusticator.setup(volume=0.6)   il volume generale, una volta sola
+        Acusticator.sintetizza(score)   il buffer, senza suonarlo
+        Acusticator.ciclo(score)        un fondo continuo, con la sua maniglia
         Acusticator.stop()              silenzio immediato, stream aperto
         Acusticator.close()             chiude e libera la scheda audio
         Acusticator.stato()             come sta il mixer in questo momento
@@ -4604,6 +4732,47 @@ class _Acusticator:
             # senza questa attesa un suono di congedo verrebbe troncato.
             mixer.aspetta_uscita()
         return True
+
+    def sintetizza(self, score, kind=1, adsr=None, fs=44100, pan=None):
+        """Il buffer di uno score, senza suonarlo: stereo float32 fra -1 e 1.
+
+        Serve a chi vuole preparare un suono una volta sola e riusarlo, per
+        esempio un fondo da tenere acceso in ciclo, o a chi lo vuole misurare.
+        Restituisce None se lo score non produce niente.
+        """
+        if pan is not None:
+            score = self._sposta(score, pan)
+        return _sintetizza(score, kind, adsr, fs)
+
+    def ciclo(self, score, kind=1, adsr=None, fs=44100, pan=None, volume=None):
+        """Tiene acceso uno score in ciclo e restituisce la maniglia per fermarlo.
+
+        Serve ai fondi continui, come il rumore sotto un contest: lo score si
+        sintetizza una volta sola e il mixer lo riavvolge senza un campione di
+        silenzio fra un giro e il seguente, mentre sopra suonano le altre voci.
+        score, kind e adsr sono quelli di sempre, vedi la classe. pan e' la
+        panoramica da meno uno a piu' uno, e con i kind di rumore conviene
+        lasciarla al centro. volume da 0 a 1 scala il buffer una volta sola,
+        alla sintesi: per cambiarlo si ferma il ciclo e se ne accende un altro,
+        perche' un fondo che cambia livello mentre suona non serve a nessuno e
+        costerebbe un moltiplicatore per blocco a tutte le voci.
+        Restituisce una maniglia con stop(), che ferma questa voce e soltanto
+        questa, e attivo, che dice se sta ancora suonando. Restituisce None se
+        lo score non produce niente o se la scheda non si apre.
+        Il ciclo non finisce da solo: chi lo accende lo ferma. Chi esce senza
+        fermarlo lo vede chiudersi insieme al mixer.
+        """
+        import numpy as np
+        buffer = self.sintetizza(score, kind, adsr, fs, pan)
+        if buffer is None or len(buffer) == 0:
+            return None
+        if volume is not None:
+            buffer = (np.asarray(buffer, dtype=np.float32) * max(0.0, min(1.0, float(volume)))).astype(np.float32)
+        mixer = _mixer_condiviso()
+        voce = mixer.suona(buffer, fs=fs, pan=0.0 if pan is None else max(-1.0, min(1.0, float(pan))), ciclo=True)
+        if voce is None:
+            return None
+        return _CicloAcceso(mixer, voce)
 
     def stop(self):
         """Zittisce subito tutto quello che sta suonando, senza chiudere nulla.
