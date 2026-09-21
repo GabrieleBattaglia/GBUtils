@@ -3,14 +3,14 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V166 di lunedì 21 settembre 2026
+	V167 di martedì 22 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.4.0 di lunedì 21 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	CWzator V11.4.0 di domenica 20 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
+	CWzator V11.5.0 di martedì 22 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	elenco_dispositivi_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "166"
+VERSION = "167"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1821,9 +1821,9 @@ def _applica_qsb(audio, banda, fs, passo, seme=None):
 	return (audio.astype(np.float64) * inviluppo).astype(np.int16)
 
 
-def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None, farnsworth=None, qsb=None, qsb_seme=None):
+def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None, farnsworth=None, qsb=None, qsb_seme=None, chirp=None, vibrato=None):
 	"""
-	CWzator V11.4.0 di domenica 20 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, UltraCode)
+	CWzator V11.5.0 di martedì 22 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, UltraCode)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -2004,6 +2004,24 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		qsb_seme (int|None): Il seme del generatore casuale dell'evanescenza (default None, cioè
 			casuale davvero). Serve alle prove, che con lo stesso seme ottengono lo stesso
 			inviluppo campione per campione.
+		chirp (int|float|None): Lo scarto in hertz fra l'inizio e la fine di ogni elemento
+			(default None, cioè tono fermo e tutto come prima). È il difetto classico del
+			trasmettitore con l'alimentazione debole: il tono scivola mentre il punto o la linea
+			suonano, e chi fa CW lo riconosce a orecchio. Positivo sale, negativo scende, e
+			l'intervallo accettato va da meno duecento a duecento hertz. Lo scivolamento è
+			lineare e ricomincia a ogni elemento, perché è l'elemento a caricare l'alimentazione.
+		vibrato (int|float|tuple|None): L'instabilità di frequenza, cioè il tono che oscilla
+			attorno al suo valore (default None, cioè tono fermo). Un numero è la profondità in
+			hertz, da zero escluso a cento, con una frequenza di oscillazione di sei hertz; una
+			coppia dice profondità e frequenza, per esempio (8, 4.5), e la frequenza va da un
+			decimo a cinquanta hertz.
+			L'oscillazione segue il tempo del messaggio, non quello dell'elemento: è un
+			oscillatore che vibra sempre, non uno che ricomincia a ogni punto. Ne viene che con
+			il vibrato ogni elemento si genera al suo istante invece di riusare i due segmenti
+			pre-generati, e la generazione costa un po' di più; senza, non cambia niente.
+		Cosa chirp e vibrato toccano e cosa no, come qsb: toccano la fase dell'onda, quindi
+			l'altezza di cio' che si sente; non toccano rwpm, che si misura sulle durate; non
+			toccano il pan; e il file WAV di to_file li riceve, perché è ciò che l'orecchio sente.
 	Returns:
 		dict: Se get_map=True, restituisce una copia del dizionario della mappa Morse.
 		tuple[PlaybackHandle, float]: Un oggetto PlaybackHandle e rwpm, la velocità effettiva in wpm.
@@ -2111,6 +2129,22 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		("ms", ms, (int, float), 0, None),
 		("vol", vol, (int, float), 0.0, 1.0),
 	]
+	if chirp is not None:
+		if not isinstance(chirp, (int, float)) or isinstance(chirp, bool):
+			return _errore(f"chirp ({chirp}) tipo non valido.")
+		if abs(chirp) > 200:
+			return _errore(f"chirp ({chirp}) fuori intervallo [-200, 200].")
+	if vibrato is not None:
+		if isinstance(vibrato, (int, float)) and not isinstance(vibrato, bool):
+			vibrato = (float(vibrato), 6.0)
+		elif isinstance(vibrato, (tuple, list)) and len(vibrato) == 2 and all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in vibrato):
+			vibrato = (float(vibrato[0]), float(vibrato[1]))
+		else:
+			return _errore(f"vibrato ({vibrato}) tipo non valido.")
+		if not (0 < vibrato[0] <= 100):
+			return _errore(f"vibrato, profondita' ({vibrato[0]}) fuori intervallo (0, 100].")
+		if not (0.1 <= vibrato[1] <= 50):
+			return _errore(f"vibrato, frequenza ({vibrato[1]}) fuori intervallo [0.1, 50].")
 	if pausa is not None:
 		if not isinstance(pausa, (int, float)) or isinstance(pausa, bool):
 			return _errore(f"pausa ({pausa}) tipo non valido.")
@@ -2217,19 +2251,42 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		if fade_shape == "coseno":
 			return (0.5 - 0.5 * np.cos(np.pi * x)).astype(np.float32)
 		return x
-	def _generate_tone(duration):
+	def _fase(t, duration, inizio):
+		"""La fase istantanea dell'elemento, in radianti.
+
+		Senza chirp e senza vibrato e' la fase di sempre, due pi greco per il
+		tono per il tempo. Con il chirp la frequenza scorre lungo l'elemento,
+		da pitch a pitch piu' chirp, e la fase ne e' l'integrale, cioe' una
+		parabola. Con il vibrato la frequenza oscilla attorno al tono, e
+		l'oscillazione segue il tempo assoluto nel messaggio, non quello
+		dell'elemento: e' un oscillatore che vibra sempre, non uno che
+		ricomincia a ogni punto. La costante si sceglie perche' ogni elemento
+		parta da fase zero, come ha sempre fatto, e la dissolvenza trovi un
+		passaggio per lo zero invece di uno scalino.
+		"""
+		fase = 2.0 * np.pi * pitch * t
+		if chirp and duration > 0:
+			fase = fase + np.pi * chirp * t * t / duration
+		if vibrato:
+			profondita, frequenza = vibrato
+			fase = fase + (profondita / frequenza) * (
+				np.cos(2.0 * np.pi * frequenza * inizio) - np.cos(2.0 * np.pi * frequenza * (inizio + t))
+			)
+		return fase
+	def _generate_tone(duration, inizio=0.0):
 		N = round(fs * duration)
 		if N <= 0:
 			return np.array([], dtype=np.int16)
 		t = np.linspace(0, duration, N, endpoint=False, dtype=np.float64)
+		fase = _fase(t, duration, inizio)
 		if wv == 1:
-			signal_float = np.sin(2 * np.pi * pitch * t)
+			signal_float = np.sin(fase)
 		elif wv == 2:
-			signal_float = scipy_signal.square(2 * np.pi * pitch * t)
+			signal_float = scipy_signal.square(fase)
 		elif wv == 3:  # Triangle
-			signal_float = scipy_signal.sawtooth(2 * np.pi * pitch * t, width=0.5)
+			signal_float = scipy_signal.sawtooth(fase, width=0.5)
 		else:  # Sawtooth classica discendente
-			signal_float = scipy_signal.sawtooth(2 * np.pi * pitch * t, width=0)
+			signal_float = scipy_signal.sawtooth(fase, width=0)
 		signal_float = signal_float.astype(np.float32)
 		if fade_mode == "proporzionale":
 			fade_samples = round(N * fade_frazione)
@@ -2296,11 +2353,14 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 			code = MORSE_MAP[letter]
 			for s_idx, symbol in enumerate(code):
 				if symbol == '.':
-					plan.append(seg_dot)
+					# Con il vibrato ogni punto nasce al suo istante, perche'
+					# l'oscillazione segue il tempo del messaggio: senza, tutti i
+					# punti sarebbero lo stesso campione ripetuto.
+					plan.append(_generate_tone(dot_duration, total_samples / fs) if vibrato else seg_dot)
 					total_samples += seg_dot.size
 					standard_units += 1
 				elif symbol == '-':
-					plan.append(seg_dash)
+					plan.append(_generate_tone(dash_duration, total_samples / fs) if vibrato else seg_dash)
 					total_samples += seg_dash.size
 					standard_units += 3
 				if s_idx < len(code) - 1:
@@ -2557,6 +2617,13 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 	# --- Gestione Sync ---
 	if sync:
 		play_obj.wait_done()
+		if sync is True:
+			# I campioni sono usciti dal mixer ma non ancora dalle casse:
+			# restano nel buffer del dispositivo per un tempo pari alla
+			# latenza, e chi saluta e chiude il programma subito dopo si
+			# sentirebbe troncare l'ultimo elemento. Con sync a un numero no:
+			# li' chi chiama ha gia' detto quanto vuole aspettare.
+			_mixer_condiviso().aspetta_uscita()
 	return play_obj, rwpm
 CWzator.scegli_dispositivo = staticmethod(scegli_dispositivo_audio)
 # Gli elenchi stanno anche qui, accanto alla scelta: chi cerca come far

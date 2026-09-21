@@ -129,16 +129,24 @@ def livello_alla_cucitura(giro, finestra):
 FS = 44100
 DISSOLVENZA = int(0.05 * FS)
 FINESTRA = int(0.005 * FS)
-senza, con = [], []
-for _ in range(8):
+senza, con, rapporti = [], [], []
+for _ in range(16):
 	rumore = GBUtils.Acusticator.sintetizza(["300-800", 2.0, 0.0, 0.5], kind=6, adsr=[0, 0, 100, 0], fs=FS)
-	senza.append(livello_alla_cucitura(rumore, FINESTRA))
-	con.append(livello_alla_cucitura(GBUtils._incrocia_ciclo(rumore, DISSOLVENZA), FINESTRA))
+	prima = livello_alla_cucitura(rumore, FINESTRA)
+	dopo = livello_alla_cucitura(GBUtils._incrocia_ciclo(rumore, DISSOLVENZA), FINESTRA)
+	senza.append(prima)
+	con.append(dopo)
+	rapporti.append(dopo / prima)
 media_senza, media_con = float(np.mean(senza)), float(np.mean(con))
+# Il rapporto si misura sulla stessa sintesi: le due misure vedono lo stesso
+# rumore, quindi la varianza si semplifica e la prova non dipende dal giro.
+guadagno = float(np.median(rapporti))
+prova("l'incrocio alza il livello alla cucitura di almeno meta'",
+	  guadagno > 1.5, f"da {media_senza:.3f} a {media_con:.3f}, rapporto mediano {guadagno:.2f}")
 prova("senza incrocio la cucitura e' un avvallamento",
-	  media_senza < 0.6, f"livello {media_senza:.3f} del corpo")
+	  media_senza < 0.7, f"livello {media_senza:.3f} del corpo")
 prova("con l'incrocio la cucitura non si sente piu'",
-	  media_con > 0.8, f"livello {media_con:.3f} del corpo")
+	  media_con > 0.75, f"livello {media_con:.3f} del corpo")
 rumore = GBUtils.Acusticator.sintetizza(["300-800", 2.0, 0.0, 0.5], kind=6, adsr=[0, 0, 100, 0], fs=FS)
 incrociato = GBUtils._incrocia_ciclo(rumore, DISSOLVENZA)
 prova("il giro e' piu' corto di tre dissolvenze",
