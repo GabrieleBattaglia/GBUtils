@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V165 di domenica 20 settembre 2026
+	V166 di lunedì 21 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.3.0 di domenica 20 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Acusticator V8.4.0 di lunedì 21 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "165"
+VERSION = "166"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1347,6 +1347,39 @@ class _Voce:
 		# dall'inizio, e la ferma soltanto chi l'ha accesa. Serve ai fondi
 		# continui, come il rumore sotto un contest.
 		self.ciclo = bool(ciclo)
+
+
+def _incrocia_ciclo(buffer, campioni):
+	"""Chiude un buffer su se' stesso, perche' il giro del ciclo non si senta.
+
+	Un buffer sintetizzato non e' fatto per essere riavvolto: i suoi due capi
+	portano il transitorio di cio' che lo ha generato, cioe' un filtro che si
+	avvia da fermo e una coda che si spegne, e a ogni giro quel doppio capo
+	diventa un avvallamento che l'orecchio sente come un colpetto.
+	Si fa in due mosse. Prima si tagliano i due capi, tanti campioni quanti ne
+	dura la dissolvenza, cosi' resta solo il materiale a regime. Poi la testa di
+	cio' che resta si incrocia con la sua stessa coda: il giro seguente comincia
+	esattamente dove il precedente e' finito, e fra i due non c'e' ne' uno
+	scalino ne' un vuoto.
+	Le due rampe sono a potenza costante, cioe' radici invece di rette: con
+	materiale scorrelato, come il rumore, due rampe lineari lascerebbero un buco
+	di tre decibel proprio a meta' dell'incrocio, che e' il difetto che si
+	voleva togliere.
+	Il buffer che ne esce e' piu' corto di tre dissolvenze. Con zero non si
+	tocca niente, per chi ha preparato il buffer da se' e vuole la lunghezza
+	esatta.
+	"""
+	import numpy as np
+	if campioni <= 0 or len(buffer) < 4 * campioni:
+		return buffer
+	corpo = np.asarray(buffer[campioni:len(buffer) - campioni], dtype=np.float32)
+	lungo = len(corpo) - campioni
+	giro = corpo[:lungo].copy()
+	t = (np.arange(campioni, dtype=np.float32) + 0.5) / campioni
+	su = np.sqrt(t).reshape(-1, 1)
+	giu = np.sqrt(1.0 - t).reshape(-1, 1)
+	giro[:campioni] = giro[:campioni] * su + corpo[lungo:] * giu
+	return giro
 
 
 class _CicloAcceso:
@@ -4490,7 +4523,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.3.0 di domenica 20 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    """V8.4.0 di lunedì 21 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -4601,6 +4634,7 @@ class _Acusticator:
         Acusticator.setup(volume=0.6)   il volume generale, una volta sola
         Acusticator.sintetizza(score)   il buffer, senza suonarlo
         Acusticator.ciclo(score)        un fondo continuo, con la sua maniglia
+        Acusticator.ciclo_di(buffer)    lo stesso, da un buffer gia' pronto
         Acusticator.stop()              silenzio immediato, stream aperto
         Acusticator.close()             chiude e libera la scheda audio
         Acusticator.stato()             come sta il mixer in questo momento
@@ -4744,7 +4778,7 @@ class _Acusticator:
             score = self._sposta(score, pan)
         return _sintetizza(score, kind, adsr, fs)
 
-    def ciclo(self, score, kind=1, adsr=None, fs=44100, pan=None, volume=None):
+    def ciclo(self, score, kind=1, adsr=None, fs=44100, pan=None, volume=None, dissolvenza=0.05):
         """Tiene acceso uno score in ciclo e restituisce la maniglia per fermarlo.
 
         Serve ai fondi continui, come il rumore sotto un contest: lo score si
@@ -4756,6 +4790,8 @@ class _Acusticator:
         alla sintesi: per cambiarlo si ferma il ciclo e se ne accende un altro,
         perche' un fondo che cambia livello mentre suona non serve a nessuno e
         costerebbe un moltiplicatore per blocco a tutte le voci.
+        dissolvenza sono i secondi su cui il buffer si chiude su se' stesso,
+        vedi ciclo_di: zero lascia il buffer com'e'.
         Restituisce una maniglia con stop(), che ferma questa voce e soltanto
         questa, e attivo, che dice se sta ancora suonando. Restituisce None se
         lo score non produce niente o se la scheda non si apre.
@@ -4768,8 +4804,35 @@ class _Acusticator:
             return None
         if volume is not None:
             buffer = (np.asarray(buffer, dtype=np.float32) * max(0.0, min(1.0, float(volume)))).astype(np.float32)
+        return self.ciclo_di(buffer, fs=fs, pan=0.0 if pan is None else pan, dissolvenza=dissolvenza)
+
+    def ciclo_di(self, buffer, fs=None, pan=0.0, dissolvenza=0.05):
+        """Tiene acceso in ciclo un buffer gia' pronto, stereo float32 fra -1 e 1.
+
+        E' la strada per chi si prepara l'audio da se', per esempio un fondo
+        con i due canali diversi fra loro, che dallo score non si otterrebbe.
+        dissolvenza sono i secondi su cui il buffer si chiude su se' stesso:
+        i due capi, che portano il transitorio della sintesi, si tagliano, e
+        la testa si incrocia con la coda, cosi' il giro non si sente. Il
+        buffer che suona e' percio' piu' corto di tre dissolvenze. Con zero
+        non si tocca niente, per chi la lunghezza esatta la vuole.
+        Restituisce la stessa maniglia di ciclo, o None se la scheda non si
+        apre o se il buffer e' vuoto.
+        """
+        import numpy as np
+        if buffer is None or len(buffer) == 0:
+            return None
+        buffer = np.asarray(buffer, dtype=np.float32)
+        if buffer.ndim == 1:
+            buffer = buffer.reshape(-1, 1)
+        if dissolvenza:
+            mixer = _mixer_condiviso()
+            frequenza = mixer._fs if fs is None else int(fs)
+            buffer = _incrocia_ciclo(buffer, int(max(0.0, float(dissolvenza)) * frequenza))
+        if len(buffer) == 0:
+            return None
         mixer = _mixer_condiviso()
-        voce = mixer.suona(buffer, fs=fs, pan=0.0 if pan is None else max(-1.0, min(1.0, float(pan))), ciclo=True)
+        voce = mixer.suona(buffer, fs=fs, pan=max(-1.0, min(1.0, float(pan))), ciclo=True)
         if voce is None:
             return None
         return _CicloAcceso(mixer, voce)

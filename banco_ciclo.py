@@ -112,5 +112,46 @@ prova("sintetizza restituisce un buffer stereo", fondo is not None and fondo.ndi
 prova("lungo quanto lo score chiede", fondo is not None and abs(fondo.shape[0] - 22050) < 100, None if fondo is None else fondo.shape[0])
 prova("uno score vuoto non produce niente", GBUtils.Acusticator.sintetizza([]) is None)
 
+# La cucitura del ciclo. Gabriele, provando il fondo di QRN del contest, ha
+# sentito un colpetto ogni dieci secondi, cioe' a ogni giro del buffer. Non e'
+# uno scalino: il salto di ampiezza alla cucitura e' zero, perche' i due capi
+# del buffer partono e finiscono da zero. E' un avvallamento, e su una sola
+# sintesi la varianza del rumore rosa lo nasconde del tutto: si misura su
+# molte, e li' i numeri parlano chiaro.
+def livello_alla_cucitura(giro, finestra):
+	"""Il livello nella finestra a cavallo della cucitura, diviso quello del corpo."""
+	doppio = np.concatenate([giro, giro])[:, 0]
+	centro = len(giro)
+	attorno = doppio[centro - finestra // 2 : centro + finestra // 2]
+	return float(np.sqrt((attorno**2).mean()) / np.sqrt((giro[:, 0] ** 2).mean()))
+
+
+FS = 44100
+DISSOLVENZA = int(0.05 * FS)
+FINESTRA = int(0.005 * FS)
+senza, con = [], []
+for _ in range(8):
+	rumore = GBUtils.Acusticator.sintetizza(["300-800", 2.0, 0.0, 0.5], kind=6, adsr=[0, 0, 100, 0], fs=FS)
+	senza.append(livello_alla_cucitura(rumore, FINESTRA))
+	con.append(livello_alla_cucitura(GBUtils._incrocia_ciclo(rumore, DISSOLVENZA), FINESTRA))
+media_senza, media_con = float(np.mean(senza)), float(np.mean(con))
+prova("senza incrocio la cucitura e' un avvallamento",
+	  media_senza < 0.6, f"livello {media_senza:.3f} del corpo")
+prova("con l'incrocio la cucitura non si sente piu'",
+	  media_con > 0.8, f"livello {media_con:.3f} del corpo")
+rumore = GBUtils.Acusticator.sintetizza(["300-800", 2.0, 0.0, 0.5], kind=6, adsr=[0, 0, 100, 0], fs=FS)
+incrociato = GBUtils._incrocia_ciclo(rumore, DISSOLVENZA)
+prova("il giro e' piu' corto di tre dissolvenze",
+	  len(incrociato) == len(rumore) - 3 * DISSOLVENZA, f"{len(rumore)} diventano {len(incrociato)}")
+prova("con dissolvenza zero il buffer non si tocca", GBUtils._incrocia_ciclo(rumore, 0) is rumore)
+corto = rumore[: 2 * DISSOLVENZA]
+prova("un buffer troppo corto per l'incrocio resta com'e'", len(GBUtils._incrocia_ciclo(corto, DISSOLVENZA)) == len(corto))
+# E la strada per chi il buffer se lo prepara da se', con i due canali diversi.
+sinistra = rumore[:, 0]
+destra = GBUtils.Acusticator.sintetizza(["300-800", 2.0, 0.0, 0.5], kind=6, adsr=[0, 0, 100, 0], fs=FS)[:, 0]
+largo = np.stack([sinistra, destra], axis=1).astype(np.float32)
+prova("i due canali di due sintesi diverse sono scorrelati",
+	  abs(float(np.corrcoef(sinistra, destra)[0, 1])) < 0.1)
+
 print(f"\nProve {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)
