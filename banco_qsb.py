@@ -125,5 +125,34 @@ for valore in (0, -1, 200, "tanto", True):
 prova("l'evanescenza e' nei campioni, quindi anche nel WAV di to_file",
 	  not np.array_equal(lento.audio_data, senza.audio_data))
 
+# 7. La profondita', V169 e issue 44: quanto l'evanescenza puo' scendere.
+piena, _ = genera(qsb=0.3, qsb_seme=11, qsb_profondita=100)
+prova("a profondita' cento l'audio e' quello di prima, campione per campione",
+	  np.array_equal(piena.audio_data, lento.audio_data))
+nulla, _ = genera(qsb=0.3, qsb_seme=11, qsb_profondita=0)
+prova("a profondita' zero l'evanescenza sparisce", np.array_equal(nulla.audio_data, senza.audio_data))
+sola, _ = genera(qsb_profondita=40)
+prova("senza qsb la profondita' non ha effetto", np.array_equal(sola.audio_data, senza.audio_data))
+leggera, rwpm_leggera = genera(qsb=0.3, qsb_seme=11, qsb_profondita=40)
+liv_leggera = inviluppo(leggera.audio_data)
+rapporto_leggera = liv_leggera / liv_senza
+rapporto_piena = liv_lento / liv_senza
+prova("a quaranta il segnale non scende mai sotto il sessanta per cento",
+	  liv_leggera.size == liv_senza.size and rapporto_leggera.min() >= 0.595, f"minimo {rapporto_leggera.min():.3f}")
+prova("a cento scende piu' in basso che a quaranta",
+	  rapporto_piena.min() < rapporto_leggera.min(), f"cento {rapporto_piena.min():.3f}, quaranta {rapporto_leggera.min():.3f}")
+prova("a quaranta l'inviluppo varia meno che a cento",
+	  liv_leggera.std() / liv_leggera.mean() < liv_lento.std() / liv_lento.mean())
+prova("a quaranta l'evanescenza c'e' ancora",
+	  liv_leggera.std() / liv_leggera.mean() > 0.02, f"variazione {liv_leggera.std() / liv_leggera.mean():.4f}")
+prova("con la profondita' velocita' e campioni non cambiano",
+	  rwpm_leggera == rwpm_senza and leggera.audio_data.size == senza.audio_data.size)
+prova("e il livello non supera mai quello senza evanescenza",
+	  int(np.abs(leggera.audio_data.astype(np.int32)).max()) <= picco_senza)
+for valore in (-1, 101, "molta", True):
+	handle, _ = genera(qsb=0.3, qsb_profondita=valore)
+	prova(f"qsb_profondita {valore!r} viene rifiutata con un messaggio",
+		  handle is None and "qsb_profondita" in (CWzator.ultimo_errore or ""), CWzator.ultimo_errore)
+
 print(f"\nProve {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)

@@ -3,14 +3,14 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V168 di giovedì 24 settembre 2026
+	V169 di giovedì 24 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.5.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	CWzator V11.6.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+	CWzator V11.7.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	elenco_dispositivi_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "168"
+VERSION = "169"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1930,25 +1930,32 @@ def _guadagno_qsb(quanti, banda, passo, fs, seme=None):
 	return np.minimum(np.abs(rumore) * math.sqrt(3.0 * navg), 1.0)
 
 
-def _applica_qsb(audio, banda, fs, passo, seme=None):
+def _applica_qsb(audio, banda, fs, passo, seme=None, profondita=100.0):
 	"""Moltiplica il messaggio per l'inviluppo dell'evanescenza.
 
 	Il guadagno si campiona ogni passo campioni e fra un campione e il
 	seguente si interpola per retta, come in cwsim. Tocca soltanto l'ampiezza
 	dei campioni gia' generati: non la velocita' effettiva, che si misura sulle
 	durate, e non la panoramica, che il mixer applica dopo.
+	La profondita', in percento, dice quanto l'inviluppo puo' scendere: il
+	guadagno diventa 1 - p * (1 - g), cioe' a cento resta quello di Morse
+	Runner, che scende quando capita fino quasi a zero, e a quaranta non va mai
+	sotto il sessanta per cento. A cento non si calcola nemmeno, cosi' chi non
+	la chiede ottiene gli stessi campioni di prima; a zero non c'e' evanescenza.
 	"""
 	import numpy as np
-	if banda <= 0 or audio.size == 0:
+	if banda <= 0 or audio.size == 0 or profondita <= 0:
 		return audio
 	guadagni = _guadagno_qsb(audio.size // passo + 2, banda, passo, fs, seme)
+	if profondita < 100.0:
+		guadagni = 1.0 - (profondita / 100.0) * (1.0 - guadagni)
 	inviluppo = np.interp(np.arange(audio.size), np.arange(guadagni.size) * passo, guadagni)
 	return (audio.astype(np.float64) * inviluppo).astype(np.int16)
 
 
-def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None, farnsworth=None, qsb=None, qsb_seme=None, chirp=None, vibrato=None):
+def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None, farnsworth=None, qsb=None, qsb_seme=None, chirp=None, vibrato=None, qsb_profondita=None):
 	"""
-	CWzator V11.6.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5.5, modalità auto)
+	CWzator V11.7.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5.5, modalità auto)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -2129,6 +2136,14 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		qsb_seme (int|None): Il seme del generatore casuale dell'evanescenza (default None, cioè
 			casuale davvero). Serve alle prove, che con lo stesso seme ottengono lo stesso
 			inviluppo campione per campione.
+		qsb_profondita (int|float|None): Quanto scende l'evanescenza, in percento da 0 a 100
+			(default None, cioè 100 e tutto come prima). Il guadagno diventa 1 - p * (1 - g),
+			dove g è quello del processo e p la profondità divisa per cento: a 100 scende quando
+			capita fino quasi a zero, come in Morse Runner; a 40 non va mai sotto il 60 per cento
+			dell'ampiezza, circa -4,4 dB, cioè segnali forti con cali leggeri; a 0 l'evanescenza
+			sparisce. Tocca soltanto ciò che qsb tocca, con la stessa interpolazione e lo stesso
+			qsb_seme, e il file WAV di to_file la riceve. Senza qsb non ha effetto. Nata con la
+			issue 44, per la propagazione del contest di cwapu.
 		chirp (int|float|None): Lo scarto in hertz fra l'inizio e la fine di ogni elemento
 			(default None, cioè tono fermo e tutto come prima). È il difetto classico del
 			trasmettitore con l'alimentazione debole: il tono scivola mentre il punto o la linea
@@ -2683,12 +2698,18 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 					pass
 		CWzator._PlaybackHandle = _PlaybackHandle
 	# --- Evanescenza: il QSB e il flutter, sopra il CW già generato ---
+	if qsb_profondita is not None:
+		if not isinstance(qsb_profondita, (int, float)) or isinstance(qsb_profondita, bool):
+			return _errore(f"qsb_profondita ({qsb_profondita}) tipo non valido.")
+		if not (0 <= qsb_profondita <= 100):
+			return _errore(f"qsb_profondita ({qsb_profondita}) fuori intervallo [0, 100].")
 	if qsb is not None:
 		if not isinstance(qsb, (int, float)) or isinstance(qsb, bool):
 			return _errore(f"qsb ({qsb}) tipo non valido.")
 		if not (0 < qsb <= 100):
 			return _errore(f"qsb ({qsb}) fuori intervallo (0, 100].")
-		audio = _applica_qsb(audio, float(qsb), fs, BLOCK_SIZE // 4, qsb_seme)
+		profondita = 100.0 if qsb_profondita is None else float(qsb_profondita)
+		audio = _applica_qsb(audio, float(qsb), fs, BLOCK_SIZE // 4, qsb_seme, profondita)
 	# --- Creazione Oggetto e Avvio Playback ---
 	PlaybackHandle = CWzator._PlaybackHandle
 	try:
