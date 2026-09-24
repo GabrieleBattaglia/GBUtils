@@ -6,7 +6,8 @@ poi chiama key e stampa cosa restituisce, una riga per tasto. Gli eventi
 passano dalla stessa tabella di traduzione che usa getwch, quindi la prova
 dice la verita' sui codici della libreria di runtime di Windows, senza
 bisogno di premere niente; cio' che non puo' dire e' quali eventi produca la
-tastiera fisica, e per quello c'e' collaudo_key.py.
+tastiera fisica, e per quello c'era collaudo_key.py, tolto il 24 settembre
+2026 a prove fatte: sta nella storia di git.
 Si lancia con
   python banco_key.py
 e stampa in fondo quante righe corrispondono all'etichetta. Le differenze
