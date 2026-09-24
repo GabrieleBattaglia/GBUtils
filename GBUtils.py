@@ -1,16 +1,16 @@
 '''
-	GBUtils di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5)
+	GBUtils di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5)
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V167 di martedì 22 settembre 2026
+	V168 di giovedì 24 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.4.0 di lunedì 21 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	Acusticator V8.5.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	CWzator V11.5.0 di martedì 22 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, UltraCode)
+	CWzator V11.6.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	elenco_dispositivi_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "167"
+VERSION = "168"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1423,6 +1423,9 @@ class _MixerCondiviso:
 	avanti e il buffer gia' riempito copre l'attesa. Misurato il 12 settembre
 	2026 con quattro fili di calcolo: a callback sette buchi al secondo, a
 	scrittura nessuno.
+	Quando la somma delle voci esce dal fondo scala non la taglia: la abbassa
+	tutta insieme, con un limitatore a guadagno, e la lascia risalire quando
+	torna dentro. Vedi _limita, e la issue 41 da cui e' nato.
 	"""
 
 	# Campioni per blocco. A 44100 hertz, 1024 campioni sono ventitre'
@@ -1436,6 +1439,24 @@ class _MixerCondiviso:
 	# cosi' l'ultimo evento si sente sempre.
 	VOCI_MAX = 32
 	FS = 44100
+	# I tempi del limitatore sulla somma, scelti il 24 settembre 2026 misurando
+	# un pile-up di cinque stazioni CW. In quanti secondi il guadagno scende,
+	# all'inizio del blocco che ne ha bisogno: con un millesimo e mezzo la rete
+	# di sicurezza tagliava ancora diciannove campioni, con mezzo tre.
+	ATTACCO = 0.0005
+	# Quanto il guadagno resta giu' dopo l'ultimo blocco forte, prima di
+	# risalire. Copre i silenzi fra un elemento e l'altro del CW: senza, il
+	# guadagno risalirebbe a ogni spazio e il fruscio respirerebbe a ogni punto.
+	# E' la tenuta, lo hang, dell'AGC delle radio.
+	TENUTA = 0.3
+	# La costante di tempo della risalita: in tanti secondi il guadagno
+	# recupera i due terzi di cio' che gli manca per tornare a uno.
+	RILASCIO = 0.5
+	# Un blocco che al guadagno attuale arriva oltre questa frazione del fondo
+	# scala rinnova la tenuta: vuol dire che il limitatore serve ancora.
+	# Misurato: a 0.8 la rete di sicurezza non taglia niente e il guadagno
+	# oscilla di 1,4 decibel invece di 1,8.
+	SOGLIA_TENUTA = 0.8
 
 	def __init__(self):
 		import threading
@@ -1453,6 +1474,10 @@ class _MixerCondiviso:
 		self._silenzio = self.SILENZIO_MAX
 		self._voci_max = self.VOCI_MAX
 		self._blocco = self.BLOCCO
+		# Lo stato del limitatore: il guadagno con cui e' uscito l'ultimo
+		# blocco, e quanti campioni di tenuta restano prima di risalire.
+		self._guadagno = 1.0
+		self._tenuta_residua = 0
 		self._uscita_registrata = False
 		# Cio' che e' andato storto, per chi vuole saperlo senza che il mixer
 		# stampi niente per conto suo.
@@ -1524,14 +1549,21 @@ class _MixerCondiviso:
 		pari alla latenza. Chi aspetta la fine di un suono di congedo, prima
 		di chiudere il programma, deve aspettare anche questo, altrimenti
 		l'ultima nota viene troncata.
+		Alla latenza si aggiungono due blocchi. Una voce risulta finita quando
+		il mixer prepara il suo ultimo blocco, non quando lo scrive: misurato
+		il 24 settembre 2026 su MME, quel blocco entra nella scheda da 20 a 30
+		millesimi dopo, e il suo ultimo campione esce un blocco piu' tardi del
+		primo. Con la sola latenza, come nella V167, il caso peggiore restava
+		scoperto di una trentina di millesimi, quanto basta a mozzare un punto.
 		"""
 		import time
-		ritardo = 0.05
+		latenza = 0.03
 		try:
 			if self._stream is not None:
-				ritardo = float(self._stream.latency) + 0.02
+				latenza = float(self._stream.latency)
 		except (AttributeError, TypeError, ValueError):
 			pass
+		ritardo = latenza + 2 * self._blocco / float(self._fs) + 0.02
 		time.sleep(min(ritardo, 0.5))
 
 	def stato(self):
@@ -1544,6 +1576,7 @@ class _MixerCondiviso:
 				"blocco": self._blocco,
 				"canali": self._canali,
 				"buchi": self.buchi,
+				"guadagno": self._guadagno,
 				"ultimo_errore": self.ultimo_errore,
 			}
 
@@ -1696,6 +1729,10 @@ class _MixerCondiviso:
 		with self._lock:
 			voci = list(self._voci)
 		if not voci:
+			# Anche il silenzio fa passare il tempo del limitatore: senza, il
+			# guadagno lasciato giu' da un pile-up aspetterebbe il suono
+			# seguente per risalire, e quel suono partirebbe abbassato.
+			self._nuovo_guadagno(0.0, self._blocco)
 			return None
 		somma = np.zeros((self._blocco, self._canali), dtype=np.float32)
 		finite = []
@@ -1737,8 +1774,92 @@ class _MixerCondiviso:
 				self._chiudi_voce(voce)
 		if self._volume != 1.0:
 			somma *= self._volume
+		self._limita(somma)
+		# Il taglio netto resta, ma soltanto come rete di sicurezza: dopo il
+		# limitatore non dovrebbe trovare piu' niente da tagliare.
 		np.clip(somma, -1.0, 1.0, out=somma)
 		return somma
+
+	def _limita(self, somma):
+		"""Abbassa la somma quando esce dal fondo scala, invece di tagliarla.
+
+		Fino alla V167 il mixer tagliava netto a piu' e meno uno, e con piu' voci
+		forti insieme il taglio era continuo: con due stazioni CW un campione su
+		otto, e quel suono duro e sporco che Gabriele ha sentito nel pile-up del
+		contest di cwapu. E' la issue 41.
+		Qui si moltiplica invece tutto il blocco per un guadagno, lo stesso sui
+		due canali, cosi' la panoramica non si sposta. Una moltiplicazione che
+		cambia piano non crea armoniche nuove, ed e' la differenza con il taglio
+		e con una curva morbida senza memoria: misurato su cinque stazioni, la
+		sporcizia sopra i duemila hertz sale di 26 decibel con il taglio, di 25
+		con la curva, di niente con il guadagno.
+		Il guadagno scende in fretta, nel primo mezzo millesimo del blocco, fino
+		a quanto basta perche' il picco del blocco stia dentro; resta fermo per
+		la tenuta; poi risale piano verso uno, senza mai superare cio' che il
+		blocco corrente sopporta. Il blocco si vede per intero prima di
+		scriverlo, quindi il limitatore guarda avanti fino a ventitre' millesimi
+		senza aggiungere un campione di ritardo.
+		Finche' la somma sta dentro il fondo scala e il guadagno e' a uno non
+		tocca niente: una voce sola esce identica campione per campione.
+		L'effetto che resta e' quello dell'AGC di una radio: mentre il pile-up e'
+		fitto tutto scende insieme, fruscio compreso, e quando si sfoltisce
+		risale in un paio di secondi.
+		"""
+		import math
+
+		import numpy as np
+		picco = float(np.max(np.abs(somma)))
+		if not math.isfinite(picco):
+			# Un buffer guasto non deve portare il guadagno a zero e tenere
+			# muto il mixer per secondi: ci pensa la rete di sicurezza.
+			return
+		prima = self._guadagno
+		dopo, attacco = self._nuovo_guadagno(picco, len(somma))
+		if dopo == prima:
+			if dopo < 1.0:
+				somma *= np.float32(dopo)
+			return
+		if attacco:
+			# Si scende nei primi campioni e poi si resta li'.
+			rampa = np.full(len(somma), dopo, dtype=np.float32)
+			quanti = max(1, min(len(somma), round(self.ATTACCO * self._fs)))
+			rampa[:quanti] = np.linspace(prima, dopo, quanti + 1, dtype=np.float32)[1:]
+		else:
+			# Si risale per retta lungo tutto il blocco.
+			rampa = np.linspace(prima, dopo, len(somma) + 1, dtype=np.float32)[1:]
+		somma *= rampa[:, None]
+
+	def _nuovo_guadagno(self, picco, quanti):
+		"""Fa avanzare il limitatore di un blocco e dice con che guadagno finisce.
+
+		picco e' il valore piu' alto del blocco, zero per un blocco di silenzio;
+		quanti e' il numero dei suoi campioni. Restituisce il guadagno nuovo e
+		se ci si e' arrivati scendendo, cioe' con l'attacco. Il silenzio passa di
+		qui come ogni altro blocco, perche' la tenuta e la risalita sono tempo.
+		"""
+		import math
+		guadagno = self._guadagno
+		if picco <= 1.0 and guadagno >= 1.0:
+			return 1.0, False
+		serve = 1.0 / picco if picco > 1.0 else 1.0
+		if serve < guadagno:
+			self._tenuta_residua = round(self.TENUTA * self._fs)
+			self._guadagno = serve
+			return serve, True
+		if picco * guadagno >= self.SOGLIA_TENUTA:
+			self._tenuta_residua = round(self.TENUTA * self._fs)
+		if self._tenuta_residua > 0:
+			self._tenuta_residua -= quanti
+			return guadagno, False
+		passo = math.exp(-quanti / (self.RILASCIO * self._fs))
+		nuovo = min(serve, 1.0 - (1.0 - guadagno) * passo)
+		# A un centesimo da uno si torna a uno: e' meno di un decimo di
+		# decibel, e da li' il mixer torna trasparente. Aspettare il millesimo
+		# vorrebbe dire un secondo e mezzo in piu' per un passo che non si sente.
+		if nuovo > 0.99 and serve >= 1.0:
+			nuovo = 1.0
+		self._guadagno = nuovo
+		return nuovo, False
 
 	def _smonta(self, stream):
 		"""Chiude lo stream e sveglia chi stava aspettando una voce."""
@@ -1752,6 +1873,10 @@ class _MixerCondiviso:
 			self._voci = []
 			self._stream = None
 			self._pompa = None
+			# Lo stream che riapre comincia da capo: un guadagno rimasto giu'
+			# dall'ultimo pile-up abbasserebbe il primo suono senza motivo.
+			self._guadagno = 1.0
+			self._tenuta_residua = 0
 		for voce in restate:
 			self._chiudi_voce(voce)
 
@@ -1823,7 +1948,7 @@ def _applica_qsb(audio, banda, fs, passo, seme=None):
 
 def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5, wv=1, sync=False, to_file=False, wave_output_path_file=None, get_map=False, fade_mode="fisso", fade_shape="lineare", play=True, pan=0, verbose=False, api=None, pausa=None, farnsworth=None, qsb=None, qsb_seme=None, chirp=None, vibrato=None):
 	"""
-	CWzator V11.5.0 di martedì 22 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5, UltraCode)
+	CWzator V11.6.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash e ClaudIA (Claude Opus 5.5, modalità auto)
 		da un'idea originale di Kevin Schmidt W9CF
 	Genera e riproduce l'audio del codice Morse dal messaggio di testo fornito.
 	Parameters:
@@ -2056,6 +2181,10 @@ def CWzator(msg="", wpm=35, pitch=550, l=30, s=50, p=50, fs=44100, ms=1, vol=0.5
 		sommati: è così che si simula un pile-up di stazioni che chiamano tutte insieme. Quando le
 		voci sono tutte occupate la più vecchia lascia il posto alla nuova. Ogni PlaybackHandle
 		controlla soltanto la propria voce, quindi il suo stop non tocca le altre.
+		Quando le stazioni sommate escono dal fondo scala il mixer non le taglia, come faceva fino
+		alla V167: le abbassa tutte insieme e le lascia risalire in un paio di secondi quando la
+		somma torna dentro, come fa l'AGC di una radio con un pile-up. Un messaggio solo che sta
+		dentro il fondo scala esce identico campione per campione.
 		Il mixer è stereo e ogni voce ha la sua posizione, data dal parametro pan. La sintesi resta
 		monofonica: il pan si applica soltanto in riproduzione.
 		Cambiando frequenza di campionamento il mixer si rifà, perché quella non si può cambiare a
@@ -4590,7 +4719,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.4.0 di lunedì 21 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    """V8.5.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -4697,6 +4826,10 @@ class _Acusticator:
     stream distinti che il sistema operativo mescola per conto suo.
     Quando le voci sono tutte occupate la piu' vecchia lascia il posto
     alla nuova, cosi' l'ultimo evento si sente sempre.
+    Quando la somma esce dal fondo scala il mixer non la taglia: la abbassa
+    tutta insieme e la lascia risalire quando torna dentro, come l'AGC di
+    una radio. Un suono solo che sta dentro il fondo scala esce identico,
+    e il guadagno del momento si legge in stato().
 
         Acusticator.setup(volume=0.6)   il volume generale, una volta sola
         Acusticator.sintetizza(score)   il buffer, senza suonarlo
@@ -4934,7 +5067,7 @@ class _Acusticator:
                 "voci_max": mixer._voci_max, "volume": mixer._volume,
                 "silenzio": mixer._silenzio, "fs": dentro["frequenza"],
                 "canali": dentro["canali"], "device": mixer._device,
-                "buchi": dentro["buchi"]}
+                "buchi": dentro["buchi"], "guadagno": dentro["guadagno"]}
 
     def _sposta(self, score, pan):
         """Applica lo spostamento di panorama, dopo aver controllato che sia
