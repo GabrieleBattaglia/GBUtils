@@ -6233,24 +6233,6 @@
             0.002
         ]
     },
-    "nuovo_preset0": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
-        ]
-    },
     "validator": {
         "descrizione": "conferma validazione ok prosegui bene accettato visto confermato approvato inserito preso aggiunto",
         "score": [
@@ -8897,24 +8879,6 @@
             40
         ]
     },
-    "nuovo_preset1": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
-        ]
-    },
     "Rapida_salita-sin_des": {
         "descrizione": "Una rapida salita da sinistra a destra. Va bene anche come conferma, cambio videata, mostro qualcosa.",
         "score": [
@@ -10349,66 +10313,6 @@
             20
         ]
     },
-    "pokermachine_trofeo_colore_fiori": {
-        "descrizione": "Poker Machine, trofeo, il Colore di fiori: il colore che rimbalza fra due ottave, sul mi",
-        "score": [
-            [
-                "c5",
-                0.08,
-                0.0,
-                0.0
-            ],
-            [
-                "g5",
-                0.08,
-                0.0,
-                0.02
-            ],
-            [
-                "c6",
-                0.12,
-                0.0,
-                0.04
-            ],
-            [
-                "p",
-                0.03,
-                0.0,
-                0.0
-            ],
-            [
-                "e6",
-                0.07,
-                -0.5,
-                0.02
-            ],
-            [
-                "e7",
-                0.07,
-                0.5,
-                0.02
-            ],
-            [
-                "e6",
-                0.07,
-                -0.5,
-                0.02
-            ],
-            [
-                "e7",
-                0.25,
-                0.5,
-                0.05
-            ]
-        ],
-        "kind": 3,
-        "adsr": [
-            2,
-            8,
-            85,
-            20
-        ]
-    },
     "pokermachine_trofeo_colore_picche": {
         "descrizione": "Poker Machine, trofeo, il Colore di picche: il colore che rimbalza fra due ottave, sul fa",
         "score": [
@@ -10704,7 +10608,7 @@
         ]
     },
     "pokermachine_trofeo_killer_5": {
-        "descrizione": "Poker Machine, trofeo, sopravvissuto alla quinta Killer Hand: il tritono della Killer Hand che si risolve",
+        "descrizione": "Poker Machine, trofeo, sopravvissuto alla quinta Killer Hand: il tritono della Killer Hand, un tono piu' su, che si risolve",
         "score": [
             [
                 "c5",
@@ -10731,19 +10635,19 @@
                 0.0
             ],
             [
-                "c4",
+                "d4",
                 0.12,
                 -0.6,
                 0.02
             ],
             [
-                "f#4",
+                "g#4",
                 0.12,
                 0.6,
                 0.02
             ],
             [
-                "g4",
+                "a4",
                 0.35,
                 0.0,
                 0.05
@@ -11484,7 +11388,7 @@
         ]
     },
     "pokermachine_trofeo_serie_500": {
-        "descrizione": "Poker Machine, trofeo, cinquecento mani in una serie: una nota lunga che sale da sinistra a destra",
+        "descrizione": "Poker Machine, trofeo, cinquecento mani in una serie: una nota lunga che sale di una quinta, dal re, da sinistra a destra",
         "score": [
             [
                 "c5",
@@ -11511,7 +11415,7 @@
                 0.0
             ],
             [
-                "c6.g6",
+                "d6.a6",
                 0.5,
                 "-0.8.0.8",
                 0.05
@@ -12015,6 +11919,360 @@
             10,
             70,
             40
+        ]
+    },
+    "pokermachine_trofeo_mano": {
+        "descrizione": "Poker Machine, trofeo di una mano: la fanfara dei trofei e il colore che rimbalza fra due ottave",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.02
+            ],
+            [
+                "c6",
+                0.12,
+                0.0,
+                0.04
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.07,
+                -0.5,
+                0.02
+            ],
+            [
+                "e7",
+                0.07,
+                0.5,
+                0.02
+            ],
+            [
+                "e6",
+                0.07,
+                -0.5,
+                0.02
+            ],
+            [
+                "e7",
+                0.25,
+                0.5,
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_trofeo_killer": {
+        "descrizione": "Poker Machine, trofeo della Killer Hand: la fanfara dei trofei e il tritono della Killer Hand che si risolve",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.02
+            ],
+            [
+                "c6",
+                0.12,
+                0.0,
+                0.04
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.12,
+                -0.6,
+                0.02
+            ],
+            [
+                "f#4",
+                0.12,
+                0.6,
+                0.02
+            ],
+            [
+                "g4",
+                0.35,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_trofeo_fiches": {
+        "descrizione": "Poker Machine, trofeo delle fiches: la fanfara dei trofei e una cascata di monete",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.02
+            ],
+            [
+                "c6",
+                0.12,
+                0.0,
+                0.04
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.05,
+                0.6,
+                0.0
+            ],
+            [
+                "e6",
+                0.05,
+                0.2,
+                0.0
+            ],
+            [
+                "c6",
+                0.05,
+                -0.2,
+                0.0
+            ],
+            [
+                "g5",
+                0.05,
+                -0.6,
+                0.0
+            ],
+            [
+                "c7",
+                0.3,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1,
+            20,
+            50,
+            40
+        ]
+    },
+    "pokermachine_trofeo_serie": {
+        "descrizione": "Poker Machine, trofeo della serie: la fanfara dei trofei e una lunga nota che sale e attraversa lo stereo",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.02
+            ],
+            [
+                "c6",
+                0.12,
+                0.0,
+                0.04
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c6.g6",
+                0.5,
+                "-0.8.0.8",
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_trofeo_abilita": {
+        "descrizione": "Poker Machine, trofeo di abilita': la fanfara dei trofei e un arpeggio veloce che sale e ridiscende",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.02
+            ],
+            [
+                "c6",
+                0.12,
+                0.0,
+                0.04
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.04,
+                -0.5,
+                0.02
+            ],
+            [
+                "g6",
+                0.04,
+                -0.25,
+                0.02
+            ],
+            [
+                "c7",
+                0.04,
+                0.0,
+                0.02
+            ],
+            [
+                "g6",
+                0.04,
+                0.25,
+                0.02
+            ],
+            [
+                "e6",
+                0.04,
+                0.5,
+                0.02
+            ],
+            [
+                "c7",
+                0.25,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
+        ]
+    },
+    "pokermachine_trofeo_colore_fiori": {
+        "descrizione": "Poker Machine, trofeo, il Colore di fiori: il colore che rimbalza fra due ottave, sul sol",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                0.02
+            ],
+            [
+                "c6",
+                0.12,
+                0.0,
+                0.04
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.07,
+                -0.5,
+                0.02
+            ],
+            [
+                "g7",
+                0.07,
+                0.5,
+                0.02
+            ],
+            [
+                "g6",
+                0.07,
+                -0.5,
+                0.02
+            ],
+            [
+                "g7",
+                0.25,
+                0.5,
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2,
+            8,
+            85,
+            20
         ]
     }
 }

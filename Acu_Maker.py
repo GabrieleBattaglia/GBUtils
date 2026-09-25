@@ -9,10 +9,10 @@ import textwrap
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import Acusticator, dgt, menu, panorama_spostato, parse_pan_parts
 
-VERSION = "1.7.1" # Gli accenti delle descrizioni si salvano in chiaro, non come codici
+VERSION = "1.8.0" # I doppioni della collezione si tolgono da soli, all'avvio e all'uscita
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)"
-RELEASE_DATE = "13 settembre 2026"
+RELEASE_DATE = "25 settembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -391,6 +391,35 @@ def impronta_suono(preset):
     """
     return json.dumps([preset.get("score"), preset.get("kind"),
                        preset.get("adsr")], sort_keys=True)
+
+
+def togli_doppioni(db):
+    """Toglie dalla collezione i preset che suonano identici a un altro, e dice quali.
+
+    Due preset sono lo stesso suono quando hanno la stessa impronta, cioe' lo
+    stesso score, la stessa forma d'onda e lo stesso inviluppo: il nome e la
+    descrizione non contano. Di ogni gruppo di suoni identici resta quello
+    con la descrizione piu' lunga, che e' la piu' utile a chi cerca un suono;
+    a parita' di lunghezza resta il primo che compare nella collezione.
+    Stampa una riga per ogni preset tolto e restituisce le coppie
+    (tolto, tenuto). La collezione serve tutto il parco software: i suoni
+    diversi restano tutti, anche quelli che oggi nessuno usa.
+    """
+    gruppi = {}
+    for nome, preset in db.items():
+        gruppi.setdefault(impronta_suono(preset), []).append(nome)
+    tolti = []
+    for nomi in gruppi.values():
+        if len(nomi) < 2:
+            continue
+        tenuto = max(nomi, key=lambda n: (len(str(db[n].get("descrizione", ""))), -nomi.index(n)))
+        for nome in nomi:
+            if nome != tenuto:
+                tolti.append((nome, tenuto))
+    for nome, tenuto in tolti:
+        del db[nome]
+        print(f"Doppione tolto: '{nome}' suonava identico a '{tenuto}', che resta.")
+    return tolti
 
 
 def trova_gemello(db, preset, escludi=None):
@@ -1346,6 +1375,8 @@ def main():
     print(f"Autori: {APP_AUTHOR} - {RELEASE_DATE}\n")
 
     db = load_db()
+    if togli_doppioni(db):
+        save_db(db)
     print(f"La libreria contiene {len(db)} preset.")
 
     while True:
@@ -1407,6 +1438,9 @@ def main():
             edit_mode(db, scelta)
             
     print("\nSalvataggio libreria in corso...")
+    # Un preset nato dal tasto piu' e lasciato com'era, o un suono rifatto
+    # uguale a un altro, non entra nella collezione.
+    togli_doppioni(db)
     save_db(db)
     statistiche(db)
     print("Arrivederci!")

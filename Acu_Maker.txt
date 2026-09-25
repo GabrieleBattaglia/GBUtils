@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.7.1)
+Manuale Utente: Acu_Maker (v1.8.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -143,5 +143,6 @@ Usa questi tasti per interagire con i parametri:
           3. Uscire ignorando i cambiamenti.
 
 Prima di chiedere, l'app guarda se in collezione esiste già un preset che suona esattamente uguale, cioè con lo stesso score, la stessa forma d'onda e lo stesso inviluppo. Se c'è, lo dice e non salva niente: sarebbe un doppione, e un nome diverso non basta a rendere diverso un suono identico.
+Dalla versione 1.8.0 la collezione si ripulisce anche da sola, all'avvio e all'uscita: se due o più preset suonano identici, cioè hanno lo stesso score, la stessa forma d'onda e lo stesso inviluppo, ne resta uno solo, quello con la descrizione più lunga, e a parità di descrizione il primo della collezione. Per ogni preset tolto una riga dice quale era e quale resta al suo posto. Così non si accumulano nemmeno i preset vuoti lasciati dal tasto più. I suoni diversi invece restano tutti, anche quelli che oggi nessun programma usa: la collezione serve tutto il parco software, e più è ricca e ben descritta, più è facile trovarci ciò che serve.
 
 Scegliendo di salvare con nome, il nome che il preset ha già viene proposto fra parentesi quadre: Invio lo accetta, altrimenti se ne scrive un altro. Accettando quello proposto il preset viene salvato al suo posto, così uno nato dal tasto [+] non lascia più dietro di sé il suo segnaposto vuoto. Allo stesso modo viene proposta la descrizione attuale.
