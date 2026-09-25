@@ -11,12 +11,18 @@ Si lancia con
   python banco_acumaker_pan.py
 e stampa in fondo quante prove sono passate.
 """
+import json
 import sys
 
 import Acu_Maker as am
 
 from GBUtils import panorama_spostato, parse_pan_values
 
+# La collezione com'e' adesso: in fondo dev'essere identica, qualunque sia il
+# numero dei preset. Fino al 25 settembre 2026 il banco ne aspettava 264, e
+# fallava appena qualcuno ne aggiungeva uno.
+with open(am.DB_FILE, encoding="utf-8") as f:
+	COLLEZIONE_PRIMA = json.load(f)
 totale = passate = 0
 
 def prova(titolo, condizione, visto=""):
@@ -130,11 +136,9 @@ prova("un editor nuovo nasce senza posizione", stato.posizione is None)
 prova("e con il preset non modificato", stato.modified is False)
 
 # 9. La collezione vera non e' stata toccata.
-import json
-
 with open(am.DB_FILE, encoding="utf-8") as f:
 	db = json.load(f)
-prova(f"la collezione sul disco e' intatta, {len(db)} preset", len(db) == 264, len(db))
+prova(f"la collezione sul disco e' intatta, {len(db)} preset", db == COLLEZIONE_PRIMA, len(db))
 
 print(f"\nProve {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)

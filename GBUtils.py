@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V169 di giovedì 24 settembre 2026
+	V170 di venerdì 25 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.5.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.5.1 di venerdì 25 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "169"
+VERSION = "170"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -4740,7 +4740,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.5.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.5.1 di venerdì 25 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5303,6 +5303,9 @@ class _Acusticator:
         cartella del pacchetto, che ogni aggiornamento sostituisce, quindi
         il preset andrebbe perso. Aggiungere suoni e' un lavoro da
         sorgente, con Acu_Maker o con questo metodo.
+        Dalla V8.5.1 gli accenti si scrivono in chiaro, come nel resto del
+        file: fino alla V8.5.0 json.dump li trasformava in sequenze di
+        escape, e ogni salvataggio riscriveva le descrizioni di tutti.
         Restituisce True se ha scritto.
         """
         import json
@@ -5342,7 +5345,7 @@ class _Acusticator:
         }
         try:
             with open(percorso, "w", encoding="utf-8") as f:
-                json.dump(dati, f, indent=4)
+                json.dump(dati, f, indent=4, ensure_ascii=False)
         except OSError as e:
             self._avvisa(f"non riesco a scrivere {os.path.basename(percorso)}: {e}")
             return False

@@ -9,9 +9,9 @@ import textwrap
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import Acusticator, dgt, menu, panorama_spostato, parse_pan_parts
 
-VERSION = "1.7.0" # La posizione d'ascolto, cioe' lo spostamento generale di panorama
+VERSION = "1.7.1" # Gli accenti delle descrizioni si salvano in chiaro, non come codici
 APP_NAME = "Acu_Maker"
-APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)"
+APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)"
 RELEASE_DATE = "13 settembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
@@ -373,7 +373,7 @@ def load_db():
 
 def save_db(db):
     with open(DB_FILE, "w", encoding="utf-8") as f:
-        json.dump(db, f, indent=4)
+        json.dump(db, f, indent=4, ensure_ascii=False)
 
 def get_unique_name(db, base_name):
     if base_name not in db:
