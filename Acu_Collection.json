@@ -282,7 +282,7 @@
         ]
     },
     "convalida": {
-        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o è andato a buon fine",
+        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o \u00e8 andato a buon fine",
         "score": [
             [
                 "g7",
@@ -1056,7 +1056,7 @@
         ]
     },
     "sirena_d_allarme_1": {
-        "descrizione": "Sirena allarme velocità 0.15",
+        "descrizione": "Sirena allarme velocit\u00e0 0.15",
         "score": [
             [
                 "c5.g5",
@@ -1116,7 +1116,7 @@
         ]
     },
     "sirena_d_allarme_2": {
-        "descrizione": "Sirena allarme velocità 0.20",
+        "descrizione": "Sirena allarme velocit\u00e0 0.20",
         "score": [
             [
                 "c5.g5",
@@ -1188,7 +1188,7 @@
         ]
     },
     "sirena_d_allarme_3": {
-        "descrizione": "Sirena allarme velocità 0.25",
+        "descrizione": "Sirena allarme velocit\u00e0 0.25",
         "score": [
             [
                 "c5.g5",
@@ -1236,7 +1236,7 @@
         ]
     },
     "sirena_d_allarme_4": {
-        "descrizione": "Sirena allarme velocità 0.30",
+        "descrizione": "Sirena allarme velocit\u00e0 0.30",
         "score": [
             [
                 "c5.g5",
@@ -1296,7 +1296,7 @@
         ]
     },
     "sirena_d_allarme_5": {
-        "descrizione": "Sirena allarme velocità 0.35",
+        "descrizione": "Sirena allarme velocit\u00e0 0.35",
         "score": [
             [
                 "c5.g5",
@@ -1368,7 +1368,7 @@
         ]
     },
     "sirena_d_allarme_6": {
-        "descrizione": "Sirena allarme velocità 0.40",
+        "descrizione": "Sirena allarme velocit\u00e0 0.40",
         "score": [
             [
                 "c5.g5",
@@ -1416,7 +1416,7 @@
         ]
     },
     "sirena_d_allarme_7": {
-        "descrizione": "Sirena allarme velocità 0.45",
+        "descrizione": "Sirena allarme velocit\u00e0 0.45",
         "score": [
             [
                 "c5.g5",
@@ -1476,7 +1476,7 @@
         ]
     },
     "sirena_d_allarme_8": {
-        "descrizione": "Sirena allarme velocità 0.50",
+        "descrizione": "Sirena allarme velocit\u00e0 0.50",
         "score": [
             [
                 "c5.g5",
@@ -1548,7 +1548,7 @@
         ]
     },
     "sirena_d_allarme_9": {
-        "descrizione": "Sirena allarme velocità 0.55",
+        "descrizione": "Sirena allarme velocit\u00e0 0.55",
         "score": [
             [
                 "c5.g5",
@@ -1596,7 +1596,7 @@
         ]
     },
     "sirena_d_allarme_10": {
-        "descrizione": "Sirena allarme velocità 0.60",
+        "descrizione": "Sirena allarme velocit\u00e0 0.60",
         "score": [
             [
                 "c5.g5",
@@ -3666,7 +3666,7 @@
         ]
     },
     "roger_cw_conferma": {
-        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta sì prosegui approvato",
+        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta s\u00ec prosegui approvato",
         "score": [
             [
                 "e5",
@@ -3738,7 +3738,7 @@
         ]
     },
     "campanellino": {
-        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa è comparso",
+        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa \u00e8 comparso",
         "score": [
             [
                 "c8.c#8",
@@ -3894,7 +3894,7 @@
         ]
     },
     "written_ok": {
-        "descrizione": "un file è stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
+        "descrizione": "un file \u00e8 stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
         "score": [
             [
                 "c4",
@@ -3918,7 +3918,7 @@
         ]
     },
     "controllo_ok": {
-        "descrizione": "qualcosa ha superato un controllo ed è stato ammesso",
+        "descrizione": "qualcosa ha superato un controllo ed \u00e8 stato ammesso",
         "score": [
             [
                 "c4",
@@ -3948,7 +3948,7 @@
         ]
     },
     "rifiutato": {
-        "descrizione": "un valore inserito non è corretto, qualcosa viene respinto, un'azione non è la più appropriata",
+        "descrizione": "un valore inserito non \u00e8 corretto, qualcosa viene respinto, un'azione non \u00e8 la pi\u00f9 appropriata",
         "score": [
             [
                 "g3.d3",
@@ -4014,7 +4014,7 @@
         ]
     },
     "cancellato": {
-        "descrizione": "un elemento è stato cancellato da una lista, qualcosa è scomparso dallo schermo, una lista o un elenco si è ridotto di dimensioni, un dato è diminuito",
+        "descrizione": "un elemento \u00e8 stato cancellato da una lista, qualcosa \u00e8 scomparso dallo schermo, una lista o un elenco si \u00e8 ridotto di dimensioni, un dato \u00e8 diminuito",
         "score": [
             [
                 "b2.g#2",
@@ -4044,7 +4044,7 @@
         ]
     },
     "vittoria": {
-        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo è stato centrato",
+        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo \u00e8 stato centrato",
         "score": [
             [
                 "f#4",
@@ -4080,7 +4080,7 @@
         ]
     },
     "convalida0": {
-        "descrizione": "un dato è stato convalidato",
+        "descrizione": "un dato \u00e8 stato convalidato",
         "score": [
             [
                 "c4",
@@ -4254,7 +4254,7 @@
         ]
     },
     "concluso": {
-        "descrizione": "una procedura rapida si è conclusa, un dato è stato validato o accettato",
+        "descrizione": "una procedura rapida si \u00e8 conclusa, un dato \u00e8 stato validato o accettato",
         "score": [
             [
                 "c5",
@@ -4290,7 +4290,7 @@
         ]
     },
     "salto": {
-        "descrizione": "fatto un saltello, qualcosa è stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
+        "descrizione": "fatto un saltello, qualcosa \u00e8 stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
         "score": [
             [
                 "f#3.d#6",
@@ -4362,7 +4362,7 @@
         ]
     },
     "eliminato": {
-        "descrizione": "qualsiasi oggetto è stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta",
+        "descrizione": "qualsiasi oggetto \u00e8 stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta",
         "score": [
             [
                 "f4.d7",
@@ -8088,7 +8088,7 @@
         ]
     },
     "meditimer_giro_piu_veloce": {
-        "descrizione": "giro più veloce del precedente: due tic che salgono",
+        "descrizione": "giro pi\u00f9 veloce del precedente: due tic che salgono",
         "score": [
             [
                 "e5",
@@ -8112,7 +8112,7 @@
         ]
     },
     "meditimer_giro_piu_lento": {
-        "descrizione": "giro più lento del precedente: due tic che scendono",
+        "descrizione": "giro pi\u00f9 lento del precedente: due tic che scendono",
         "score": [
             [
                 "a5",
@@ -8208,7 +8208,7 @@
         ]
     },
     "meditimer_record_veloce": {
-        "descrizione": "nuovo giro più veloce di tutti: un arpeggio brillante che sale fino in alto",
+        "descrizione": "nuovo giro pi\u00f9 veloce di tutti: un arpeggio brillante che sale fino in alto",
         "score": [
             [
                 "c5",
@@ -8250,7 +8250,7 @@
         ]
     },
     "meditimer_record_lento": {
-        "descrizione": "nuovo giro più lento di tutti: quattro note che scendono piano, senza rimprovero",
+        "descrizione": "nuovo giro pi\u00f9 lento di tutti: quattro note che scendono piano, senza rimprovero",
         "score": [
             [
                 "e5",
@@ -8430,7 +8430,7 @@
         ]
     },
     "meditimer_sveglia_impostata": {
-        "descrizione": "sveglia impostata: una scivolata più acuta che sale e si posa su un tic",
+        "descrizione": "sveglia impostata: una scivolata pi\u00f9 acuta che sale e si posa su un tic",
         "score": [
             [
                 "e5.b5",
@@ -8556,7 +8556,7 @@
         ]
     },
     "meditimer_report_salvato": {
-        "descrizione": "report della sessione salvato su file: due tic vicini, il secondo più acuto",
+        "descrizione": "report della sessione salvato su file: due tic vicini, il secondo pi\u00f9 acuto",
         "score": [
             [
                 "c6",
@@ -8622,7 +8622,7 @@
         ]
     },
     "meditimer_banco_fase_conclusa": {
-        "descrizione": "fine di una fase del banco di prova: due tic, il secondo più acuto",
+        "descrizione": "fine di una fase del banco di prova: due tic, il secondo pi\u00f9 acuto",
         "score": [
             [
                 "e5",
@@ -8895,6 +8895,42 @@
             0,
             100,
             40
+        ]
+    },
+    "nuovo_preset1": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "c4",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "Rapida_salita-sin_des": {
+        "descrizione": "Una rapida salita da sinistra a destra. Va bene anche come conferma, cambio videata, mostro qualcosa.",
+        "score": [
+            [
+                "c3.a#7",
+                0.22,
+                "-1.1",
+                "0.0"
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
         ]
     },
     "pokermachine_coppia_gemella": {
