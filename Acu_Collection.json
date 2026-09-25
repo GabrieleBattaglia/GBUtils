@@ -10450,5 +10450,41 @@
             85,
             20
         ]
+    },
+    "pokermachine_montepremi_soglia": {
+        "descrizione": "Poker Machine, il montepremi supera una soglia: tre monete che salgono e una campanella che resta",
+        "score": [
+            [
+                "g6",
+                0.05,
+                -0.4,
+                0.0
+            ],
+            [
+                "c7",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "e7",
+                0.05,
+                0.4,
+                0.02
+            ],
+            [
+                "c7",
+                0.35,
+                0.0,
+                0.04
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1,
+            20,
+            50,
+            40
+        ]
     }
 }
