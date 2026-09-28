@@ -1,5 +1,6 @@
 """Banco di prova di gestisci_aggiornamento, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto).
-Nato con la V159 e la issue 21, il 14 settembre 2026.
+Nato con la V159 e la issue 21, il 14 settembre 2026; ampliato con la V172
+il 28 settembre 2026 da ClaudIA (Claude Opus 5.5, UltraCode).
 La funzione conduce da sola la conversazione dell'aggiornamento, e dalla V1.2.0
 sa anche tacere: quando il chiamante passa proponi, cioe' quando ha una
 finestra sua, spariscono le frasi di cortesia che in un'interfaccia grafica
@@ -12,6 +13,11 @@ La meta' delle prove verifica il silenzio: sono quelle che contano, perche' un
 messaggio di troppo in una interfaccia grafica e' una finestra da chiudere.
 L'altra meta' verifica che la conversazione da console sia rimasta identica a
 prima, perche' sei applicazioni la usano cosi'.
+Dalla V172 le prove dal 13 in poi guardano l'attesa della domanda, due
+minuti di serie, e l'ordine fra la frase che dice che il programma si chiude
+e l'avvio dello script di sostituzione: la prova 17 usa la perform_update
+vera, con lo scaricamento e l'avvio dello script sostituiti, quindi non
+scarica e non avvia niente.
 Si lancia con
   python banco_aggiornamento.py
 e stampa in fondo quante prove sono passate.
@@ -65,12 +71,17 @@ class Scena:
 	def finto_controllo(self, *_argomenti, **_chiavi):
 		return self.esito_controllo
 
-	def finto_scarico(self, _indirizzo, _app, avanzamento=None, **_chiavi):
+	def finto_scarico(self, _indirizzo, _app, avanzamento=None, prima_di_sostituire=None, **_chiavi):
 		self.scaricato = True
 		self.avanzamento_ricevuto = avanzamento
 		for preso, quanti in self.blocchi:
 			if avanzamento:
 				avanzamento(preso, quanti)
+		if self.scaricamento and prima_di_sostituire is not None:
+			prima_di_sostituire()
+		# Il momento in cui la perform_update vera avvierebbe lo script.
+		if self.scaricamento:
+			self.detti.append("<script avviato>")
 		return self.scaricamento
 
 	# Le tre porte che il chiamante puo' passare.
@@ -121,7 +132,8 @@ def main():
 			 [d.split("%")[0] for d in scena.detti if "%" in d] == ["20", "40", "60", "80", "100"],
 			 [d for d in scena.detti if "%" in d])
 	verifica("console: chiude dicendo che si chiude",
-			 scena.detti[-1] == "Aggiornamento pronto, il programma si chiude per applicarlo.")
+			 scena.detti[-2:] == ["Aggiornamento pronto, il programma si chiude per applicarlo.", "<script avviato>"],
+			 scena.detti[-2:])
 
 	# 3. Da console, senza niente da fare, si parla lo stesso: e' una console,
 	# e chi ha lanciato il programma sta guardando.
@@ -157,9 +169,9 @@ def main():
 	verifica("finestra: una proposta sola", len(scena.proposte) == 1, scena.proposte)
 	verifica("finestra: la proposta porta i tre dati",
 			 scena.proposte[0] == ("1.0.0", "2.0.0", NOTE), scena.proposte)
-	verifica("finestra: una sola cosa detta, l'esito", len(scena.detti) == 1, scena.detti)
-	verifica("finestra: l'esito e' quello giusto",
-			 scena.detti[0] == "Aggiornamento pronto, il programma si chiude per applicarlo.")
+	verifica("finestra: una sola cosa detta, l'esito, prima dello script",
+			 scena.detti == ["Aggiornamento pronto, il programma si chiude per applicarlo.", "<script avviato>"],
+			 scena.detti)
 	verifica("finestra: senza avanzamento lo scaricamento e' muto",
 			 scena.avanzamento_ricevuto is None, scena.avanzamento_ricevuto)
 
@@ -216,6 +228,120 @@ def main():
 							   traduci=lambda t: f"[{t}]", solo_se_compilato=False)
 	verifica("traduci: l'esito passa di li'", scena.detti[0].startswith("["), scena.detti)
 	verifica("traduci: le note restano quelle dell'autore", scena.proposte[0][2] == NOTE)
+
+	# 13. La proposta che dichiara attesa riceve i due minuti di serie, o il
+	# tempo chiesto; quella che non lo dichiara e' chiamata come prima, ed e'
+	# il caso delle prove 4-12.
+	ricevute = []
+
+	def proponi_con_attesa(attuale, nuova, note, attesa=None):
+		ricevute.append(attesa)
+		return False
+
+	with Scena(CE_NE_UNO) as scena:
+		esito = gestisci_aggiornamento("App", "1.0.0", API, avvisa=scena.avvisa,
+									   proponi=proponi_con_attesa, solo_se_compilato=False)
+	verifica("attesa: la proposta riceve due minuti", ricevute == [120], ricevute)
+	verifica("attesa: la risposta no vale come sempre", esito is False and scena.scaricato is False)
+	ricevute.clear()
+	with Scena(CE_NE_UNO) as scena:
+		gestisci_aggiornamento("App", "1.0.0", API, avvisa=scena.avvisa, proponi=proponi_con_attesa,
+							   attesa_risposta=None, solo_se_compilato=False)
+	verifica("attesa: None vuol dire senza limite", ricevute == [None], ricevute)
+
+	# 14. Anche chiedi riceve il tempo, se lo dichiara, e anche con **chiavi.
+	chieste = []
+
+	def chiedi_con_chiavi(testo, **chiavi):
+		chieste.append(chiavi.get("attesa"))
+		return False
+
+	with Scena(CE_NE_UNO) as scena:
+		gestisci_aggiornamento("App", "1.0.0", API, avvisa=scena.avvisa, chiedi=chiedi_con_chiavi,
+							   attesa_risposta=45, solo_se_compilato=False)
+	verifica("attesa: chiedi la riceve", chieste == [45], chieste)
+	verifica("attesa: chiedi che dice no rimanda", "Aggiornamento rimandato." in scena.detti, scena.detti)
+
+	# 15. Da console la scadenza di enter_escape vale come non adesso, e lo si
+	# dice: nessuna risposta, aggiornamento rimandato.
+	vera_enter_escape = GBUtils.enter_escape
+	attese = []
+
+	def enter_escape_che_scade(prompt="", guida="", attesa=None):
+		# Senza risposta, come enter_escape alla scadenza: None.
+		attese.append(attesa)
+
+	GBUtils.enter_escape = enter_escape_che_scade
+	try:
+		with Scena(CE_NE_UNO) as scena:
+			esito = gestisci_aggiornamento("App", "1.0.0", API, avvisa=scena.avvisa, solo_se_compilato=False)
+	finally:
+		GBUtils.enter_escape = vera_enter_escape
+	verifica("console: la domanda aspetta due minuti", attese == [120], attese)
+	verifica("console: la scadenza risponde di no", esito is False)
+	verifica("console: la scadenza non scarica", scena.scaricato is False)
+	verifica("console: la scadenza si dice",
+			 scena.detti[-2:] == ["Nessuna risposta.", "Aggiornamento rimandato."], scena.detti)
+
+	# 16. Un Invio da console, dopo le modifiche, resta un si'.
+	GBUtils.enter_escape = lambda prompt="", guida="", attesa=None: True
+	try:
+		with Scena(CE_NE_UNO) as scena:
+			esito = gestisci_aggiornamento("App", "1.0.0", API, avvisa=scena.avvisa, solo_se_compilato=False)
+	finally:
+		GBUtils.enter_escape = vera_enter_escape
+	verifica("console: Invio aggiorna", esito is True and scena.scaricato is True)
+
+	# 17. La perform_update vera: la frase arriva prima che lo script parta. Lo
+	# scaricamento scrive un archivio finto, l'avvio dello script si annota
+	# soltanto; l'eseguibile e' finto, in una cartella temporanea.
+	import os
+	import subprocess
+	import tempfile
+	import zipfile
+
+	eventi = []
+	cartella = tempfile.mkdtemp(prefix="banco_v172_")
+	vero_scarica = GBUtils._scarica
+	vero_popen = subprocess.Popen
+	vero_frozen = getattr(sys, "frozen", None)
+	vero_eseguibile = sys.executable
+
+	def scarica_finto(_indirizzo, destinazione, *_argomenti, **_chiavi):
+		with zipfile.ZipFile(destinazione, "w") as z:
+			z.writestr("App.exe", "finto")
+		eventi.append("scaricato")
+		return 5
+
+	def popen_finto(comando, **_chiavi):
+		eventi.append("script avviato")
+
+	GBUtils._scarica = scarica_finto
+	subprocess.Popen = popen_finto
+	sys.frozen = True
+	sys.executable = os.path.join(cartella, "App.exe")
+	try:
+		riuscito = GBUtils.perform_update("https://esempio/App.zip", "BancoV172", cartella_log=cartella,
+										  prima_di_sostituire=lambda: eventi.append("frase"))
+	finally:
+		GBUtils._scarica = vero_scarica
+		subprocess.Popen = vero_popen
+		sys.executable = vero_eseguibile
+		if vero_frozen is None:
+			del sys.frozen
+		else:
+			sys.frozen = vero_frozen
+		import shutil
+		shutil.rmtree(cartella, ignore_errors=True)
+		for nome in ("update_BancoV172_estratto",):
+			shutil.rmtree(os.path.join(tempfile.gettempdir(), nome), ignore_errors=True)
+		for nome in ("update_BancoV172.zip", "updater_BancoV172.bat"):
+			percorso = os.path.join(tempfile.gettempdir(), nome)
+			if os.path.exists(percorso):
+				os.remove(percorso)
+	verifica("perform_update: riesce", riuscito is True)
+	verifica("perform_update: la frase prima dello script",
+			 eventi == ["scaricato", "frase", "script avviato"], eventi)
 
 	print()
 	print(f"Prove {totale}, passate {passate}.")

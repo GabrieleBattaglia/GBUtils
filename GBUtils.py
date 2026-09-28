@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V171 di venerdì 25 settembre 2026
+	V172 di lunedì 28 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.5.1 di venerdì 25 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -19,14 +19,14 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	formatta_dimensione V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	formatta_durata V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	frequenza_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	gestisci_aggiornamento V1.2.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	gestisci_aggiornamento V1.3.1 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	key V8.0.2 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
 	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
-	perform_update V1.6.1 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto)
+	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
 	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	scegli_dispositivo_audio V1.1.1 di venerdì 18 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "171"
+VERSION = "172"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -570,9 +570,9 @@ start "" /D "{current_dir}" "{current_exe}"
 """
 
 def perform_update(download_url: str, app_name: str = "App", avanzamento=None, timeout: int = 30,
-                   cartella_log: str | None = None) -> bool:
+                   cartella_log: str | None = None, prima_di_sostituire=None) -> bool:
     """
-    V1.6.1 di martedì 8 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Fable 5.1, modalità auto)
+    V1.7.0 di lunedì 28 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
     Scarica l'aggiornamento, lo estrae e avvia lo script che sostituisce
     l'installazione, poi restituisce True perche' il chiamante possa chiudersi.
     Il download avviene con la verifica dei certificati attiva, tramite
@@ -590,6 +590,14 @@ def perform_update(download_url: str, app_name: str = "App", avanzamento=None, t
     decide come annunciarlo.
     timeout e' il tempo massimo in secondi di attesa di una risposta durante lo
     scaricamento, non la durata complessiva.
+    prima_di_sostituire, se indicata, viene chiamata senza argomenti quando
+    l'aggiornamento e' scaricato ed estratto e lo script e' pronto, appena
+    prima di avviarlo. E' il momento di dire all'utente che il programma si
+    chiude: lo script aspetta la chiusura al massimo 30 secondi, e un avviso
+    dato dopo, in una finestra che aspetta l'OK, poteva tenere il programma
+    aperto oltre quel limite e far rinunciare all'aggiornamento. Chiamata qui,
+    l'attesa dell'utente viene prima dei 30 secondi e non li consuma. Dalla
+    V1.7.0, per la issue 13 di Dadillo.
     """
     import os
     import shutil
@@ -671,7 +679,10 @@ def perform_update(download_url: str, app_name: str = "App", avanzamento=None, t
         with open(bat_path, "w", encoding="utf-8") as f:
             f.write(bat_content)
             
-        # 6. Avvia lo script batch
+        # 6. Avvia lo script batch, dopo che il chiamante ha detto quello che
+        # doveva: da qui partono i 30 secondi entro cui chiudersi.
+        if prima_di_sostituire is not None:
+            prima_di_sostituire()
         CREATE_NEW_CONSOLE = 0x00000010
         subprocess.Popen([bat_path], creationflags=CREATE_NEW_CONSOLE)
         
@@ -685,9 +696,9 @@ def perform_update(download_url: str, app_name: str = "App", avanzamento=None, t
 def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
                            timeout: int = 10, chiedi=None, avvisa=None, traduci=None,
                            solo_se_compilato: bool = True, proponi=None,
-                           avanzamento=None) -> bool:
+                           avanzamento=None, attesa_risposta=120) -> bool:
     """
-    V1.2.0 di lunedì 14 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    V1.3.1 di lunedì 28 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
     Conduce da sola tutta la conversazione dell'aggiornamento: controlla se ce
     n'e' uno, lo riferisce, mostra le novita', chiede se applicarlo, lo scarica
     annunciando a che punto e' e avvia la sostituzione.
@@ -728,7 +739,27 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     percentuale. Senza di lei e senza proponi restano gli annunci di sempre;
     senza di lei ma con proponi lo scaricamento e' muto, perche' cinque
     finestre modali di fila sarebbero peggio del silenzio.
+    attesa_risposta, dalla V1.3.0, e' il tempo in secondi che la domanda
+    aspetta: due minuti di serie, None per aspettare senza limite. Se scade
+    senza risposta vale come non adesso, il programma prosegue e
+    l'aggiornamento viene riproposto alla chiamata successiva: e' la regola
+    di Gabriele del 28 settembre 2026. Da console lo fa enter_escape, e alla
+    scadenza si dice che l'aggiornamento e' rimandato. Con una finestra la
+    domanda e' del chiamante: chiedi e proponi ricevono il tempo nel
+    parametro con nome attesa, se lo dichiarano, e allo scadere chiudono la
+    loro finestra rispondendo di no; chi non lo dichiara viene chiamato come
+    prima e aspetta senza limite.
+    Dalla V1.3.1 la frase che dice che il programma si chiude per applicare
+    l'aggiornamento arriva prima di avviare lo script di sostituzione, non
+    dopo, attraverso prima_di_sostituire di perform_update. Lo script aspetta
+    la chiusura del programma al massimo 30 secondi: con l'avviso dato dopo,
+    un avvisa che apre una finestra e aspetta l'OK poteva consumarli, e chi
+    premeva OK oltre quel limite si ritrovava col programma chiuso e
+    l'aggiornamento non applicato. Perche' l'ordine serva, avvisa deve
+    tornare quando l'utente ha chiuso la finestra, come fa proponi: un avvisa
+    che la apre e torna subito lascia scorrere i 30 secondi come prima.
     """
+    import inspect
     import sys
 
     def tr(testo):
@@ -747,10 +778,24 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
         if proponi is None:
             dillo(testo)
 
+    def con_attesa(funzione):
+        # Il tempo si passa solo a chi lo dichiara, cosi' le finestre scritte
+        # prima della V1.3.0 continuano a funzionare come prima.
+        try:
+            parametri = inspect.signature(funzione).parameters.values()
+        except (TypeError, ValueError):
+            return {}
+        if any(p.name == "attesa" or p.kind is p.VAR_KEYWORD for p in parametri):
+            return {"attesa": attesa_risposta}
+        return {}
+
     def domanda(testo):
         if chiedi:
-            return bool(chiedi(testo))
-        return enter_escape(testo)
+            return bool(chiedi(testo, **con_attesa(chiedi)))
+        risposta = enter_escape(testo, attesa=attesa_risposta)
+        if risposta is None:
+            dillo(tr("Nessuna risposta."))
+        return bool(risposta)
 
     if solo_se_compilato and not getattr(sys, 'frozen', False):
         return False
@@ -776,7 +821,7 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     if proponi is not None:
         # Versioni e novita' in un colpo solo: il chiamante ne fa una finestra
         # sola, con le note dove si possono leggere con calma.
-        if not proponi(current_version, versione, changelog):
+        if not proponi(current_version, versione, changelog, **con_attesa(proponi)):
             return False
     else:
         dillo(tr("Disponibile la versione") + f" {versione}.")
@@ -815,8 +860,18 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
     cortesia(tr("Scarico l'aggiornamento."))
     if avanzamento is None and proponi is None:
         avanzamento = segnala
-    if perform_update(indirizzo, app_name, avanzamento=avanzamento, cartella_log=cartella_log):
+    detto = []
+
+    def pronto():
+        detto.append(True)
         dillo(tr("Aggiornamento pronto, il programma si chiude per applicarlo."))
+
+    if perform_update(indirizzo, app_name, avanzamento=avanzamento, cartella_log=cartella_log,
+                      prima_di_sostituire=pronto):
+        # Una perform_update che non chiama prima_di_sostituire, per esempio
+        # quella finta di un banco, non deve far perdere la frase.
+        if not detto:
+            pronto()
         return True
     dillo(tr("Aggiornamento non riuscito, si prosegue con questa versione."))
     return False
