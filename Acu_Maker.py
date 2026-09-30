@@ -9,10 +9,10 @@ import textwrap
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import Acusticator, dgt, menu, panorama_spostato, parse_pan_parts
 
-VERSION = "1.8.0" # I doppioni della collezione si tolgono da soli, all'avvio e all'uscita
+VERSION = "1.8.1" # La collezione si salva con l'a capo finale, come la scrive Acusticator.save
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)"
-RELEASE_DATE = "25 settembre 2026"
+RELEASE_DATE = "30 settembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -372,8 +372,11 @@ def load_db():
         return json.load(f)
 
 def save_db(db):
+    # Dalla 1.8.1 con l'a capo finale: json.dump non lo mette, e senza di
+    # lui ogni salvataggio cambiava anche l'ultima riga del file.
     with open(DB_FILE, "w", encoding="utf-8") as f:
         json.dump(db, f, indent=4, ensure_ascii=False)
+        f.write("\n")
 
 def get_unique_name(db, base_name):
     if base_name not in db:

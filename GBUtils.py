@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V173 di mercoledì 30 settembre 2026
+	V174 di mercoledì 30 settembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.5.1 di venerdì 25 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+	Acusticator V8.5.2 di mercoledì 30 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -4795,7 +4795,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.5.1 di venerdì 25 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+    """V8.5.2 di mercoledì 30 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5361,6 +5361,9 @@ class _Acusticator:
         Dalla V8.5.1 gli accenti si scrivono in chiaro, come nel resto del
         file: fino alla V8.5.0 json.dump li trasformava in sequenze di
         escape, e ogni salvataggio riscriveva le descrizioni di tutti.
+        Dalla V8.5.2 il file finisce con l'a capo, come lo scrive Acu_Maker:
+        fino alla V8.5.1 json.dump lo toglieva, e ogni salvataggio cambiava
+        anche l'ultima riga del file.
         Restituisce True se ha scritto.
         """
         import json
@@ -5401,6 +5404,7 @@ class _Acusticator:
         try:
             with open(percorso, "w", encoding="utf-8") as f:
                 json.dump(dati, f, indent=4, ensure_ascii=False)
+                f.write("\n")
         except OSError as e:
             self._avvisa(f"non riesco a scrivere {os.path.basename(percorso)}: {e}")
             return False
