@@ -12274,5 +12274,23 @@
             85,
             20
         ]
+    },
+    "meteora_aggancio": {
+        "descrizione": "MeTeOra, Maiuscolo+F8 aggancia l'inseguimento del brano: zap laser che sale in portamento da la diesis 2 a do diesis 7, onda e durata di laser_da_gioco_3, che fa lo stesso scendendo ed e' il suono dello sgancio. Va bene per ogni aggancio, attivazione o presa.",
+        "score": [
+            [
+                "a#2.c#7",
+                0.21,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            99.948,
+            0.0,
+            0.05
+        ]
     }
 }
