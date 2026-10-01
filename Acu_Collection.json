@@ -12472,5 +12472,35 @@
             70.0,
             30.0
         ]
+    },
+    "meteora_scendi": {
+        "descrizione": "MeTeOra, Maiuscolo+Backspace scende nella plancia fino all'ultimo ramo aperto: lo specchio di menu_triplicato_su_4, che e' Backspace che risale. Le stesse tre note di seno, mi 4, re 4 e do 4, che scendono e vanno da destra a sinistra. Va bene per ogni discesa dentro un elenco o un albero.",
+        "score": [
+            [
+                "e4",
+                0.08811088391930968,
+                0.25473587684766985,
+                0.0
+            ],
+            [
+                "d4",
+                0.10618576841271338,
+                -0.038830192425205357,
+                0.0
+            ],
+            [
+                "c4",
+                0.12128300902042155,
+                -0.24470682788073328,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
     }
 }
