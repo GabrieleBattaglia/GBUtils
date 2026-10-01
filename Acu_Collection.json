@@ -5229,32 +5229,32 @@
         "descrizione": "elaborazione terminata, operazione conclusa",
         "score": [
             [
-                "c7",
-                0.06,
+                "a#6",
+                0.01,
                 0.0,
                 0.0
             ],
             [
                 "p",
-                0.4,
+                0.04,
                 0.0,
                 0.0
             ],
             [
-                "c7",
-                0.06,
+                "f7",
+                0.01,
                 0.0,
                 0.0
             ],
             [
                 "p",
-                0.4,
+                0.04,
                 0.0,
                 0.0
             ],
             [
-                "g7",
-                0.2,
+                "g#6.c#5",
+                0.04,
                 0.0,
                 0.0
             ]
@@ -12519,6 +12519,36 @@
             0.0,
             100.0,
             40.0
+        ]
+    },
+    "meteora_apri_tutto": {
+        "descrizione": "MeTeOra, F10 apre tutti i rami dentro la voce: lo specchio di menu_tripletta_gi_7, che e' F9 che chiude tutto. Le stesse tre note di dente di sega al contrario, sol diesis 5, la diesis 5 e do 6, che salgono. Va bene per ogni apertura completa, espansione o dispiegamento.",
+        "score": [
+            [
+                "g#5",
+                0.07848400286858419,
+                -0.2889093309651133,
+                0.0
+            ],
+            [
+                "a#5",
+                0.13464080604309148,
+                0.21532828375519752,
+                0.0
+            ],
+            [
+                "c6",
+                0.1077869228297045,
+                -0.3269938763344009,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
         ]
     }
 }
