@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V180 di giovedì 1 ottobre 2026
+	V181 di giovedì 1 ottobre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.5.2 di mercoledì 30 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+	Acusticator V8.6.1 di giovedì 1 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +35,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "180"
+VERSION = "181"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -4795,7 +4795,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.5.2 di mercoledì 30 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+    """V8.6.1 di giovedì 1 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5001,13 +5001,30 @@ class _Acusticator:
                   la scheda audio liberata, 120 di partenza. Si riapre da
                   solo al suono successivo.
         fs        frequenza di campionamento dello stream, 44100 di partenza.
-        device    dispositivo di uscita, None per quello di sistema.
+        device    il dispositivo di uscita: il suo indice, come lo danno
+                  elenco_dispositivi_audio e scegli_dispositivo_audio, o il
+                  nome breve di un'interfaccia, per esempio "wasapi", che
+                  vuol dire il suo dispositivo predefinito. Non il nome di
+                  una scheda: fino alla V8.5.2 una stringa andava a
+                  sounddevice come ricerca nel nome del dispositivo. None
+                  lascia l'uscita com'e'. Con l'indice si prende anche il
+                  nome della sua interfaccia, che il mixer legge per
+                  accendere la conversione automatica di WASAPI: fino alla
+                  V8.5.2 restava quello di prima, e un dispositivo WASAPI
+                  che Windows tiene a 48000 non si apriva a 44100, come nella
+                  issue 38. Un'interfaccia sconosciuta solleva ValueError, e
+                  allora setup non cambia niente.
         Cambiare fs o device chiude lo stream in corso, che si riaprira'
-        con i valori nuovi. Restituisce le impostazioni in vigore.
+        con i valori nuovi. Restituisce le impostazioni in vigore, con il
+        nome intero dell'interfaccia dell'uscita, per esempio "Windows
+        WASAPI", o None se il mixer non ha ancora scelto.
         Le impostazioni valgono per il mixer condiviso, quindi anche per chi
         altro lo stia usando.
         """
         mixer = _mixer_condiviso()
+        # L'uscita si risolve per prima: se solleva, nessun valore e' ancora
+        # cambiato.
+        uscita = None if device is None else scegli_dispositivo_audio(device)
         if volume is not None:
             mixer._volume = max(0.0, min(1.0, float(volume)))
         if voci_max is not None:
@@ -5018,13 +5035,18 @@ class _Acusticator:
         if fs is not None and int(fs) != mixer._fs:
             mixer._fs = int(fs)
             riapri = True
-        if device is not None and device != mixer._device:
-            mixer._device = device
+        if uscita is not None and uscita != (mixer._device, mixer._nome_api):
+            # Prima i valori nuovi, poi la chiusura, sotto il lucchetto delle
+            # aperture: un suono che riapre lo stream da un altro filo trova
+            # gia' dispositivo e interfaccia nuovi, e mai l'uno senza l'altra.
+            with mixer._avvio:
+                mixer._device, mixer._nome_api = uscita
             riapri = True
         if riapri:
             mixer.chiudi()
         return {"volume": mixer._volume, "voci_max": mixer._voci_max,
-                "silenzio": mixer._silenzio, "fs": mixer._fs, "device": mixer._device}
+                "silenzio": mixer._silenzio, "fs": mixer._fs, "device": mixer._device,
+                "interfaccia": mixer._nome_api}
 
     def riproduci(self, buffer, fs=None, sync=False):
         """Manda al mixer un buffer gia' pronto, stereo float32 fra -1 e 1.
@@ -5143,6 +5165,7 @@ class _Acusticator:
                 "voci_max": mixer._voci_max, "volume": mixer._volume,
                 "silenzio": mixer._silenzio, "fs": dentro["frequenza"],
                 "canali": dentro["canali"], "device": mixer._device,
+                "interfaccia": mixer._nome_api,
                 "buchi": dentro["buchi"], "guadagno": dentro["guadagno"]}
 
     def _sposta(self, score, pan):
