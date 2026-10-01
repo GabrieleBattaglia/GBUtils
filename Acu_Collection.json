@@ -8886,7 +8886,7 @@
                 "c3.a#7",
                 0.22,
                 "-1.1",
-                "0.0"
+                0.0
             ]
         ],
         "kind": 4,
@@ -12571,6 +12571,534 @@
         "adsr": [
             2.0,
             20.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_impostazioni": {
+        "descrizione": "MeTeOra, si apre la finestra delle impostazioni: quattro scatti brevi di rumore rosa in banda stretta, ciascuno più acuto del precedente, da 900-1400 a 2100-3300 Hz, che vanno da sinistra a destra come una manopola girata una tacca alla volta; 210 ms. Va bene per aprire regolazioni, preferenze o un pannello di controllo.",
+        "score": [
+            [
+                "900-1400",
+                0.02,
+                -0.5,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "1200-1900",
+                0.02,
+                -0.17,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "1600-2500",
+                0.02,
+                0.17,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "2100-3300",
+                0.03,
+                0.5,
+                -0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "meteora_impostazione_cambiata": {
+        "descrizione": "MeTeOra, un valore delle impostazioni è applicato: un trillo rapido di seno fra do diesis 6 e re diesis 6, ripetuto due volte, che si posa sul sol diesis 6 una quarta più su, al centro; 210 ms. Va bene per ogni valore accettato, una regolazione andata a segno o una preferenza cambiata.",
+        "score": [
+            [
+                "c#6",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "d#6",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "c#6",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "d#6",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "g#6",
+                0.11,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            85.0,
+            25.0
+        ]
+    },
+    "meteora_console_salvata": {
+        "descrizione": "MeTeOra, la console è scritta in un file: tre tocchi sommessi di onda triangolare sul sol 4, come i tasti di una macchina da scrivere, da sinistra a destra, e il campanello di fine riga sul sol 6, al centro, che si spegne piano; 310 ms. Va bene per ogni testo salvato, un registro scritto o una stampa su file.",
+        "score": [
+            [
+                "g4",
+                0.015,
+                -0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.015,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.015,
+                0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.045,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.15,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            50.0,
+            20.0,
+            40.0
+        ]
+    },
+    "meteora_marcatori": {
+        "descrizione": "MeTeOra, si apre la finestra dei marcatori: quattro tocchi pizzicati di onda triangolare sparsi nel panorama, sol diesis 6 a sinistra, do diesis 7 a destra, si 6 appena a sinistra e mi 7 a destra, le puntine dei marker viste tutte insieme, e un si 5 più grave al centro, la bacheca che le tiene; 190 ms. Va bene per aprire un elenco di segnalibri, di appunti o di punti segnati.",
+        "score": [
+            [
+                "g#6",
+                0.02,
+                -0.6,
+                -0.05
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                0.0
+            ],
+            [
+                "c#7",
+                0.02,
+                0.5,
+                -0.05
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                0.0
+            ],
+            [
+                "b6",
+                0.02,
+                -0.2,
+                -0.05
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                0.0
+            ],
+            [
+                "e7",
+                0.02,
+                0.7,
+                -0.05
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.05,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            1.0,
+            30.0,
+            50.0,
+            40.0
+        ]
+    },
+    "meteora_marcatori_esportati": {
+        "descrizione": "MeTeOra, i marcatori scelti sono esportati in un file: due note di seno che salgono di una quarta, sol 5 e do 6, al centro, e la loro eco più piano a destra, che se ne va; 140 ms. Va bene per ogni esportazione, copia o invio verso l'esterno; il gesto opposto è meteora_marcatori_importati.",
+        "score": [
+            [
+                "g5",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.035,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.025,
+                0.8,
+                -0.2
+            ],
+            [
+                "c6",
+                0.035,
+                0.8,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_marcatori_importati": {
+        "descrizione": "MeTeOra, i marcatori arrivano da un file esportato: due note di seno che scendono di una quarta, re 6 e la 5, prima piano a sinistra e poi piene al centro, come qualcosa che entra; 140 ms. Va bene per ogni importazione, caricamento o arrivo dall'esterno; il gesto opposto è meteora_marcatori_esportati.",
+        "score": [
+            [
+                "d6",
+                0.025,
+                -0.8,
+                -0.2
+            ],
+            [
+                "a5",
+                0.035,
+                -0.8,
+                -0.2
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.035,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_marcatori_cancellati": {
+        "descrizione": "MeTeOra, Cancella tutto nella finestra dei marcatori toglie i marker di tutti i brani: una cascata rapida di seno sull'accordo di re minore, la 6, fa 6, re 6, la 5, fa 5 e re 5, che scende da destra a sinistra e si posa sul re 4; 232 ms. Diverso da meteora_marker_tolti_tutti, che toglie i marker di un brano solo. Va bene per svuotare un archivio o cancellare tutto.",
+        "score": [
+            [
+                "a6",
+                0.022,
+                0.6,
+                -0.05
+            ],
+            [
+                "f6",
+                0.022,
+                0.4,
+                -0.05
+            ],
+            [
+                "d6",
+                0.022,
+                0.2,
+                -0.05
+            ],
+            [
+                "a5",
+                0.022,
+                0.0,
+                -0.05
+            ],
+            [
+                "f5",
+                0.022,
+                -0.2,
+                -0.05
+            ],
+            [
+                "d5",
+                0.022,
+                -0.4,
+                -0.05
+            ],
+            [
+                "d4",
+                0.1,
+                -0.6,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            40.0,
+            40.0,
+            30.0
+        ]
+    },
+    "meteora_scheda_audio": {
+        "descrizione": "MeTeOra, cambia la scheda audio in uso e il suono esce già da quella nuova: onda triangolare morbida, fa diesis 4 tutto a sinistra, do diesis 5 tutto a destra e fa diesis 5 al centro, quinta e ottava che provano i due canali uno alla volta e poi insieme; 300 ms. Va bene per una prova dell'impianto o un cambio di uscita o di dispositivo audio.",
+        "score": [
+            [
+                "f#4",
+                0.06,
+                -1.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "c#5",
+                0.06,
+                1.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "f#5",
+                0.13,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "meteora_marcatori_trovato": {
+        "descrizione": "MeTeOra, la barra rovesciata nella finestra dei marcatori trova il testo più avanti nella lista: onda sinusoidale morbida, una scorsa rapida di tre note che salgono, la 5, si 5 e do diesis 6, da sinistra verso il centro, come gli occhi che scorrono le righe, poi mi 6 e la 6 al centro, piene, il salto di quarta di chi ha trovato; 207 ms. È della stessa famiglia di meteora_marcatori_ripartito e meteora_marcatori_non_trovato. Va bene per ogni ricerca riuscita in un elenco.",
+        "score": [
+            [
+                "a5",
+                0.02,
+                -0.5,
+                -0.15
+            ],
+            [
+                "b5",
+                0.02,
+                -0.25,
+                -0.15
+            ],
+            [
+                "c#6",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.045,
+                0.0,
+                0.0
+            ],
+            [
+                "a6",
+                0.09,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_marcatori_ripartito": {
+        "descrizione": "MeTeOra, la barra rovesciata nella finestra dei marcatori arriva in fondo alla lista e trova il testo ripartendo dalla cima: onda sinusoidale morbida, una scivolata dal do diesis 7 al la 5 che va da destra a sinistra, il ritorno a capo, poi la stessa chiusa di meteora_marcatori_trovato, mi 6 e la 6 al centro; 210 ms. Va bene per una ricerca che ha fatto il giro, o per ogni elenco che ricomincia dall'inizio.",
+        "score": [
+            [
+                "c#7.a5",
+                0.06,
+                "0.6.-0.6",
+                -0.15
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.045,
+                0.0,
+                0.0
+            ],
+            [
+                "a6",
+                0.09,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_marcatori_non_trovato": {
+        "descrizione": "MeTeOra, la barra rovesciata nella finestra dei marcatori non trova il testo: onda sinusoidale morbida, la stessa scorsa di meteora_marcatori_trovato, la 5, si 5 e do diesis 6 da sinistra verso il centro, che invece di salire si sgonfia sul do 6 e ricade sul la 5 da cui era partita, più piano, al centro; 217 ms. Va bene per ogni ricerca senza risultati in un elenco.",
+        "score": [
+            [
+                "a5",
+                0.02,
+                -0.5,
+                -0.15
+            ],
+            [
+                "b5",
+                0.02,
+                -0.25,
+                -0.15
+            ],
+            [
+                "c#6",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.045,
+                0.0,
+                -0.05
+            ],
+            [
+                "a5",
+                0.1,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            10.0,
             80.0,
             30.0
         ]
