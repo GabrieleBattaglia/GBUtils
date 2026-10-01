@@ -108,7 +108,7 @@
         ]
     },
     "timbratura": {
-        "descrizione": "Tento di imitare il badje Esselunga. Usato da: clz, meteora, tornello.",
+        "descrizione": "Il lettore di badge dell'Esselunga, imitato: onda quadra, un re 4 corto, un fa 3 grave più lungo e un re diesis 6 acuto, separati da brevi pause, 300 ms. Va bene per una timbratura, una registrazione o una conferma di passaggio. Usato da: clz, meteora, tornello.",
         "score": [
             [
                 "d4",
@@ -150,7 +150,7 @@
         ]
     },
     "conferma": {
-        "descrizione": "rapido conferma o check ok. Usato da: clz, meteora.",
+        "descrizione": "Conferma rapida di seno: due note acute che scendono, sol 6 e mi 6, una pausa e un punto acutissimo di fa 7, in 220 ms. Va bene per un'operazione riuscita o un controllo superato. Usato da: clz, meteora.",
         "score": [
             [
                 "g6",
@@ -246,7 +246,7 @@
         ]
     },
     "espelli": {
-        "descrizione": "qualcosa esce da un elenco o lista. Usato da: meteora, tornello.",
+        "descrizione": "Qualcosa esce da un elenco: un fischio di seno che precipita di tre ottave, da do 7 a do 4, in 100 ms. Va bene per togliere una voce, espellere o scartare. Usato da: meteora, tornello.",
         "score": [
             [
                 "c7.c4",
@@ -444,7 +444,7 @@
         ]
     },
     "il_gioco_alto": {
-        "descrizione": "Menu tick acuto da game_mode. Usato da: meteora.",
+        "descrizione": "Tick acuto di menu: un si 5 di seno, secco, di 50 ms. Va bene per scorrere le voci di un menu o per un segnale leggero; il gemello più acuto di il_gioco_spunta_a_met. Usato da: meteora.",
         "score": [
             [
                 "b5",
@@ -462,7 +462,7 @@
         ]
     },
     "il_gioco_spunta_a_met": {
-        "descrizione": "Seleziona il menu medio da game_mode. Usato da: meteora.",
+        "descrizione": "Tick medio di menu: un sol 5 di seno, secco, di 50 ms, per selezionare o spuntare una voce; il gemello più grave di il_gioco_alto. Usato da: meteora.",
         "score": [
             [
                 "g5",
@@ -1680,7 +1680,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_2": {
-        "descrizione": "Notifica UI breve 2. Usato da: meteora.",
+        "descrizione": "Notifica breve di interfaccia: due note di seno che scendono di una terza minore, re diesis 6 e do 6, in 150 ms. Un avviso discreto, che chiude verso il basso. Usato da: meteora.",
         "score": [
             [
                 "d#6",
@@ -1704,7 +1704,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_3": {
-        "descrizione": "Notifica UI breve 3. Usato da: meteora.",
+        "descrizione": "Notifica breve di interfaccia: due note di seno che salgono di una nona, da fa diesis 6 a sol diesis 7, in 150 ms. Un avviso squillante, che si apre verso l'alto. Usato da: meteora.",
         "score": [
             [
                 "f#6",
@@ -1728,7 +1728,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_4": {
-        "descrizione": "Notifica UI breve 4. Usato da: meteora.",
+        "descrizione": "Notifica breve di interfaccia: due note di seno che salgono di due ottave, da do diesis 5 a do diesis 7, in 150 ms. Un avviso netto, un balzo verso l'alto. Usato da: meteora.",
         "score": [
             [
                 "c#5",
@@ -1752,7 +1752,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_5": {
-        "descrizione": "Notifica UI breve 5. Usato da: meteora.",
+        "descrizione": "Notifica breve di interfaccia: due note di seno che scendono di una sesta minore, da la diesis 6 a re 6, in 150 ms. Un avviso morbido, che si posa. Usato da: meteora.",
         "score": [
             [
                 "a#6",
@@ -1926,7 +1926,7 @@
         ]
     },
     "menu_triplicato_su_2": {
-        "descrizione": "Tripletta menu direzione up variante 2. Usato da: meteora, tornello.",
+        "descrizione": "Tripletta che sale: do 4, re 4 e mi 4 di onda triangolare, in 265 ms, con le note sparse fra sinistra e destra e la seconda più lunga delle altre. Va bene per salire in un menu o in un albero. Usato da: meteora, tornello.",
         "score": [
             [
                 "c4",
@@ -1986,7 +1986,7 @@
         ]
     },
     "menu_triplicato_su_4": {
-        "descrizione": "Tripletta menu direzione up variante 4. Usato da: meteora.",
+        "descrizione": "Tripletta che sale: do 4, re 4 e mi 4 di seno, in 316 ms, che accelera e va da sinistra a destra. Va bene per salire in un menu o di un livello in un albero. Usato da: meteora.",
         "score": [
             [
                 "c4",
@@ -2046,7 +2046,7 @@
         ]
     },
     "menu_triplicato_su_6": {
-        "descrizione": "Tripletta menu direzione up variante 6. Usato da: meteora.",
+        "descrizione": "Tripletta che sale: do 4, re 4 e mi 4 di onda triangolare, in 290 ms, con la prima nota lunga a sinistra e le altre due più rapide a destra. Va bene per salire in un menu o in un albero. Usato da: meteora.",
         "score": [
             [
                 "c4",
@@ -2196,7 +2196,7 @@
         ]
     },
     "processo_quartina_1": {
-        "descrizione": "Quartina di elaborazione variante 1. Usato da: meteora.",
+        "descrizione": "Quartina di elaborazione: quattro note di onda quadra che salgono di quinta, quarta e quinta, la stessa coppia ripetuta un'ottava sopra, do 5, sol 5, do 6 e sol 6, da 80 ms ciascuna, attraversando lo stereo da sinistra a destra, 320 ms. Va bene per un lavoro che parte o avanza; il 10 è la stessa figura un'ottava sotto. Usato da: meteora.",
         "score": [
             [
                 "c5",
@@ -2232,7 +2232,7 @@
         ]
     },
     "processo_quartina_10": {
-        "descrizione": "Quartina di elaborazione variante 10. Usato da: meteora.",
+        "descrizione": "Quartina di elaborazione: quattro note di onda quadra che salgono di quinta, quarta e quinta, la stessa coppia ripetuta un'ottava sopra, do 4, sol 4, do 5 e sol 5, da 80 ms ciascuna, attraversando lo stereo da sinistra a destra, 320 ms. Va bene per un lavoro che parte o avanza; l'1 è la stessa figura un'ottava sopra. Usato da: meteora.",
         "score": [
             [
                 "c4",
@@ -2286,7 +2286,7 @@
         ]
     },
     "laser_da_gioco_2": {
-        "descrizione": "Effetto laser/zap 2. Usato da: meteora.",
+        "descrizione": "Zap laser da videogioco: dente di sega che precipita da la diesis 6 a do diesis 3 in 190 ms, con attacco istantaneo e coda che si spegne. Il 3 è un poco più lungo e scende più in basso. Usato da: meteora.",
         "score": [
             [
                 "a#6.c#3",
@@ -2304,7 +2304,7 @@
         ]
     },
     "laser_da_gioco_3": {
-        "descrizione": "Effetto laser/zap 3. Usato da: meteora.",
+        "descrizione": "Zap laser da videogioco: dente di sega che precipita da do diesis 7 a la diesis 2 in 210 ms, con attacco istantaneo e coda che si spegne. Il fratello più lungo e più profondo del 2. Usato da: meteora.",
         "score": [
             [
                 "c#7.a#2",
@@ -2460,7 +2460,7 @@
         ]
     },
     "salto_del_gioco_1": {
-        "descrizione": "Effetto salto 1. Usato da: meteora.",
+        "descrizione": "Salto da videogioco: un fischio di seno che sale di due ottave, da do 4 a do 6, in 200 ms. Va bene per un balzo, un passaggio a un livello superiore o un'apertura; il 10 è lo stesso salto un'ottava sotto. Usato da: meteora.",
         "score": [
             [
                 "c4.c6",
@@ -2478,7 +2478,7 @@
         ]
     },
     "salto_del_gioco_10": {
-        "descrizione": "Effetto salto 10. Usato da: meteora.",
+        "descrizione": "Salto da videogioco: un fischio di seno che sale di due ottave, da do 3 a do 5, in 200 ms. Va bene per un balzo o un'apertura; l'1 è lo stesso salto un'ottava sopra. Usato da: meteora.",
         "score": [
             [
                 "c3.c5",
@@ -3306,7 +3306,7 @@
         ]
     },
     "colpo_d_impatto_1": {
-        "descrizione": "Impatto percussivo 1. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto, un tonfo cupo e brevissimo: dente di sega che cade di un'ottava, da fa 2 a fa 1, in 60 ms, con attacco istantaneo e decadimento fino al silenzio. Usato da: meteora.",
         "score": [
             [
                 "f2.f1",
@@ -3324,7 +3324,7 @@
         ]
     },
     "colpo_d_impatto_2": {
-        "descrizione": "Impatto percussivo 2. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto, un tonfo secco appena più lungo dell'1: dente di sega che cade di un'ottava, da la diesis 2 a la diesis 1, in 70 ms, con attacco istantaneo e decadimento fino al silenzio. Usato da: meteora.",
         "score": [
             [
                 "a#2.a#1",
@@ -3342,7 +3342,7 @@
         ]
     },
     "colpo_d_impatto_3": {
-        "descrizione": "Impatto percussivo 3. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto che sprofonda: dente di sega che precipita da si 3 a do 0, quasi quattro ottave, in 80 ms, con attacco istantaneo e decadimento fino al silenzio. Un colpo che si schianta in basso. Usato da: meteora.",
         "score": [
             [
                 "b3.c0",
@@ -3360,7 +3360,7 @@
         ]
     },
     "colpo_d_impatto_5": {
-        "descrizione": "Impatto percussivo 5. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto più chiaro: dente di sega che cade di un'ottava, da do 4 a do 3, in 100 ms, con attacco istantaneo e decadimento fino al silenzio. Un urto di legno più che un tonfo. Usato da: meteora.",
         "score": [
             [
                 "c4.c3",
@@ -3396,7 +3396,7 @@
         ]
     },
     "colpo_d_impatto_7": {
-        "descrizione": "Impatto percussivo 7. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto profondissimo: dente di sega che cade da do 1 a do 0, quasi solo vibrazione, in 120 ms, con attacco istantaneo e decadimento fino al silenzio. Un colpo di grancassa lontano. Usato da: meteora.",
         "score": [
             [
                 "c1.c0",
@@ -3468,7 +3468,7 @@
         ]
     },
     "melodia_del_campanello_1": {
-        "descrizione": "Melodia campanello 1. Usato da: tornello.",
+        "descrizione": "Il carillon di Westminster, quello dei campanili e dei campanelli di casa: mi, do, re e sol, poi sol, re, mi e do, fra l'ottava 5 e la 6, in seno, 2,6 secondi. Va bene per un'apertura importante, un annuncio o un appuntamento. Usato da: tornello.",
         "score": [
             [
                 "e6",
@@ -4080,7 +4080,7 @@
         ]
     },
     "convalida0": {
-        "descrizione": "un dato è stato convalidato. Usato da: meteora, quinqu.",
+        "descrizione": "Un dato è stato convalidato: quattro note di onda triangolare che saltano su e giù, do 4, fa 6 e re diesis 5, e chiudono lunghe sul sol diesis 6, in 700 ms. Va bene per un valore accettato o un controllo andato a buon fine. Usato da: meteora, quinqu.",
         "score": [
             [
                 "c4",
@@ -4979,8 +4979,8 @@
             0.002
         ]
     },
-    "gabryscola_gioca_carta": {
-        "descrizione": "Suono rapido per la carta giocata sul tavolo. Usato da: tornello.",
+    "gioca_carta": {
+        "descrizione": "Una carta giocata sul tavolo: un guizzo di onda triangolare che sale da re 5 a la 5 in 60 ms, con attacco istantaneo e decadimento fino al silenzio. Va bene per una carta calata o un'azione rapida. Usato da: tornello.",
         "score": [
             [
                 "d5.a5",
@@ -5340,7 +5340,7 @@
         ]
     },
     "spostamento_f5": {
-        "descrizione": "Spostamento focus F5 (-1 ottava). Usato da: meteora, tornello.",
+        "descrizione": "Spostamento del fuoco, grave: due tocchi di seno brevissimi, sol 2 e mi 3, in 60 ms. È spostamento_f6 un'ottava sotto; insieme a f6 e f7 distingue tre aree in cui il fuoco può andare. Usato da: meteora, tornello.",
         "score": [
             [
                 "g2",
@@ -5364,7 +5364,7 @@
         ]
     },
     "spostamento_f6": {
-        "descrizione": "Spostamento focus F6 (altezza standard). Usato da: meteora, tornello.",
+        "descrizione": "Spostamento del fuoco, all'altezza media: due tocchi di seno brevissimi, sol 3 e mi 4, in 60 ms. Il riferimento della famiglia: f5 è un'ottava sotto, f7 un'ottava sopra. Usato da: meteora, tornello.",
         "score": [
             [
                 "g3",
@@ -5388,7 +5388,7 @@
         ]
     },
     "spostamento_f7": {
-        "descrizione": "Spostamento focus F7 (+1 ottava). Usato da: meteora, tornello.",
+        "descrizione": "Spostamento del fuoco, acuto: due tocchi di seno brevissimi, sol 4 e mi 5, in 60 ms. È spostamento_f6 un'ottava sopra; insieme a f5 e f6 distingue tre aree in cui il fuoco può andare. Usato da: meteora, tornello.",
         "score": [
             [
                 "g4",
@@ -5484,7 +5484,7 @@
         ]
     },
     "Digitazione": {
-        "descrizione": "lettere premute su un controller. Usato da: meteora.",
+        "descrizione": "Un tasto premuto e rilasciato: due note di seno secche, fa 3 e sol 4, in 140 ms. Va bene per la digitazione, per lettere premute su un controller o per un tasto che risponde. Usato da: meteora.",
         "score": [
             [
                 "f3",
@@ -5508,7 +5508,7 @@
         ]
     },
     "Laser_destra_sinistra": {
-        "descrizione": "Uno sparo laser da destra a sinistra. Usato da: meteora.",
+        "descrizione": "Uno sparo laser di seno che scivola da sol 4 a la 3 in 120 ms e attraversa lo stereo da destra a sinistra. Va bene per qualcosa che parte verso sinistra o per un ritorno indietro. Usato da: meteora.",
         "score": [
             [
                 "g4.a3",
@@ -5952,7 +5952,7 @@
         ]
     },
     "fanfara_retro": {
-        "descrizione": "fanfara squadrata da videogioco antico. Usato da: batnav, gabryscola.",
+        "descrizione": "Fanfara squadrata da videogioco antico: onda quadra, do 5 ripetuto due volte, sol 5 e un do 6 lungo, in 650 ms. Va bene per una vittoria o un traguardo raggiunto. Usato da: batnav, gabryscola.",
         "score": [
             [
                 "c5",
@@ -6060,7 +6060,7 @@
         ]
     },
     "doppio_tic_conferma": {
-        "descrizione": "due tic vicinissimi, conferma leggera. Usato da: batnav, gabryscola, meteora, pokermachine, tornello.",
+        "descrizione": "Due tic vicinissimi di seno, mi 6 appena a sinistra e si 6 appena a destra, separati da 50 ms di pausa, 130 ms in tutto: una conferma leggera. Va bene per una scelta accettata o un'azione minore riuscita. Usato da: batnav, gabryscola, meteora, pokermachine, tornello.",
         "score": [
             [
                 "e6",
@@ -7565,8 +7565,8 @@
             20
         ]
     },
-    "pokermachine_kh_penalita": {
-        "descrizione": "Poker Machine, penalita' della Killer Hand: una scivolata di due ottave verso il basso e due colpi gravi",
+    "kh_penalita": {
+        "descrizione": "Penalità: dente di sega che scivola di due ottave, da do 5 a do 3, in mezzo secondo andando da destra a sinistra, poi due colpi gravi di do 2, un secondo in tutto. Va bene per una perdita o un castigo. Kh sta per Killer Hand, la mano assassina del video poker, per cui è nato.",
         "score": [
             [
                 "c5.c3",
@@ -11921,8 +11921,8 @@
             40
         ]
     },
-    "pokermachine_trofeo_mano": {
-        "descrizione": "Poker Machine, trofeo di una mano: la fanfara dei trofei e il colore che rimbalza fra due ottave",
+    "trofeo_mano": {
+        "descrizione": "Trofeo di una mano: una fanfara da trofeo, do 5, sol 5 e do 6, poi mi 6 e mi 7 che rimbalzano due volte fra sinistra e destra; onda triangolare, 770 ms.",
         "score": [
             [
                 "c5",
@@ -11981,8 +11981,8 @@
             20
         ]
     },
-    "pokermachine_trofeo_killer": {
-        "descrizione": "Poker Machine, trofeo della Killer Hand: la fanfara dei trofei e il tritono della Killer Hand che si risolve",
+    "trofeo_killer": {
+        "descrizione": "Trofeo della Killer Hand, la mano assassina del video poker: una fanfara da trofeo, do 5, sol 5 e do 6, poi il tritono do 4 e fa diesis 4, da sinistra a destra, che si risolve sul sol 4; dente di sega, 900 ms.",
         "score": [
             [
                 "c5",
@@ -12035,8 +12035,8 @@
             20
         ]
     },
-    "pokermachine_trofeo_fiches": {
-        "descrizione": "Poker Machine, trofeo delle fiches: la fanfara dei trofei e una cascata di monete",
+    "trofeo_fiches": {
+        "descrizione": "Trofeo delle fiches: una fanfara da trofeo, do 5, sol 5 e do 6, poi una cascata di seno da sol 6 a sol 5 che passa da destra a sinistra, come monete che cadono, e un do 7 finale, 810 ms.",
         "score": [
             [
                 "c5",
@@ -12101,8 +12101,8 @@
             40
         ]
     },
-    "pokermachine_trofeo_serie": {
-        "descrizione": "Poker Machine, trofeo della serie: la fanfara dei trofei e una lunga nota che sale e attraversa lo stereo",
+    "trofeo_serie": {
+        "descrizione": "Trofeo della serie: una fanfara da trofeo, do 5, sol 5 e do 6, poi una lunga nota che sale da do 6 a sol 6 attraversando lo stereo da sinistra a destra; onda triangolare, 810 ms.",
         "score": [
             [
                 "c5",
@@ -12143,8 +12143,8 @@
             20
         ]
     },
-    "pokermachine_trofeo_abilita": {
-        "descrizione": "Poker Machine, trofeo di abilita': la fanfara dei trofei e un arpeggio veloce che sale e ridiscende",
+    "trofeo_abilita": {
+        "descrizione": "Trofeo di abilità: una fanfara da trofeo, do 5, sol 5 e do 6, poi un arpeggio veloce di seno, mi 6, sol 6, do 7, sol 6 e mi 6, che sale e ridiscende passando da sinistra a destra, e un do 7 finale, 760 ms.",
         "score": [
             [
                 "c5",
@@ -12473,8 +12473,8 @@
             30.0
         ]
     },
-    "meteora_scendi": {
-        "descrizione": "Nato per MeTeOra, che lo ha usato fino alla 1.42.2 per Maiuscolo+Backspace che scendeva nella plancia fino all'ultimo ramo aperto, e ora non lo usa piu': lo specchio di menu_triplicato_su_4, che e' Backspace che risale. Le stesse tre note di seno, mi 4, re 4 e do 4, che scendono e vanno da destra a sinistra. Va bene per ogni discesa dentro un elenco o un albero.",
+    "scendi": {
+        "descrizione": "Lo specchio di menu_triplicato_su_4, la tripletta che sale: le stesse tre note di seno, mi 4, re 4 e do 4, che scendono e vanno da destra a sinistra. Va bene per ogni discesa dentro un elenco o un albero.",
         "score": [
             [
                 "e4",
