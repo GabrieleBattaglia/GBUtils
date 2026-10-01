@@ -12292,5 +12292,185 @@
             0.0,
             0.05
         ]
+    },
+    "meteora_marker_messo": {
+        "descrizione": "MeTeOra, T mette un marker nel brano: due note di triangolo che salgono di una quinta, mi 6 e si 6, una puntina che si pianta. Va bene per ogni segno, segnalibro o punto messo.",
+        "score": [
+            [
+                "e6",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "b6",
+                0.06,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "meteora_marker_rinominato": {
+        "descrizione": "MeTeOra, un marker cambia nome: due tocchi di triangolo sul si 6 e la discesa al mi 6, la puntina riscritta. Va bene per ogni etichetta cambiata.",
+        "score": [
+            [
+                "b6",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "b6",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.05,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "meteora_marker_indietro": {
+        "descrizione": "MeTeOra, R salta al marker precedente: breve scivolata di seno dal la 6 al mi 6, a sinistra. Va bene per ogni salto indietro a un punto segnato.",
+        "score": [
+            [
+                "a6.e6",
+                0.07,
+                -0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_marker_avanti": {
+        "descrizione": "MeTeOra, Y salta al marker successivo: breve scivolata di seno dal mi 6 al la 6, a destra. Va bene per ogni salto avanti a un punto segnato.",
+        "score": [
+            [
+                "e6.a6",
+                0.07,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_marker_tolti_prima": {
+        "descrizione": "MeTeOra, Maiuscolo+R toglie i marker dall'inizio fin qui: un'ottava di dente di sega che scende, dal do 6 al do 5, a sinistra.",
+        "score": [
+            [
+                "c6.c5",
+                0.12,
+                -0.7,
+                -0.15
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            40.0
+        ]
+    },
+    "meteora_marker_tolti_dopo": {
+        "descrizione": "MeTeOra, Maiuscolo+Y toglie i marker da qui alla fine: un'ottava di dente di sega che scende, dal do 6 al do 5, a destra.",
+        "score": [
+            [
+                "c6.c5",
+                0.12,
+                0.7,
+                -0.15
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            40.0
+        ]
+    },
+    "meteora_marker_tolti_tutti": {
+        "descrizione": "MeTeOra, Maiuscolo+T toglie tutti i marker del brano: l'ottava di dente di sega che scende due volte, prima a sinistra e poi a destra.",
+        "score": [
+            [
+                "c6.c5",
+                0.1,
+                -0.6,
+                -0.15
+            ],
+            [
+                "c6.c5",
+                0.1,
+                0.6,
+                -0.15
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            40.0
+        ]
+    },
+    "meteora_marker_eliminato": {
+        "descrizione": "MeTeOra, Canc elimina un marker dalla plancia: due note di triangolo staccate che cadono di un'ottava, mi 6 e mi 5, la puntina che si stacca.",
+        "score": [
+            [
+                "e6",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.05,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            20.0,
+            70.0,
+            30.0
+        ]
     }
 }
