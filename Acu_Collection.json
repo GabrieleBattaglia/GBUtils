@@ -54,7 +54,7 @@
         ]
     },
     "tripletta_su_giu_rapidissima": {
-        "descrizione": "Suono misto rapido di 6 note (onda triangolare)",
+        "descrizione": "Suono misto rapido di 6 note (onda triangolare). Usato da: meteora.",
         "score": [
             [
                 "c4",
@@ -108,7 +108,7 @@
         ]
     },
     "timbratura": {
-        "descrizione": "Tento di imitare il badje Esselunga",
+        "descrizione": "Tento di imitare il badje Esselunga. Usato da: clz, meteora, tornello.",
         "score": [
             [
                 "d4",
@@ -150,7 +150,7 @@
         ]
     },
     "conferma": {
-        "descrizione": "rapido conferma o check ok",
+        "descrizione": "rapido conferma o check ok. Usato da: clz, meteora.",
         "score": [
             [
                 "g6",
@@ -228,7 +228,7 @@
         ]
     },
     "aggiunta_giocatore": {
-        "descrizione": "Qualcosa che viene aggiunto ad un elenco",
+        "descrizione": "Qualcosa che viene aggiunto ad un elenco. Usato da: meteora.",
         "score": [
             [
                 "c4.c7",
@@ -246,7 +246,7 @@
         ]
     },
     "espelli": {
-        "descrizione": "qualcosa esce da un elenco o lista",
+        "descrizione": "qualcosa esce da un elenco o lista. Usato da: meteora, tornello.",
         "score": [
             [
                 "c7.c4",
@@ -264,7 +264,7 @@
         ]
     },
     "morto": {
-        "descrizione": "un personaggio muore o si fa molto male, qualcosa viene depennato forzatamente",
+        "descrizione": "un personaggio muore o si fa molto male, qualcosa viene depennato forzatamente. Usato da: meteora.",
         "score": [
             [
                 "d2.c#0",
@@ -336,7 +336,7 @@
         ]
     },
     "partenza": {
-        "descrizione": "un processo che inizia, qualcosa che comincia. Un suono piuttosto gentile e soft, da usare anche in serie ripetute",
+        "descrizione": "un processo che inizia, qualcosa che comincia. Un suono piuttosto gentile e soft, da usare anche in serie ripetute. Usato da: batnav, cartella, clz, gabryscola, meteora.",
         "score": [
             [
                 "g2.g#3",
@@ -354,7 +354,7 @@
         ]
     },
     "sys_tick_alto": {
-        "descrizione": "Tick breve acuto (singola nota (onda sinusoidale))",
+        "descrizione": "Tick breve acuto (singola nota (onda sinusoidale)). Usato da: gabryscola, meteora.",
         "score": [
             [
                 "c6",
@@ -372,7 +372,7 @@
         ]
     },
     "sys_tick_basso": {
-        "descrizione": "Tick breve grave (singola nota (onda sinusoidale))",
+        "descrizione": "Tick breve grave (singola nota (onda sinusoidale)). Usato da: gabryscola, meteora.",
         "score": [
             [
                 "c5",
@@ -390,7 +390,7 @@
         ]
     },
     "avviso_di_sistema": {
-        "descrizione": "Avviso o errore (singola nota (onda sinusoidale))",
+        "descrizione": "Avviso o errore (singola nota (onda sinusoidale)). Usato da: clz, gabryscola, meteora, tornello.",
         "score": [
             [
                 "f6",
@@ -408,7 +408,7 @@
         ]
     },
     "ronzio_di_errore_di_sistema": {
-        "descrizione": "Buzz grave di errore (singola nota (onda quadra))",
+        "descrizione": "Buzz grave di errore (singola nota (onda quadra)). Usato da: clz.",
         "score": [
             [
                 "g3",
@@ -444,7 +444,7 @@
         ]
     },
     "il_gioco_alto": {
-        "descrizione": "Menu tick acuto da game_mode",
+        "descrizione": "Menu tick acuto da game_mode. Usato da: meteora.",
         "score": [
             [
                 "b5",
@@ -462,7 +462,7 @@
         ]
     },
     "il_gioco_spunta_a_met": {
-        "descrizione": "Seleziona il menu medio da game_mode",
+        "descrizione": "Seleziona il menu medio da game_mode. Usato da: meteora.",
         "score": [
             [
                 "g5",
@@ -1680,7 +1680,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_2": {
-        "descrizione": "Notifica UI breve 2",
+        "descrizione": "Notifica UI breve 2. Usato da: meteora.",
         "score": [
             [
                 "d#6",
@@ -1704,7 +1704,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_3": {
-        "descrizione": "Notifica UI breve 3",
+        "descrizione": "Notifica UI breve 3. Usato da: meteora.",
         "score": [
             [
                 "f#6",
@@ -1728,7 +1728,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_4": {
-        "descrizione": "Notifica UI breve 4",
+        "descrizione": "Notifica UI breve 4. Usato da: meteora.",
         "score": [
             [
                 "c#5",
@@ -1752,7 +1752,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_5": {
-        "descrizione": "Notifica UI breve 5",
+        "descrizione": "Notifica UI breve 5. Usato da: meteora.",
         "score": [
             [
                 "a#6",
@@ -1926,7 +1926,7 @@
         ]
     },
     "menu_triplicato_su_2": {
-        "descrizione": "Tripletta menu direzione up variante 2",
+        "descrizione": "Tripletta menu direzione up variante 2. Usato da: meteora, tornello.",
         "score": [
             [
                 "c4",
@@ -1956,7 +1956,7 @@
         ]
     },
     "menu_triplicato_verso_il_basso_3": {
-        "descrizione": "Tripletta menu direzione down variante 3",
+        "descrizione": "Tripletta menu direzione down variante 3. Usato da: tornello.",
         "score": [
             [
                 "c6",
@@ -1986,7 +1986,7 @@
         ]
     },
     "menu_triplicato_su_4": {
-        "descrizione": "Tripletta menu direzione up variante 4",
+        "descrizione": "Tripletta menu direzione up variante 4. Usato da: meteora.",
         "score": [
             [
                 "c4",
@@ -2046,7 +2046,7 @@
         ]
     },
     "menu_triplicato_su_6": {
-        "descrizione": "Tripletta menu direzione up variante 6",
+        "descrizione": "Tripletta menu direzione up variante 6. Usato da: meteora.",
         "score": [
             [
                 "c4",
@@ -2076,7 +2076,7 @@
         ]
     },
     "menu_tripletta_gi_7": {
-        "descrizione": "Tripletta menu direzione down variante 7",
+        "descrizione": "Tripletta menu direzione down variante 7. Usato da: meteora.",
         "score": [
             [
                 "c6",
@@ -2136,7 +2136,7 @@
         ]
     },
     "menu_tripletta_in_basso_9": {
-        "descrizione": "Tripletta menu direzione down variante 9",
+        "descrizione": "Tripletta menu direzione down variante 9. Usato da: meteora.",
         "score": [
             [
                 "c6",
@@ -2196,7 +2196,7 @@
         ]
     },
     "processo_quartina_1": {
-        "descrizione": "Quartina di elaborazione variante 1",
+        "descrizione": "Quartina di elaborazione variante 1. Usato da: meteora.",
         "score": [
             [
                 "c5",
@@ -2232,7 +2232,7 @@
         ]
     },
     "processo_quartina_10": {
-        "descrizione": "Quartina di elaborazione variante 10",
+        "descrizione": "Quartina di elaborazione variante 10. Usato da: meteora.",
         "score": [
             [
                 "c4",
@@ -2286,7 +2286,7 @@
         ]
     },
     "laser_da_gioco_2": {
-        "descrizione": "Effetto laser/zap 2",
+        "descrizione": "Effetto laser/zap 2. Usato da: meteora.",
         "score": [
             [
                 "a#6.c#3",
@@ -2304,7 +2304,7 @@
         ]
     },
     "laser_da_gioco_3": {
-        "descrizione": "Effetto laser/zap 3",
+        "descrizione": "Effetto laser/zap 3. Usato da: meteora.",
         "score": [
             [
                 "c#7.a#2",
@@ -2460,7 +2460,7 @@
         ]
     },
     "salto_del_gioco_1": {
-        "descrizione": "Effetto salto 1",
+        "descrizione": "Effetto salto 1. Usato da: meteora.",
         "score": [
             [
                 "c4.c6",
@@ -2478,7 +2478,7 @@
         ]
     },
     "salto_del_gioco_10": {
-        "descrizione": "Effetto salto 10",
+        "descrizione": "Effetto salto 10. Usato da: meteora.",
         "score": [
             [
                 "c3.c5",
@@ -3306,7 +3306,7 @@
         ]
     },
     "colpo_d_impatto_1": {
-        "descrizione": "Impatto percussivo 1",
+        "descrizione": "Impatto percussivo 1. Usato da: meteora.",
         "score": [
             [
                 "f2.f1",
@@ -3324,7 +3324,7 @@
         ]
     },
     "colpo_d_impatto_2": {
-        "descrizione": "Impatto percussivo 2",
+        "descrizione": "Impatto percussivo 2. Usato da: meteora.",
         "score": [
             [
                 "a#2.a#1",
@@ -3342,7 +3342,7 @@
         ]
     },
     "colpo_d_impatto_3": {
-        "descrizione": "Impatto percussivo 3",
+        "descrizione": "Impatto percussivo 3. Usato da: meteora.",
         "score": [
             [
                 "b3.c0",
@@ -3360,7 +3360,7 @@
         ]
     },
     "colpo_d_impatto_5": {
-        "descrizione": "Impatto percussivo 5",
+        "descrizione": "Impatto percussivo 5. Usato da: meteora.",
         "score": [
             [
                 "c4.c3",
@@ -3396,7 +3396,7 @@
         ]
     },
     "colpo_d_impatto_7": {
-        "descrizione": "Impatto percussivo 7",
+        "descrizione": "Impatto percussivo 7. Usato da: meteora.",
         "score": [
             [
                 "c1.c0",
@@ -3468,7 +3468,7 @@
         ]
     },
     "melodia_del_campanello_1": {
-        "descrizione": "Melodia campanello 1",
+        "descrizione": "Melodia campanello 1. Usato da: tornello.",
         "score": [
             [
                 "e6",
@@ -3600,7 +3600,7 @@
         ]
     },
     "rifiuto": {
-        "descrizione": "Qualcosa viene rifiutato, dato fuori range, tipo non consentito, stringa troppo lunga o corta",
+        "descrizione": "Qualcosa viene rifiutato, dato fuori range, tipo non consentito, stringa troppo lunga o corta. Usato da: meteora, quinqu.",
         "score": [
             [
                 "g3.f3",
@@ -3666,7 +3666,7 @@
         ]
     },
     "roger_cw_conferma": {
-        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta sì prosegui approvato",
+        "descrizione": "conferma in cw morse r da usare per qualsiasi conferma o risposta sì prosegui approvato. Usato da: quinqu, tornello.",
         "score": [
             [
                 "e5",
@@ -3708,7 +3708,7 @@
         ]
     },
     "mostra": {
-        "descrizione": "compare un popup qualcosa viene mostrato un avviso richiede di essere visto anche una notifica un nuovo dato in una pila che vuole essere notato",
+        "descrizione": "compare un popup qualcosa viene mostrato un avviso richiede di essere visto anche una notifica un nuovo dato in una pila che vuole essere notato. Usato da: meteora, quinqu.",
         "score": [
             [
                 "f2",
@@ -3738,7 +3738,7 @@
         ]
     },
     "campanellino": {
-        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa è comparso",
+        "descrizione": "notifica breve campanellino appena discendente un dato richiede attenzione qualcosa è comparso. Usato da: gabryscola, meteora, quinqu.",
         "score": [
             [
                 "c8.c#8",
@@ -3756,7 +3756,7 @@
         ]
     },
     "grosse_biglie": {
-        "descrizione": "due grosse biglie oggetti di vetro urtano",
+        "descrizione": "due grosse biglie oggetti di vetro urtano. Usato da: meteora.",
         "score": [
             [
                 "c1.f3",
@@ -3774,7 +3774,7 @@
         ]
     },
     "lista": {
-        "descrizione": "quando compare una lunga lista di elementi da l'idea di un elenco che si riempie, una colonna che si popola di dati",
+        "descrizione": "quando compare una lunga lista di elementi da l'idea di un elenco che si riempie, una colonna che si popola di dati. Usato da: meteora, quinqu, tornello.",
         "score": [
             [
                 "d4.a6",
@@ -3894,7 +3894,7 @@
         ]
     },
     "written_ok": {
-        "descrizione": "un file è stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta",
+        "descrizione": "un file è stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta. Usato da: batnav, meteora, quinqu, tornello.",
         "score": [
             [
                 "c4",
@@ -3918,7 +3918,7 @@
         ]
     },
     "controllo_ok": {
-        "descrizione": "qualcosa ha superato un controllo ed è stato ammesso",
+        "descrizione": "qualcosa ha superato un controllo ed è stato ammesso. Usato da: meteora, quinqu.",
         "score": [
             [
                 "c4",
@@ -3948,7 +3948,7 @@
         ]
     },
     "rifiutato": {
-        "descrizione": "un valore inserito non è corretto, qualcosa viene respinto, un'azione non è la più appropriata",
+        "descrizione": "un valore inserito non è corretto, qualcosa viene respinto, un'azione non è la più appropriata. Usato da: batnav, cartella, meteora, quinqu, tornello.",
         "score": [
             [
                 "g3.d3",
@@ -3978,7 +3978,7 @@
         ]
     },
     "apertura": {
-        "descrizione": "una finestra si apre, una classifica mostrata, un elenco appare, un diagramma, una videata di risultati compaiono a schermo",
+        "descrizione": "una finestra si apre, una classifica mostrata, un elenco appare, un diagramma, una videata di risultati compaiono a schermo. Usato da: batnav, gabryscola, meteora, pokermachine, tornello.",
         "score": [
             [
                 "g5",
@@ -4014,7 +4014,7 @@
         ]
     },
     "cancellato": {
-        "descrizione": "un elemento è stato cancellato da una lista, qualcosa è scomparso dallo schermo, una lista o un elenco si è ridotto di dimensioni, un dato è diminuito",
+        "descrizione": "un elemento è stato cancellato da una lista, qualcosa è scomparso dallo schermo, una lista o un elenco si è ridotto di dimensioni, un dato è diminuito. Usato da: meteora, quinqu, tornello.",
         "score": [
             [
                 "b2.g#2",
@@ -4044,7 +4044,7 @@
         ]
     },
     "vittoria": {
-        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo è stato centrato",
+        "descrizione": "raggiunto un risultato positivo, qualcosa di buono, un obbiettivo è stato centrato. Usato da: quinqu.",
         "score": [
             [
                 "f#4",
@@ -4080,7 +4080,7 @@
         ]
     },
     "convalida0": {
-        "descrizione": "un dato è stato convalidato",
+        "descrizione": "un dato è stato convalidato. Usato da: meteora, quinqu.",
         "score": [
             [
                 "c4",
@@ -4188,7 +4188,7 @@
         ]
     },
     "salita_ideale": {
-        "descrizione": "Portamento ascendente - valore superiore all'ideale",
+        "descrizione": "Portamento ascendente - valore superiore all'ideale. Usato da: meteora, quinqu.",
         "score": [
             [
                 "c4.g4",
@@ -4206,7 +4206,7 @@
         ]
     },
     "discesa_ideale": {
-        "descrizione": "Portamento discendente - valore inferiore all'ideale",
+        "descrizione": "Portamento discendente - valore inferiore all'ideale. Usato da: meteora, quinqu.",
         "score": [
             [
                 "g4.c4",
@@ -4224,7 +4224,7 @@
         ]
     },
     "in_linea_ideale": {
-        "descrizione": "Nota stabile - valore esattamente in linea con l'ideale",
+        "descrizione": "Nota stabile - valore esattamente in linea con l'ideale. Usato da: quinqu.",
         "score": [
             [
                 "e5",
@@ -4290,7 +4290,7 @@
         ]
     },
     "salto": {
-        "descrizione": "fatto un saltello, qualcosa è stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia",
+        "descrizione": "fatto un saltello, qualcosa è stato saltato o evitato, domanda non risposta, procedura abortita, procedura semplificata, presa una scorciatoia. Usato da: meteora, tornello.",
         "score": [
             [
                 "f#3.d#6",
@@ -4314,7 +4314,7 @@
         ]
     },
     "successivo": {
-        "descrizione": "dato accettato e passo al successivo, digitazione ok, mostro il prossimo elemento, giro pagina",
+        "descrizione": "dato accettato e passo al successivo, digitazione ok, mostro il prossimo elemento, giro pagina. Usato da: meteora, tornello.",
         "score": [
             [
                 "c4",
@@ -4344,7 +4344,7 @@
         ]
     },
     "notifica": {
-        "descrizione": "una notifica compare e richiede attenzione, un elemento cambia stato e richiede attenzione",
+        "descrizione": "una notifica compare e richiede attenzione, un elemento cambia stato e richiede attenzione. Usato da: meteora, tornello.",
         "score": [
             [
                 "e7",
@@ -4980,7 +4980,7 @@
         ]
     },
     "gabryscola_gioca_carta": {
-        "descrizione": "Suono rapido per la carta giocata sul tavolo",
+        "descrizione": "Suono rapido per la carta giocata sul tavolo. Usato da: tornello.",
         "score": [
             [
                 "d5.a5",
@@ -5100,7 +5100,7 @@
         ]
     },
     "gabryscola_sconfitta": {
-        "descrizione": "Melodia discendente e triste per la sconfitta a Gabryscola",
+        "descrizione": "Melodia discendente e triste per la sconfitta a Gabryscola. Usato da: batnav.",
         "score": [
             [
                 "g4",
@@ -5226,7 +5226,7 @@
         ]
     },
     "terminata": {
-        "descrizione": "elaborazione terminata, operazione conclusa",
+        "descrizione": "elaborazione terminata, operazione conclusa. Usato da: cartella, meteora.",
         "score": [
             [
                 "a#6",
@@ -5268,7 +5268,7 @@
         ]
     },
     "fide_attesa": {
-        "descrizione": "Segnale acustico basso di attesa per ricerca FIDE",
+        "descrizione": "Segnale acustico basso di attesa per ricerca FIDE. Usato da: tornello.",
         "score": [
             [
                 "g3",
@@ -5286,7 +5286,7 @@
         ]
     },
     "fide_pronto": {
-        "descrizione": "Segnale acustico acuto di fine ricerca FIDE",
+        "descrizione": "Segnale acustico acuto di fine ricerca FIDE. Usato da: tornello.",
         "score": [
             [
                 "g6",
@@ -5304,7 +5304,7 @@
         ]
     },
     "donazione": {
-        "descrizione": "Alert allegro con frequenze alte e portamento veloce (glissando ascendente) per donazione",
+        "descrizione": "Alert allegro con frequenze alte e portamento veloce (glissando ascendente) per donazione. Usato da: terminal_beast, tornello.",
         "score": [
             [
                 "c6",
@@ -5340,7 +5340,7 @@
         ]
     },
     "spostamento_f5": {
-        "descrizione": "Spostamento focus F5 (-1 ottava)",
+        "descrizione": "Spostamento focus F5 (-1 ottava). Usato da: meteora, tornello.",
         "score": [
             [
                 "g2",
@@ -5364,7 +5364,7 @@
         ]
     },
     "spostamento_f6": {
-        "descrizione": "Spostamento focus F6 (altezza standard)",
+        "descrizione": "Spostamento focus F6 (altezza standard). Usato da: meteora, tornello.",
         "score": [
             [
                 "g3",
@@ -5388,7 +5388,7 @@
         ]
     },
     "spostamento_f7": {
-        "descrizione": "Spostamento focus F7 (+1 ottava)",
+        "descrizione": "Spostamento focus F7 (+1 ottava). Usato da: meteora, tornello.",
         "score": [
             [
                 "g4",
@@ -5412,7 +5412,7 @@
         ]
     },
     "perfect_match": {
-        "descrizione": "due accordi in portamento, premio per una risposta esatta",
+        "descrizione": "due accordi in portamento, premio per una risposta esatta. Usato da: meteora, tornello.",
         "score": [
             [
                 "c5.g5",
@@ -5484,7 +5484,7 @@
         ]
     },
     "Digitazione": {
-        "descrizione": "lettere premute su un controller",
+        "descrizione": "lettere premute su un controller. Usato da: meteora.",
         "score": [
             [
                 "f3",
@@ -5508,7 +5508,7 @@
         ]
     },
     "Laser_destra_sinistra": {
-        "descrizione": "Uno sparo laser da destra a sinistra",
+        "descrizione": "Uno sparo laser da destra a sinistra. Usato da: meteora.",
         "score": [
             [
                 "g4.a3",
@@ -5568,7 +5568,7 @@
         ]
     },
     "respiro_di_vapore": {
-        "descrizione": "sbuffo di vapore che si chiude, valvola o pistone",
+        "descrizione": "sbuffo di vapore che si chiude, valvola o pistone. Usato da: batnav.",
         "score": [
             [
                 "700-9000.2200-3600",
@@ -5604,7 +5604,7 @@
         ]
     },
     "scintillio_di_ghiaccio": {
-        "descrizione": "due scintille acute, cristallo o magia gelida",
+        "descrizione": "due scintille acute, cristallo o magia gelida. Usato da: meteora.",
         "score": [
             [
                 "5000-11000",
@@ -5730,7 +5730,7 @@
         ]
     },
     "volo_radente": {
-        "descrizione": "qualcosa passa radente da sinistra a destra e scende",
+        "descrizione": "qualcosa passa radente da sinistra a destra e scende. Usato da: batnav.",
         "score": [
             [
                 "c6.c4",
@@ -5748,7 +5748,7 @@
         ]
     },
     "passaggio_veloce": {
-        "descrizione": "sfreccia da destra a sinistra, breve e ruvido",
+        "descrizione": "sfreccia da destra a sinistra, breve e ruvido. Usato da: batnav, meteora.",
         "score": [
             [
                 "a5.d4",
@@ -5766,7 +5766,7 @@
         ]
     },
     "rimbalzo_stereo": {
-        "descrizione": "quattro rimbalzi che calano rimbalzando fra le casse",
+        "descrizione": "quattro rimbalzi che calano rimbalzando fra le casse. Usato da: meteora.",
         "score": [
             [
                 "e6",
@@ -5802,7 +5802,7 @@
         ]
     },
     "spirale_discendente": {
-        "descrizione": "discesa a spirale, gira nello stereo mentre cala",
+        "descrizione": "discesa a spirale, gira nello stereo mentre cala. Usato da: quinqu.",
         "score": [
             [
                 "g6.g5",
@@ -5850,7 +5850,7 @@
         ]
     },
     "jingle_livello_superato": {
-        "descrizione": "arpeggio che sale e si apre, un livello superato",
+        "descrizione": "arpeggio che sale e si apre, un livello superato. Usato da: batnav, gabryscola, meteora, pokermachine, quinqu.",
         "score": [
             [
                 "g4",
@@ -5886,7 +5886,7 @@
         ]
     },
     "jingle_scoperta": {
-        "descrizione": "tre note che salgono e restano sospese, una scoperta",
+        "descrizione": "tre note che salgono e restano sospese, una scoperta. Usato da: meteora.",
         "score": [
             [
                 "d5",
@@ -5916,7 +5916,7 @@
         ]
     },
     "jingle_missione_fallita": {
-        "descrizione": "tre note che scendono e una scivolata che si spegne",
+        "descrizione": "tre note che scendono e una scivolata che si spegne. Usato da: batnav, gabryscola.",
         "score": [
             [
                 "g4",
@@ -5952,7 +5952,7 @@
         ]
     },
     "fanfara_retro": {
-        "descrizione": "fanfara squadrata da videogioco antico",
+        "descrizione": "fanfara squadrata da videogioco antico. Usato da: batnav, gabryscola.",
         "score": [
             [
                 "c5",
@@ -5988,7 +5988,7 @@
         ]
     },
     "carillon_dolce": {
-        "descrizione": "quattro note di carillon che si spengono piano",
+        "descrizione": "quattro note di carillon che si spengono piano. Usato da: meteora.",
         "score": [
             [
                 "e6",
@@ -6024,7 +6024,7 @@
         ]
     },
     "arpeggio_pensoso": {
-        "descrizione": "arpeggio minore lento, attesa o riflessione",
+        "descrizione": "arpeggio minore lento, attesa o riflessione. Usato da: meteora, tornello.",
         "score": [
             [
                 "a4",
@@ -6060,7 +6060,7 @@
         ]
     },
     "doppio_tic_conferma": {
-        "descrizione": "due tic vicinissimi, conferma leggera",
+        "descrizione": "due tic vicinissimi, conferma leggera. Usato da: batnav, gabryscola, meteora, pokermachine, tornello.",
         "score": [
             [
                 "e6",
@@ -6090,7 +6090,7 @@
         ]
     },
     "errore_secco": {
-        "descrizione": "due note stonate e basse, errore senza drammi",
+        "descrizione": "due note stonate e basse, errore senza drammi. Usato da: batnav, cartella, gabryscola, meteora, pokermachine.",
         "score": [
             [
                 "b3",
@@ -6114,7 +6114,7 @@
         ]
     },
     "caricamento_in_corso": {
-        "descrizione": "tre battiti uguali che scorrono da sinistra a destra",
+        "descrizione": "tre battiti uguali che scorrono da sinistra a destra. Usato da: meteora.",
         "score": [
             [
                 "c5",
@@ -6156,7 +6156,7 @@
         ]
     },
     "annullato": {
-        "descrizione": "scivolata corta all'ingiu', operazione annullata",
+        "descrizione": "scivolata corta all'ingiu', operazione annullata. Usato da: gabryscola, meteora.",
         "score": [
             [
                 "a4.d4",
@@ -6174,7 +6174,7 @@
         ]
     },
     "moneta_raccolta": {
-        "descrizione": "due note svelte, si e' raccolto qualcosa",
+        "descrizione": "due note svelte, si e' raccolto qualcosa. Usato da: gabryscola, meteora.",
         "score": [
             [
                 "b5",
@@ -6198,7 +6198,7 @@
         ]
     },
     "scudisciata": {
-        "descrizione": "Un colpo di frusta, anche scorrimento fra elementi, anche eliminazione elemento",
+        "descrizione": "Un colpo di frusta, anche scorrimento fra elementi, anche eliminazione elemento. Usato da: batnav, meteora.",
         "score": [
             [
                 "156-184.7040-11841",
@@ -6216,7 +6216,7 @@
         ]
     },
     "Coccodrillino": {
-        "descrizione": "Un suono di conferma, anche breve impulso laser, limite raggiunto non valicabile, muro impossibile proseguire",
+        "descrizione": "Un suono di conferma, anche breve impulso laser, limite raggiunto non valicabile, muro impossibile proseguire. Usato da: meteora.",
         "score": [
             [
                 "g6.c4",
@@ -6342,7 +6342,7 @@
         ]
     },
     "carta_giocata": {
-        "descrizione": "una carta posata sul tavolo: colpo secco di cartoncino, rosa, banda che scende",
+        "descrizione": "una carta posata sul tavolo: colpo secco di cartoncino, rosa, banda che scende. Usato da: gabryscola, meteora.",
         "score": [
             [
                 "600-9000.300-2500",
@@ -6360,7 +6360,7 @@
         ]
     },
     "carta_pescata": {
-        "descrizione": "una carta sfilata dal mazzo: fruscio breve che sale, bianco",
+        "descrizione": "una carta sfilata dal mazzo: fruscio breve che sale, bianco. Usato da: gabryscola, meteora.",
         "score": [
             [
                 "300-4000.1500-12000",
@@ -6378,7 +6378,7 @@
         ]
     },
     "carta_girata": {
-        "descrizione": "una carta girata a faccia in su: sfregamento che sale, pausa, battuta sul tavolo",
+        "descrizione": "una carta girata a faccia in su: sfregamento che sale, pausa, battuta sul tavolo. Usato da: gabryscola, meteora.",
         "score": [
             [
                 "400-6000.1000-10000",
@@ -6408,7 +6408,7 @@
         ]
     },
     "mazzo_mescolato": {
-        "descrizione": "il mazzo che si mescola: raffica di sedici fruscii brevissimi di rumore azzurro che rimbalzano fra i due lati",
+        "descrizione": "il mazzo che si mescola: raffica di sedici fruscii brevissimi di rumore azzurro che rimbalzano fra i due lati. Usato da: gabryscola, meteora, pokermachine.",
         "score": [
             [
                 "1500-9000",
@@ -8052,7 +8052,7 @@
         ]
     },
     "meditimer_giro": {
-        "descrizione": "un giro registrato, il primo, senza confronti: un tic solo",
+        "descrizione": "un giro registrato, il primo, senza confronti: un tic solo. Usato da: tornello.",
         "score": [
             [
                 "a5",
@@ -8586,7 +8586,7 @@
         ]
     },
     "meditimer_banco_fase": {
-        "descrizione": "inizio di una fase del banco di prova: un tic che sale appena",
+        "descrizione": "inizio di una fase del banco di prova: un tic che sale appena. Usato da: tornello.",
         "score": [
             [
                 "c5.e5",
@@ -8682,7 +8682,7 @@
         ]
     },
     "meditimer_banco_salvato": {
-        "descrizione": "prova salvata in archivio: tre tic veloci che salgono",
+        "descrizione": "prova salvata in archivio: tre tic veloci che salgono. Usato da: tornello.",
         "score": [
             [
                 "c6",
@@ -8880,7 +8880,7 @@
         ]
     },
     "Rapida_salita-sin_des": {
-        "descrizione": "Una rapida salita da sinistra a destra. Va bene anche come conferma, cambio videata, mostro qualcosa.",
+        "descrizione": "Una rapida salita da sinistra a destra. Va bene anche come conferma, cambio videata, mostro qualcosa. Usato da: meteora.",
         "score": [
             [
                 "c3.a#7",
@@ -8898,7 +8898,7 @@
         ]
     },
     "pokermachine_coppia_gemella": {
-        "descrizione": "Poker Machine, coppia gemella: due note uguali allo specchio, una a sinistra e la sua gemella a destra, e un riflesso piu' alto",
+        "descrizione": "Poker Machine, coppia gemella: due note uguali allo specchio, una a sinistra e la sua gemella a destra, e un riflesso piu' alto. Usato da: tornello.",
         "score": [
             [
                 "d4",
@@ -11892,7 +11892,7 @@
         ]
     },
     "pokermachine_coppia_muta": {
-        "descrizione": "Poker Machine, una coppia che la sorpresa ha reso muta: due note uguali che si spengono in un tonfo",
+        "descrizione": "Poker Machine, una coppia che la sorpresa ha reso muta: due note uguali che si spengono in un tonfo. Usato da: tornello.",
         "score": [
             [
                 "c4",
@@ -12474,7 +12474,7 @@
         ]
     },
     "meteora_scendi": {
-        "descrizione": "MeTeOra, Maiuscolo+Backspace scende nella plancia fino all'ultimo ramo aperto: lo specchio di menu_triplicato_su_4, che e' Backspace che risale. Le stesse tre note di seno, mi 4, re 4 e do 4, che scendono e vanno da destra a sinistra. Va bene per ogni discesa dentro un elenco o un albero.",
+        "descrizione": "Nato per MeTeOra, che lo ha usato fino alla 1.42.2 per Maiuscolo+Backspace che scendeva nella plancia fino all'ultimo ramo aperto, e ora non lo usa piu': lo specchio di menu_triplicato_su_4, che e' Backspace che risale. Le stesse tre note di seno, mi 4, re 4 e do 4, che scendono e vanno da destra a sinistra. Va bene per ogni discesa dentro un elenco o un albero.",
         "score": [
             [
                 "e4",
@@ -12549,6 +12549,30 @@
             0.0,
             100.0,
             0.05
+        ]
+    },
+    "meteora_risali_all_antenato": {
+        "descrizione": "MeTeOra, Maiuscolo+Backspace risale di colpo al ramo antenato della plancia, l'unita' o la playlist: un salto d'ottava di onda triangolare, do 4 e do 5, il gradino lungo accanto alla tripletta di Backspace che sale un passo alla volta. Va bene per ogni ritorno in cima o salto al livello superiore.",
+        "score": [
+            [
+                "c4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            20.0,
+            80.0,
+            30.0
         ]
     }
 }
