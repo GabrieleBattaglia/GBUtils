@@ -3783,61 +3783,61 @@
                 0.0
             ],
             [
-                "d4.a6",
+                "d#4.a#6",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "e4.b6",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "f4.c7",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "f#4.c#7",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "g4.d7",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "g#4.d#7",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "a4.e7",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "b4.f#7",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "c5.g7",
                 0.1,
                 0.0,
                 0.0
             ],
             [
-                "d4.a6",
+                "c#5.g#7",
                 0.1,
                 0.0,
                 0.0
@@ -13101,6 +13101,630 @@
             10.0,
             80.0,
             30.0
+        ]
+    },
+    "meteora_velocita_su": {
+        "descrizione": "MeTeOra, il tasto D rende la riproduzione più veloce: quattro tic di onda triangolare sul si 5, al centro, sempre più ravvicinati, come un metronomo che accelera; 180 ms. Il gesto opposto è meteora_velocita_giu, quattro tic sul mi 5 che rallentano. Va bene per ogni aumento di velocità, di ritmo o di cadenza.",
+        "score": [
+            [
+                "b5",
+                0.018,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.018,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.032,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.018,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.024,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            40.0
+        ]
+    },
+    "meteora_velocita_giu": {
+        "descrizione": "MeTeOra, il tasto A rende la riproduzione più lenta: quattro tic di onda triangolare sul mi 5, al centro, sempre più distanziati, come un metronomo che rallenta; 180 ms. Il gesto opposto è meteora_velocita_su, quattro tic sul si 5 che accelerano. Va bene per ogni diminuzione di velocità, di ritmo o di cadenza.",
+        "score": [
+            [
+                "e5",
+                0.018,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.018,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.032,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.018,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.024,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            40.0
+        ]
+    },
+    "meteora_velocita_normale": {
+        "descrizione": "MeTeOra, il tasto S riporta la velocità della riproduzione al normale: tre tic di onda triangolare a passo regolare, il mi 5 a sinistra e il si 5 a destra, le note di meteora_velocita_giu e di meteora_velocita_su, che si ritrovano sul sol diesis 5 in mezzo, al centro e un po' più lungo; 170 ms. Va bene per ogni ritorno di un ritmo o di una velocità al valore normale.",
+        "score": [
+            [
+                "e5",
+                0.018,
+                -0.4,
+                0.0
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.018,
+                0.4,
+                0.0
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "g#5",
+                0.054,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            40.0
+        ]
+    },
+    "meteora_velocita_al_limite": {
+        "descrizione": "MeTeOra, la velocità della riproduzione è già al minimo o al massimo e non cambia più: due tic di onda triangolare sul do diesis 5, più gravi di quelli di meteora_velocita_su e meteora_velocita_giu, il secondo più piano, come bussare contro un muro; 80 ms. Va bene per ogni regolazione di velocità o di ritmo arrivata al fondo scala.",
+        "score": [
+            [
+                "c#5",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c#5",
+                0.025,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            40.0
+        ]
+    },
+    "meteora_tono_su": {
+        "descrizione": "MeTeOra, il tasto F alza il tono di un semitono: onda sinusoidale morbida, il la 5 che sale di un semitono al la diesis 5, al centro; 140 ms. Il gesto opposto è meteora_tono_giu, che dal la 5 scende al sol diesis 5. Va bene per ogni intonazione alzata di un passo, o per un trasporto verso l'acuto.",
+        "score": [
+            [
+                "a5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "a#5",
+                0.09,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            10.0,
+            85.0,
+            25.0
+        ]
+    },
+    "meteora_tono_giu": {
+        "descrizione": "MeTeOra, il tasto H abbassa il tono di un semitono: onda sinusoidale morbida, il la 5 che scende di un semitono al sol diesis 5, al centro; 140 ms. Il gesto opposto è meteora_tono_su, che dal la 5 sale al la diesis 5. Va bene per ogni intonazione abbassata di un passo, o per un trasporto verso il grave.",
+        "score": [
+            [
+                "a5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "g#5",
+                0.09,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            10.0,
+            85.0,
+            25.0
+        ]
+    },
+    "meteora_tono_normale": {
+        "descrizione": "MeTeOra, il tasto G riporta il tono al normale: onda sinusoidale morbida, il sol diesis 5 a sinistra e il la diesis 5 a destra, gli arrivi di meteora_tono_giu e di meteora_tono_su, che si chiudono sul la 5 in mezzo, al centro e più lungo; 160 ms. Va bene per ogni ritorno all'intonazione di partenza o a un valore centrale.",
+        "score": [
+            [
+                "g#5",
+                0.04,
+                -0.3,
+                0.0
+            ],
+            [
+                "a#5",
+                0.04,
+                0.3,
+                0.0
+            ],
+            [
+                "a5",
+                0.08,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            10.0,
+            85.0,
+            25.0
+        ]
+    },
+    "meteora_tono_al_limite": {
+        "descrizione": "MeTeOra, il tono è già a dodici semitoni sopra o sotto il normale e non cambia più: onda sinusoidale, due tocchi brevi sul la 5, la nota da cui partono meteora_tono_su e meteora_tono_giu, il secondo più piano, come bussare contro un muro; 85 ms. Va bene per ogni intonazione arrivata al fondo scala.",
+        "score": [
+            [
+                "a5",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.03,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            10.0,
+            85.0,
+            25.0
+        ]
+    },
+    "meteora_banda_precedente": {
+        "descrizione": "MeTeOra, il tasto U sceglie la banda precedente dell'equalizzatore, più grave: due soffi di rumore rosa in banda stretta, fra 1300 e 1900 Hz a destra e fra 550 e 800 Hz a sinistra, come un cursore che passa a quello accanto; 95 ms. È lo specchio di meteora_banda_successiva. Va bene per ogni spostamento verso sinistra o verso il grave fra le regolazioni di un mixer o di un equalizzatore.",
+        "score": [
+            [
+                "1300-1900",
+                0.03,
+                0.35,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "550-800",
+                0.045,
+                -0.35,
+                0.0
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "meteora_banda_successiva": {
+        "descrizione": "MeTeOra, il tasto I sceglie la banda successiva dell'equalizzatore, più acuta: due soffi di rumore rosa in banda stretta, fra 550 e 800 Hz a sinistra e fra 1300 e 1900 Hz a destra, come un cursore che passa a quello accanto; 95 ms. È lo specchio di meteora_banda_precedente. Va bene per ogni spostamento verso destra o verso l'acuto fra le regolazioni di un mixer o di un equalizzatore.",
+        "score": [
+            [
+                "550-800",
+                0.03,
+                -0.35,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "1300-1900",
+                0.045,
+                0.35,
+                0.0
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "meteora_banda_al_limite": {
+        "descrizione": "MeTeOra, U o I sono già sulla prima o sull'ultima banda dell'equalizzatore: due soffi cupi di rumore rosa fra 300 e 450 Hz, al centro, il secondo più piano, come un cursore che batte contro il fondo della sua guida; 85 ms. Va bene per ogni scelta che non può andare oltre il primo o l'ultimo elemento di una fila.",
+        "score": [
+            [
+                "300-450",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "300-450",
+                0.03,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "meteora_banda_su": {
+        "descrizione": "MeTeOra, il tasto O alza di un decibel la banda scelta dell'equalizzatore: un soffio di rumore rosa in banda stretta, al centro, che cresce di volume mentre la banda sale e si allarga, da 900-1300 a 1150-1650 Hz; 130 ms. Il gesto opposto è meteora_banda_giu, lo stesso soffio rovesciato. Va bene per ogni guadagno, livello o regolazione di timbro alzati di un passo.",
+        "score": [
+            [
+                "900-1300.1150-1650",
+                0.13,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            80.0,
+            0.0,
+            100.0,
+            15.0
+        ]
+    },
+    "meteora_banda_giu": {
+        "descrizione": "MeTeOra, il tasto P abbassa di un decibel la banda scelta dell'equalizzatore: un soffio di rumore rosa in banda stretta, al centro, che parte pieno e si spegne mentre la banda scende e si stringe, da 1150-1650 a 900-1300 Hz; 130 ms. Il gesto opposto è meteora_banda_su, lo stesso soffio rovesciato. Va bene per ogni guadagno, livello o regolazione di timbro abbassati di un passo.",
+        "score": [
+            [
+                "1150-1650.900-1300",
+                0.13,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            15.0,
+            0.0,
+            100.0,
+            80.0
+        ]
+    },
+    "meteora_guadagno_al_limite": {
+        "descrizione": "MeTeOra, la banda scelta dell'equalizzatore è già a più 12 o a meno 12 dB e non cambia più: due soffi chiari di rumore rosa fra 2400 e 3600 Hz, al centro, il secondo più piano, come una manopola che batte contro il fermo; 85 ms. Va bene per ogni guadagno o livello arrivato al fondo scala.",
+        "score": [
+            [
+                "2400-3600",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "2400-3600",
+                0.03,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "meteora_banda_azzerata": {
+        "descrizione": "MeTeOra, la E accentata riporta a zero la banda scelta dell'equalizzatore: un soffio di rumore rosa al centro, che parte stretto fra 1000 e 1400 Hz e si allarga fino a 300-5000 Hz mentre si spegne, un picco che si appiattisce; 150 ms. Va bene per ogni regolazione singola rimessa al valore neutro.",
+        "score": [
+            [
+                "1000-1400.300-5000",
+                0.15,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            50.0
+        ]
+    },
+    "meteora_bande_azzerate": {
+        "descrizione": "MeTeOra, Maiuscolo con la E accentata riporta a zero tutte le bande dell'equalizzatore: tre soffi di rumore rosa, grave a sinistra, medio al centro e acuto a destra, ciascuno stretto all'inizio e largo alla fine, tre picchi che si appiattiscono uno dopo l'altro; 230 ms. È il gesto di meteora_banda_azzerata steso su tutto lo spettro. Va bene per azzerare insieme tutte le regolazioni di un mixer o di un equalizzatore.",
+        "score": [
+            [
+                "200-320.80-1200",
+                0.07,
+                -0.5,
+                0.0
+            ],
+            [
+                "900-1300.300-5000",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "4000-6000.1500-12000",
+                0.09,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            50.0
+        ]
+    },
+    "meteora_dissolvenza_accesa": {
+        "descrizione": "MeTeOra, il tasto L accende la dissolvenza incrociata fra un brano e l'altro: onda a dente di sega, un mi 4 a sinistra che svanisce e un do diesis 5 a destra, una sesta più su, che nasce dal silenzio, il brano che esce e quello che entra; 220 ms. Il gesto opposto è meteora_dissolvenza_spenta. Va bene per accendere ogni passaggio morbido, sfumatura o transizione.",
+        "score": [
+            [
+                "e4.p",
+                0.11,
+                -0.5,
+                -0.05
+            ],
+            [
+                "p.c#5",
+                0.11,
+                0.5,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            0.0,
+            100.0,
+            3.0
+        ]
+    },
+    "meteora_dissolvenza_spenta": {
+        "descrizione": "MeTeOra, il tasto L spegne la dissolvenza incrociata, e i brani tornano a cambiare di netto: onda a dente di sega, il do diesis 5 a destra e il mi 4 a sinistra, le note di meteora_dissolvenza_accesa al contrario, staccate e senza sfumare; 160 ms. Va bene per spegnere ogni passaggio morbido o per tornare ai tagli netti.",
+        "score": [
+            [
+                "c#5",
+                0.06,
+                0.5,
+                -0.05
+            ],
+            [
+                "e4",
+                0.1,
+                -0.5,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "meteora_dissolvenza_durata": {
+        "descrizione": "MeTeOra, Maiuscolo con L imposta la durata della dissolvenza incrociata: onda a dente di sega, un fa diesis 5 che nasce dal silenzio a sinistra, cresce venendo al centro e svanisce verso destra, la sfumatura intera in un arco solo; 300 ms. È della stessa famiglia di meteora_dissolvenza_accesa. Va bene per ogni durata, tempo di transizione o lunghezza di sfumatura impostati.",
+        "score": [
+            [
+                "p.f#5",
+                0.12,
+                "-0.6.0",
+                -0.05
+            ],
+            [
+                "f#5.p",
+                0.18,
+                "0.0.6",
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.0,
+            0.0,
+            100.0,
+            0.0
+        ]
+    },
+    "nuovo_preset0": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "f3.a3",
+                0.18,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "a3.f3",
+                0.18,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
+    },
+    "spugna": {
+        "descrizione": "Suono per cancellazione rapida di qualcosa, eliminazione, pulizia, sgombro",
+        "score": [
+            [
+                "e3.g#3",
+                0.18,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "a3.f3",
+                0.18,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
         ]
     }
 }
