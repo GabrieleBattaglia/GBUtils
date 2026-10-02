@@ -13678,5 +13678,245 @@
             100.0,
             0.002
         ]
+    },
+    "meteora_video_acceso": {
+        "descrizione": "MeTeOra, Maiuscolo con F1 accende il video, che si vedrà in una finestra a parte: onda triangolare, un arpeggio di do maggiore che sale da sinistra a destra, do 5, mi 5, sol 5, e un do 6 al centro, come un proiettore che si accende; 280 ms. Il gesto opposto è meteora_video_spento. Va bene per accendere ogni immagine, schermo o finestra che si apre.",
+        "score": [
+            [
+                "c5",
+                0.06,
+                -0.5,
+                -0.05
+            ],
+            [
+                "e5",
+                0.06,
+                0.0,
+                -0.05
+            ],
+            [
+                "g5",
+                0.06,
+                0.5,
+                -0.05
+            ],
+            [
+                "c6",
+                0.1,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_video_spento": {
+        "descrizione": "MeTeOra, Maiuscolo con F1 spegne il video, e dei video si sente solo l'audio: onda triangolare, l'arpeggio di meteora_video_acceso al contrario, do 6 al centro, sol 5 a destra, mi 5 al centro e do 5 a sinistra, che scende e si chiude; 280 ms. Va bene per spegnere ogni immagine o schermo.",
+        "score": [
+            [
+                "c6",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "g5",
+                0.06,
+                0.5,
+                -0.05
+            ],
+            [
+                "e5",
+                0.06,
+                0.0,
+                -0.05
+            ],
+            [
+                "c5",
+                0.1,
+                -0.5,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            25.0
+        ]
+    },
+    "meteora_sottotitoli_accesi": {
+        "descrizione": "MeTeOra, Maiuscolo con F2 accende i sottotitoli letti, o passa alla traccia seguente: sinusoide, due glissando brevi al centro che salgono, da la 5 a do 6 e da la 5 a mi 6, separati da una pausa di 30 ms, come due parole dette con la voce che sale; 190 ms. Il gesto opposto è meteora_sottotitoli_spenti. Va bene per ogni testo che comincia a essere letto.",
+        "score": [
+            [
+                "a5.c6",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "a5.e6",
+                0.09,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_sottotitoli_spenti": {
+        "descrizione": "MeTeOra, Maiuscolo con F2 spegne i sottotitoli letti: sinusoide, i due glissando di meteora_sottotitoli_accesi al contrario, da mi 6 a la 5 e da do 6 a la 5, che scendono, come una voce che tace; 190 ms. Va bene per ogni lettura che si ferma.",
+        "score": [
+            [
+                "e6.a5",
+                0.09,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c6.a5",
+                0.07,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_traccia_audio": {
+        "descrizione": "MeTeOra, Maiuscolo con F3 passa alla traccia audio seguente del video: onda triangolare, sol 4 a sinistra, si 4 al centro e re 5 a destra, tre note brevi che girano come una giostra; 150 ms. Va bene per ogni scelta a giro fra alternative.",
+        "score": [
+            [
+                "g4",
+                0.05,
+                -0.7,
+                -0.05
+            ],
+            [
+                "b4",
+                0.05,
+                0.0,
+                -0.05
+            ],
+            [
+                "d5",
+                0.05,
+                0.7,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            15.0
+        ]
+    },
+    "meteora_schermo_intero": {
+        "descrizione": "MeTeOra, Maiuscolo con F5 mette il video a schermo intero: sinusoide, un do 5 al centro e poi un sol 5 a sinistra e a destra, la nota che si apre e si allarga ai due lati; 180 ms. Il gesto opposto è meteora_schermo_in_finestra. Va bene per ogni cosa che si allarga o si ingrandisce.",
+        "score": [
+            [
+                "c5",
+                0.06,
+                0.0,
+                -0.05
+            ],
+            [
+                "g5",
+                0.06,
+                -0.8,
+                -0.05
+            ],
+            [
+                "g5",
+                0.06,
+                0.8,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_schermo_in_finestra": {
+        "descrizione": "MeTeOra, Maiuscolo con F5 riporta il video in finestra: sinusoide, il sol 5 a destra e a sinistra e poi il do 5 al centro, meteora_schermo_intero al contrario, che si richiude; 180 ms. Va bene per ogni cosa che si restringe o torna al suo posto.",
+        "score": [
+            [
+                "g5",
+                0.06,
+                0.8,
+                -0.05
+            ],
+            [
+                "g5",
+                0.06,
+                -0.8,
+                -0.05
+            ],
+            [
+                "c5",
+                0.06,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_rapporto": {
+        "descrizione": "MeTeOra, Maiuscolo con F6 cambia il rapporto dell'immagine del video, a giro: dente di sega morbido, un glissando di quarta al centro, da mi 5 a la 5, come un'immagine che si stira; 120 ms. Va bene per ogni proporzione o formato che cambia.",
+        "score": [
+            [
+                "e5.a5",
+                0.12,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            30.0
+        ]
     }
 }
