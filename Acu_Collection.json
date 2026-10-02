@@ -1662,7 +1662,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_2": {
-        "descrizione": "Notifica breve di interfaccia: due note di seno che scendono di una terza minore, re diesis 6 e do 6, in 150 ms. Un avviso discreto, che chiude verso il basso.",
+        "descrizione": "Notifica breve di interfaccia: due note di seno che scendono di una terza minore, re diesis 6 e do 6, in 150 ms. Un avviso discreto, che chiude verso il basso. Usato da: meteora.",
         "score": [
             [
                 "d#6",
@@ -1686,7 +1686,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_3": {
-        "descrizione": "Notifica breve di interfaccia: due note di seno che salgono di una nona, da fa diesis 6 a sol diesis 7, in 150 ms. Un avviso squillante, che si apre verso l'alto.",
+        "descrizione": "Notifica breve di interfaccia: due note di seno che salgono di una nona, da fa diesis 6 a sol diesis 7, in 150 ms. Un avviso squillante, che si apre verso l'alto. Usato da: meteora.",
         "score": [
             [
                 "f#6",
