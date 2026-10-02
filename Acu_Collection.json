@@ -1662,7 +1662,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_2": {
-        "descrizione": "Notifica breve di interfaccia: due note di seno che scendono di una terza minore, re diesis 6 e do 6, in 150 ms. Un avviso discreto, che chiude verso il basso. Usato da: meteora.",
+        "descrizione": "Notifica breve di interfaccia: due note di seno che scendono di una terza minore, re diesis 6 e do 6, in 150 ms. Un avviso discreto, che chiude verso il basso.",
         "score": [
             [
                 "d#6",
@@ -1686,7 +1686,7 @@
         ]
     },
     "notifica_tramite_interfaccia_utente_3": {
-        "descrizione": "Notifica breve di interfaccia: due note di seno che salgono di una nona, da fa diesis 6 a sol diesis 7, in 150 ms. Un avviso squillante, che si apre verso l'alto. Usato da: meteora.",
+        "descrizione": "Notifica breve di interfaccia: due note di seno che salgono di una nona, da fa diesis 6 a sol diesis 7, in 150 ms. Un avviso squillante, che si apre verso l'alto.",
         "score": [
             [
                 "f#6",
@@ -3288,7 +3288,7 @@
         ]
     },
     "colpo_d_impatto_1": {
-        "descrizione": "Colpo d'impatto, un tonfo cupo e brevissimo: dente di sega che cade di un'ottava, da fa 2 a fa 1, in 60 ms, con attacco istantaneo e decadimento fino al silenzio. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto, un tonfo cupo e brevissimo: dente di sega che cade di un'ottava, da fa 2 a fa 1, in 60 ms, con attacco istantaneo e decadimento fino al silenzio.",
         "score": [
             [
                 "f2.f1",
@@ -3306,7 +3306,7 @@
         ]
     },
     "colpo_d_impatto_2": {
-        "descrizione": "Colpo d'impatto, un tonfo secco appena più lungo dell'1: dente di sega che cade di un'ottava, da la diesis 2 a la diesis 1, in 70 ms, con attacco istantaneo e decadimento fino al silenzio. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto, un tonfo secco appena più lungo dell'1: dente di sega che cade di un'ottava, da la diesis 2 a la diesis 1, in 70 ms, con attacco istantaneo e decadimento fino al silenzio.",
         "score": [
             [
                 "a#2.a#1",
@@ -13373,8 +13373,8 @@
             25.0
         ]
     },
-    "meteora_banda_precedente": {
-        "descrizione": "MeTeOra, il tasto U sceglie la banda precedente dell'equalizzatore, più grave: due soffi di rumore rosa in banda stretta, fra 1300 e 1900 Hz a destra e fra 550 e 800 Hz a sinistra, come un cursore che passa a quello accanto; 95 ms. È lo specchio di meteora_banda_successiva. Va bene per ogni spostamento verso sinistra o verso il grave fra le regolazioni di un mixer o di un equalizzatore.",
+    "banda_precedente": {
+        "descrizione": "Due soffi di rumore rosa in banda stretta, fra 1300 e 1900 Hz a destra e fra 550 e 800 Hz a sinistra, come un cursore che passa a quello accanto verso sinistra; 95 ms. È lo specchio di meteora_loop_a_messo. Va bene per ogni spostamento verso sinistra o verso il grave fra le regolazioni di un mixer o di un equalizzatore.",
         "score": [
             [
                 "1300-1900",
@@ -13403,8 +13403,8 @@
             40.0
         ]
     },
-    "meteora_banda_successiva": {
-        "descrizione": "MeTeOra, il tasto I sceglie la banda successiva dell'equalizzatore, più acuta: due soffi di rumore rosa in banda stretta, fra 550 e 800 Hz a sinistra e fra 1300 e 1900 Hz a destra, come un cursore che passa a quello accanto; 95 ms. È lo specchio di meteora_banda_precedente. Va bene per ogni spostamento verso destra o verso l'acuto fra le regolazioni di un mixer o di un equalizzatore.",
+    "meteora_loop_a_messo": {
+        "descrizione": "MeTeOra, Maiuscolo con X mette il punto A del loop A-B: due soffi di rumore rosa in banda stretta, fra 550 e 800 Hz a sinistra e fra 1300 e 1900 Hz a destra, come un cursore che parte verso destra; 95 ms. Fino alla 1.55.2 era il suono di I, la banda successiva dell'equalizzatore; il suo specchio è banda_precedente. Va bene per l'inizio di un intervallo o di una selezione.",
         "score": [
             [
                 "550-800",
@@ -13463,8 +13463,8 @@
             40.0
         ]
     },
-    "meteora_banda_su": {
-        "descrizione": "MeTeOra, il tasto O alza di un decibel la banda scelta dell'equalizzatore: un soffio di rumore rosa in banda stretta, al centro, che cresce di volume mentre la banda sale e si allarga, da 900-1300 a 1150-1650 Hz; 130 ms. Il gesto opposto è meteora_banda_giu, lo stesso soffio rovesciato. Va bene per ogni guadagno, livello o regolazione di timbro alzati di un passo.",
+    "meteora_loop_b_messo": {
+        "descrizione": "MeTeOra, Maiuscolo con X mette il punto B e chiude il loop A-B: un soffio di rumore rosa in banda stretta, al centro, che cresce di volume mentre la banda sale e si allarga, da 900-1300 a 1150-1650 Hz; 130 ms. Fino alla 1.55.2 era il suono di O. Il gesto opposto è meteora_loop_tolto, lo stesso soffio rovesciato. Va bene per la chiusura di un intervallo, o per un passo che sale.",
         "score": [
             [
                 "900-1300.1150-1650",
@@ -13481,8 +13481,8 @@
             15.0
         ]
     },
-    "meteora_banda_giu": {
-        "descrizione": "MeTeOra, il tasto P abbassa di un decibel la banda scelta dell'equalizzatore: un soffio di rumore rosa in banda stretta, al centro, che parte pieno e si spegne mentre la banda scende e si stringe, da 1150-1650 a 900-1300 Hz; 130 ms. Il gesto opposto è meteora_banda_su, lo stesso soffio rovesciato. Va bene per ogni guadagno, livello o regolazione di timbro abbassati di un passo.",
+    "meteora_loop_tolto": {
+        "descrizione": "MeTeOra, Maiuscolo con X toglie il loop A-B: un soffio di rumore rosa in banda stretta, al centro, che parte pieno e si spegne mentre la banda scende e si stringe, da 1150-1650 a 900-1300 Hz; 130 ms. Fino alla 1.55.2 era il suono di P. Il gesto opposto è meteora_loop_b_messo, lo stesso soffio rovesciato. Va bene per ogni cosa che si toglie o si scioglie, o per un passo che scende.",
         "score": [
             [
                 "1150-1650.900-1300",
