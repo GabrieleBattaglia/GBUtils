@@ -14152,5 +14152,83 @@
             100.0,
             20.0
         ]
+    },
+    "meteora_tag_letti": {
+        "descrizione": "MeTeOra, F11 scrive nella console i tag di un file: sinusoide, due sol 5 staccati e un re 6, come due voci di un elenco e la riga che le segue; 150 ms. Va bene per ogni scheda o elenco di dati letto.",
+        "score": [
+            [
+                "g5",
+                0.03,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.03,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.05,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_tag_cambiato": {
+        "descrizione": "MeTeOra, un tag scritto nel file, come il titolo o l'album: onda triangolare, una scivolata dal fa 5 al do 6, come una scritta che si aggiorna; 120 ms. Lo specchio e' meteora_tag_cancellato. Va bene per ogni dato salvato in un file.",
+        "score": [
+            [
+                "f5.c6",
+                0.12,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_tag_cancellato": {
+        "descrizione": "MeTeOra, un tag tolto dal file con il campo vuoto: onda triangolare, una scivolata dal do 6 al fa 5, meteora_tag_cambiato al contrario; 120 ms. Va bene per ogni dato tolto da un file.",
+        "score": [
+            [
+                "c6.f5",
+                0.12,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
     }
 }
