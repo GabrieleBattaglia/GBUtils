@@ -13918,5 +13918,53 @@
             100.0,
             30.0
         ]
+    },
+    "meteora_percorso_aggiunto": {
+        "descrizione": "MeTeOra, un percorso di rete aggiunto a Questa rete: onda triangolare, un re 5 a destra e un la 5 al centro, una quinta che sale e arriva, come una cartella lontana che si avvicina; 140 ms. Il gesto opposto è meteora_percorso_tolto. Va bene per ogni collegamento, indirizzo o segnalibro che si aggiunge.",
+        "score": [
+            [
+                "d5",
+                0.05,
+                0.6,
+                -0.05
+            ],
+            [
+                "a5",
+                0.09,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_percorso_tolto": {
+        "descrizione": "MeTeOra, un percorso di rete tolto da Questa rete: onda triangolare, il la 5 al centro e il re 5 a destra, meteora_percorso_aggiunto al contrario, una quinta che scende e se ne va; 140 ms. Va bene per ogni collegamento o segnalibro che si toglie.",
+        "score": [
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.05
+            ],
+            [
+                "d5",
+                0.09,
+                0.6,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
     }
 }
