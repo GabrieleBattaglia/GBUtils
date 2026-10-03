@@ -14032,5 +14032,95 @@
             100.0,
             20.0
         ]
+    },
+    "meteora_annullamento": {
+        "descrizione": "MeTeOra, un'operazione annullata da chi usa il programma, con Esc in un campo o con No a una domanda: sinusoide, la 4, sol diesis 4 e sol 4 al centro, tre passi di semitono che scendono e si spengono, come un passo indietro; 200 ms. È un'altra cosa da annullato, che in MeTeOra è lo stop. Va bene per ogni domanda a cui si risponde di no.",
+        "score": [
+            [
+                "a4",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "g#4",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "g4",
+                0.1,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            25.0
+        ]
+    },
+    "meteora_ramo_aggiornato": {
+        "descrizione": "MeTeOra, un ramo della plancia riletto da capo con Aggiorna, per esempio Questo PC o una cartella: onda triangolare, re 5 e la 5 due volte, al centro, rapidi come le due frecce che girano in tondo dell'aggiornamento; 200 ms. Va bene per ogni elenco riletto da capo.",
+        "score": [
+            [
+                "d5",
+                0.04,
+                0.0,
+                -0.08
+            ],
+            [
+                "a5",
+                0.04,
+                0.0,
+                -0.08
+            ],
+            [
+                "d5",
+                0.04,
+                0.0,
+                -0.08
+            ],
+            [
+                "a5",
+                0.08,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_video_nascosto": {
+        "descrizione": "MeTeOra, Esc nella finestra del video la nasconde per il brano in corso, e il video resta acceso per i brani dopo: sinusoide, do 6 al centro e do 5 a sinistra, un'ottava che scende e si sposta di lato, come una finestra che si fa da parte; 150 ms. Va bene per ogni pannello che si ritira senza spegnersi.",
+        "score": [
+            [
+                "c6",
+                0.05,
+                0.0,
+                -0.1
+            ],
+            [
+                "c5",
+                0.1,
+                -0.6,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            25.0
+        ]
     }
 }
