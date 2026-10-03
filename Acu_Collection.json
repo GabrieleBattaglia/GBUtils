@@ -14122,5 +14122,35 @@
             100.0,
             25.0
         ]
+    },
+    "meteora_file_rinominato": {
+        "descrizione": "MeTeOra, Rinomina file: il file cambia nome sul disco. Sinusoide, mi 5 a sinistra, la 5 al centro e mi 6 a destra, una quarta e una quinta che salgono scorrendo da sinistra a destra, come un'etichetta riscritta; 180 ms. Va bene per ogni nome cambiato su un disco.",
+        "score": [
+            [
+                "e5",
+                0.05,
+                -0.4,
+                -0.08
+            ],
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "e6",
+                0.08,
+                0.4,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
     }
 }
