@@ -13966,5 +13966,71 @@
             100.0,
             20.0
         ]
+    },
+    "meteora_scaricamento_avviato": {
+        "descrizione": "MeTeOra, comincia uno scaricamento, per esempio FluidSynth o un banco di suoni per i MIDI: sinusoide, sol 5, re 5 e sol 4 al centro, tre note che scendono come qualcosa che arriva dall'alto; 180 ms. Il gesto che lo chiude è meteora_scaricamento_finito. Va bene per ogni trasferimento che comincia.",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "d5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "g4",
+                0.08,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_scaricamento_finito": {
+        "descrizione": "MeTeOra, uno scaricamento finito e controllato: sinusoide, un arpeggio di sol maggiore che sale al centro, sol 4, si 4, re 5 e sol 5, come una cosa arrivata al suo posto; 250 ms. Va bene per ogni trasferimento completato.",
+        "score": [
+            [
+                "g4",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "b4",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "d5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "g5",
+                0.1,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
     }
 }
