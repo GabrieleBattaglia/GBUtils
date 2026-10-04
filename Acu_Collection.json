@@ -14344,5 +14344,71 @@
             100.0,
             0.05
         ]
+    },
+    "meteora_passata_avviata": {
+        "descrizione": "MeTeOra, comincia la passata in anticipo dei sottotitoli impressi: tre note brevi di onda triangolare, do 5, mi 5 e sol 5, che salgono da sinistra a destra, come un lavoro che parte. Va bene per l'avvio di ogni elaborazione lunga in sottofondo.",
+        "score": [
+            [
+                "c5",
+                0.08,
+                -0.3,
+                -0.05
+            ],
+            [
+                "e5",
+                0.08,
+                0.0,
+                -0.05
+            ],
+            [
+                "g5",
+                0.08,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_passata_finita": {
+        "descrizione": "MeTeOra, la passata dei sottotitoli impressi e' finita e il file e' pronto: un arpeggio di seno, sol 5, do 6, mi 6 e sol 6, l'ultima piu' lunga, come una cosa pronta. Va bene per la fine di ogni elaborazione lunga riuscita.",
+        "score": [
+            [
+                "g5",
+                0.1,
+                -0.2,
+                0.0
+            ],
+            [
+                "c6",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.1,
+                0.2,
+                0.0
+            ],
+            [
+                "g6",
+                0.3,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
