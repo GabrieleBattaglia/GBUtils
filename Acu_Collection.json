@@ -14230,5 +14230,119 @@
             100.0,
             20.0
         ]
+    },
+    "meteora_plancia_chiusa": {
+        "descrizione": "MeTeOra, Maiuscolo con F9 chiude tutta la plancia: la tripletta di F9 (menu_tripletta_gi_7) che continua a scendere, cinque note di dente di sega, do 6, la diesis 5, sol diesis 5, fa diesis 5 e mi 5, da sinistra a destra. Va bene per ogni chiusura generale, un riordino completo.",
+        "score": [
+            [
+                "c6",
+                0.09,
+                -0.4,
+                0.0
+            ],
+            [
+                "a#5",
+                0.09,
+                -0.2,
+                0.0
+            ],
+            [
+                "g#5",
+                0.09,
+                0.0,
+                0.0
+            ],
+            [
+                "f#5",
+                0.09,
+                0.2,
+                0.0
+            ],
+            [
+                "e5",
+                0.16,
+                0.4,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
+    },
+    "meteora_plancia_in_apertura": {
+        "descrizione": "MeTeOra, Maiuscolo con F10 comincia ad aprire tutta la plancia: due note staccate di onda triangolare, sol diesis 5 e do 6, che annunciano un lavoro lungo. Va bene per l'inizio di ogni operazione che richiede tempo.",
+        "score": [
+            [
+                "g#5",
+                0.12,
+                -0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.12,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "meteora_plancia_aperta": {
+        "descrizione": "MeTeOra, Maiuscolo con F10 ha finito di aprire tutta la plancia: lo specchio di meteora_plancia_chiusa, le stesse cinque note di dente di sega che salgono, mi 5, fa diesis 5, sol diesis 5, la diesis 5 e do 6. Va bene per la fine di ogni apertura completa o dispiegamento.",
+        "score": [
+            [
+                "e5",
+                0.09,
+                -0.4,
+                0.0
+            ],
+            [
+                "f#5",
+                0.09,
+                -0.2,
+                0.0
+            ],
+            [
+                "g#5",
+                0.09,
+                0.0,
+                0.0
+            ],
+            [
+                "a#5",
+                0.09,
+                0.2,
+                0.0
+            ],
+            [
+                "c6",
+                0.16,
+                0.4,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            0.005,
+            0.0,
+            100.0,
+            0.05
+        ]
     }
 }
