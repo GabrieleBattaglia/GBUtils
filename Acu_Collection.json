@@ -3630,7 +3630,7 @@
         ]
     },
     "super_salita": {
-        "descrizione": "portamento che sale rapidamente",
+        "descrizione": "portamento che sale rapidamente. Usato da: meteora.",
         "score": [
             [
                 "c2.g8",
