@@ -5286,7 +5286,7 @@
         ]
     },
     "donazione": {
-        "descrizione": "Alert allegro con frequenze alte e portamento veloce (glissando ascendente) per donazione. Usato da: terminal_beast, tornello.",
+        "descrizione": "Alert allegro con frequenze alte e portamento veloce (glissando ascendente) per donazione. Usato da: meteora, terminal_beast, tornello.",
         "score": [
             [
                 "c6",
