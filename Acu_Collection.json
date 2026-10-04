@@ -7938,7 +7938,7 @@
         ]
     },
     "meditimer_cronometro_pausa": {
-        "descrizione": "il cronometro si ferma in pausa: due note corte che scendono",
+        "descrizione": "il cronometro si ferma in pausa: due note corte che scendono. Usato da: meteora.",
         "score": [
             [
                 "c6",
@@ -7962,7 +7962,7 @@
         ]
     },
     "meditimer_cronometro_ripreso": {
-        "descrizione": "il cronometro riparte dalla pausa: tre note veloci che salgono",
+        "descrizione": "il cronometro riparte dalla pausa: tre note veloci che salgono. Usato da: meteora.",
         "score": [
             [
                 "e5",
