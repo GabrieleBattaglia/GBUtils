@@ -4344,7 +4344,7 @@
         ]
     },
     "eliminato": {
-        "descrizione": "qualsiasi oggetto è stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta",
+        "descrizione": "qualsiasi oggetto è stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta. Usato da: meteora.",
         "score": [
             [
                 "f4.d7",
@@ -7992,7 +7992,7 @@
         ]
     },
     "meditimer_cronometro_fermato": {
-        "descrizione": "stop del cronometro: due note basse e morbide che si spengono",
+        "descrizione": "stop del cronometro: due note basse e morbide che si spengono. Usato da: meteora.",
         "score": [
             [
                 "a4",
@@ -8052,7 +8052,7 @@
         ]
     },
     "meditimer_giro_piu_veloce": {
-        "descrizione": "giro più veloce del precedente: due tic che salgono",
+        "descrizione": "giro più veloce del precedente: due tic che salgono. Usato da: meteora.",
         "score": [
             [
                 "e5",
@@ -8076,7 +8076,7 @@
         ]
     },
     "meditimer_giro_piu_lento": {
-        "descrizione": "giro più lento del precedente: due tic che scendono",
+        "descrizione": "giro più lento del precedente: due tic che scendono. Usato da: meteora.",
         "score": [
             [
                 "a5",
@@ -8130,7 +8130,7 @@
         ]
     },
     "meditimer_giro_uguale": {
-        "descrizione": "giro uguale al precedente: tre tic uguali e fitti",
+        "descrizione": "giro uguale al precedente: tre tic uguali e fitti. Usato da: meteora.",
         "score": [
             [
                 "g5",
@@ -8370,7 +8370,7 @@
         ]
     },
     "meditimer_timer_impostato": {
-        "descrizione": "timer impostato: una scivolata che sale e si posa su un tic",
+        "descrizione": "timer impostato: una scivolata che sale e si posa su un tic. Usato da: meteora.",
         "score": [
             [
                 "c5.g5",
@@ -8448,7 +8448,7 @@
         ]
     },
     "meditimer_annullato": {
-        "descrizione": "timer o sveglia annullati: una scivolata verso il basso",
+        "descrizione": "timer o sveglia annullati: una scivolata verso il basso. Usato da: meteora.",
         "score": [
             [
                 "g5.c5",
@@ -8664,7 +8664,7 @@
         ]
     },
     "meditimer_banco_salvato": {
-        "descrizione": "prova salvata in archivio: tre tic veloci che salgono. Usato da: tornello.",
+        "descrizione": "prova salvata in archivio: tre tic veloci che salgono. Usato da: meteora, tornello.",
         "score": [
             [
                 "c6",
