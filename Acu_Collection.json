@@ -150,7 +150,7 @@
         ]
     },
     "conferma": {
-        "descrizione": "Conferma rapida di seno: due note acute che scendono, sol 6 e mi 6, una pausa e un punto acutissimo di fa 7, in 220 ms. Va bene per un'operazione riuscita o un controllo superato. Usato da: clz, meteora.",
+        "descrizione": "Conferma rapida di seno: due note acute che scendono, sol 6 e mi 6, una pausa e un punto acutissimo di fa 7, in 220 ms. Va bene per un'operazione riuscita o un controllo superato. Usato da: clz, mess, meteora.",
         "score": [
             [
                 "g6",
@@ -228,7 +228,7 @@
         ]
     },
     "aggiunta_giocatore": {
-        "descrizione": "Qualcosa che viene aggiunto ad un elenco. Usato da: meteora.",
+        "descrizione": "Qualcosa che viene aggiunto ad un elenco. Usato da: mess, meteora.",
         "score": [
             [
                 "c4.c7",
@@ -246,7 +246,7 @@
         ]
     },
     "espelli": {
-        "descrizione": "Qualcosa esce da un elenco: un fischio di seno che precipita di tre ottave, da do 7 a do 4, in 100 ms. Va bene per togliere una voce, espellere o scartare. Usato da: meteora, tornello.",
+        "descrizione": "Qualcosa esce da un elenco: un fischio di seno che precipita di tre ottave, da do 7 a do 4, in 100 ms. Va bene per togliere una voce, espellere o scartare. Usato da: mess, meteora, tornello.",
         "score": [
             [
                 "c7.c4",
@@ -1038,7 +1038,7 @@
         ]
     },
     "sirena_d_allarme_1": {
-        "descrizione": "Sirena allarme velocità 0.15",
+        "descrizione": "Sirena allarme velocità 0.15. Usato da: mess.",
         "score": [
             [
                 "c5.g5",
@@ -3900,7 +3900,7 @@
         ]
     },
     "controllo_ok": {
-        "descrizione": "qualcosa ha superato un controllo ed è stato ammesso. Usato da: meteora, quinqu.",
+        "descrizione": "qualcosa ha superato un controllo ed è stato ammesso. Usato da: mess, meteora, quinqu.",
         "score": [
             [
                 "c4",
@@ -3960,7 +3960,7 @@
         ]
     },
     "apertura": {
-        "descrizione": "una finestra si apre, una classifica mostrata, un elenco appare, un diagramma, una videata di risultati compaiono a schermo. Usato da: batnav, gabryscola, meteora, pokermachine, tornello.",
+        "descrizione": "una finestra si apre, una classifica mostrata, un elenco appare, un diagramma, una videata di risultati compaiono a schermo. Usato da: batnav, gabryscola, mess, meteora, pokermachine, tornello.",
         "score": [
             [
                 "g5",
@@ -5208,7 +5208,7 @@
         ]
     },
     "terminata": {
-        "descrizione": "elaborazione terminata, operazione conclusa. Usato da: cartella, meteora.",
+        "descrizione": "elaborazione terminata, operazione conclusa. Usato da: cartella, mess, meteora.",
         "score": [
             [
                 "a#6",
@@ -5286,7 +5286,7 @@
         ]
     },
     "donazione": {
-        "descrizione": "Alert allegro con frequenze alte e portamento veloce (glissando ascendente) per donazione. Usato da: meteora, terminal_beast, tornello.",
+        "descrizione": "Alert allegro con frequenze alte e portamento veloce (glissando ascendente) per donazione. Usato da: mess, meteora, terminal_beast, tornello.",
         "score": [
             [
                 "c6",
@@ -5322,7 +5322,7 @@
         ]
     },
     "spostamento_f5": {
-        "descrizione": "Spostamento del fuoco, grave: due tocchi di seno brevissimi, sol 2 e mi 3, in 60 ms. È spostamento_f6 un'ottava sotto; insieme a f6 e f7 distingue tre aree in cui il fuoco può andare. Usato da: meteora, tornello.",
+        "descrizione": "Spostamento del fuoco, grave: due tocchi di seno brevissimi, sol 2 e mi 3, in 60 ms. È spostamento_f6 un'ottava sotto; insieme a f6 e f7 distingue tre aree in cui il fuoco può andare. Usato da: mess, meteora, tornello.",
         "score": [
             [
                 "g2",
@@ -5370,7 +5370,7 @@
         ]
     },
     "spostamento_f7": {
-        "descrizione": "Spostamento del fuoco, acuto: due tocchi di seno brevissimi, sol 4 e mi 5, in 60 ms. È spostamento_f6 un'ottava sopra; insieme a f5 e f6 distingue tre aree in cui il fuoco può andare. Usato da: meteora, tornello.",
+        "descrizione": "Spostamento del fuoco, acuto: due tocchi di seno brevissimi, sol 4 e mi 5, in 60 ms. È spostamento_f6 un'ottava sopra; insieme a f5 e f6 distingue tre aree in cui il fuoco può andare. Usato da: mess, meteora, tornello.",
         "score": [
             [
                 "g4",
@@ -5586,7 +5586,7 @@
         ]
     },
     "scintillio_di_ghiaccio": {
-        "descrizione": "due scintille acute, cristallo o magia gelida. Usato da: meteora.",
+        "descrizione": "due scintille acute, cristallo o magia gelida. Usato da: mess, meteora.",
         "score": [
             [
                 "5000-11000",
@@ -5868,7 +5868,7 @@
         ]
     },
     "jingle_scoperta": {
-        "descrizione": "tre note che salgono e restano sospese, una scoperta. Usato da: meteora.",
+        "descrizione": "tre note che salgono e restano sospese, una scoperta. Usato da: mess, meteora.",
         "score": [
             [
                 "d5",
@@ -5970,7 +5970,7 @@
         ]
     },
     "carillon_dolce": {
-        "descrizione": "quattro note di carillon che si spengono piano. Usato da: meteora.",
+        "descrizione": "quattro note di carillon che si spengono piano. Usato da: mess, meteora.",
         "score": [
             [
                 "e6",
@@ -6006,7 +6006,7 @@
         ]
     },
     "arpeggio_pensoso": {
-        "descrizione": "arpeggio minore lento, attesa o riflessione. Usato da: meteora, tornello.",
+        "descrizione": "arpeggio minore lento, attesa o riflessione. Usato da: mess, meteora, tornello.",
         "score": [
             [
                 "a4",
@@ -6360,7 +6360,7 @@
         ]
     },
     "carta_girata": {
-        "descrizione": "una carta girata a faccia in su: sfregamento che sale, pausa, battuta sul tavolo. Usato da: gabryscola, meteora.",
+        "descrizione": "una carta girata a faccia in su: sfregamento che sale, pausa, battuta sul tavolo. Usato da: gabryscola, mess, meteora.",
         "score": [
             [
                 "400-6000.1000-10000",
@@ -8298,7 +8298,7 @@
         ]
     },
     "meditimer_ora": {
-        "descrizione": "l'ora: tic a sinistra e toc a destra, separati da un silenzio",
+        "descrizione": "l'ora: tic a sinistra e toc a destra, separati da un silenzio. Usato da: mess.",
         "score": [
             [
                 "a5",
@@ -8502,7 +8502,7 @@
         ]
     },
     "meditimer_allarme_zittito": {
-        "descrizione": "suoneria zittita: una scivolata breve verso il basso, che chiude",
+        "descrizione": "suoneria zittita: una scivolata breve verso il basso, che chiude. Usato da: mess.",
         "score": [
             [
                 "e5.a4",
@@ -8550,7 +8550,7 @@
         ]
     },
     "meditimer_banco_avvio": {
-        "descrizione": "il banco di prova parte: un motore che sale di giri, rumore rosa che si alza",
+        "descrizione": "il banco di prova parte: un motore che sale di giri, rumore rosa che si alza. Usato da: mess.",
         "score": [
             [
                 "150-600.600-2400",
@@ -8664,7 +8664,7 @@
         ]
     },
     "meditimer_banco_salvato": {
-        "descrizione": "prova salvata in archivio: tre tic veloci che salgono. Usato da: meteora, tornello.",
+        "descrizione": "prova salvata in archivio: tre tic veloci che salgono. Usato da: mess, meteora, tornello.",
         "score": [
             [
                 "c6",
@@ -8706,7 +8706,7 @@
         ]
     },
     "meditimer_classifiche": {
-        "descrizione": "le classifiche dei banchi di prova: un arpeggio morbido di quattro note triangolari",
+        "descrizione": "le classifiche dei banchi di prova: un arpeggio morbido di quattro note triangolari. Usato da: mess.",
         "score": [
             [
                 "d5",
@@ -9720,7 +9720,7 @@
         ]
     },
     "pokermachine_scudi_pieni": {
-        "descrizione": "Poker Machine, scudi gia' al massimo: due note uguali e gentili, lo scudo non ci sta piu'",
+        "descrizione": "Poker Machine, scudi gia' al massimo: due note uguali e gentili, lo scudo non ci sta piu'. Usato da: mess.",
         "score": [
             [
                 "g5",
@@ -9744,7 +9744,7 @@
         ]
     },
     "pokermachine_consiglio": {
-        "descrizione": "Poker Machine, il consiglio: un sussurro di due note che salgono, come una voce all'orecchio sinistro",
+        "descrizione": "Poker Machine, il consiglio: un sussurro di due note che salgono, come una voce all'orecchio sinistro. Usato da: mess.",
         "score": [
             [
                 "c5",
@@ -9822,7 +9822,7 @@
         ]
     },
     "pokermachine_raddoppio_carta": {
-        "descrizione": "Poker Machine, la carta del raddoppio si scopre: un fruscio solo che sale",
+        "descrizione": "Poker Machine, la carta del raddoppio si scopre: un fruscio solo che sale. Usato da: mess.",
         "score": [
             [
                 "300-4000.1500-12000",
@@ -11736,7 +11736,7 @@
         ]
     },
     "pokermachine_manuale": {
-        "descrizione": "Poker Machine, la guida si apre: due fruscii di pagina che vanno da destra a sinistra, il secondo piu' ampio",
+        "descrizione": "Poker Machine, la guida si apre: due fruscii di pagina che vanno da destra a sinistra, il secondo piu' ampio. Usato da: mess.",
         "score": [
             [
                 "800-6000.300-2500",
@@ -12276,7 +12276,7 @@
         ]
     },
     "meteora_marker_messo": {
-        "descrizione": "MeTeOra, T mette un marker nel brano: due note di triangolo che salgono di una quinta, mi 6 e si 6, una puntina che si pianta. Va bene per ogni segno, segnalibro o punto messo.",
+        "descrizione": "MeTeOra, T mette un marker nel brano: due note di triangolo che salgono di una quinta, mi 6 e si 6, una puntina che si pianta. Va bene per ogni segno, segnalibro o punto messo. Usato da: mess.",
         "score": [
             [
                 "e6",
@@ -12300,7 +12300,7 @@
         ]
     },
     "meteora_marker_rinominato": {
-        "descrizione": "MeTeOra, un marker cambia nome: due tocchi di triangolo sul si 6 e la discesa al mi 6, la puntina riscritta. Va bene per ogni etichetta cambiata.",
+        "descrizione": "MeTeOra, un marker cambia nome: due tocchi di triangolo sul si 6 e la discesa al mi 6, la puntina riscritta. Va bene per ogni etichetta cambiata. Usato da: mess.",
         "score": [
             [
                 "b6",
@@ -12432,7 +12432,7 @@
         ]
     },
     "meteora_marker_eliminato": {
-        "descrizione": "MeTeOra, Canc elimina un marker dalla plancia: due note di triangolo staccate che cadono di un'ottava, mi 6 e mi 5, la puntina che si stacca.",
+        "descrizione": "MeTeOra, Canc elimina un marker dalla plancia: due note di triangolo staccate che cadono di un'ottava, mi 6 e mi 5, la puntina che si stacca. Usato da: mess.",
         "score": [
             [
                 "e6",
@@ -12558,7 +12558,7 @@
         ]
     },
     "meteora_impostazioni": {
-        "descrizione": "MeTeOra, si apre la finestra delle impostazioni: quattro scatti brevi di rumore rosa in banda stretta, ciascuno più acuto del precedente, da 900-1400 a 2100-3300 Hz, che vanno da sinistra a destra come una manopola girata una tacca alla volta; 210 ms. Va bene per aprire regolazioni, preferenze o un pannello di controllo.",
+        "descrizione": "MeTeOra, si apre la finestra delle impostazioni: quattro scatti brevi di rumore rosa in banda stretta, ciascuno più acuto del precedente, da 900-1400 a 2100-3300 Hz, che vanno da sinistra a destra come una manopola girata una tacca alla volta; 210 ms. Va bene per aprire regolazioni, preferenze o un pannello di controllo. Usato da: mess.",
         "score": [
             [
                 "900-1400",
@@ -12612,7 +12612,7 @@
         ]
     },
     "meteora_impostazione_cambiata": {
-        "descrizione": "MeTeOra, un valore delle impostazioni è applicato: un trillo rapido di seno fra do diesis 6 e re diesis 6, ripetuto due volte, che si posa sul sol diesis 6 una quarta più su, al centro; 210 ms. Va bene per ogni valore accettato, una regolazione andata a segno o una preferenza cambiata.",
+        "descrizione": "MeTeOra, un valore delle impostazioni è applicato: un trillo rapido di seno fra do diesis 6 e re diesis 6, ripetuto due volte, che si posa sul sol diesis 6 una quarta più su, al centro; 210 ms. Va bene per ogni valore accettato, una regolazione andata a segno o una preferenza cambiata. Usato da: mess.",
         "score": [
             [
                 "c#6",
@@ -12654,7 +12654,7 @@
         ]
     },
     "meteora_console_salvata": {
-        "descrizione": "MeTeOra, la console è scritta in un file: tre tocchi sommessi di onda triangolare sul sol 4, come i tasti di una macchina da scrivere, da sinistra a destra, e il campanello di fine riga sul sol 6, al centro, che si spegne piano; 310 ms. Va bene per ogni testo salvato, un registro scritto o una stampa su file.",
+        "descrizione": "MeTeOra, la console è scritta in un file: tre tocchi sommessi di onda triangolare sul sol 4, come i tasti di una macchina da scrivere, da sinistra a destra, e il campanello di fine riga sul sol 6, al centro, che si spegne piano; 310 ms. Va bene per ogni testo salvato, un registro scritto o una stampa su file. Usato da: mess.",
         "score": [
             [
                 "g4",
@@ -12708,7 +12708,7 @@
         ]
     },
     "meteora_marcatori": {
-        "descrizione": "MeTeOra, si apre la finestra dei marcatori: quattro tocchi pizzicati di onda triangolare sparsi nel panorama, sol diesis 6 a sinistra, do diesis 7 a destra, si 6 appena a sinistra e mi 7 a destra, le puntine dei marker viste tutte insieme, e un si 5 più grave al centro, la bacheca che le tiene; 190 ms. Va bene per aprire un elenco di segnalibri, di appunti o di punti segnati.",
+        "descrizione": "MeTeOra, si apre la finestra dei marcatori: quattro tocchi pizzicati di onda triangolare sparsi nel panorama, sol diesis 6 a sinistra, do diesis 7 a destra, si 6 appena a sinistra e mi 7 a destra, le puntine dei marker viste tutte insieme, e un si 5 più grave al centro, la bacheca che le tiene; 190 ms. Va bene per aprire un elenco di segnalibri, di appunti o di punti segnati. Usato da: mess.",
         "score": [
             [
                 "g#6",
@@ -12816,7 +12816,7 @@
         ]
     },
     "meteora_marcatori_importati": {
-        "descrizione": "MeTeOra, i marcatori arrivano da un file esportato: due note di seno che scendono di una quarta, re 6 e la 5, prima piano a sinistra e poi piene al centro, come qualcosa che entra; 140 ms. Va bene per ogni importazione, caricamento o arrivo dall'esterno; il gesto opposto è meteora_marcatori_esportati.",
+        "descrizione": "MeTeOra, i marcatori arrivano da un file esportato: due note di seno che scendono di una quarta, re 6 e la 5, prima piano a sinistra e poi piene al centro, come qualcosa che entra; 140 ms. Va bene per ogni importazione, caricamento o arrivo dall'esterno; il gesto opposto è meteora_marcatori_esportati. Usato da: mess.",
         "score": [
             [
                 "d6",
@@ -12954,7 +12954,7 @@
         ]
     },
     "meteora_marcatori_trovato": {
-        "descrizione": "MeTeOra, la barra rovesciata nella finestra dei marcatori trova il testo più avanti nella lista: onda sinusoidale morbida, una scorsa rapida di tre note che salgono, la 5, si 5 e do diesis 6, da sinistra verso il centro, come gli occhi che scorrono le righe, poi mi 6 e la 6 al centro, piene, il salto di quarta di chi ha trovato; 207 ms. È della stessa famiglia di meteora_marcatori_ripartito e meteora_marcatori_non_trovato. Va bene per ogni ricerca riuscita in un elenco.",
+        "descrizione": "MeTeOra, la barra rovesciata nella finestra dei marcatori trova il testo più avanti nella lista: onda sinusoidale morbida, una scorsa rapida di tre note che salgono, la 5, si 5 e do diesis 6, da sinistra verso il centro, come gli occhi che scorrono le righe, poi mi 6 e la 6 al centro, piene, il salto di quarta di chi ha trovato; 207 ms. È della stessa famiglia di meteora_marcatori_ripartito e meteora_marcatori_non_trovato. Va bene per ogni ricerca riuscita in un elenco. Usato da: mess.",
         "score": [
             [
                 "a5",
@@ -13038,7 +13038,7 @@
         ]
     },
     "meteora_marcatori_non_trovato": {
-        "descrizione": "MeTeOra, la barra rovesciata nella finestra dei marcatori non trova il testo: onda sinusoidale morbida, la stessa scorsa di meteora_marcatori_trovato, la 5, si 5 e do diesis 6 da sinistra verso il centro, che invece di salire si sgonfia sul do 6 e ricade sul la 5 da cui era partita, più piano, al centro; 217 ms. Va bene per ogni ricerca senza risultati in un elenco.",
+        "descrizione": "MeTeOra, la barra rovesciata nella finestra dei marcatori non trova il testo: onda sinusoidale morbida, la stessa scorsa di meteora_marcatori_trovato, la 5, si 5 e do diesis 6 da sinistra verso il centro, che invece di salire si sgonfia sul do 6 e ricade sul la 5 da cui era partita, più piano, al centro; 217 ms. Va bene per ogni ricerca senza risultati in un elenco. Usato da: mess.",
         "score": [
             [
                 "a5",
@@ -13548,7 +13548,7 @@
         ]
     },
     "meteora_bande_azzerate": {
-        "descrizione": "MeTeOra, Maiuscolo con la E accentata riporta a zero tutte le bande dell'equalizzatore: tre soffi di rumore rosa, grave a sinistra, medio al centro e acuto a destra, ciascuno stretto all'inizio e largo alla fine, tre picchi che si appiattiscono uno dopo l'altro; 230 ms. È il gesto di meteora_banda_azzerata steso su tutto lo spettro. Va bene per azzerare insieme tutte le regolazioni di un mixer o di un equalizzatore.",
+        "descrizione": "MeTeOra, Maiuscolo con la E accentata riporta a zero tutte le bande dell'equalizzatore: tre soffi di rumore rosa, grave a sinistra, medio al centro e acuto a destra, ciascuno stretto all'inizio e largo alla fine, tre picchi che si appiattiscono uno dopo l'altro; 230 ms. È il gesto di meteora_banda_azzerata steso su tutto lo spettro. Va bene per azzerare insieme tutte le regolazioni di un mixer o di un equalizzatore. Usato da: mess.",
         "score": [
             [
                 "200-320.80-1200",
@@ -13752,7 +13752,7 @@
         ]
     },
     "meteora_sottotitoli_accesi": {
-        "descrizione": "MeTeOra, Maiuscolo con F2 accende i sottotitoli letti, o passa alla traccia seguente: sinusoide, due glissando brevi al centro che salgono, da la 5 a do 6 e da la 5 a mi 6, separati da una pausa di 30 ms, come due parole dette con la voce che sale; 190 ms. Il gesto opposto è meteora_sottotitoli_spenti. Va bene per ogni testo che comincia a essere letto.",
+        "descrizione": "MeTeOra, Maiuscolo con F2 accende i sottotitoli letti, o passa alla traccia seguente: sinusoide, due glissando brevi al centro che salgono, da la 5 a do 6 e da la 5 a mi 6, separati da una pausa di 30 ms, come due parole dette con la voce che sale; 190 ms. Il gesto opposto è meteora_sottotitoli_spenti. Va bene per ogni testo che comincia a essere letto. Usato da: mess.",
         "score": [
             [
                 "a5.c6",
@@ -14034,7 +14034,7 @@
         ]
     },
     "meteora_annullamento": {
-        "descrizione": "MeTeOra, un'operazione annullata da chi usa il programma, con Esc in un campo o con No a una domanda: sinusoide, la 4, sol diesis 4 e sol 4 al centro, tre passi di semitono che scendono e si spengono, come un passo indietro; 200 ms. È un'altra cosa da annullato, che in MeTeOra è lo stop. Va bene per ogni domanda a cui si risponde di no.",
+        "descrizione": "MeTeOra, un'operazione annullata da chi usa il programma, con Esc in un campo o con No a una domanda: sinusoide, la 4, sol diesis 4 e sol 4 al centro, tre passi di semitono che scendono e si spengono, come un passo indietro; 200 ms. È un'altra cosa da annullato, che in MeTeOra è lo stop. Va bene per ogni domanda a cui si risponde di no. Usato da: mess.",
         "score": [
             [
                 "a4",
@@ -14064,7 +14064,7 @@
         ]
     },
     "meteora_ramo_aggiornato": {
-        "descrizione": "MeTeOra, un ramo della plancia riletto da capo con Aggiorna, per esempio Questo PC o una cartella: onda triangolare, re 5 e la 5 due volte, al centro, rapidi come le due frecce che girano in tondo dell'aggiornamento; 200 ms. Va bene per ogni elenco riletto da capo.",
+        "descrizione": "MeTeOra, un ramo della plancia riletto da capo con Aggiorna, per esempio Questo PC o una cartella: onda triangolare, re 5 e la 5 due volte, al centro, rapidi come le due frecce che girano in tondo dell'aggiornamento; 200 ms. Va bene per ogni elenco riletto da capo. Usato da: mess.",
         "score": [
             [
                 "d5",
@@ -14154,7 +14154,7 @@
         ]
     },
     "meteora_tag_letti": {
-        "descrizione": "MeTeOra, F11 scrive nella console i tag di un file: sinusoide, due sol 5 staccati e un re 6, come due voci di un elenco e la riga che le segue; 150 ms. Va bene per ogni scheda o elenco di dati letto.",
+        "descrizione": "MeTeOra, F11 scrive nella console i tag di un file: sinusoide, due sol 5 staccati e un re 6, come due voci di un elenco e la riga che le segue; 150 ms. Va bene per ogni scheda o elenco di dati letto. Usato da: mess.",
         "score": [
             [
                 "g5",
@@ -14409,6 +14409,4350 @@
             15.0,
             70.0,
             30.0
+        ]
+    },
+    "mess_avvio": {
+        "descrizione": "MESS, la finestra si apre su un mondo caricato dal salvataggio: un richiamo di onda triangolare, la diesis 4 di slancio, re diesis 5, il salto di sesta al do 6, il passo indietro sul la diesis 5 e l'arrivo lungo sul re diesis 6, da sinistra verso il centro, in 840 ms. È il motivo di MESS: lo riprendono, cambiato, mess_mondo_nuovo, mess_avvio_dalla_copia, mess_avvio_con_avvisi e mess_salvataggio_illeggibile, e lo rovescia mess_uscita. Va bene per un benvenuto, l'avvio di una sessione o una squadra che entra in campo.",
+        "score": [
+            [
+                "a#4",
+                0.07,
+                -0.6,
+                -0.05
+            ],
+            [
+                "d#5",
+                0.1,
+                -0.4,
+                0.0
+            ],
+            [
+                "c6",
+                0.17,
+                -0.1,
+                0.05
+            ],
+            [
+                "a#5",
+                0.08,
+                0.1,
+                0.0
+            ],
+            [
+                "d#6",
+                0.42,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            20.0
+        ]
+    },
+    "mess_mondo_nuovo": {
+        "descrizione": "MESS, primo avvio, nasce un mondo nuovo di cinquanta giocatori: onda triangolare, tre note gravi e larghe che salgono da sinistra, re diesis 3, la diesis 3 e re diesis 4, poi il motivo di mess_avvio, la diesis 4, re diesis 5, do 6, la diesis 5 e re diesis 6, che si apre su un sol 6 lungo al centro, in 1,9 secondi. Più solenne dell'avvio normale. Va bene per una nascita, una fondazione o una prima volta.",
+        "score": [
+            [
+                "d#3",
+                0.22,
+                -0.8,
+                -0.05
+            ],
+            [
+                "a#3",
+                0.22,
+                -0.6,
+                -0.02
+            ],
+            [
+                "d#4",
+                0.28,
+                -0.4,
+                0.0
+            ],
+            [
+                "a#4",
+                0.07,
+                -0.2,
+                -0.05
+            ],
+            [
+                "d#5",
+                0.1,
+                -0.1,
+                0.0
+            ],
+            [
+                "c6",
+                0.17,
+                0.0,
+                0.05
+            ],
+            [
+                "a#5",
+                0.08,
+                0.1,
+                0.0
+            ],
+            [
+                "d#6",
+                0.26,
+                0.1,
+                0.05
+            ],
+            [
+                "g6",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_avvio_dalla_copia": {
+        "descrizione": "MESS, il salvataggio principale non si usa e il mondo riparte dalla copia di sicurezza: onda triangolare, l'inizio del motivo di mess_avvio a sinistra, la diesis 4, re diesis 5 e do 6, che si interrompe; la sua copia, più piano, a destra; e una chiusa che non arriva, la diesis 5 e un sol diesis 5 lungo al centro, sospeso invece di salire al re diesis 6, in 1,25 secondi. Un avvio riuscito con un'ombra. Va bene per una ripresa da una copia, un ripiego o un recupero.",
+        "score": [
+            [
+                "a#4",
+                0.07,
+                -0.5,
+                -0.05
+            ],
+            [
+                "d#5",
+                0.1,
+                -0.4,
+                0.0
+            ],
+            [
+                "c6",
+                0.15,
+                -0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.1,
+                0.0,
+                -0.5
+            ],
+            [
+                "a#4",
+                0.07,
+                0.5,
+                -0.16
+            ],
+            [
+                "d#5",
+                0.1,
+                0.5,
+                -0.16
+            ],
+            [
+                "c6",
+                0.15,
+                0.5,
+                -0.14
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "a#5",
+                0.09,
+                0.2,
+                -0.05
+            ],
+            [
+                "g#5",
+                0.38,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            20.0
+        ]
+    },
+    "mess_avvio_con_avvisi": {
+        "descrizione": "MESS, avvio con le collezioni di nomi e cognomi difettose: il motivo di mess_avvio intero, onda triangolare, la diesis 4, re diesis 5, do 6, la diesis 5 e re diesis 6, poi due colpi gravi di la 4, a sinistra e a destra, il secondo più piano, come qualcuno che bussa perché c'è qualcosa da controllare, in 1 secondo. Va bene per una partenza riuscita che porta con sé degli avvisi.",
+        "score": [
+            [
+                "a#4",
+                0.07,
+                -0.6,
+                -0.05
+            ],
+            [
+                "d#5",
+                0.1,
+                -0.4,
+                0.0
+            ],
+            [
+                "c6",
+                0.17,
+                -0.1,
+                0.05
+            ],
+            [
+                "a#5",
+                0.08,
+                0.1,
+                0.0
+            ],
+            [
+                "d#6",
+                0.28,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.1,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.07,
+                -0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.07,
+                0.3,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            20.0
+        ]
+    },
+    "mess_salvataggio_illeggibile": {
+        "descrizione": "MESS, né il salvataggio né la copia si leggono e il gioco si ferma: dente di sega, l'inizio del motivo di mess_avvio, la diesis 4 e re diesis 5, che invece di arrivare crolla in una scivolata lunga dal do 6 al mi 3, poi un tremito grave fra re 3 e re diesis 3 che rimbalza fra le casse spegnendosi, e un re diesis 2 profondo al centro, in 1,7 secondi. Il suono più grave dell'applicazione. Va bene per un errore che impedisce di proseguire, un archivio perduto o un blocco.",
+        "score": [
+            [
+                "a#4",
+                0.07,
+                -0.3,
+                -0.1
+            ],
+            [
+                "d#5",
+                0.1,
+                -0.2,
+                -0.08
+            ],
+            [
+                "c6.e3",
+                0.6,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "d3",
+                0.1,
+                -0.4,
+                -0.1
+            ],
+            [
+                "d#3",
+                0.1,
+                0.4,
+                -0.14
+            ],
+            [
+                "d3",
+                0.1,
+                -0.4,
+                -0.18
+            ],
+            [
+                "d#3",
+                0.1,
+                0.4,
+                -0.22
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#2",
+                0.4,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_uscita": {
+        "descrizione": "MESS, chiusura con il mondo salvato: il motivo di mess_avvio al contrario, onda triangolare, re diesis 6, la diesis 5, do 6, re diesis 5 e un la diesis 4 lungo che si posa, da destra verso sinistra, in 950 ms. Va bene per un congedo sereno, un'uscita o la fine di una sessione.",
+        "score": [
+            [
+                "d#6",
+                0.14,
+                0.6,
+                0.0
+            ],
+            [
+                "a#5",
+                0.08,
+                0.4,
+                0.0
+            ],
+            [
+                "c6",
+                0.17,
+                0.1,
+                0.0
+            ],
+            [
+                "d#5",
+                0.1,
+                -0.2,
+                -0.05
+            ],
+            [
+                "a#4",
+                0.46,
+                -0.5,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_uscita_senza_salvataggio": {
+        "descrizione": "MESS, chiusura in cui il salvataggio finale non riesce: onda triangolare, subito il tonfo di mess_salvataggio_non_riuscito, una scivolata dal mi 4 al la 3 al centro, poi il congedo di mess_uscita un'ottava sotto e più piano, re diesis 5, la diesis 4, do 5, re diesis 4 e un la diesis 3 lungo, da destra verso sinistra; 1,15 secondi. Va bene per un'uscita in cui qualcosa va perso o un congedo con un errore.",
+        "score": [
+            [
+                "e4.a3",
+                0.2,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#5",
+                0.14,
+                0.6,
+                -0.08
+            ],
+            [
+                "a#4",
+                0.08,
+                0.4,
+                -0.08
+            ],
+            [
+                "c5",
+                0.17,
+                0.1,
+                -0.08
+            ],
+            [
+                "d#4",
+                0.1,
+                -0.2,
+                -0.1
+            ],
+            [
+                "a#3",
+                0.4,
+                -0.5,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_salvataggio_con_avviso": {
+        "descrizione": "MESS, Ctrl+S riuscito ma con un avviso dell'archivio, per esempio la copia di sicurezza non aggiornata: tre tocchi di seno che salgono, do 6, mi 6 e sol 6, come meditimer_banco_salvato, poi due tocchi più gravi di fa diesis 5 al centro, il secondo più piano, un però che segue il sì, in 440 ms. Va bene per un salvataggio o un'operazione riusciti con una riserva.",
+        "score": [
+            [
+                "c6",
+                0.04,
+                -0.2,
+                -0.05
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.04,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "g6",
+                0.05,
+                0.2,
+                -0.05
+            ],
+            [
+                "p",
+                0.09,
+                0.0,
+                -0.5
+            ],
+            [
+                "f#5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "f#5",
+                0.05,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            54.0,
+            0.0,
+            30.0
+        ]
+    },
+    "mess_salvataggio_non_riuscito": {
+        "descrizione": "MESS, un salvataggio non riesce, con Ctrl+S o dopo un'operazione: onda triangolare, tre tocchi che scendono per terze maggiori, sol 6, re diesis 6 e si 5, da destra a sinistra, e un tonfo che scivola dal mi 4 al la 3 al centro, in 450 ms. Lo specchio scuro di meditimer_banco_salvato. Va bene per una scrittura su disco fallita o un'operazione che non lascia traccia.",
+        "score": [
+            [
+                "g6",
+                0.05,
+                0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#6",
+                0.05,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.05,
+                -0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4.a3",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            45.0,
+            25.0,
+            25.0
+        ]
+    },
+    "mess_tasto_a_vuoto": {
+        "descrizione": "MESS, un pulsante premuto senza niente su cui lavorare: due colpi sordi di rumore rosa al centro, il primo fra 500 e 2500 Hz, il secondo un poco più cupo e più piano, fra 400 e 2000 Hz, come bussare su una scatola vuota; 150 ms. Va bene per un elenco senza selezione, un comando a vuoto o un tasto che non trova niente.",
+        "score": [
+            [
+                "500-2500",
+                0.06,
+                0.0,
+                0.5
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "400-2000",
+                0.06,
+                0.0,
+                0.3
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_campo_da_correggere": {
+        "descrizione": "MESS, un valore da correggere in un campo, e il dialogo resta aperto: onda triangolare, una scivolata grave che cede di un tono, dal do 4 al la diesis 3, una breve pausa e un punto acutissimo di sol 7, più piano, al centro; 170 ms. È il gesto di rifiuto, stretto per un errore lieve e frequente. Va bene per un dato fuori misura, un campo vuoto o un numero scritto male.",
+        "score": [
+            [
+                "c4.a#3",
+                0.12,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "g7",
+                0.02,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_novita_illeggibile": {
+        "descrizione": "MESS, F2 quando le novità non si leggono: seno, l'inizio di jingle_scoperta, re 5 e la 5, ma la terza nota, invece di salire e restare sospesa, cade in una lunga scivolata dal mi 6 al sol diesis 4, in 620 ms. Una scoperta mancata. Va bene per un documento, un file o un testo che non si apre.",
+        "score": [
+            [
+                "d5",
+                0.14,
+                0.0,
+                -0.05
+            ],
+            [
+                "a5",
+                0.14,
+                0.0,
+                0.0
+            ],
+            [
+                "e6.g#4",
+                0.34,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_informazioni": {
+        "descrizione": "MESS, F3, Informazioni con versione e autori: una firma, quattro scivolate rapide di onda triangolare che vanno su e giù come una penna che scrive, dal mi 4 al si 4, giù al fa diesis 4, su al re 5 e giù al la 4, da sinistra a destra, poi il punto, un mi 5 breve a destra, in 330 ms. Va bene per i crediti, una firma, un'intestazione o una presentazione.",
+        "score": [
+            [
+                "e4.b4",
+                0.06,
+                -0.6,
+                -0.08
+            ],
+            [
+                "b4.f#4",
+                0.05,
+                -0.3,
+                -0.08
+            ],
+            [
+                "f#4.d5",
+                0.07,
+                0.0,
+                -0.08
+            ],
+            [
+                "d5.a4",
+                0.05,
+                0.3,
+                -0.08
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.04,
+                0.5,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            10.0
+        ]
+    },
+    "mess_impostazioni_non_salvate": {
+        "descrizione": "MESS, le impostazioni valgono per la sessione ma il file non si scrive: seno, un trillo di semitono fra sol diesis 5 e sol 5, due volte, al centro, poi due passi che scendono verso sinistra, re diesis 5 e sol diesis 4, più piano, in 400 ms. Un cambiamento che non resta. Va bene per una preferenza non salvata o un dato tenuto solo in memoria.",
+        "score": [
+            [
+                "g#5",
+                0.04,
+                0.0,
+                -0.05
+            ],
+            [
+                "g5",
+                0.04,
+                0.0,
+                -0.05
+            ],
+            [
+                "g#5",
+                0.04,
+                0.0,
+                -0.05
+            ],
+            [
+                "g5",
+                0.04,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#5",
+                0.07,
+                -0.2,
+                -0.08
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#4",
+                0.12,
+                -0.4,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_diari_conservati": {
+        "descrizione": "MESS, la conservazione dei diari è applicata: onda triangolare, tre note staccate dell'accordo di fa maggiore, do 5 a sinistra, il salto di sesta al la 5 al centro e un fa 5 più lungo a destra che si posa, come tre giorni segnati sul calendario, in 360 ms. Va bene per una durata o una scadenza fissata, un periodo impostato o un archivio regolato.",
+        "score": [
+            [
+                "c5",
+                0.05,
+                -0.3,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "f5",
+                0.2,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            25.0,
+            55.0,
+            30.0
+        ]
+    },
+    "mess_prova_volume": {
+        "descrizione": "MESS, prova del volume degli effetti: una sola nota di onda triangolare, sol 5 al centro, che cresce fino al livello scelto e si spegne, in 160 ms. Breve e neutra, si può ripetere a ogni ritocco. Va bene per provare un volume, un livello o un guadagno.",
+        "score": [
+            [
+                "g5",
+                0.16,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            45.0,
+            0.0,
+            100.0,
+            35.0
+        ]
+    },
+    "mess_diario_a_ritroso": {
+        "descrizione": "MESS, il diario del giocatore, letto dalla voce più recente all'indietro: tre note di seno che nascono dal silenzio e crescono fino a staccarsi, come un nastro suonato al contrario, si 5 a destra, fa diesis 5 al centro e un re 5 più lungo a sinistra, un accordo di si minore che scende tornando indietro nel tempo; 400 ms. Va bene per un diario, una cronologia, un ricordo o qualcosa che si rilegge a ritroso.",
+        "score": [
+            [
+                "b5",
+                0.11,
+                0.5,
+                -0.1
+            ],
+            [
+                "f#5",
+                0.11,
+                0.0,
+                -0.1
+            ],
+            [
+                "d5",
+                0.18,
+                -0.5,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            70.0,
+            0.0,
+            100.0,
+            15.0
+        ]
+    },
+    "mess_fuochi_d_artificio": {
+        "descrizione": "MESS, la TOP 10 dei migliori giocatori: fuochi d'artificio di rumore rosa, un razzo che fischia salendo, con una banda stretta che va da 1000 a 4000 Hz in 220 ms e viaggia da sinistra verso il centro, poi lo scoppio, largo e cupo, che si spegne, e quattro scintille acute sparse fra i due lati; 570 ms. Va bene per una classifica dei migliori, un podio, un festeggiamento o un traguardo da celebrare.",
+        "score": [
+            [
+                "1000-1150.3800-4200",
+                0.22,
+                "-0.6.0",
+                0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "120-5000.80-1500",
+                0.12,
+                0.1,
+                0.05
+            ],
+            [
+                "3000-9000",
+                0.025,
+                0.5,
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "2500-8000",
+                0.025,
+                -0.4,
+                -0.05
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "3500-10000",
+                0.025,
+                0.7,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "3000-9000",
+                0.025,
+                0.1,
+                -0.18
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            5.0,
+            30.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_saluto_in_eco": {
+        "descrizione": "MESS, l'elenco dei giocatori che si sono ritirati nella sessione: onda triangolare, due note brevi che salgono di una quarta, sol 4 e do 5, al centro, e la loro eco più piano a destra, come un saluto che si allontana; 140 ms. È il gesto di meteora_marcatori_esportati un'ottava sotto, e rovescia meteora_marcatori_importati, il suono di chi arriva. Va bene per chi lascia un elenco senza clamore, un congedo tranquillo o un'uscita di scena serena.",
+        "score": [
+            [
+                "g4",
+                0.025,
+                0.0,
+                0.1
+            ],
+            [
+                "c5",
+                0.035,
+                0.0,
+                0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "g4",
+                0.025,
+                0.8,
+                -0.14
+            ],
+            [
+                "c5",
+                0.035,
+                0.8,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_spirale_breve": {
+        "descrizione": "MESS, l'elenco di chi è uscito di scena nella sessione: tre scivolate d'ottava di seno che girano fra le casse calando, da sol 6 a sol 3, sempre più piano; 540 ms. È spirale_discendente stretta e sommessa. Va bene per chi svanisce, un elenco di assenti o un ricordo.",
+        "score": [
+            [
+                "g6.g5",
+                0.16,
+                "-0.9.0.9",
+                -0.2
+            ],
+            [
+                "g5.g4",
+                0.16,
+                "0.9.-0.9",
+                -0.23
+            ],
+            [
+                "g4.g3",
+                0.22,
+                "-0.9.0.9",
+                -0.26
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            0.0,
+            100.0,
+            20.0
+        ]
+    },
+    "mess_sonar": {
+        "descrizione": "MESS, si apre la ricerca dei giocatori: un sonar di seno, un si 5 che squilla appena a sinistra e si spegne piano in 300 ms, poi una breve attesa e la sua eco, debole e corta, che torna da destra; 440 ms. Va bene per aprire una ricerca, un'esplorazione o un'indagine.",
+        "score": [
+            [
+                "b5",
+                0.3,
+                -0.25,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.09,
+                0.65,
+                -0.36
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            60.0,
+            15.0,
+            21.0
+        ]
+    },
+    "mess_notiziario": {
+        "descrizione": "MESS, il riepilogo dell'ultimo avanzamento: una sigla da notiziario di seno, quattro note a zig zag sull'accordo di fa maggiore, fa 5, do 6, la 5 e fa 6, che salgono scorrendo da sinistra a destra, e un do 6 più lungo al centro che resta sospeso come prima della notizia; 440 ms. Il gemello senza notizie è mess_notiziario_vuoto. Va bene per un riepilogo, un resoconto, un bollettino o le notizie del giorno.",
+        "score": [
+            [
+                "f5",
+                0.06,
+                -0.4,
+                -0.1
+            ],
+            [
+                "c6",
+                0.06,
+                -0.15,
+                -0.1
+            ],
+            [
+                "a5",
+                0.06,
+                0.15,
+                -0.1
+            ],
+            [
+                "f6",
+                0.08,
+                0.4,
+                -0.08
+            ],
+            [
+                "c6",
+                0.18,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            15.0,
+            75.0,
+            30.0
+        ]
+    },
+    "mess_notiziario_vuoto": {
+        "descrizione": "MESS, il riepilogo dell'avanzamento quando il mondo non è ancora avanzato: seno, la sigla di mess_notiziario che comincia, fa 5, do 6 e la 5 da sinistra verso il centro, e invece di salire al fa 6 si interrompe e ricade piano, una scivolata dal fa 5 al re 5 al centro; 420 ms. Va bene per un notiziario senza notizie, un resoconto vuoto o un comando che non ha niente da dire.",
+        "score": [
+            [
+                "f5",
+                0.06,
+                -0.4,
+                -0.14
+            ],
+            [
+                "c6",
+                0.06,
+                -0.15,
+                -0.14
+            ],
+            [
+                "a5",
+                0.06,
+                0.15,
+                -0.14
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "f5.d5",
+                0.18,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            15.0,
+            75.0,
+            30.0
+        ]
+    },
+    "mess_nuovo_giorno": {
+        "descrizione": "MESS, il mondo avanza di un giorno: onda triangolare, una scivolata che sale come un'alba, da sol 4 a re 5, a sinistra, e un rintocco chiaro di sol 5 a destra, una quarta sopra; 400 ms. Va bene per il tempo che fa un passo, un giorno che comincia o un avanzamento periodico in sottofondo. Le sue varianti con una coda sono mess_giorno_di_congedo, mess_giorno_di_partenza e mess_giorno_di_lutto.",
+        "score": [
+            [
+                "g4.d5",
+                0.15,
+                -0.35,
+                -0.12
+            ],
+            [
+                "g5",
+                0.25,
+                0.25,
+                -0.02
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            30.0,
+            55.0,
+            35.0
+        ]
+    },
+    "mess_giorni_trascorsi": {
+        "descrizione": "MESS, il mondo avanza di più giorni in una volta: onda triangolare, il gesto di mess_nuovo_giorno, scivolata e rintocco, ripetuto tre volte più svelto, ogni volta un tono più su, su sol, su la e infine su si; il primo a sinistra, il secondo al centro e il terzo, più lungo, a destra; 700 ms. Va bene per un salto in avanti di più giorni, un tempo recuperato o un avanzamento veloce.",
+        "score": [
+            [
+                "g4.d5",
+                0.08,
+                -0.6,
+                -0.2
+            ],
+            [
+                "g5",
+                0.1,
+                -0.6,
+                -0.1
+            ],
+            [
+                "a4.e5",
+                0.08,
+                0.0,
+                -0.2
+            ],
+            [
+                "a5",
+                0.1,
+                0.0,
+                -0.1
+            ],
+            [
+                "b4.f#5",
+                0.08,
+                0.6,
+                -0.2
+            ],
+            [
+                "b5",
+                0.26,
+                0.6,
+                -0.06
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            30.0,
+            55.0,
+            35.0
+        ]
+    },
+    "mess_giorno_di_lutto": {
+        "descrizione": "MESS, nell'avanzamento del giorno muore un giocatore: onda triangolare, l'alba di mess_nuovo_giorno, scivolata da sol 4 a re 5 e un rintocco breve di sol 5, poi, dopo una pausa, i due rintocchi gravi di una campana a morto, do 4 e un sol 3 più lungo una quarta sotto; 670 ms. Va bene per un lutto annunciato senza clamore dentro una giornata.",
+        "score": [
+            [
+                "g4.d5",
+                0.15,
+                -0.35,
+                -0.14
+            ],
+            [
+                "g5",
+                0.1,
+                0.25,
+                -0.1
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "c4",
+                0.12,
+                -0.15,
+                -0.06
+            ],
+            [
+                "g3",
+                0.25,
+                0.15,
+                -0.06
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            30.0,
+            55.0,
+            35.0
+        ]
+    },
+    "mess_giorno_di_congedo": {
+        "descrizione": "MESS, nell'avanzamento del giorno qualcuno si ritira: onda triangolare, l'alba di mess_nuovo_giorno, una scivolata da sol 4 a re 5 a sinistra e il rintocco di sol 5, più corto, a destra, poi un passo giù di una quarta sul re 5 che si allontana tutto a destra, più piano; 470 ms. Va bene per un giorno che passa portandosi via qualcuno, un congedo sereno o un pensionamento.",
+        "score": [
+            [
+                "g4.d5",
+                0.15,
+                -0.35,
+                -0.14
+            ],
+            [
+                "g5",
+                0.12,
+                0.25,
+                -0.08
+            ],
+            [
+                "d5",
+                0.2,
+                0.6,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            30.0,
+            55.0,
+            35.0
+        ]
+    },
+    "mess_giorno_di_partenza": {
+        "descrizione": "MESS, nell'avanzamento del giorno qualcuno lascia il mondo dello showdown prima del tempo: onda triangolare, l'alba di mess_nuovo_giorno, scivolata da sol 4 a re 5 e rintocco di sol 5 tagliato corto, poi una corsa rapida che scende, fa 5, re 5 e la diesis 4, scappando verso sinistra sempre più piano; 410 ms. Va bene per un'uscita anticipata, una fuga o un abbandono improvviso.",
+        "score": [
+            [
+                "g4.d5",
+                0.15,
+                -0.35,
+                -0.14
+            ],
+            [
+                "g5",
+                0.1,
+                0.25,
+                -0.08
+            ],
+            [
+                "f5",
+                0.04,
+                -0.1,
+                -0.18
+            ],
+            [
+                "d5",
+                0.04,
+                -0.45,
+                -0.23
+            ],
+            [
+                "a#4",
+                0.08,
+                -0.8,
+                -0.28
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            30.0,
+            55.0,
+            35.0
+        ]
+    },
+    "mess_motore_che_si_spegne": {
+        "descrizione": "MESS, chiude una polisportiva del computer: un motore che si spegne, rumore rosa al centro con la banda che scende da 600-2400 a 150-600 Hz perdendo giri; 500 ms. È lo specchio di meditimer_banco_avvio, il motore che parte. Va bene per un'attività che si ferma, una macchina che si spegne o una chiusura senza dramma.",
+        "score": [
+            [
+                "600-2400.150-600",
+                0.5,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            45.0
+        ]
+    },
+    "mess_quinte_sovrapposte": {
+        "descrizione": "MESS, si apre il dialogo della nuova polisportiva: onda triangolare, quattro note che salgono per quinte sovrapposte, do 5, sol 5, re 6 e la 6, da sinistra a destra, l'ultima lunga e lasciata aperta, come un orizzonte che si spalanca; 470 ms. Va bene per l'apertura di qualcosa di nuovo da creare, un modulo vuoto o una pagina bianca.",
+        "score": [
+            [
+                "c5",
+                0.07,
+                -0.6,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                -0.2,
+                0.0
+            ],
+            [
+                "d6",
+                0.07,
+                0.2,
+                0.0
+            ],
+            [
+                "a6",
+                0.26,
+                0.6,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_fischio_d_inizio": {
+        "descrizione": "MESS, una polisportiva è fondata: il fischio d'inizio dell'arbitro, un trillo di seno fra re 7 e re diesis 7 a colpi di 22 ms che dura un quarto di secondo, poi una fanfara di seno in re maggiore, la 4, re 5 e fa diesis 5, un giro su mi 5 e fa diesis 5, la 5 e un re 6 lungo al centro; un secondo e mezzo. Il gesto opposto è mess_triplice_fischio. Va bene per una fondazione, una nascita, l'inizio solenne di qualcosa di importante.",
+        "score": [
+            [
+                "d7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d#7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d#7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d#7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d#7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d#7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "d#7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "p",
+                0.09,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.09,
+                -0.4,
+                0.0
+            ],
+            [
+                "d5",
+                0.09,
+                -0.2,
+                0.0
+            ],
+            [
+                "f#5",
+                0.09,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.09,
+                0.2,
+                0.0
+            ],
+            [
+                "f#5",
+                0.09,
+                0.2,
+                0.0
+            ],
+            [
+                "a5",
+                0.2,
+                0.4,
+                0.02
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d6",
+                0.5,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            15.0
+        ]
+    },
+    "mess_scambio_di_posto": {
+        "descrizione": "MESS, si apre il dialogo per cambiare la polisportiva attiva: onda triangolare, due scivolate gravi che si incrociano come due giocatori che si scambiano di posto, la prima sale dal do 4 al sol 4 andando da sinistra a destra, la seconda parte più in alto e scende dal la 4 al re 4 tornando da destra a sinistra, così le due strade si tagliano, in 205 ms. Va bene per uno scambio, una sostituzione o la scelta fra più alternative.",
+        "score": [
+            [
+                "c4.g4",
+                0.09,
+                "-0.7.0.7",
+                -0.05
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4.d4",
+                0.09,
+                "0.7.-0.7",
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            0.0,
+            100.0,
+            25.0
+        ]
+    },
+    "mess_invito_a_fondare": {
+        "descrizione": "MESS, non hai ancora nessuna polisportiva e il programma ti invita a fondarne una: sinusoide al centro, sol 5 e do 5 staccati, una quinta che scende nel vuoto, poi una scivolata che risale dal sol 5 al do 6, come un incoraggiamento; 420 ms. Va bene per un elenco ancora vuoto con l'invito a creare il primo elemento.",
+        "score": [
+            [
+                "g5",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "c5",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5.c6",
+                0.2,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_segnale_di_occupato": {
+        "descrizione": "MESS, un comando vuole la polisportiva attiva ma non ce n'è nessuna: il segnale di occupato del telefono italiano, due bip di sinusoide a 425 Hz da 60 ms separati da 60 ms di silenzio, al centro; 180 ms. Va bene per ogni comando che non trova l'oggetto su cui lavorare, o per un servizio che non risponde.",
+        "score": [
+            [
+                425,
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                425,
+                0.06,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            0.0,
+            100.0,
+            10.0
+        ]
+    },
+    "mess_maniglia_scossa": {
+        "descrizione": "MESS, la password è sbagliata: la maniglia di una porta chiusa a chiave scossa invano, cinque colpetti rapidi di rumore marrone fra 250 e 1400 Hz che rimbalzano fra sinistra e destra, e un tonfo più cupo fra 150 e 700 Hz al centro; 244 ms. Va bene per un accesso negato, una parola d'ordine respinta o una porta che non si apre.",
+        "score": [
+            [
+                "250-1400",
+                0.022,
+                -0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.016,
+                0.0,
+                -0.5
+            ],
+            [
+                "250-1400",
+                0.022,
+                0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.016,
+                0.0,
+                -0.5
+            ],
+            [
+                "250-1400",
+                0.022,
+                -0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.016,
+                0.0,
+                -0.5
+            ],
+            [
+                "250-1400",
+                0.022,
+                0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.016,
+                0.0,
+                -0.5
+            ],
+            [
+                "250-1400",
+                0.022,
+                -0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "150-700",
+                0.05,
+                0.0,
+                0.1
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_due_voci_stonate": {
+        "descrizione": "MESS, la password e la sua conferma non coincidono: onda triangolare, mi 5 a sinistra e fa 5 a destra che si alternano due volte, due voci a un semitono che non si accordano, poi un mi 5 al centro che si affloscia sul re diesis 5; 360 ms. Va bene per due dati che dovrebbero essere uguali e non lo sono, o per un confronto fallito.",
+        "score": [
+            [
+                "e5",
+                0.05,
+                -0.6,
+                0.0
+            ],
+            [
+                "f5",
+                0.05,
+                0.6,
+                0.0
+            ],
+            [
+                "e5",
+                0.05,
+                -0.6,
+                0.0
+            ],
+            [
+                "f5",
+                0.05,
+                0.6,
+                0.0
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5.d#5",
+                0.12,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_tastierino_del_codice": {
+        "descrizione": "MESS, si apre il dialogo della password della polisportiva: quattro bip staccati di sinusoide, come i tasti di un tastierino, la 5, mi 6, do diesis 6 e fa diesis 6, da sinistra a destra, l'ultimo un po' più lungo; 270 ms. Va bene per aprire l'inserimento di un codice, di un PIN o di una parola d'ordine.",
+        "score": [
+            [
+                "a5",
+                0.04,
+                -0.5,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.04,
+                -0.15,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6",
+                0.04,
+                0.15,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "f#6",
+                0.06,
+                0.5,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            0.0,
+            100.0,
+            15.0
+        ]
+    },
+    "mess_chiave_che_chiude": {
+        "descrizione": "MESS, la polisportiva è ora protetta da password: una chiave che gira e chiude, rumore rosa al centro, uno sfregamento di 70 ms con la banda che sale da 1200-2600 a 2200-4500 Hz, uno scatto secco e chiaro fra 2500 e 9000 Hz e il chiavistello che si chiude, un colpo pieno con la banda che scende da 300-1600 a 200-900 Hz; 204 ms. Lo specchio è mess_chiave_che_apre. Va bene per mettere al sicuro, proteggere o chiudere a chiave.",
+        "score": [
+            [
+                "1200-2600.2200-4500",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "2500-9000",
+                0.014,
+                0.0,
+                0.05
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "300-1600.200-900",
+                0.06,
+                0.0,
+                0.15
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_chiave_che_apre": {
+        "descrizione": "MESS, la polisportiva resta senza protezione: lo specchio di mess_chiave_che_chiude, rumore rosa al centro, prima il chiavistello che si ritrae, un colpo con la banda che sale da 200-900 a 300-1600 Hz, poi lo sfregamento della chiave che torna indietro, con la banda che scende da 2200-4500 a 1200-2600 Hz, e uno scatto leggero fra 3000 e 10000 Hz, la serratura libera; 192 ms. Va bene per togliere una protezione, aprire un lucchetto o sbloccare.",
+        "score": [
+            [
+                "200-900.300-1600",
+                0.055,
+                0.0,
+                0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "2200-4500.1200-2600",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "3000-10000",
+                0.012,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_bussare_alla_porta": {
+        "descrizione": "MESS, prima di chiudere una polisportiva protetta se ne chiede la password: qualcuno bussa alla porta, tre colpi secchi di onda triangolare sul re 4 che si spengono subito, uno e poi due più ravvicinati, al centro; 275 ms. Va bene per una richiesta di permesso, una parola d'ordine chiesta prima di entrare o una visita.",
+        "score": [
+            [
+                "d4",
+                0.035,
+                0.0,
+                0.1
+            ],
+            [
+                "p",
+                0.105,
+                0.0,
+                -0.5
+            ],
+            [
+                "d4",
+                0.035,
+                0.0,
+                0.1
+            ],
+            [
+                "p",
+                0.065,
+                0.0,
+                -0.5
+            ],
+            [
+                "d4",
+                0.035,
+                0.0,
+                0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            9.0,
+            60.0,
+            0.0,
+            31.0
+        ]
+    },
+    "mess_campana_a_martello": {
+        "descrizione": "MESS, la domanda irreversibile se chiudere per sempre la polisportiva: la campana a martello dell'allarme, cinque rintocchi rapidi di seno sul la 4, poi una scivolata grave e inquieta che sale di un tritono, da re 4 a sol diesis 4, come una domanda allarmata; 890 ms. Va bene per una conferma pericolosa, una domanda che non ammette ripensamenti o un'azione definitiva.",
+        "score": [
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.07,
+                0.0,
+                -0.5
+            ],
+            [
+                "d4.g#4",
+                0.38,
+                0.0,
+                0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            30.0,
+            50.0,
+            35.0
+        ]
+    },
+    "mess_triplice_fischio": {
+        "descrizione": "MESS, una polisportiva è chiusa per sempre: il triplice fischio di fine partita, due fischi brevi e uno lungo, trilli di seno fra si 6 e do 7 a colpi di 22 ms, poi una cadenza in re minore che scende da destra a sinistra, la 5, fa 5, re 5 e un la 4 lungo che si spegne; quasi due secondi. Il gesto opposto è mess_fischio_d_inizio. Va bene per una fine definitiva, una chiusura o lo scioglimento di qualcosa.",
+        "score": [
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "c7",
+                0.022,
+                0.0,
+                -0.24
+            ],
+            [
+                "p",
+                0.15,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.14,
+                0.3,
+                0.0
+            ],
+            [
+                "f5",
+                0.14,
+                0.1,
+                0.0
+            ],
+            [
+                "d5",
+                0.14,
+                -0.1,
+                0.0
+            ],
+            [
+                "a4",
+                0.5,
+                -0.3,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            20.0
+        ]
+    },
+    "mess_occhiata_alla_scheda": {
+        "descrizione": "MESS, la scheda della polisportiva attiva: un'occhiata rapida di onda triangolare al centro, fa 6, do 6 e di nuovo fa 6, giù di una quarta e su; 110 ms. Va bene per una scheda, un riepilogo o un dettaglio mostrato spesso, senza disturbare.",
+        "score": [
+            [
+                "f6",
+                0.03,
+                0.0,
+                -0.05
+            ],
+            [
+                "c6",
+                0.03,
+                0.0,
+                -0.05
+            ],
+            [
+                "f6",
+                0.05,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            25.0,
+            55.0,
+            30.0
+        ]
+    },
+    "mess_rosa_che_sfila": {
+        "descrizione": "MESS, l'elenco dei tesserati della polisportiva attiva: cinque tocchi brevi di onda triangolare che sfilano da sinistra a destra salendo a zigzag, mi 5, si 5, fa diesis 5, do diesis 6 e sol diesis 5, come giocatori che fanno un passo avanti uno alla volta; 205 ms. Va bene per una rosa, una squadra o un elenco di persone.",
+        "score": [
+            [
+                "e5",
+                0.025,
+                -0.7,
+                0.0
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.025,
+                -0.35,
+                0.0
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "f#5",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6",
+                0.025,
+                0.35,
+                0.0
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#5",
+                0.045,
+                0.7,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            12.0,
+            30.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_penna_sul_diario": {
+        "descrizione": "MESS, il diario della polisportiva attiva: una penna che scrive, tre tratti di rumore bianco nelle frequenze alte, il primo e il terzo con la banda che sale da 3000-7000 a 4500-9000 Hz, quello in mezzo con la banda che scende, da sinistra a destra come una riga scritta; 180 ms. Va bene per un diario, un registro, una cronaca o degli appunti.",
+        "score": [
+            [
+                "3000-7000.4500-9000",
+                0.045,
+                -0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "3500-8000.2500-6000",
+                0.055,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "3000-7000.4500-9000",
+                0.04,
+                0.3,
+                0.0
+            ]
+        ],
+        "kind": 5,
+        "adsr": [
+            15.0,
+            0.0,
+            100.0,
+            35.0
+        ]
+    },
+    "mess_albo_che_scorre": {
+        "descrizione": "MESS, l'elenco delle polisportive del mondo: dente di sega morbido, un arpeggio rapido di la minore che sale per due ottave, la 3, do 4, mi 4, la 4, do 5, mi 5 e la 5, da sinistra a destra, come un albo che scorre; 240 ms. Va bene per un elenco lungo, un albo o un archivio che si apre.",
+        "score": [
+            [
+                "a3",
+                0.03,
+                -0.8,
+                -0.05
+            ],
+            [
+                "c4",
+                0.03,
+                -0.55,
+                -0.05
+            ],
+            [
+                "e4",
+                0.03,
+                -0.3,
+                -0.05
+            ],
+            [
+                "a4",
+                0.03,
+                0.0,
+                -0.05
+            ],
+            [
+                "c5",
+                0.03,
+                0.3,
+                -0.05
+            ],
+            [
+                "e5",
+                0.03,
+                0.55,
+                -0.05
+            ],
+            [
+                "a5",
+                0.06,
+                0.8,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            12.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_porta_che_cigola": {
+        "descrizione": "MESS, si apre la scelta del tesserato da svincolare: una porta che si apre cigolando, quindici impulsi brevissimi di dente di sega da 24 ms che salgono a zigzag dal do diesis 4 al do 5, da sinistra a destra; 360 ms. Va bene per una porta d'uscita, un congedo da decidere o qualcosa che si apre a fatica.",
+        "score": [
+            [
+                "c#4",
+                0.024,
+                -0.6,
+                -0.05
+            ],
+            [
+                "d4",
+                0.024,
+                -0.51,
+                -0.05
+            ],
+            [
+                "c#4",
+                0.024,
+                -0.43,
+                -0.05
+            ],
+            [
+                "e4",
+                0.024,
+                -0.34,
+                -0.05
+            ],
+            [
+                "d#4",
+                0.024,
+                -0.26,
+                -0.05
+            ],
+            [
+                "f4",
+                0.024,
+                -0.17,
+                -0.05
+            ],
+            [
+                "e4",
+                0.024,
+                -0.09,
+                -0.05
+            ],
+            [
+                "f#4",
+                0.024,
+                0.0,
+                -0.05
+            ],
+            [
+                "g4",
+                0.024,
+                0.09,
+                -0.05
+            ],
+            [
+                "f#4",
+                0.024,
+                0.17,
+                -0.05
+            ],
+            [
+                "a4",
+                0.024,
+                0.26,
+                -0.05
+            ],
+            [
+                "g#4",
+                0.024,
+                0.34,
+                -0.05
+            ],
+            [
+                "b4",
+                0.024,
+                0.43,
+                -0.05
+            ],
+            [
+                "a#4",
+                0.024,
+                0.51,
+                -0.05
+            ],
+            [
+                "c5",
+                0.024,
+                0.6,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            12.0,
+            40.0,
+            40.0,
+            30.0
+        ]
+    },
+    "mess_contratto_strappato": {
+        "descrizione": "MESS, lo svincolo è confermato e il tesserato torna libero: un contratto strappato, nove strappi brevissimi di rumore azzurro con la banda che sale da 1500-6000 a 2500-9000 Hz, che si spostano dal centro verso destra, e il lembo finale che si stacca; 220 ms. Va bene per un contratto sciolto, un legame rotto o un documento stracciato.",
+        "score": [
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.0,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.07,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.15,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.22,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.3,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.38,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.45,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.53,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.014,
+                0.6,
+                0.05
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "2000-9000.1000-5000",
+                0.04,
+                0.6,
+                0.05
+            ]
+        ],
+        "kind": 8,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            30.0
+        ]
+    },
+    "mess_eco_nello_spogliatoio": {
+        "descrizione": "MESS, la polisportiva attiva non ha tesserati: un richiamo nello spogliatoio vuoto, una scivolata di seno che sale dal la 4 al mi 5, ripetuta tre volte come un'eco sempre più debole che si allontana da sinistra a destra; 380 ms. Va bene per un elenco o un contenitore vuoto, una stanza deserta o una chiamata senza risposta.",
+        "score": [
+            [
+                "a4.e5",
+                0.08,
+                -0.5,
+                0.0
+            ],
+            [
+                "p",
+                0.07,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4.e5",
+                0.08,
+                0.1,
+                -0.28
+            ],
+            [
+                "p",
+                0.07,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4.e5",
+                0.08,
+                0.6,
+                -0.4
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            30.0
+        ]
+    },
+    "mess_fanfara_della_bandiera": {
+        "descrizione": "MESS, un tuo tesserato diventa una bandiera del club: una fanfara solenne da ottoni, dente di sega morbido, re 5, sol 5, la 5 e un re 6 lungo, poi si 5, re 6 e un sol 6 lungo e pieno che resta; 1640 ms. Va bene per un onore, un riconoscimento, una nomina o un traguardo di fedeltà.",
+        "score": [
+            [
+                "d5",
+                0.13,
+                -0.3,
+                -0.08
+            ],
+            [
+                "g5",
+                0.13,
+                -0.1,
+                -0.08
+            ],
+            [
+                "a5",
+                0.13,
+                0.1,
+                -0.08
+            ],
+            [
+                "d6",
+                0.38,
+                0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.11,
+                0.0,
+                -0.08
+            ],
+            [
+                "d6",
+                0.11,
+                0.0,
+                -0.08
+            ],
+            [
+                "g6",
+                0.6,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_scarpe_al_chiodo": {
+        "descrizione": "MESS, un tuo tesserato si ritira per età e appende le scarpe al chiodo: onda triangolare, quattro note che scendono piano da destra a sinistra, mi 5, re 5, do 5 e sol 4, e un la 4 lungo che risale di un passo e resta sospeso, un saluto malinconico ma sereno; 1140 ms. Va bene per un ritiro, un pensionamento o un congedo naturale.",
+        "score": [
+            [
+                "e5",
+                0.16,
+                0.4,
+                0.0
+            ],
+            [
+                "d5",
+                0.16,
+                0.2,
+                0.0
+            ],
+            [
+                "c5",
+                0.16,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.16,
+                -0.2,
+                0.0
+            ],
+            [
+                "a4",
+                0.5,
+                -0.4,
+                -0.02
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_il_silenzio": {
+        "descrizione": "MESS, un tuo tesserato muore o lascia per sempre il mondo dello showdown: l'inizio del Silenzio, la tradizionale chiamata di tromba militare del congedo, onda triangolare al centro, sol 4, sol 4 e un do 5 lungo, poi sol 4, do 5 e un mi 5 lungo; 1760 ms. Va bene per un lutto, un addio definitivo o un omaggio a chi se ne va.",
+        "score": [
+            [
+                "g4",
+                0.18,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.5,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "g4",
+                0.18,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.7,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_mercato_aperto": {
+        "descrizione": "MESS, si apre il mercato: una saracinesca che si alza, dodici scatti fittissimi di rumore rosa, 16 ms ciascuno a 9 ms l'uno dall'altro, ogni scatto in una banda più acuta del precedente, da 120-600 a 700-3000 Hz, che cresce appena di volume e scorre da sinistra a destra, un rullio metallico che sale; 290 ms. Lo specchio è mess_mosse_finite, la saracinesca che si abbassa. Va bene per aprire un mercato, un negozio, una bottega o un elenco di offerte.",
+        "score": [
+            [
+                "120-600",
+                0.016,
+                -0.3,
+                -0.18
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "170-820",
+                0.016,
+                -0.25,
+                -0.165
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "230-1040",
+                0.016,
+                -0.19,
+                -0.151
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "280-1250",
+                0.016,
+                -0.14,
+                -0.136
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "330-1470",
+                0.016,
+                -0.08,
+                -0.122
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "380-1690",
+                0.016,
+                -0.03,
+                -0.107
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "440-1910",
+                0.016,
+                0.03,
+                -0.093
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "490-2130",
+                0.016,
+                0.08,
+                -0.078
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "540-2350",
+                0.016,
+                0.14,
+                -0.064
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "590-2560",
+                0.016,
+                0.19,
+                -0.049
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "650-2780",
+                0.016,
+                0.25,
+                -0.035
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "700-3000",
+                0.016,
+                0.3,
+                -0.02
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_mercato_mostra": {
+        "descrizione": "MESS, nel mercato cambia la scelta di chi mostrare: un unico sfioro di rumore azzurro, acuto e brevissimo, fra 2000 e 7000 Hz con la banda che sale appena, al centro, come l'angolo di un cartellino girato col dito; 45 ms. Pensato per un evento che scatta a ogni freccia, va bene per ogni scelta in un elenco a tendina o un cambio di categoria che deve farsi sentire appena.",
+        "score": [
+            [
+                "2000-5000.2800-7000",
+                0.045,
+                0.0,
+                0.5
+            ]
+        ],
+        "kind": 8,
+        "adsr": [
+            15.0,
+            0.0,
+            100.0,
+            55.0
+        ]
+    },
+    "mess_mercato_ordine": {
+        "descrizione": "MESS, nel mercato cambia l'ordine dell'elenco: un guizzo di sinusoide che sale di una quarta dal re 6 al sol 6 a destra e ricade al re 6 a sinistra, come due voci che si scambiano di posto, 25 ms per parte con attacco di 3 ms; 50 ms. Pensato per un evento che scatta a ogni freccia, va bene per ogni riordino, scambio di posizione o cambio di criterio.",
+        "score": [
+            [
+                "d6.g6",
+                0.025,
+                0.5,
+                -0.2
+            ],
+            [
+                "g6.d6",
+                0.025,
+                -0.5,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_filtro_dialogo": {
+        "descrizione": "MESS, si apre la ricerca per aggiungere un filtro al mercato: un imbuto di rumore rosa, al centro, che parte larghissimo, da 120 a 9000 Hz, e si stringe fino a una banda sottile fra 1700 e 2300 Hz, entrando piano e spegnendosi; 230 ms. È il gesto opposto di meteora_banda_azzerata, che si allarga. Va bene per aprire un filtro, una ricerca mirata o un setaccio fra molti elementi.",
+        "score": [
+            [
+                "120-9000.1700-2300",
+                0.23,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            25.0,
+            0.0,
+            100.0,
+            30.0
+        ]
+    },
+    "mess_filtro_aggiunto": {
+        "descrizione": "MESS, un filtro entra nell'elenco dei filtri del mercato: onda triangolare, due tocchi rapidi sul do diesis 6 e una scivolata di quinta fino al sol diesis 6, al centro, come un fermo che scatta e una maglia che entra; 150 ms. Lo specchio è mess_filtro_tolto. Va bene per ogni criterio, condizione o regola che si aggiunge.",
+        "score": [
+            [
+                "c#6",
+                0.025,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6",
+                0.025,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6.g#6",
+                0.07,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_filtro_tolto": {
+        "descrizione": "MESS, un filtro esce dall'elenco dei filtri del mercato: mess_filtro_aggiunto al contrario, onda triangolare, una scivolata di quinta che scende dal sol diesis 6 al do diesis 6 e due tocchi rapidi sul do diesis 6, il secondo più piano, al centro; 150 ms. Va bene per ogni criterio, condizione o regola che si toglie.",
+        "score": [
+            [
+                "g#6.c#6",
+                0.07,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6",
+                0.025,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6",
+                0.025,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_filtri_tutti_tolti": {
+        "descrizione": "MESS, si tolgono tutti i filtri del mercato e tornano tutti i candidati: onda triangolare, la scivolata di mess_filtro_tolto tre volte, dal sol diesis 6 al do diesis 6 a destra e al centro, e l'ultima, più lunga e piena, che scende di un'ottava e una quinta fino al do diesis 5 a sinistra; 350 ms. Va bene per ogni azzeramento di criteri, un elenco riaperto per intero o una pulizia completa di condizioni.",
+        "score": [
+            [
+                "g#6.c#6",
+                0.07,
+                0.5,
+                -0.1
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#6.c#6",
+                0.07,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#6.c#5",
+                0.18,
+                -0.5,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_cifra_ingaggio": {
+        "descrizione": "MESS, si apre il dialogo della cifra d'ingaggio di un libero: onda triangolare, il tintinnio di una moneta, un mi 7 breve appena a destra, e dopo una pausa una scivolata di quinta che sale dal sol 5 al re 6, al centro, come una voce che chiede quanto; 220 ms. Va bene per ogni richiesta di una cifra, di un prezzo o di un compenso.",
+        "score": [
+            [
+                "e7",
+                0.03,
+                0.3,
+                -0.22
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5.d6",
+                0.15,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_probabilita": {
+        "descrizione": "MESS, la probabilità che un libero accetti l'ingaggio: un pizzico doppio di onda triangolare, il la 5 e subito la sua ottava, la 6, più piano, al centro, ciascuno con attacco di 3 ms e decadimento fino al silenzio, un tic con un riflesso di vetro; 55 ms. È un timbro da spostare d'altezza a programma, più acuto quanto più alta è la percentuale, come l'ago di uno strumento. Va bene per ogni valore che cambia mentre si scrive e va letto a orecchio.",
+        "score": [
+            [
+                "a5",
+                0.025,
+                0.0,
+                -0.1
+            ],
+            [
+                "a6",
+                0.03,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            12.0,
+            88.0,
+            0.0,
+            0.0
+        ]
+    },
+    "mess_cifra_offerta": {
+        "descrizione": "MESS, si apre il dialogo della cifra da offrire a una polisportiva per un suo tesserato: onda triangolare, due colpi sordi sul la 3 appena a sinistra, come bussare alla porta di un altro, e una scivolata di quinta che sale dal re 5 al la 5, al centro, la domanda; 330 ms. Va bene per ogni proposta da fare a qualcun altro o una trattativa che comincia.",
+        "score": [
+            [
+                "a3",
+                0.035,
+                -0.2,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "a3",
+                0.035,
+                -0.2,
+                0.0
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5.a5",
+                0.15,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            40.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_ingaggio_accettato": {
+        "descrizione": "MESS, il libero accetta l'ingaggio: sinusoide, la firma, uno scarabocchio di tre scivolate rapide a zig zag a sinistra, dal mi 5 al si 5, giù al fa diesis 5 e su al do diesis 6, e poi l'accordo di mi maggiore che sale verso destra, mi 6, sol diesis 6 e un si 6 più lungo; 380 ms. Il gemello opposto è mess_ingaggio_rifiutato, dove la penna cade. Va bene per un contratto firmato, un accordo raggiunto o una proposta accettata.",
+        "score": [
+            [
+                "e5.b5",
+                0.04,
+                -0.4,
+                -0.12
+            ],
+            [
+                "b5.f#5",
+                0.04,
+                -0.3,
+                -0.12
+            ],
+            [
+                "f#5.c#6",
+                0.04,
+                -0.2,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "g#6",
+                0.05,
+                0.15,
+                -0.08
+            ],
+            [
+                "b6",
+                0.13,
+                0.3,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_ingaggio_rifiutato": {
+        "descrizione": "MESS, il libero rifiuta l'ingaggio: il gemello opposto di mess_ingaggio_accettato, sinusoide, la penna che cade, una scivolata dal si 5 al mi 5 a destra, e l'accordo di mi minore che scende verso sinistra, si 5, sol 5 e un mi 5 più lungo; 335 ms. Va bene per un contratto non firmato, una proposta respinta o un accordo mancato.",
+        "score": [
+            [
+                "b5.e5",
+                0.08,
+                0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "g5",
+                0.05,
+                -0.15,
+                -0.08
+            ],
+            [
+                "e5",
+                0.13,
+                -0.3,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_acquisto_fatto": {
+        "descrizione": "MESS, l'acquisto di un giocatore in vendita è fatto: onda triangolare, due monete che escono, mi 7 e si 6 a destra, e dopo una pausa una quinta piena che sale al centro, mi 6 e un si 6 lungo, come un affare chiuso; 265 ms. Va bene per ogni acquisto pagato, un prezzo saldato o una merce presa.",
+        "score": [
+            [
+                "e7",
+                0.03,
+                0.3,
+                -0.22
+            ],
+            [
+                "b6",
+                0.03,
+                0.15,
+                -0.22
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.045,
+                0.0,
+                -0.08
+            ],
+            [
+                "b6",
+                0.12,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            50.0,
+            30.0,
+            25.0
+        ]
+    },
+    "mess_offerta_accettata": {
+        "descrizione": "MESS, la polisportiva del computer accetta l'offerta e il tesserato passa all'utente: onda triangolare, una cadenza che si chiude, fa 5 e la 5 a sinistra, sol 5 e si 5 al centro, do 6 e mi 6 a destra, e un sol 6 lungo al centro, cioè quarto, quinto e primo grado di do maggiore, il giro che dice fatto; 780 ms. Va bene per una trattativa conclusa, un accordo importante o un passaggio di proprietà.",
+        "score": [
+            [
+                "f5",
+                0.08,
+                -0.4,
+                -0.1
+            ],
+            [
+                "a5",
+                0.08,
+                -0.4,
+                -0.1
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                -0.08
+            ],
+            [
+                "b5",
+                0.08,
+                0.0,
+                -0.08
+            ],
+            [
+                "c6",
+                0.08,
+                0.4,
+                -0.05
+            ],
+            [
+                "e6",
+                0.08,
+                0.4,
+                -0.05
+            ],
+            [
+                "g6",
+                0.3,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_offerta_rifiutata": {
+        "descrizione": "MESS, la polisportiva del computer rifiuta la cifra offerta: onda triangolare, la domanda di mess_cifra_offerta che torna più corta e più piano, una scivolata di quinta che sale dal re 5 al la 5, e la risposta, più piena, che precipita dal la 4 al re 4, al centro; 340 ms. Va bene per ogni offerta respinta da un altro, una proposta caduta o un affare saltato.",
+        "score": [
+            [
+                "d5.a5",
+                0.1,
+                0.0,
+                -0.14
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4.d4",
+                0.2,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_cassa_vuota": {
+        "descrizione": "MESS, i soldi in cassa non bastano: onda triangolare, il colpo sordo del cassetto che si apre, un sol 3, e invece del campanello due note opache che cadono di un tritono, re diesis 4 e un la 3 più lungo, al centro; 290 ms. È l'opposto di mess_tesserato_venduto, il cassetto che suona. Va bene per ogni fondo insufficiente, un pagamento impossibile o un conto in rosso.",
+        "score": [
+            [
+                "g3",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#4",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "a3",
+                0.18,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            7.0,
+            40.0,
+            40.0,
+            30.0
+        ]
+    },
+    "mess_mosse_finite": {
+        "descrizione": "MESS, le mosse di mercato del giorno sono finite: la saracinesca che si abbassa, i dodici scatti fittissimi di rumore rosa di mess_mercato_aperto al contrario, da 700-3000 a 120-600 Hz, da destra a sinistra e calando di volume, e dopo 30 ms il tonfo sordo della saracinesca a terra, rumore fra 50 e 500 Hz per 90 ms; 410 ms. Va bene per un negozio chiuso, un servizio non disponibile fino a domani o una quota del giorno esaurita.",
+        "score": [
+            [
+                "700-3000",
+                0.016,
+                0.3,
+                -0.02
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "650-2780",
+                0.016,
+                0.25,
+                -0.031
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "590-2560",
+                0.016,
+                0.19,
+                -0.042
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "540-2350",
+                0.016,
+                0.14,
+                -0.053
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "490-2130",
+                0.016,
+                0.08,
+                -0.064
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "440-1910",
+                0.016,
+                0.03,
+                -0.075
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "380-1690",
+                0.016,
+                -0.03,
+                -0.085
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "330-1470",
+                0.016,
+                -0.08,
+                -0.096
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "280-1250",
+                0.016,
+                -0.14,
+                -0.107
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "230-1040",
+                0.016,
+                -0.19,
+                -0.118
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "170-820",
+                0.016,
+                -0.25,
+                -0.129
+            ],
+            [
+                "p",
+                0.009,
+                0.0,
+                -0.5
+            ],
+            [
+                "120-600",
+                0.016,
+                -0.3,
+                -0.14
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "50-500",
+                0.09,
+                -0.3,
+                -0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_vendite_aperte": {
+        "descrizione": "MESS, si apre il dialogo delle vendite dei tesserati: il campanello della porta di una bottega, sinusoide, si 6 e sol diesis 6 alternati quattro volte, fra sinistra e destra, sempre più piano, 35 ms ciascuno e l'ultimo un po' più lungo; 305 ms. Va bene per aprire una vetrina, una bottega, un banco di vendita o per un cliente che entra.",
+        "score": [
+            [
+                "b6",
+                0.035,
+                -0.3,
+                -0.1
+            ],
+            [
+                "g#6",
+                0.035,
+                0.3,
+                -0.14
+            ],
+            [
+                "b6",
+                0.035,
+                -0.3,
+                -0.18
+            ],
+            [
+                "g#6",
+                0.035,
+                0.3,
+                -0.22
+            ],
+            [
+                "b6",
+                0.035,
+                -0.3,
+                -0.26
+            ],
+            [
+                "g#6",
+                0.035,
+                0.3,
+                -0.3
+            ],
+            [
+                "b6",
+                0.035,
+                -0.3,
+                -0.34
+            ],
+            [
+                "g#6",
+                0.06,
+                0.3,
+                -0.38
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            40.0,
+            40.0,
+            30.0
+        ]
+    },
+    "mess_vendita_non_attiva": {
+        "descrizione": "MESS, si vuole togliere dalla vendita un tesserato che in vendita non c'è: onda triangolare, due tocchi opachi sul si 4 e un terzo che si piega in giù di un tritono fino al fa 4, al centro, come una mano che cerca un cartellino e non lo trova; 210 ms. Va bene per ogni azione su un elemento che non è nello stato richiesto.",
+        "score": [
+            [
+                "b4",
+                0.03,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4",
+                0.03,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4.f4",
+                0.1,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            30.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_arretrati_aperti": {
+        "descrizione": "MESS, si apre l'elenco dei tesserati che aspettano gli arretrati: onda triangolare, quattro note in re minore armonico, re 5, fa 5 e mi 5 da sinistra a destra, che ricadono e restano sospese su un do diesis 5 più lungo al centro, come un conto in sospeso, in 440 ms. Va bene per aprire un elenco di debiti, di attese o di cose ancora da sistemare.",
+        "score": [
+            [
+                "d5",
+                0.08,
+                -0.2,
+                -0.1
+            ],
+            [
+                "f5",
+                0.08,
+                0.0,
+                -0.1
+            ],
+            [
+                "e5",
+                0.08,
+                0.2,
+                -0.1
+            ],
+            [
+                "c#5",
+                0.2,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_conti_a_posto": {
+        "descrizione": "MESS, nessun tesserato aspetta arretrati: onda triangolare, un mordente svelto a sinistra, fa 4, mi 4 e fa 4, poi dopo un respiro il salto di sesta al re 5, più lungo, a destra, come un tutto a posto detto sorridendo, in 310 ms. Va bene per conti in ordine, nessun debito o una lista d'attesa vuota che è una buona notizia.",
+        "score": [
+            [
+                "f4",
+                0.03,
+                -0.4,
+                -0.05
+            ],
+            [
+                "e4",
+                0.03,
+                -0.4,
+                -0.05
+            ],
+            [
+                "f4",
+                0.06,
+                -0.4,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5",
+                0.16,
+                0.4,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            75.0,
+            25.0
+        ]
+    },
+    "mess_arretrati_in_parte": {
+        "descrizione": "MESS, gli arretrati sono pagati in parte e il tesserato aspetta ancora: onda triangolare, il tintinnio di una moneta, re 7 e la 6 appena a destra, e dopo una pausa un passo di un tono che sale, mi 5 e fa diesis 5, al centro, e resta sospeso; 310 ms. È della stessa famiglia di mess_arretrati_saldati e mess_arretrati_tutti_saldati. Va bene per un pagamento parziale, un acconto o un passo avanti che non chiude la questione.",
+        "score": [
+            [
+                "d7",
+                0.03,
+                0.2,
+                -0.2
+            ],
+            [
+                "a6",
+                0.04,
+                0.2,
+                -0.2
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.07,
+                0.0,
+                -0.1
+            ],
+            [
+                "f#5",
+                0.13,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            30.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_arretrati_saldati": {
+        "descrizione": "MESS, un tesserato riceve tutti gli arretrati che aspettava: onda triangolare, due monete che tintinnano, re 7 e la 6 a sinistra e poi a destra, e dopo una pausa re 5, la 5 e un re 6 più lungo al centro, la quinta e l'ottava che chiudono il conto; 460 ms. Va bene per un debito saldato, un pagamento completo o un conto chiuso.",
+        "score": [
+            [
+                "d7",
+                0.03,
+                -0.2,
+                -0.2
+            ],
+            [
+                "a6",
+                0.04,
+                -0.2,
+                -0.2
+            ],
+            [
+                "d7",
+                0.03,
+                0.2,
+                -0.2
+            ],
+            [
+                "a6",
+                0.04,
+                0.2,
+                -0.2
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "a5",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "d6",
+                0.16,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            30.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_arretrati_tutti_saldati": {
+        "descrizione": "MESS, pagato l'ultimo debito e nessuno aspetta più arretrati: onda triangolare, tre monete che tintinnano, re 7 e la 6 a sinistra, al centro e a destra, e poi l'arpeggio intero di re maggiore che sale da sinistra a destra, re 5, fa diesis 5, la 5, re 6 e fa diesis 6, e si apre su un la 6 lungo al centro; 960 ms. Va bene per tutti i conti chiusi, una liberazione o una pratica finalmente sistemata.",
+        "score": [
+            [
+                "d7",
+                0.03,
+                -0.6,
+                -0.2
+            ],
+            [
+                "a6",
+                0.04,
+                -0.6,
+                -0.2
+            ],
+            [
+                "d7",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "a6",
+                0.04,
+                0.0,
+                -0.2
+            ],
+            [
+                "d7",
+                0.03,
+                0.6,
+                -0.2
+            ],
+            [
+                "a6",
+                0.04,
+                0.6,
+                -0.2
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5",
+                0.07,
+                -0.3,
+                -0.07
+            ],
+            [
+                "f#5",
+                0.07,
+                -0.15,
+                -0.07
+            ],
+            [
+                "a5",
+                0.07,
+                0.0,
+                -0.07
+            ],
+            [
+                "d6",
+                0.07,
+                0.15,
+                -0.07
+            ],
+            [
+                "f#6",
+                0.07,
+                0.3,
+                -0.07
+            ],
+            [
+                "a6",
+                0.35,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_bilancio": {
+        "descrizione": "MESS, il bilancio della polisportiva: le palline di un pallottoliere, onda triangolare pizzicata, due colpetti di mi 4 a sinistra, tre di si 4 a destra e il totale, un mi 5 al centro che si spegne; 385 ms. Va bene per un conto, un bilancio, un riepilogo di cifre o un calcolo.",
+        "score": [
+            [
+                "e4",
+                0.018,
+                -0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4",
+                0.018,
+                -0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4",
+                0.018,
+                0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4",
+                0.018,
+                0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4",
+                0.018,
+                0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.1,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            17.0,
+            83.0,
+            0.0,
+            0.0
+        ]
+    },
+    "mess_primo_del_mese": {
+        "descrizione": "MESS, è arrivato il primo del mese: sinusoide, il din don di un calendario, mi 6 a sinistra e do 6 a destra, e poi quattro monete rapide che salgono al centro, sol 6, la 6, si 6 e re 7, fino a un mi 7 lungo, lo sponsor incassato e gli stipendi pagati; 780 ms. Lo specchio è mess_stipendi_non_pagati. Va bene per una scadenza rispettata, un incasso periodico o un nuovo mese che comincia bene.",
+        "score": [
+            [
+                "e6",
+                0.12,
+                -0.3,
+                -0.08
+            ],
+            [
+                "c6",
+                0.18,
+                0.3,
+                -0.08
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "g6",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "a6",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "b6",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "d7",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "e7",
+                0.3,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10.0,
+            25.0,
+            55.0,
+            30.0
+        ]
+    },
+    "mess_stipendi_non_pagati": {
+        "descrizione": "MESS, al primo del mese la cassa non basta per gli stipendi: sinusoide, il din don del calendario di mess_primo_del_mese in minore e più grave, do 6 a sinistra e la 5 a destra, poi due la 4 vuoti al centro, il secondo più piano, e un fa 4 lungo una terza sotto; 940 ms. Va bene per una scadenza mancata, un pagamento non riuscito o un avviso di conti che non tornano.",
+        "score": [
+            [
+                "c6",
+                0.12,
+                -0.3,
+                -0.08
+            ],
+            [
+                "a5",
+                0.18,
+                0.3,
+                -0.08
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.1,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.1,
+                0.0,
+                -0.14
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "f4",
+                0.3,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10.0,
+            25.0,
+            55.0,
+            30.0
+        ]
+    },
+    "mess_tesserati_partiti": {
+        "descrizione": "MESS, tuoi tesserati senza più pazienza se ne vanno per gli stipendi non pagati: rumore marrone, quattro passi netti fra 250 e 3000 Hz che si allontanano verso destra, ciascuno di 80 ms e più piano del precedente, e dopo un silenzio il tonfo pieno di una porta che sbatte, fra 80 e 1800 Hz, tutto a destra; 1,46 secondi. Va bene per qualcuno che se ne va arrabbiato, un abbandono o una perdita grave.",
+        "score": [
+            [
+                "250-3000",
+                0.08,
+                -0.2,
+                0.5
+            ],
+            [
+                "p",
+                0.23,
+                0.0,
+                -0.5
+            ],
+            [
+                "240-2850",
+                0.08,
+                0.1,
+                0.35
+            ],
+            [
+                "p",
+                0.23,
+                0.0,
+                -0.5
+            ],
+            [
+                "230-2700",
+                0.08,
+                0.4,
+                0.2
+            ],
+            [
+                "p",
+                0.23,
+                0.0,
+                -0.5
+            ],
+            [
+                "220-2550",
+                0.08,
+                0.7,
+                0.05
+            ],
+            [
+                "p",
+                0.2,
+                0.0,
+                -0.5
+            ],
+            [
+                "80-1800",
+                0.25,
+                0.8,
+                0.5
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            3.0,
+            60.0,
+            15.0,
+            22.0
+        ]
+    },
+    "mess_tesserato_venduto": {
+        "descrizione": "MESS, un tuo giocatore in vendita è stato comprato e i soldi entrano in cassa: il registratore di cassa, onda triangolare, il colpo del cassetto, un sol 3, e il campanello, do 7 e un mi 7 che risuona, poi l'eco di tre monete che passano da sinistra a destra, sol 6, do 7 e mi 7; 595 ms. L'opposto è mess_cassa_vuota. Va bene per una vendita, un incasso o un pagamento ricevuto.",
+        "score": [
+            [
+                "g3",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c7",
+                0.03,
+                0.0,
+                -0.12
+            ],
+            [
+                "e7",
+                0.25,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "g6",
+                0.03,
+                -0.4,
+                -0.22
+            ],
+            [
+                "c7",
+                0.03,
+                0.0,
+                -0.22
+            ],
+            [
+                "e7",
+                0.15,
+                0.4,
+                -0.22
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            45.0,
+            30.0,
+            15.0
         ]
     }
 }
