@@ -18754,5 +18754,629 @@
             30.0,
             15.0
         ]
+    },
+    "mess_invito_a_giocare": {
+        "descrizione": "MESS, si apre la scelta del tuo giocatore per un'amichevole: dente di sega morbido, un salto d'ottava dal la 4 al la 5, come chi chiama a giocare, poi due passi che salgono, si 5 e un do diesis 6 lungo, da sinistra verso il centro, in 450 ms. Gli risponde mess_avversario_che_risponde. Va bene per un invito, una sfida lanciata o la prima scelta di una coppia.",
+        "score": [
+            [
+                "a4",
+                0.06,
+                -0.5,
+                -0.08
+            ],
+            [
+                "a5",
+                0.1,
+                -0.4,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.06,
+                -0.2,
+                -0.08
+            ],
+            [
+                "c#6",
+                0.2,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_avversario_che_risponde": {
+        "descrizione": "MESS, si apre la scelta dell'avversario dell'amichevole: dente di sega morbido, la risposta dall'altra parte del tavolo a mess_invito_a_giocare, un salto d'ottava che scende dal mi 6 al mi 5, poi due passi che salgono, fa diesis 5 e un sol diesis 5 lungo, da destra, in 450 ms. Va bene per una risposta, chi accetta una sfida o la seconda scelta di una coppia.",
+        "score": [
+            [
+                "e6",
+                0.06,
+                0.6,
+                -0.1
+            ],
+            [
+                "e5",
+                0.1,
+                0.5,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0,
+                -0.5
+            ],
+            [
+                "f#5",
+                0.06,
+                0.4,
+                -0.08
+            ],
+            [
+                "g#5",
+                0.2,
+                0.3,
+                -0.06
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_opzioni_dell_amichevole": {
+        "descrizione": "MESS, si apre il dialogo delle opzioni dell'amichevole, con i set, il modo di mostrare la cronaca e il suo livello: onda triangolare, tre scatti brevi come leve che si regolano, fa diesis 6 a sinistra, re 6 a destra e fa diesis 6 a sinistra, poi un si 6 al centro, in 340 ms. Va bene per un pannello di opzioni, una regolazione o una scelta fra più voci.",
+        "score": [
+            [
+                "f#6",
+                0.035,
+                -0.5,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0,
+                -0.5
+            ],
+            [
+                "d6",
+                0.035,
+                0.5,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0,
+                -0.5
+            ],
+            [
+                "f#6",
+                0.035,
+                -0.5,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0,
+                -0.5
+            ],
+            [
+                "b6",
+                0.08,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            30.0,
+            40.0,
+            30.0
+        ]
+    },
+    "mess_conto_alla_rovescia": {
+        "descrizione": "MESS, l'amichevole comincia a essere mostrata un punto alla volta: onda triangolare al centro, il conto alla rovescia di una partenza, tre segnali brevi sul la 5 e il via all'ottava, sul la 6, in 580 ms. Va bene per un via, l'inizio di una gara o di un racconto a puntate.",
+        "score": [
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.07,
+                0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.07,
+                0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.07,
+                0,
+                -0.5
+            ],
+            [
+                "a6",
+                0.22,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_amichevole_vinta": {
+        "descrizione": "MESS, l'amichevole la vince il tuo tesserato: una fanfara breve di dente di sega morbido in la maggiore, mi 5 ribattuto, la 5, do diesis 6 e un mi 6 lungo, da sinistra verso il centro, in 760 ms. La stessa figura scende in mess_amichevole_persa. Va bene per una vittoria, una partita vinta o un traguardo raggiunto.",
+        "score": [
+            [
+                "e5",
+                0.08,
+                -0.3,
+                -0.08
+            ],
+            [
+                "e5",
+                0.08,
+                -0.3,
+                -0.08
+            ],
+            [
+                "a5",
+                0.12,
+                0.0,
+                -0.07
+            ],
+            [
+                "c#6",
+                0.08,
+                0.2,
+                -0.06
+            ],
+            [
+                "e6",
+                0.4,
+                0.0,
+                -0.04
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_amichevole_persa": {
+        "descrizione": "MESS, l'amichevole la perde il tuo tesserato: dente di sega morbido, la figura di mess_amichevole_vinta che scende in la minore, mi 6 ribattuto, do 6, la 5 e un mi 5 lungo che si piega di un semitono verso il basso, da destra verso sinistra, in 780 ms. Va bene per una sconfitta, una partita persa o un obiettivo mancato.",
+        "score": [
+            [
+                "e6",
+                0.08,
+                0.3,
+                -0.1
+            ],
+            [
+                "e6",
+                0.08,
+                0.3,
+                -0.1
+            ],
+            [
+                "c6",
+                0.12,
+                0.1,
+                -0.1
+            ],
+            [
+                "a5",
+                0.08,
+                -0.1,
+                -0.1
+            ],
+            [
+                "e5.d#5",
+                0.42,
+                -0.3,
+                -0.12
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_stretta_di_mano": {
+        "descrizione": "MESS, un'amichevole fra due tuoi tesserati, che vinci comunque: sinusoide, due mani che si stringono, do diesis 6 a sinistra e poi a destra, mi 6 a sinistra e poi a destra, e un la 6 lungo al centro, in 700 ms. Va bene per un incontro in famiglia, un pareggio o un accordo fra due parti.",
+        "score": [
+            [
+                "c#6",
+                0.08,
+                -0.8,
+                -0.05
+            ],
+            [
+                "c#6",
+                0.08,
+                0.8,
+                -0.05
+            ],
+            [
+                "p",
+                0.04,
+                0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.08,
+                -0.8,
+                -0.05
+            ],
+            [
+                "e6",
+                0.08,
+                0.8,
+                -0.05
+            ],
+            [
+                "p",
+                0.04,
+                0,
+                -0.5
+            ],
+            [
+                "a6",
+                0.3,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_punto_successivo": {
+        "descrizione": "MESS, F8 mostra il punto successivo dell'amichevole: un guizzo minimo di dente di sega morbido, una scivolata di quinta dal la 5 al mi 6, appena a destra, in 50 ms. Breve e discreto, perché suona a ogni punto. Va bene per andare avanti di un passo, voltare pagina o mostrare l'elemento seguente.",
+        "score": [
+            [
+                "a5.e6",
+                0.05,
+                0.2,
+                -0.1
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_resto_dell_incontro": {
+        "descrizione": "MESS, Ctrl+F8 mostra tutto il resto dell'amichevole: il guizzo di mess_punto_successivo cinque volte di fila, sempre più acuto, dal la 5 fino al sol diesis 7, che corre da sinistra a destra, dente di sega morbido, in 250 ms. Va bene per un avanzamento veloce, un salto alla fine o tutto il resto in una volta.",
+        "score": [
+            [
+                "a5.e6",
+                0.035,
+                -0.6,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0,
+                -0.5
+            ],
+            [
+                "c#6.g#6",
+                0.035,
+                -0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0,
+                -0.5
+            ],
+            [
+                "e6.b6",
+                0.035,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0,
+                -0.5
+            ],
+            [
+                "a6.e7",
+                0.035,
+                0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0,
+                -0.5
+            ],
+            [
+                "c#7.g#7",
+                0.05,
+                0.6,
+                -0.12
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_incontro_finito": {
+        "descrizione": "MESS, F8 quando l'amichevole è già tutta mostrata: dente di sega morbido al centro, una cadenza che chiude, un mi 5 breve e, dopo un respiro, la quinta che scende al la 4, in 370 ms. Va bene per dire che qualcosa è finito e non c'è altro da vedere, o per la fine di un elenco.",
+        "score": [
+            [
+                "e5",
+                0.07,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.05,
+                0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.25,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            6.0,
+            20.0,
+            60.0,
+            40.0
+        ]
+    },
+    "mess_cronaca_salvata": {
+        "descrizione": "MESS, la cronaca dell'amichevole è scritta nel suo file: onda triangolare, quattro tic svelti sul fa diesis 6 come i tasti di una macchina da scrivere, da sinistra verso il centro, e il campanello di fine riga, si 5 e mi 6, a destra, in 500 ms. Va bene per un testo salvato, un rapporto scritto o un file pronto.",
+        "score": [
+            [
+                "f#6",
+                0.02,
+                -0.5,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0,
+                -0.5
+            ],
+            [
+                "f#6",
+                0.02,
+                -0.4,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0,
+                -0.5
+            ],
+            [
+                "f#6",
+                0.02,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0,
+                -0.5
+            ],
+            [
+                "f#6",
+                0.02,
+                -0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.06,
+                0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.06,
+                0.3,
+                -0.08
+            ],
+            [
+                "e6",
+                0.22,
+                0.3,
+                -0.06
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            30.0,
+            30.0,
+            60.0
+        ]
+    },
+    "mess_cronaca_non_salvata": {
+        "descrizione": "MESS, la cronaca dell'amichevole non si può scrivere nel file: dente di sega morbido al centro, un la 4 e poi un tonfo che scivola giù di un tritono, dal sol diesis 4 al re 4, in 400 ms. Va bene per un file che non si scrive, un'operazione sul disco fallita o un errore senza drammi.",
+        "score": [
+            [
+                "a4",
+                0.09,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0,
+                -0.5
+            ],
+            [
+                "g#4.d4",
+                0.28,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_nessun_incontro": {
+        "descrizione": "MESS, F8, Ctrl+F8 o Salva la cronaca quando nella sessione non c'è ancora un'amichevole: dente di sega morbido al centro, una domanda sommessa che resta senza risposta, un la 4 e, dopo un attimo, un do 5 più piano, in 260 ms. Va bene per un comando che non trova niente su cui lavorare o per qualcosa che manca.",
+        "score": [
+            [
+                "a4",
+                0.06,
+                0.0,
+                -0.14
+            ],
+            [
+                "p",
+                0.06,
+                0,
+                -0.5
+            ],
+            [
+                "c5",
+                0.14,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            8.0,
+            20.0,
+            60.0,
+            40.0
+        ]
+    },
+    "mess_torna_domani": {
+        "descrizione": "MESS, oggi nessuno può giocare un'amichevole, perché ognuno ne gioca al massimo una al giorno e chi è infortunato non gioca: dente di sega morbido, l'invito di mess_invito_a_giocare un'ottava sotto, la 3, la 4 e si 4, che resta sospeso e ricade di un tritono sul fa 4, da sinistra verso il centro, in 620 ms. Va bene per un rimando a domani, un'attesa o un'occasione che non c'è.",
+        "score": [
+            [
+                "a3",
+                0.06,
+                -0.3,
+                -0.06
+            ],
+            [
+                "a4",
+                0.1,
+                -0.2,
+                -0.06
+            ],
+            [
+                "p",
+                0.03,
+                0,
+                -0.5
+            ],
+            [
+                "b4",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.12,
+                0,
+                -0.5
+            ],
+            [
+                "f4",
+                0.25,
+                0.1,
+                -0.1
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
