@@ -7938,7 +7938,7 @@
         ]
     },
     "meditimer_cronometro_pausa": {
-        "descrizione": "il cronometro si ferma in pausa: due note corte che scendono. Usato da: meteora.",
+        "descrizione": "il cronometro si ferma in pausa: due note corte che scendono. Usato da: mess, meteora.",
         "score": [
             [
                 "c6",
@@ -7962,7 +7962,7 @@
         ]
     },
     "meditimer_cronometro_ripreso": {
-        "descrizione": "il cronometro riparte dalla pausa: tre note veloci che salgono. Usato da: meteora.",
+        "descrizione": "il cronometro riparte dalla pausa: tre note veloci che salgono. Usato da: mess, meteora.",
         "score": [
             [
                 "e5",
@@ -13086,7 +13086,7 @@
         ]
     },
     "meteora_velocita_su": {
-        "descrizione": "MeTeOra, il tasto D rende la riproduzione più veloce: quattro tic di onda triangolare sul si 5, al centro, sempre più ravvicinati, come un metronomo che accelera; 180 ms. Il gesto opposto è meteora_velocita_giu, quattro tic sul mi 5 che rallentano. Va bene per ogni aumento di velocità, di ritmo o di cadenza.",
+        "descrizione": "MeTeOra, il tasto D rende la riproduzione più veloce: quattro tic di onda triangolare sul si 5, al centro, sempre più ravvicinati, come un metronomo che accelera; 180 ms. Il gesto opposto è meteora_velocita_giu, quattro tic sul mi 5 che rallentano. Va bene per ogni aumento di velocità, di ritmo o di cadenza. Usato da: mess.",
         "score": [
             [
                 "b5",
@@ -13140,7 +13140,7 @@
         ]
     },
     "meteora_velocita_giu": {
-        "descrizione": "MeTeOra, il tasto A rende la riproduzione più lenta: quattro tic di onda triangolare sul mi 5, al centro, sempre più distanziati, come un metronomo che rallenta; 180 ms. Il gesto opposto è meteora_velocita_su, quattro tic sul si 5 che accelerano. Va bene per ogni diminuzione di velocità, di ritmo o di cadenza.",
+        "descrizione": "MeTeOra, il tasto A rende la riproduzione più lenta: quattro tic di onda triangolare sul mi 5, al centro, sempre più distanziati, come un metronomo che rallenta; 180 ms. Il gesto opposto è meteora_velocita_su, quattro tic sul si 5 che accelerano. Va bene per ogni diminuzione di velocità, di ritmo o di cadenza. Usato da: mess.",
         "score": [
             [
                 "e5",
@@ -13236,7 +13236,7 @@
         ]
     },
     "meteora_velocita_al_limite": {
-        "descrizione": "MeTeOra, la velocità della riproduzione è già al minimo o al massimo e non cambia più: due tic di onda triangolare sul do diesis 5, più gravi di quelli di meteora_velocita_su e meteora_velocita_giu, il secondo più piano, come bussare contro un muro; 80 ms. Va bene per ogni regolazione di velocità o di ritmo arrivata al fondo scala.",
+        "descrizione": "MeTeOra, la velocità della riproduzione è già al minimo o al massimo e non cambia più: due tic di onda triangolare sul do diesis 5, più gravi di quelli di meteora_velocita_su e meteora_velocita_giu, il secondo più piano, come bussare contro un muro; 80 ms. Va bene per ogni regolazione di velocità o di ritmo arrivata al fondo scala. Usato da: mess.",
         "score": [
             [
                 "c#5",
@@ -19377,6 +19377,144 @@
             15.0,
             70.0,
             30.0
+        ]
+    },
+    "mess_dall_altra_parte": {
+        "descrizione": "MESS, nella partita dal vivo Alt+L passa dalla parte dell'altro giocatore, all'altra testata del tavolo: sinusoide, una scivolata di quarta che sale dal re 5 al sol 5 e attraversa da sinistra a destra, un respiro, e un sol 4 breve e più piano a destra, come chi ha fatto il giro del tavolo e si ferma; 280 ms. Va bene per un cambio di punto di vista, di parte o di lato.",
+        "score": [
+            [
+                "d5.g5",
+                0.16,
+                "-0.8.0.8",
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0,
+                -0.5
+            ],
+            [
+                "g4",
+                0.09,
+                0.8,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_velocita_di_gioco": {
+        "descrizione": "MESS, si apre il dialogo della velocità di gioco: sinusoide, il tic tac di un metronomo, quattro tocchi brevissimi a passo regolare, la 5 a sinistra e mi 6 a destra due volte, ogni 120 ms; 420 ms. Va bene per ogni regolazione di un ritmo, di un tempo o di una cadenza.",
+        "score": [
+            [
+                "a5",
+                0.03,
+                -0.6,
+                -0.05
+            ],
+            [
+                "p",
+                0.09,
+                0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.03,
+                0.6,
+                -0.05
+            ],
+            [
+                "p",
+                0.09,
+                0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.03,
+                -0.6,
+                -0.05
+            ],
+            [
+                "p",
+                0.09,
+                0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.03,
+                0.6,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0,
+                -0.5
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            30.0,
+            40.0,
+            40.0
+        ]
+    },
+    "mess_velocita_salvata": {
+        "descrizione": "MESS, la velocità di gioco è salvata nelle impostazioni: sinusoide, il tic tac di mess_velocita_di_gioco una volta sola, la 5 a sinistra e mi 6 a destra, poi la stessa quinta che si posa al centro, la 5 e un mi 6 lungo, come un ritmo che si fissa; 400 ms. Va bene per un tempo o una cadenza scelti e confermati.",
+        "score": [
+            [
+                "a5",
+                0.03,
+                -0.5,
+                -0.05
+            ],
+            [
+                "p",
+                0.07,
+                0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.03,
+                0.5,
+                -0.05
+            ],
+            [
+                "p",
+                0.08,
+                0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.06,
+                0,
+                -0.1
+            ],
+            [
+                "e6",
+                0.13,
+                0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            25.0,
+            60.0,
+            35.0
         ]
     }
 }
