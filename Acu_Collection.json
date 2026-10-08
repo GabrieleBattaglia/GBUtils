@@ -18894,7 +18894,7 @@
         ]
     },
     "mess_conto_alla_rovescia": {
-        "descrizione": "MESS, l'amichevole comincia a essere mostrata un punto alla volta: onda triangolare al centro, il conto alla rovescia di una partenza, tre segnali brevi sul la 5 e il via all'ottava, sul la 6, in 580 ms. Va bene per un via, l'inizio di una gara o di un racconto a puntate.",
+        "descrizione": "MESS, si apre la finestra della partita dal vivo, quando nel dialogo dell'amichevole si sceglie Assisti: onda triangolare al centro, il conto alla rovescia di una partenza, tre segnali brevi sul la 5 e il via all'ottava, sul la 6, in 580 ms. Va bene per un via, l'inizio di una gara o di un racconto a puntate.",
         "score": [
             [
                 "a5",
@@ -19086,7 +19086,7 @@
         ]
     },
     "mess_punto_successivo": {
-        "descrizione": "MESS, F8 mostra il punto successivo dell'amichevole: un guizzo minimo di dente di sega morbido, una scivolata di quinta dal la 5 al mi 6, appena a destra, in 50 ms. Breve e discreto, perché suona a ogni punto. Va bene per andare avanti di un passo, voltare pagina o mostrare l'elemento seguente.",
+        "descrizione": "MESS, nella partita dal vivo il riscaldamento è saltato: durante il riscaldamento il pulsante Prosegui diventa Salta il riscaldamento, e Invio o spazio lo saltano. Un guizzo minimo di dente di sega morbido, una scivolata di quinta dal la 5 al mi 6, appena a destra, in 50 ms, breve e discreto. Va bene per andare avanti di un passo, saltare un tratto o mostrare l'elemento seguente.",
         "score": [
             [
                 "a5.e6",
@@ -19104,7 +19104,7 @@
         ]
     },
     "mess_resto_dell_incontro": {
-        "descrizione": "MESS, Ctrl+F8 mostra tutto il resto dell'amichevole: il guizzo di mess_punto_successivo cinque volte di fila, sempre più acuto, dal la 5 fino al sol diesis 7, che corre da sinistra a destra, dente di sega morbido, in 250 ms. Va bene per un avanzamento veloce, un salto alla fine o tutto il resto in una volta.",
+        "descrizione": "MESS, nella partita dal vivo Alt+V, Vai alla fine, chiude la finestra e mostra nella vista principale il risultato e la cronaca intera, e subito dopo suona l'esito: il guizzo di mess_punto_successivo cinque volte di fila, sempre più acuto, dal la 5 fino al sol diesis 7, che corre da sinistra a destra, dente di sega morbido, in 250 ms. Va bene per un avanzamento veloce, un salto alla fine o tutto il resto in una volta.",
         "score": [
             [
                 "a5.e6",
@@ -19170,7 +19170,7 @@
         ]
     },
     "mess_incontro_finito": {
-        "descrizione": "MESS, F8 quando l'amichevole è già tutta mostrata: dente di sega morbido al centro, una cadenza che chiude, un mi 5 breve e, dopo un respiro, la quinta che scende al la 4, in 370 ms. Va bene per dire che qualcosa è finito e non c'è altro da vedere, o per la fine di un elenco.",
+        "descrizione": "MESS, nella partita dal vivo Alt+F o Alt+L a incontro già finito, quando non c'è più niente da ascoltare né un lato da cambiare, e il pulsante porta al risultato: dente di sega morbido al centro, una cadenza che chiude, un mi 5 breve e, dopo un respiro, la quinta che scende al la 4, in 370 ms. Va bene per dire che qualcosa è finito e non c'è altro da vedere, o per la fine di un elenco.",
         "score": [
             [
                 "e5",
@@ -19556,6 +19556,36 @@
             3.0,
             20.0,
             70.0,
+            40.0
+        ]
+    },
+    "mess_prova_volume_partita": {
+        "descrizione": "MESS, prova del volume della partita dal vivo, nel dialogo degli effetti sonori: rumore rosa, una pallina colpita a sinistra, un tocco secco di 30 ms fra 300 e 6000 Hz, che attraversa il tavolo verso destra per 300 ms, con la banda che scende da 2500-8000 a 1500-5000 Hz mentre rallenta, e sbatte sulla sponda a destra, 40 ms fra 800 e 4000 Hz; 370 ms in tutto. Suona al volume della partita scritto nel campo, non a quello degli effetti, ed è diverso dalla nota di mess_prova_volume, che prova gli effetti. Va bene per provare il livello di una scena sonora, di un gioco o di uno spazio stereo.",
+        "score": [
+            [
+                "300-6000",
+                0.03,
+                -0.6,
+                0.45
+            ],
+            [
+                "2500-8000.1500-5000",
+                0.3,
+                "-0.6.0.6",
+                0.15
+            ],
+            [
+                "800-4000",
+                0.04,
+                0.6,
+                0.35
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            2.0,
+            30.0,
+            50.0,
             40.0
         ]
     }
