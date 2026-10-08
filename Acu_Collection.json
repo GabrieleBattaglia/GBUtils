@@ -336,7 +336,7 @@
         ]
     },
     "sys_tick_alto": {
-        "descrizione": "Tick breve acuto (singola nota (onda sinusoidale)). Usato da: gabryscola, meteora.",
+        "descrizione": "Tick breve acuto (singola nota (onda sinusoidale)). Usato da: gabryscola, mess, meteora.",
         "score": [
             [
                 "c6",
@@ -3288,7 +3288,7 @@
         ]
     },
     "colpo_d_impatto_1": {
-        "descrizione": "Colpo d'impatto, un tonfo cupo e brevissimo: dente di sega che cade di un'ottava, da fa 2 a fa 1, in 60 ms, con attacco istantaneo e decadimento fino al silenzio.",
+        "descrizione": "Colpo d'impatto, un tonfo cupo e brevissimo: dente di sega che cade di un'ottava, da fa 2 a fa 1, in 60 ms, con attacco istantaneo e decadimento fino al silenzio. Usato da: mess.",
         "score": [
             [
                 "f2.f1",
@@ -3306,7 +3306,7 @@
         ]
     },
     "colpo_d_impatto_2": {
-        "descrizione": "Colpo d'impatto, un tonfo secco appena più lungo dell'1: dente di sega che cade di un'ottava, da la diesis 2 a la diesis 1, in 70 ms, con attacco istantaneo e decadimento fino al silenzio.",
+        "descrizione": "Colpo d'impatto, un tonfo secco appena più lungo dell'1: dente di sega che cade di un'ottava, da la diesis 2 a la diesis 1, in 70 ms, con attacco istantaneo e decadimento fino al silenzio. Usato da: mess.",
         "score": [
             [
                 "a#2.a#1",
@@ -3324,7 +3324,7 @@
         ]
     },
     "colpo_d_impatto_3": {
-        "descrizione": "Colpo d'impatto che sprofonda: dente di sega che precipita da si 3 a do 0, quasi quattro ottave, in 80 ms, con attacco istantaneo e decadimento fino al silenzio. Un colpo che si schianta in basso. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto che sprofonda: dente di sega che precipita da si 3 a do 0, quasi quattro ottave, in 80 ms, con attacco istantaneo e decadimento fino al silenzio. Un colpo che si schianta in basso. Usato da: mess, meteora.",
         "score": [
             [
                 "b3.c0",
@@ -3342,7 +3342,7 @@
         ]
     },
     "colpo_d_impatto_5": {
-        "descrizione": "Colpo d'impatto più chiaro: dente di sega che cade di un'ottava, da do 4 a do 3, in 100 ms, con attacco istantaneo e decadimento fino al silenzio. Un urto di legno più che un tonfo. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto più chiaro: dente di sega che cade di un'ottava, da do 4 a do 3, in 100 ms, con attacco istantaneo e decadimento fino al silenzio. Un urto di legno più che un tonfo. Usato da: mess, meteora.",
         "score": [
             [
                 "c4.c3",
@@ -3360,7 +3360,7 @@
         ]
     },
     "colpo_d_impatto_6": {
-        "descrizione": "Impatto percussivo 6",
+        "descrizione": "Impatto percussivo 6 Usato da: mess.",
         "score": [
             [
                 "c1.c0",
@@ -3378,7 +3378,7 @@
         ]
     },
     "colpo_d_impatto_7": {
-        "descrizione": "Colpo d'impatto profondissimo: dente di sega che cade da do 1 a do 0, quasi solo vibrazione, in 120 ms, con attacco istantaneo e decadimento fino al silenzio. Un colpo di grancassa lontano. Usato da: meteora.",
+        "descrizione": "Colpo d'impatto profondissimo: dente di sega che cade da do 1 a do 0, quasi solo vibrazione, in 120 ms, con attacco istantaneo e decadimento fino al silenzio. Un colpo di grancassa lontano. Usato da: mess, meteora.",
         "score": [
             [
                 "c1.c0",
@@ -3396,7 +3396,7 @@
         ]
     },
     "colpo_d_impatto_8": {
-        "descrizione": "Impatto percussivo 8",
+        "descrizione": "Impatto percussivo 8 Usato da: mess.",
         "score": [
             [
                 "c1.c0",
@@ -3414,7 +3414,7 @@
         ]
     },
     "colpo_d_impatto_9": {
-        "descrizione": "Impatto percussivo 9",
+        "descrizione": "Impatto percussivo 9 Usato da: mess.",
         "score": [
             [
                 "c1.c0",
@@ -3432,7 +3432,7 @@
         ]
     },
     "colpo_d_impatto_10": {
-        "descrizione": "Impatto percussivo 10",
+        "descrizione": "Impatto percussivo 10 Usato da: mess.",
         "score": [
             [
                 "a1.g#1",
@@ -5268,7 +5268,7 @@
         ]
     },
     "fide_pronto": {
-        "descrizione": "Segnale acustico acuto di fine ricerca FIDE. Usato da: tornello.",
+        "descrizione": "Segnale acustico acuto di fine ricerca FIDE. Usato da: mess, tornello.",
         "score": [
             [
                 "g6",
@@ -5610,7 +5610,7 @@
         ]
     },
     "pioggia_leggera": {
-        "descrizione": "pioggia fine di sottofondo che attraversa lo stereo",
+        "descrizione": "pioggia fine di sottofondo che attraversa lo stereo Usato da: mess.",
         "score": [
             [
                 "600-6000",
@@ -5748,7 +5748,7 @@
         ]
     },
     "rimbalzo_stereo": {
-        "descrizione": "quattro rimbalzi che calano rimbalzando fra le casse. Usato da: meteora.",
+        "descrizione": "quattro rimbalzi che calano rimbalzando fra le casse. Usato da: mess, meteora.",
         "score": [
             [
                 "e6",
@@ -6042,7 +6042,7 @@
         ]
     },
     "doppio_tic_conferma": {
-        "descrizione": "Due tic vicinissimi di seno, mi 6 appena a sinistra e si 6 appena a destra, separati da 50 ms di pausa, 130 ms in tutto: una conferma leggera. Va bene per una scelta accettata o un'azione minore riuscita. Usato da: batnav, gabryscola, meteora, pokermachine, tornello.",
+        "descrizione": "Due tic vicinissimi di seno, mi 6 appena a sinistra e si 6 appena a destra, separati da 50 ms di pausa, 130 ms in tutto: una conferma leggera. Va bene per una scelta accettata o un'azione minore riuscita. Usato da: batnav, gabryscola, mess, meteora, pokermachine, tornello.",
         "score": [
             [
                 "e6",
@@ -6180,7 +6180,7 @@
         ]
     },
     "scudisciata": {
-        "descrizione": "Un colpo di frusta, anche scorrimento fra elementi, anche eliminazione elemento. Usato da: batnav, meteora.",
+        "descrizione": "Un colpo di frusta, anche scorrimento fra elementi, anche eliminazione elemento. Usato da: batnav, mess, meteora.",
         "score": [
             [
                 "156-184.7040-11841",
@@ -6324,7 +6324,7 @@
         ]
     },
     "carta_giocata": {
-        "descrizione": "una carta posata sul tavolo: colpo secco di cartoncino, rosa, banda che scende. Usato da: gabryscola, meteora.",
+        "descrizione": "una carta posata sul tavolo: colpo secco di cartoncino, rosa, banda che scende. Usato da: gabryscola, mess, meteora.",
         "score": [
             [
                 "600-9000.300-2500",
@@ -6342,7 +6342,7 @@
         ]
     },
     "carta_pescata": {
-        "descrizione": "una carta sfilata dal mazzo: fruscio breve che sale, bianco. Usato da: gabryscola, meteora.",
+        "descrizione": "una carta sfilata dal mazzo: fruscio breve che sale, bianco. Usato da: gabryscola, mess, meteora.",
         "score": [
             [
                 "300-4000.1500-12000",
@@ -6714,7 +6714,7 @@
         ]
     },
     "pokermachine_scarto": {
-        "descrizione": "carte scartate: un colpo di polso che le fa volare verso sinistra e il tonfo sul tavolo",
+        "descrizione": "carte scartate: un colpo di polso che le fa volare verso sinistra e il tonfo sul tavolo Usato da: mess.",
         "score": [
             [
                 "3000-11000.400-1500",
@@ -8778,7 +8778,7 @@
         ]
     },
     "meditimer_manuale": {
-        "descrizione": "il manuale si apre: un fruscio di pagina, rumore bianco che scende",
+        "descrizione": "il manuale si apre: un fruscio di pagina, rumore bianco che scende Usato da: mess.",
         "score": [
             [
                 "800-6000.300-2000",
@@ -11796,7 +11796,7 @@
         ]
     },
     "pokermachine_rimescolo": {
-        "descrizione": "Poker Machine, gli scarti tornano nel mazzo: sei fruscii di rumore marrone che rimbalzano, piu' lenti del mescolare",
+        "descrizione": "Poker Machine, gli scarti tornano nel mazzo: sei fruscii di rumore marrone che rimbalzano, piu' lenti del mescolare Usato da: mess.",
         "score": [
             [
                 "200-3000",
@@ -21290,6 +21290,36 @@
             3.0,
             15.0,
             70.0,
+            35.0
+        ]
+    },
+    "mess_amichevole_registrata": {
+        "descrizione": "MESS, l'amichevole registrata senza svelare il risultato, uscendo con Esc dalla partita dal vivo: onda triangolare, una scivolata morbida da mi 5 a do 5, una breve pausa e un sol 4 che si posa, in 330 ms. Va bene per un'azione conclusa in silenzio, come un registro che si chiude senza annunci.",
+        "score": [
+            [
+                "e5.c5",
+                0.12,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "g4",
+                0.16,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            0.0,
+            100.0,
             35.0
         ]
     }
