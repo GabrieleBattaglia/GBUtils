@@ -19470,12 +19470,12 @@
         ]
     },
     "mess_velocita_salvata": {
-        "descrizione": "MESS, la velocità di gioco è salvata nelle impostazioni: sinusoide, il tic tac di mess_velocita_di_gioco una volta sola, la 5 a sinistra e mi 6 a destra, poi la stessa quinta che si posa al centro, la 5 e un mi 6 lungo, come un ritmo che si fissa; 400 ms. Va bene per un tempo o una cadenza scelti e confermati.",
+        "descrizione": "MESS, la velocità di gioco è salvata nelle impostazioni: sinusoide al centro, tre note che scendono sull'accordo di sol, fa diesis 6 e re 6 brevi come due tocchi di metronomo, e un sol 5 lungo dove il ritmo si posa; 400 ms. È diverso dal tic tac di mess_velocita_di_gioco, che apre il dialogo, per note, altezza e direzione. Va bene per un tempo, una cadenza o una regolazione scelti e confermati.",
         "score": [
             [
-                "a5",
+                "f#6",
                 0.03,
-                -0.5,
+                0,
                 -0.05
             ],
             [
@@ -19485,26 +19485,20 @@
                 -0.5
             ],
             [
-                "e6",
+                "d6",
                 0.03,
-                0.5,
+                0,
                 -0.05
             ],
             [
                 "p",
-                0.08,
+                0.07,
                 0,
                 -0.5
             ],
             [
-                "a5",
-                0.06,
-                0,
-                -0.1
-            ],
-            [
-                "e6",
-                0.13,
+                "g5",
+                0.2,
                 0,
                 -0.08
             ]
@@ -19515,6 +19509,54 @@
             25.0,
             60.0,
             35.0
+        ]
+    },
+    "mess_fino_a_fine_set": {
+        "descrizione": "MESS, nella partita dal vivo Alt+F ascolta di seguito fino a fine set, senza fermarsi a ogni punto: sinusoide al centro, una scala che sale di filato, sol 5, la 5, si 5, re 6 e mi 6, un tocco ogni 35 ms senza respiro, e si posa su un sol 6 lungo; 315 ms. Va bene per un avanzamento continuo, un ascolto o una lettura di seguito, senza soste.",
+        "score": [
+            [
+                "g5",
+                0.035,
+                0,
+                -0.1
+            ],
+            [
+                "a5",
+                0.035,
+                0,
+                -0.1
+            ],
+            [
+                "b5",
+                0.035,
+                0,
+                -0.1
+            ],
+            [
+                "d6",
+                0.035,
+                0,
+                -0.1
+            ],
+            [
+                "e6",
+                0.035,
+                0,
+                -0.08
+            ],
+            [
+                "g6",
+                0.14,
+                0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            20.0,
+            70.0,
+            40.0
         ]
     }
 }
