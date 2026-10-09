@@ -21636,49 +21636,13 @@
         ]
     },
     "mess_sala_allenamento": {
-        "descrizione": "MESS, si apre la sala allenamento: onda triangolare, il passo del riscaldamento, re 5 a sinistra e la 5 a destra, due volte, a ritmo di corsa, e poi il re 6 al centro, più lungo, il via; 450 ms. Va bene per l'ingresso in una palestra, l'inizio di un allenamento o di un esercizio a tempo.",
+        "descrizione": "MESS, si apre la sala allenamento: sinusoide, il richiamo dell'allenatore, due sol 6 brevi al centro, poi due scivolate di una quarta dal do 5 al fa 5, una a sinistra e una a destra, i primi passi di corsa, e una scivolata più lunga dal fa 5 al do 6 al centro, la squadra che parte; 530 ms. Va bene per l'ingresso in una palestra, l'inizio di un allenamento o di un esercizio a tempo.",
         "score": [
             [
-                "d5",
-                0.05,
-                -0.3,
-                -0.1
-            ],
-            [
-                "p",
-                0.03,
+                "g6",
+                0.06,
                 0.0,
-                0.0
-            ],
-            [
-                "a5",
-                0.05,
-                0.3,
-                -0.1
-            ],
-            [
-                "p",
-                0.03,
-                0.0,
-                0.0
-            ],
-            [
-                "d5",
-                0.05,
-                -0.3,
-                -0.1
-            ],
-            [
-                "p",
-                0.03,
-                0.0,
-                0.0
-            ],
-            [
-                "a5",
-                0.05,
-                0.3,
-                -0.1
+                -0.08
             ],
             [
                 "p",
@@ -21687,15 +21651,45 @@
                 0.0
             ],
             [
-                "d6",
-                0.12,
+                "g6",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.f5",
+                0.07,
+                -0.4,
+                -0.1
+            ],
+            [
+                "c5.f5",
+                0.07,
+                0.4,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "f5.c6",
+                0.14,
                 0.0,
                 -0.05
             ]
         ],
-        "kind": 3,
+        "kind": 1,
         "adsr": [
-            5.0,
+            3.0,
             25.0,
             55.0,
             30.0
@@ -21960,10 +21954,10 @@
         ]
     },
     "mess_allenando_fermo": {
-        "descrizione": "MESS, nella sala allenamento l'allenando scelto è infortunato e oggi non si allena: sinusoide, un passo zoppo, una nota lunga e una corta, mi 5 e re 5, una pausa, e il do 5 che scende e si ferma; 340 ms. Va bene per chi è fermo ai box, un'attività sospesa, un compito rimandato per forza.",
+        "descrizione": "MESS, nella sala allenamento l'allenando scelto è infortunato e oggi non si allena: sinusoide, un passo zoppo, una nota lunga e una corta, la 5 e fa 5, una pausa, e una scivolata che scende dal la 5 al re 5 e si ferma; 340 ms. Va bene per chi è fermo ai box, un'attività sospesa, un compito rimandato per forza.",
         "score": [
             [
-                "e5",
+                "a5",
                 0.09,
                 0.0,
                 -0.1
@@ -21975,7 +21969,7 @@
                 0.0
             ],
             [
-                "d5",
+                "f5",
                 0.04,
                 0.0,
                 -0.15
@@ -21987,7 +21981,7 @@
                 0.0
             ],
             [
-                "c5",
+                "a5.d5",
                 0.14,
                 0.0,
                 -0.12
