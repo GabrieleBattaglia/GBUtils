@@ -21634,5 +21634,935 @@
             100.0,
             0.0
         ]
+    },
+    "mess_sala_allenamento": {
+        "descrizione": "MESS, si apre la sala allenamento: onda triangolare, il passo del riscaldamento, re 5 a sinistra e la 5 a destra, due volte, a ritmo di corsa, e poi il re 6 al centro, più lungo, il via; 450 ms. Va bene per l'ingresso in una palestra, l'inizio di un allenamento o di un esercizio a tempo.",
+        "score": [
+            [
+                "d5",
+                0.05,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.05,
+                0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.05,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.05,
+                0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.12,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            25.0,
+            55.0,
+            30.0
+        ]
+    },
+    "mess_allenamento_fatto": {
+        "descrizione": "MESS, una spesa a mano nella sala allenamento, punti allenamento su una caratteristica: sinusoide, una scivolata breve dal sol 5 al do 6, il peso che sale, e un mi 6 staccato, il peso arrivato in cima, al centro; 150 ms. Il fratello più grande è mess_allenamento_completo. Va bene per un miglioramento piccolo, un punto guadagnato, un passo avanti.",
+        "score": [
+            [
+                "g5.c6",
+                0.07,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.06,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_allenamento_completo": {
+        "descrizione": "MESS, l'allenamento completo di un tesserato secondo il suo programma: sinusoide, la scivolata dal sol 5 al do 6 di mess_allenamento_fatto e poi l'arpeggio di do maggiore che sale, mi 6, sol 6 e un do 7 più lungo, da sinistra a destra; 300 ms. Va bene per un lavoro fatto per intero, una scheda di esercizi completata, una crescita su tutto il fronte.",
+        "score": [
+            [
+                "g5.c6",
+                0.06,
+                -0.2,
+                -0.1
+            ],
+            [
+                "e6",
+                0.05,
+                -0.1,
+                -0.1
+            ],
+            [
+                "g6",
+                0.05,
+                0.1,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "c7",
+                0.12,
+                0.2,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_allenati_tutti": {
+        "descrizione": "MESS, Allena tutti nella sala allenamento, ogni tesserato secondo il suo programma: onda triangolare, cinque scivolate brevi che salgono a scala da sinistra a destra, dal sol 4 al mi 6, una per allenando, e poi mi 6 e un do 7 lungo al centro, la squadra che arriva insieme; 500 ms. Va bene per un lavoro di gruppo concluso, molti miglioramenti in una volta, una squadra che cresce.",
+        "score": [
+            [
+                "g4.c5",
+                0.05,
+                -0.8,
+                -0.12
+            ],
+            [
+                "c5.e5",
+                0.05,
+                -0.4,
+                -0.12
+            ],
+            [
+                "e5.g5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "g5.c6",
+                0.05,
+                0.4,
+                -0.12
+            ],
+            [
+                "c6.e6",
+                0.05,
+                0.8,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "c7",
+                0.16,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_classe_salita": {
+        "descrizione": "MESS, un tesserato sale di classe dopo l'allenamento: sinusoide che suona come una campanella, con l'attacco rapido e la coda che risuona, mi 6 a sinistra, si 6 a destra e il mi 7 al centro, lungo; 440 ms. Suona in coda all'esito. Va bene per una promozione, un livello raggiunto, un grado in più.",
+        "score": [
+            [
+                "e6",
+                0.08,
+                -0.3,
+                -0.05
+            ],
+            [
+                "b6",
+                0.08,
+                0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e7",
+                0.25,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            60.0,
+            20.0,
+            38.0
+        ]
+    },
+    "mess_portafoglio_vuoto": {
+        "descrizione": "MESS, nella sala allenamento non ci sono punti allenamento da spendere, o la cifra scelta è zero: un sacchetto vuoto scosso, rumore rosa, due fruscii brevi e cupi, fra 300 e 1500 Hz a sinistra e fra 250 e 1200 Hz a destra, e un tonfo sordo fra 120 e 600 Hz al centro; 250 ms. Va bene per un portafoglio vuoto, una scorta finita, un credito che non basta.",
+        "score": [
+            [
+                "300-1500",
+                0.04,
+                -0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "250-1200",
+                0.04,
+                0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "120-600",
+                0.09,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_al_massimo": {
+        "descrizione": "MESS, nella sala allenamento la caratteristica scelta è già al massimo, al tetto del totale: onda triangolare, una scivolata che sale di un'ottava, dal do 6 al do 7, e ci batte contro tre volte, sempre più piano, come contro un soffitto; 230 ms. Va bene per un valore al massimo, un limite raggiunto, un contenitore pieno fino all'orlo.",
+        "score": [
+            [
+                "c6.c7",
+                0.08,
+                0.0,
+                -0.1
+            ],
+            [
+                "c7",
+                0.03,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c7",
+                0.03,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c7",
+                0.03,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_allenando_fermo": {
+        "descrizione": "MESS, nella sala allenamento l'allenando scelto è infortunato e oggi non si allena: sinusoide, un passo zoppo, una nota lunga e una corta, mi 5 e re 5, una pausa, e il do 5 che scende e si ferma; 340 ms. Va bene per chi è fermo ai box, un'attività sospesa, un compito rimandato per forza.",
+        "score": [
+            [
+                "e5",
+                0.09,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.04,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.14,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            30.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_programma_cambiato": {
+        "descrizione": "MESS, nella sala allenamento cambia il programma del tesserato, a ogni freccia sulla scelta: onda triangolare, due note brevissime che salgono di una quinta, la 5 e mi 6, una pagina del quaderno degli esercizi che si gira; 60 ms. Va bene per ogni scelta che cambia in un elenco a tendina, un'opzione spostata, un piano diverso.",
+        "score": [
+            [
+                "a5",
+                0.025,
+                0.0,
+                -0.15
+            ],
+            [
+                "e6",
+                0.035,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_intensita_cambiata": {
+        "descrizione": "MESS, nella sala allenamento cambia l'intensità del tesserato, leggera, normale o intensa: rumore marrone fra 100 e 900 Hz, un battito di cuore, tu tum, il secondo colpo un po' più piano e più lungo; 150 ms. Va bene per uno sforzo che cambia, un ritmo più alto o più basso, il fiato e il cuore.",
+        "score": [
+            [
+                "100-900",
+                0.04,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "100-900",
+                0.05,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            10.0,
+            30.0,
+            40.0,
+            40.0
+        ]
+    },
+    "mess_contratti_aperti": {
+        "descrizione": "MESS, si apre il dialogo dei contratti e dei rinnovi: rumore rosa, tre fogli sfogliati nel raccoglitore dei contratti, con la banda che sale da 1000-4000 a 1500-6000 Hz e si sposta da sinistra a destra, l'ultimo un po' più lungo; 150 ms. Va bene per aprire un fascicolo, un archivio di documenti, una cartella di carte.",
+        "score": [
+            [
+                "1000-4000",
+                0.03,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "1200-5000",
+                0.03,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "1500-6000",
+                0.05,
+                0.3,
+                -0.1
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_probabilita_rinnovo": {
+        "descrizione": "MESS, la probabilità che il tesserato accetti il rinnovo, mentre si scrivono stipendio e durata: sinusoide, una goccia doppia, il fa 5 e subito la sua quinta, do 6, più piano, al centro, ciascuno con attacco rapido e decadimento fino al silenzio; 65 ms. È un timbro da spostare d'altezza a programma, più acuto quanto più alta è la percentuale, diverso da mess_probabilita dell'ingaggio. Va bene per ogni valore che sale e scende, come l'ago di uno strumento.",
+        "score": [
+            [
+                "f5",
+                0.03,
+                0.0,
+                -0.1
+            ],
+            [
+                "c6",
+                0.035,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10.0,
+            90.0,
+            0.0,
+            0.0
+        ]
+    },
+    "mess_rinnovo_firmato": {
+        "descrizione": "MESS, il tesserato accetta il rinnovo del contratto: sinusoide, un motivo di due note che sale di una quarta e si ripete un tono più su, re 5 e sol 5 a sinistra, mi 5 e la 5 al centro, e poi un'ottava sopra a destra, re 6 e un sol 6 lungo, il contratto che si rinnova e va avanti; 480 ms. Il gemello opposto è mess_rinnovo_rifiutato. Va bene per un accordo confermato, un abbonamento rinnovato, un patto che continua.",
+        "score": [
+            [
+                "d5",
+                0.05,
+                -0.3,
+                -0.1
+            ],
+            [
+                "g5",
+                0.05,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.05,
+                0.0,
+                -0.1
+            ],
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.06,
+                0.3,
+                -0.08
+            ],
+            [
+                "g6",
+                0.16,
+                0.3,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_rinnovo_rifiutato": {
+        "descrizione": "MESS, il tesserato rifiuta il rinnovo e si può riprovare un altro giorno: sinusoide, il motivo di mess_rinnovo_firmato al contrario, sol 5 e re 5 a destra, fa 5 e do 5 al centro, che scendono, e una scivolata dal mi 5 al si 4 a sinistra; 400 ms. Il rifiuto definitivo è mess_rinnovo_chiuso. Va bene per una proposta respinta, una trattativa che non va, un no per ora.",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0.3,
+                -0.1
+            ],
+            [
+                "d5",
+                0.05,
+                0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "f5",
+                0.05,
+                0.0,
+                -0.1
+            ],
+            [
+                "c5",
+                0.05,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "e5.b4",
+                0.14,
+                -0.3,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_rinnovo_chiuso": {
+        "descrizione": "MESS, il terzo rifiuto del rinnovo, e il tesserato non tratta più: il motivo che scende di mess_rinnovo_rifiutato con l'onda a dente di sega, più ruvida, sol 5 e re 5 a destra, fa 5 e do 5 al centro, e in fondo due colpi gravi a sinistra, re 4 e una scivolata dal re 4 al la 3, la porta che si chiude; 650 ms. Più definitivo del rifiuto semplice. Va bene per una trattativa chiusa per sempre, un no senza appello, una strada sbarrata.",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0.3,
+                -0.12
+            ],
+            [
+                "d5",
+                0.05,
+                0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "f5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "c5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "d4",
+                0.1,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "d4.a3",
+                0.25,
+                -0.3,
+                -0.1
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_rinnovo_non_ancora": {
+        "descrizione": "MESS, il rinnovo non si può ancora proporre perché il contratto non è negli ultimi tre mesi: onda triangolare, un orologio, tic tac tic tac, si 5 a sinistra e mi 5 a destra, colpi secchi e lenti; 440 ms. Va bene per un'attesa, un momento non ancora arrivato, una scadenza lontana.",
+        "score": [
+            [
+                "b5",
+                0.02,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.02,
+                0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.02,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.02,
+                0.3,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            50.0,
+            20.0,
+            45.0
+        ]
+    },
+    "mess_rinnovo_domani": {
+        "descrizione": "MESS, oggi al tesserato è già stata fatta una proposta di rinnovo, e la prossima si fa domani: sinusoide, un mi 5, una pausa, e lo stesso mi 5 che risale di una quinta fino al si 5, come un arrivederci a domani; 280 ms. Va bene per un rinvio, un'azione possibile una volta al giorno, un appuntamento spostato.",
+        "score": [
+            [
+                "e5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.1,
+                0.0,
+                0.0
+            ],
+            [
+                "e5.b5",
+                0.12,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_rinnovo_niente_da_fare": {
+        "descrizione": "MESS, il tesserato ha già rifiutato tre proposte di rinnovo e non ne accetta altre: onda a dente di sega morbida, un no con la testa, due scivolate brevi dal mi 5 al re 5, a sinistra e a destra, e un la 4 lungo al centro che chiude; 350 ms. Va bene per un tentativo esaurito, una porta già chiusa, niente da fare.",
+        "score": [
+            [
+                "e5.d5",
+                0.06,
+                -0.3,
+                -0.15
+            ],
+            [
+                "e5.d5",
+                0.06,
+                0.3,
+                -0.15
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "a4",
+                0.18,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            35.0
+        ]
+    },
+    "mess_rinnovo_gia_fatto": {
+        "descrizione": "MESS, il tesserato ha già rinnovato il contratto, e non serve un'altra proposta: onda triangolare, un segno di spunta, sol 6 e re 7 che salgono di una quinta, con l'eco del re 7 più piano; 180 ms. Va bene per una cosa già fatta, un compito già spuntato, un doppione evitato.",
+        "score": [
+            [
+                "g6",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "d7",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "d7",
+                0.04,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            30.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_contratti_in_scadenza": {
+        "descrizione": "MESS, nell'avanzamento del mondo il contratto di un tuo tesserato entra negli ultimi tre mesi, o nell'ultimo: sinusoide, un promemoria d'agenda, due do 6 uguali, a sinistra e a destra, e una scivolata lunga che scende dal sol 5 al mi 5; 460 ms. Va bene per una scadenza che si avvicina, un promemoria, un termine da non dimenticare.",
+        "score": [
+            [
+                "c6",
+                0.07,
+                -0.2,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.07,
+                0.2,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.e5",
+                0.22,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            25.0,
+            55.0,
+            30.0
+        ]
+    },
+    "mess_contratto_scaduto": {
+        "descrizione": "MESS, nell'avanzamento del mondo il contratto di un tuo tesserato scade senza rinnovo, e lui torna libero: rumore rosa, la sabbia di una clessidra che finisce di scendere, con la banda che cala da 3000-8000 a 1500-4000 Hz, e un tonfo sordo fra 120 e 700 Hz; 450 ms. Diverso da mess_contratto_strappato dello svincolo. Va bene per un tempo scaduto, un termine passato, un legame che finisce da sé.",
+        "score": [
+            [
+                "3000-8000.1500-4000",
+                0.3,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "120-700",
+                0.1,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_infortunio_in_allenamento": {
+        "descrizione": "MESS, nell'avanzamento del mondo un tuo tesserato si infortuna nella seduta d'allenamento all'intensità intensa: onda a dente di sega morbida, un grido breve che sale dal mi 5 al si 5, la caduta di un'ottava e mezza fino al re 4 e un colpo sul re 4; 320 ms. Va bene per un incidente in palestra, uno sforzo di troppo, una caduta.",
+        "score": [
+            [
+                "e5.b5",
+                0.04,
+                0.0,
+                -0.1
+            ],
+            [
+                "b5.d4",
+                0.18,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "d4",
+                0.06,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
