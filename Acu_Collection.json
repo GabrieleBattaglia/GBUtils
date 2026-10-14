@@ -22558,5 +22558,2291 @@
             70.0,
             30.0
         ]
+    },
+    "mess_calendario_tornei": {
+        "descrizione": "MESS, si apre il calendario dei tornei e delle iscrizioni, con Ctrl+U: onda triangolare, le pagine del calendario sfogliate da sinistra a destra, un arpeggio che sale: un do 5 di 45 ms a sinistra, un mi 5 di 45 ms, un sol 5 di 45 ms e un do 6 di 90 ms a destra; 225 ms. Va bene per un calendario, un'agenda, un elenco di appuntamenti che si apre.",
+        "score": [
+            [
+                "c5",
+                0.045,
+                -0.4,
+                -0.12
+            ],
+            [
+                "e5",
+                0.045,
+                -0.15,
+                -0.12
+            ],
+            [
+                "g5",
+                0.045,
+                0.15,
+                -0.12
+            ],
+            [
+                "c6",
+                0.09,
+                0.4,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_iscrizioni_tornei": {
+        "descrizione": "MESS, si aprono le iscrizioni dei tuoi atleti alla prima edizione aperta, con Ctrl+J: onda triangolare, l'appello degli iscritti, due note che si ripetono come una chiamata, al centro: un la 5 di 40 ms, un mi 6 di 40 ms, una pausa di 30 ms, un la 5 di 40 ms e un mi 6 di 70 ms; 220 ms. Va bene per un appello, un elenco di nomi da chiamare, delle iscrizioni da fare.",
+        "score": [
+            [
+                "a5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.07,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_iscrizione_fatta": {
+        "descrizione": "MESS, nel calendario un tuo atleta iscritto a un torneo con la quota pagata, o la rosa della tua polisportiva per la coppa: sinusoide, il gettone che cade nella cassetta dell'iscrizione, una quarta che sale, al centro: un sol 5 di 40 ms e un do 6 di 70 ms; 110 ms. Va bene per un'iscrizione pagata, un posto prenotato, una conferma breve.",
+        "score": [
+            [
+                "g5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "c6",
+                0.07,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_iscrizione_tolta": {
+        "descrizione": "MESS, nel calendario l'iscrizione di un tuo atleta tolta, con la quota rimborsata: sinusoide, il gettone che torna indietro, una quarta che scende scivolando e si posa, il contrario di mess_iscrizione_fatta: una scivolata dal do 6 al sol 5 di 60 ms e un sol 5 di 50 ms; 110 ms. Va bene per un'iscrizione tolta, un rimborso, una prenotazione annullata.",
+        "score": [
+            [
+                "c6.g5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_iscrizione_senza_quota": {
+        "descrizione": "MESS, nel calendario la cassa della polisportiva non basta per la quota d'iscrizione: dente di sega, la cassa che scende a vuoto e batte sul fondo, grave, al centro: una scivolata dal mi 4 al do 4 di 120 ms, una pausa di 40 ms e un do 4 di 70 ms; 230 ms. Va bene per una quota che la cassa non copre, un pagamento che non passa.",
+        "score": [
+            [
+                "e4.c4",
+                0.12,
+                0.0,
+                -0.18
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.07,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_iscrizione_sovrapposta": {
+        "descrizione": "MESS, nel calendario l'atleta negli stessi giorni ha già un altro torneo o un'altra sfida: onda triangolare, due appuntamenti che si accavallano, un semitono che oscilla fra sinistra e destra: un do 5 di 35 ms a sinistra, un do diesis 5 di 35 ms a destra, un do 5 di 35 ms a sinistra e un do diesis 5 di 60 ms a destra; 165 ms. Va bene per due impegni negli stessi giorni, una sovrapposizione, un conflitto d'orario.",
+        "score": [
+            [
+                "c5",
+                0.035,
+                -0.3,
+                -0.12
+            ],
+            [
+                "c#5",
+                0.035,
+                0.3,
+                -0.12
+            ],
+            [
+                "c5",
+                0.035,
+                -0.3,
+                -0.12
+            ],
+            [
+                "c#5",
+                0.06,
+                0.3,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_iscrizione_non_idoneo": {
+        "descrizione": "MESS, nel calendario l'atleta non può giocare quel torneo, per sesso, classe, età o qualificazione: rumore marrone, tre colpi a una porta sbarrata, sempre più cupi: un colpo fra 200 e 1000 Hz di 40 ms, una pausa di 50 ms, un colpo fra 160 e 800 Hz di 40 ms, una pausa di 50 ms e un colpo fra 120 e 600 Hz di 70 ms; 250 ms. Va bene per un torneo per altri, un ingresso non permesso, un requisito che manca.",
+        "score": [
+            [
+                "200-1000",
+                0.04,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "160-800",
+                0.04,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "120-600",
+                0.07,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_tornei_in_corso": {
+        "descrizione": "MESS, si apre il pannello dei tornei in corso e conclusi di recente, con Ctrl+Y: sinusoide, il tabellone che si accende, due quinte che salgono da sinistra a destra: un mi 5 di 50 ms a sinistra, un si 5 di 50 ms e un mi 6 di 90 ms a destra; 190 ms. Va bene per un pannello di gara, un tabellone, dei risultati da seguire.",
+        "score": [
+            [
+                "e5",
+                0.05,
+                -0.3,
+                -0.12
+            ],
+            [
+                "b5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.09,
+                0.3,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_differita_al_via": {
+        "descrizione": "MESS, si apre la finestra dal vivo per ascoltare in differita un incontro dei tuoi, di torneo o di sfida: dente di sega, il nastro che si riavvolge veloce e poi riparte: una scivolata dal do 6 al do 4 di 150 ms, una pausa di 40 ms, un sol 4 di 60 ms e un do 5 di 80 ms; 330 ms. Va bene per una registrazione che riparte, una replica, una partita in differita.",
+        "score": [
+            [
+                "c6.c4",
+                0.15,
+                0.0,
+                -0.22
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.06,
+                0.0,
+                -0.18
+            ],
+            [
+                "c5",
+                0.08,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_cronaca_torneo": {
+        "descrizione": "MESS, la cronaca di un incontro dei tuoi, di torneo o di sfida, aperta da leggere: rumore azzurro, un foglio di carta che si apre, due fruscii chiari: un colpo fra 2000 e 6000 Hz di 60 ms a sinistra, una pausa di 30 ms e un colpo fra 3000 e 8000 Hz di 40 ms a destra; 130 ms. Va bene per una cronaca da leggere, un resoconto, un documento che si apre.",
+        "score": [
+            [
+                "2000-6000",
+                0.06,
+                -0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "3000-8000",
+                0.04,
+                0.3,
+                -0.14
+            ]
+        ],
+        "kind": 8,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_risultato_svelato": {
+        "descrizione": "MESS, il risultato di un incontro dei tuoi che si mostra, dopo l'ascolto in differita o con Mostra il risultato: sinusoide, una busta aperta, una scivolata di una quarta e una nota sopra: una scivolata dal la 5 al re 6 di 60 ms e un fa diesis 6 di 50 ms; 110 ms. Va bene per un risultato che si scopre, una sorpresa svelata, un segreto che esce.",
+        "score": [
+            [
+                "a5.d6",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "f#6",
+                0.05,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_risultati_svelati_tutti": {
+        "descrizione": "MESS, Mostra tutti i risultati svela in un colpo gli incontri dei tuoi ancora da ascoltare: sinusoide, tante buste aperte una dopo l'altra, da sinistra a destra: un la 5 di 30 ms a sinistra, un re 6 di 30 ms a sinistra, un la 5 di 30 ms, un re 6 di 30 ms a destra e un fa diesis 6 di 80 ms a destra; 200 ms. Va bene per tanti risultati mostrati insieme, un elenco che si scopre tutto.",
+        "score": [
+            [
+                "a5",
+                0.03,
+                -0.6,
+                -0.14
+            ],
+            [
+                "d6",
+                0.03,
+                -0.3,
+                -0.14
+            ],
+            [
+                "a5",
+                0.03,
+                0.0,
+                -0.14
+            ],
+            [
+                "d6",
+                0.03,
+                0.3,
+                -0.14
+            ],
+            [
+                "f#6",
+                0.08,
+                0.6,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_niente_da_svelare": {
+        "descrizione": "MESS, Mostra tutti i risultati quando non c'è nessun incontro dei tuoi da svelare: onda triangolare, una scatola vuota, una scivolata breve e grave che scende: una scivolata dal fa 4 al re 4 di 120 ms; 120 ms. Va bene per niente da mostrare, un elenco già tutto letto, una ricerca a vuoto.",
+        "score": [
+            [
+                "f4.d4",
+                0.12,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_nessuna_differita": {
+        "descrizione": "MESS, un incontro che non si può ascoltare né leggere: non è dei tuoi, o la sua edizione è già stata sostituita: rumore rosa, il fruscio di un nastro che non c'è, due soffi che si spengono: un colpo fra 400 e 2500 Hz di 50 ms, una pausa di 40 ms e un colpo fra 300 e 1800 Hz di 80 ms; 170 ms. Va bene per una registrazione che manca, una replica non disponibile.",
+        "score": [
+            [
+                "400-2500",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "300-1800",
+                0.08,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_albo_d_oro": {
+        "descrizione": "MESS, si apre l'albo d'oro dei tornei, con Ctrl+Shift+B: sinusoide, le pagine d'oro dell'albo, tre rintocchi di campanella e un do acuto che risuona: un do 6 di 60 ms a sinistra, un mi 6 di 60 ms, un sol 6 di 60 ms a destra e un do 7 di 250 ms; 430 ms. Va bene per un albo d'oro, un libro dei campioni, un registro dei vincitori.",
+        "score": [
+            [
+                "c6",
+                0.06,
+                -0.3,
+                -0.12
+            ],
+            [
+                "e6",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "g6",
+                0.06,
+                0.3,
+                -0.12
+            ],
+            [
+                "c7",
+                0.25,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            55.0,
+            25.0,
+            40.0
+        ]
+    },
+    "mess_classifica_mondiale": {
+        "descrizione": "MESS, la classifica mondiale per sempre, uomini e donne, con Ctrl+Shift+W: onda triangolare, la scala del podio mondiale, sei gradini che salgono: un sol 4 di 50 ms, un do 5 di 50 ms, un mi 5 di 50 ms, un sol 5 di 50 ms, un do 6 di 50 ms e un mi 6 di 120 ms; 370 ms. Va bene per una classifica di tutti i tempi, un medagliere, una graduatoria lunga.",
+        "score": [
+            [
+                "g4",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "c5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "e5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "c6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.12,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_editor_modelli": {
+        "descrizione": "MESS, si apre l'editor dei modelli di torneo, con Ctrl+Shift+J: dente di sega, il cassetto dei modelli che scorre e si apre: una scivolata dal la 3 al mi 4 di 100 ms e un la 4 di 50 ms; 150 ms. Va bene per un archivio di modelli, un editor di impostazioni, un cassetto di schede.",
+        "score": [
+            [
+                "a3.e4",
+                0.1,
+                0.0,
+                -0.2
+            ],
+            [
+                "a4",
+                0.05,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_modello_torneo": {
+        "descrizione": "MESS, nell'editor si apre il dialogo di un modello di torneo, nuovo o da modificare: onda triangolare, una scheda tirata fuori dal cassetto, una scivolata e una nota: una scivolata dal mi 5 al la 5 di 70 ms e un do diesis 6 di 50 ms; 120 ms. Va bene per una scheda da compilare, un modulo che si apre.",
+        "score": [
+            [
+                "e5.a5",
+                0.07,
+                0.0,
+                -0.12
+            ],
+            [
+                "c#6",
+                0.05,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_modello_salvato": {
+        "descrizione": "MESS, un modello di torneo salvato: sinusoide, la scheda rimessa a posto, tre note che salgono e si posano: un la 5 di 40 ms, un mi 6 di 40 ms e un la 6 di 90 ms; 170 ms. Va bene per un modello salvato, una scheda archiviata, un lavoro messo da parte.",
+        "score": [
+            [
+                "a5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "a6",
+                0.09,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_modello_duplicato": {
+        "descrizione": "MESS, un modello di torneo duplicato, con un identificativo nuovo: sinusoide, la stessa nota a sinistra e a destra, le due copie, e una nota sopra al centro: un mi 6 di 40 ms a sinistra, un mi 6 di 40 ms a destra e un si 6 di 60 ms; 140 ms. Va bene per una copia, un duplicato, una scheda clonata.",
+        "score": [
+            [
+                "e6",
+                0.04,
+                -0.4,
+                -0.12
+            ],
+            [
+                "e6",
+                0.04,
+                0.4,
+                -0.12
+            ],
+            [
+                "b6",
+                0.06,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_modello_eliminato": {
+        "descrizione": "MESS, un modello di torneo eliminato: onda triangolare, la scheda che scivola via, un'ottava che scende: una scivolata dal la 5 al la 4 di 150 ms; 150 ms. Va bene per un modello cancellato, una scheda buttata, un elemento tolto.",
+        "score": [
+            [
+                "a5.a4",
+                0.15,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_editor_formule": {
+        "descrizione": "MESS, si apre l'editor delle formule dei tornei, con Ctrl+Shift+Y: dente di sega, il quaderno delle formule che si apre, una salita di quinta e la sua ottava: una scivolata dal re 4 al la 4 di 90 ms e un re 5 di 60 ms; 150 ms. Va bene per un editor di regole, un quaderno di schemi, un progetto da disegnare.",
+        "score": [
+            [
+                "d4.a4",
+                0.09,
+                0.0,
+                -0.2
+            ],
+            [
+                "d5",
+                0.06,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_formula_nuova": {
+        "descrizione": "MESS, nell'editor delle formule nasce una formula nuova, ancora da salvare: onda triangolare, un foglio bianco, un accordo maggiore spezzato che sale: un sol 5 di 40 ms, un si 5 di 40 ms e un re 6 di 60 ms; 140 ms. Va bene per un documento nuovo, una bozza, un foglio da riempire.",
+        "score": [
+            [
+                "g5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "b5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "d6",
+                0.06,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_formula_salvata": {
+        "descrizione": "MESS, una formula valida salvata nel file delle formule: sinusoide, la formula scritta nel file, tre note che salgono e si posano: un re 5 di 40 ms, un la 5 di 40 ms e un re 6 di 90 ms; 170 ms. Va bene per un file salvato, una regola confermata, un lavoro scritto.",
+        "score": [
+            [
+                "d5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "a5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "d6",
+                0.09,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_formula_non_valida": {
+        "descrizione": "MESS, una formula che non si può salvare, con il motivo: dente di sega, un tritono che scende, la formula che non torna: un fa 4 di 60 ms e un si 3 di 120 ms; 180 ms. Va bene per un errore di schema, una regola che non sta in piedi, un conto sbagliato.",
+        "score": [
+            [
+                "f4",
+                0.06,
+                0.0,
+                -0.18
+            ],
+            [
+                "b3",
+                0.12,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_formula_in_uso": {
+        "descrizione": "MESS, si vuole eliminare una formula che dei modelli usano ancora: onda triangolare, tre richiami uguali da sinistra a destra, chi usa ancora la formula, e una nota grave che chiude: un do 5 di 50 ms a sinistra, un do 5 di 50 ms, un do 5 di 50 ms a destra, una pausa di 30 ms e un sol 4 di 80 ms; 260 ms. Va bene per un elemento ancora in uso, una cancellazione impedita.",
+        "score": [
+            [
+                "c5",
+                0.05,
+                -0.5,
+                -0.12
+            ],
+            [
+                "c5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "c5",
+                0.05,
+                0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.08,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_formula_eliminata": {
+        "descrizione": "MESS, una formula eliminata dal file delle formule: dente di sega, la formula cancellata, un'ottava che scende veloce: una scivolata dal re 5 al re 4 di 140 ms; 140 ms. Va bene per una regola tolta, un file cancellato, un elemento eliminato.",
+        "score": [
+            [
+                "d5.d4",
+                0.14,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_fase_dialogo": {
+        "descrizione": "MESS, nell'editor delle formule si apre il dialogo di una fase, nuova o da modificare: sinusoide, una riga della formula che si apre, due note brevissime che salgono di una quarta: un do 6 di 30 ms e un fa 6 di 40 ms; 70 ms. Va bene per un dettaglio da cambiare, un sottodialogo, una riga che si apre.",
+        "score": [
+            [
+                "c6",
+                0.03,
+                0.0,
+                -0.14
+            ],
+            [
+                "f6",
+                0.04,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_fase_aggiunta": {
+        "descrizione": "MESS, nell'editor delle formule una fase aggiunta in fondo: sinusoide, una fase messa in fondo, una quinta che sale: un si 5 di 35 ms e un fa diesis 6 di 55 ms; 90 ms. Va bene per una riga aggiunta, un passo in più, un elemento in coda.",
+        "score": [
+            [
+                "b5",
+                0.035,
+                0.0,
+                -0.14
+            ],
+            [
+                "f#6",
+                0.055,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_fase_modificata": {
+        "descrizione": "MESS, nell'editor delle formule una fase cambiata, con quelle che seguono aggiornate: onda triangolare, una fase ritoccata, un tono su e giù: un si 5 di 35 ms, un do diesis 6 di 35 ms e un si 5 di 45 ms; 115 ms. Va bene per una riga cambiata, un ritocco, una modifica breve.",
+        "score": [
+            [
+                "b5",
+                0.035,
+                0.0,
+                -0.14
+            ],
+            [
+                "c#6",
+                0.035,
+                0.0,
+                -0.14
+            ],
+            [
+                "b5",
+                0.045,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_fase_tolta": {
+        "descrizione": "MESS, nell'editor delle formule una fase tolta: sinusoide, una fase tolta, lo specchio di mess_fase_aggiunta: un fa diesis 6 di 35 ms e un si 5 di 55 ms; 90 ms. Va bene per una riga tolta, un passo in meno, un elemento rimosso.",
+        "score": [
+            [
+                "f#6",
+                0.035,
+                0.0,
+                -0.14
+            ],
+            [
+                "b5",
+                0.055,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_calendario_ripristinato": {
+        "descrizione": "MESS, il calendario predefinito rimesso, con quello di prima messo da parte: onda triangolare, il calendario riavvolto e rimesso da capo, una scivolata che scende e un arpeggio che risale: una scivolata dal do 6 al do 5 di 120 ms, una pausa di 40 ms, un do 5 di 50 ms, un mi 5 di 50 ms e un sol 5 di 90 ms; 350 ms. Va bene per un ripristino, i valori di fabbrica, una ripartenza da capo.",
+        "score": [
+            [
+                "c6.c5",
+                0.12,
+                0.0,
+                -0.14
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "e5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "g5",
+                0.09,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_calendario_illeggibile": {
+        "descrizione": "MESS, un modello o una formula dei tornei che non si leggono, all'avvio, nell'avanzamento o all'apertura dell'editor: dente di sega, un avviso che insiste, un semitono che oscilla e una nota grave: un mi 5 di 70 ms, un re diesis 5 di 70 ms, un mi 5 di 70 ms e un do 4 di 160 ms; 370 ms. Va bene per un file che non si legge, un archivio rovinato, un errore da correggere.",
+        "score": [
+            [
+                "e5",
+                0.07,
+                0.0,
+                -0.18
+            ],
+            [
+                "d#5",
+                0.07,
+                0.0,
+                -0.18
+            ],
+            [
+                "e5",
+                0.07,
+                0.0,
+                -0.18
+            ],
+            [
+                "c4",
+                0.16,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_lancia_sfida": {
+        "descrizione": "MESS, si apre il lancio di una sfida a una polisportiva del computer, con Ctrl+W: dente di sega, il guanto di sfida, un richiamo di tromba che sale: un sol 4 di 60 ms, un re 5 di 60 ms e un sol 5 di 120 ms; 240 ms. Va bene per una sfida da lanciare, un invito a battersi.",
+        "score": [
+            [
+                "g4",
+                0.06,
+                0.0,
+                -0.2
+            ],
+            [
+                "d5",
+                0.06,
+                0.0,
+                -0.18
+            ],
+            [
+                "g5",
+                0.12,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_sfida_raccolta": {
+        "descrizione": "MESS, la polisportiva del computer accetta la tua sfida, che si gioca domani: dente di sega, la sfida raccolta, il richiamo che arriva fino alla polisportiva dall'altra parte: un sol 4 di 50 ms, un re 5 di 50 ms, un si 5 di 50 ms a destra e un sol 5 di 120 ms a destra; 270 ms. Va bene per una sfida accettata dall'avversario, un appuntamento fissato.",
+        "score": [
+            [
+                "g4",
+                0.05,
+                0.0,
+                -0.2
+            ],
+            [
+                "d5",
+                0.05,
+                0.0,
+                -0.18
+            ],
+            [
+                "b5",
+                0.05,
+                0.5,
+                -0.18
+            ],
+            [
+                "g5",
+                0.12,
+                0.5,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_sfida_declinata": {
+        "descrizione": "MESS, la polisportiva del computer rifiuta la tua sfida, e dice perché: dente di sega, la sfida respinta, il richiamo che torna indietro in minore dall'altra parte: un sol 5 di 60 ms a destra, un re 5 di 60 ms a destra e un la diesis 4 di 150 ms a destra; 270 ms. Va bene per una proposta rifiutata, un invito declinato.",
+        "score": [
+            [
+                "g5",
+                0.06,
+                0.5,
+                -0.18
+            ],
+            [
+                "d5",
+                0.06,
+                0.5,
+                -0.18
+            ],
+            [
+                "a#4",
+                0.15,
+                0.5,
+                -0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_nessuna_sfida_da_lanciare": {
+        "descrizione": "MESS, la tua polisportiva non ha più sfide da lanciare questo mese: onda triangolare, la faretra vuota, una scivolata che scende e una nota spenta: una scivolata dal re 5 al sol 4 di 150 ms, una pausa di 40 ms e un sol 4 di 60 ms; 250 ms. Va bene per una scorta finita, nessun tentativo rimasto, un limite del mese.",
+        "score": [
+            [
+                "d5.g4",
+                0.15,
+                0.0,
+                -0.14
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.06,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_sfide_in_arrivo": {
+        "descrizione": "MESS, si aprono le sfide in arrivo, a cui rispondere entro domani, con Ctrl+Shift+F: sinusoide, le sfide che arrivano da destra verso il centro, tre note che salgono: un mi 5 di 50 ms a destra, un la 5 di 50 ms a destra e un do diesis 6 di 80 ms; 180 ms. Va bene per dei messaggi in arrivo, degli inviti da leggere.",
+        "score": [
+            [
+                "e5",
+                0.05,
+                0.6,
+                -0.12
+            ],
+            [
+                "a5",
+                0.05,
+                0.3,
+                -0.12
+            ],
+            [
+                "c#6",
+                0.08,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_sfida_accettata": {
+        "descrizione": "MESS, accetti una sfida in arrivo, con la tua formazione: sinusoide, la stretta di mano della sfida accettata, un accordo maggiore che sale: un la 5 di 50 ms, un do diesis 6 di 50 ms, un mi 6 di 50 ms e un la 6 di 120 ms; 270 ms. Va bene per un sì, un invito accettato, un patto fatto.",
+        "score": [
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "c#6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "a6",
+                0.12,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_sfida_rifiutata": {
+        "descrizione": "MESS, rifiuti una sfida in arrivo: sinusoide, il no educato, lo specchio di mess_sfida_accettata, l'accordo che scende: un la 6 di 50 ms, un mi 6 di 50 ms, un do diesis 6 di 50 ms e un la 5 di 120 ms; 270 ms. Va bene per un no, un invito rifiutato con garbo.",
+        "score": [
+            [
+                "a6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "c#6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "a5",
+                0.12,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_formazione": {
+        "descrizione": "MESS, si apre la formazione per una sfida o la rosa per la coppa, con titolari e riserve: onda triangolare, la squadra che si mette in fila, tre passi da sinistra a destra e la chiamata: un do 5 di 45 ms a sinistra, un mi 5 di 45 ms, un sol 5 di 45 ms a destra, una pausa di 40 ms e un do 6 di 70 ms; 245 ms. Va bene per una formazione, una squadra da schierare, dei ruoli da assegnare.",
+        "score": [
+            [
+                "c5",
+                0.045,
+                -0.5,
+                -0.12
+            ],
+            [
+                "e5",
+                0.045,
+                0.0,
+                -0.12
+            ],
+            [
+                "g5",
+                0.045,
+                0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.07,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_formazione_non_valida": {
+        "descrizione": "MESS, una formazione che non va, con il motivo: il due più uno, un doppione o un impegno: onda triangolare, la fila che si scompone, due note giuste e una stonata: un do 5 di 45 ms, un mi 5 di 45 ms e un fa diesis 5 di 120 ms; 210 ms. Va bene per una formazione sbagliata, una composizione che non va.",
+        "score": [
+            [
+                "c5",
+                0.045,
+                0.0,
+                -0.12
+            ],
+            [
+                "e5",
+                0.045,
+                0.0,
+                -0.12
+            ],
+            [
+                "f#5",
+                0.12,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_storico_sfide": {
+        "descrizione": "MESS, si apre lo storico delle sfide delle tue polisportive, con Ctrl+Shift+H: rumore marrone, le pagine di un vecchio registro sfogliate, tre fruscii sempre più chiari: un colpo fra 100 e 600 Hz di 60 ms, una pausa di 40 ms, un colpo fra 150 e 900 Hz di 60 ms, una pausa di 40 ms e un colpo fra 200 e 1200 Hz di 80 ms; 280 ms. Va bene per uno storico, un registro, un archivio da sfogliare.",
+        "score": [
+            [
+                "100-600",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "150-900",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "200-1200",
+                0.08,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_iscrizione_automatica_accesa": {
+        "descrizione": "MESS, nella sala allenamento si accende l'iscrizione automatica ai tornei del tesserato, con Alt+U: sinusoide, un interruttore che si accende, una quinta che sale: un re 6 di 30 ms e un la 6 di 50 ms; 80 ms. Va bene per un'opzione accesa, una casella spuntata, un automatismo che parte.",
+        "score": [
+            [
+                "d6",
+                0.03,
+                0.0,
+                -0.14
+            ],
+            [
+                "a6",
+                0.05,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_iscrizione_automatica_spenta": {
+        "descrizione": "MESS, nella sala allenamento si spegne l'iscrizione automatica ai tornei del tesserato, con Alt+U: sinusoide, l'interruttore che si spegne, lo specchio di mess_iscrizione_automatica_accesa: un la 6 di 30 ms e un re 6 di 50 ms; 80 ms. Va bene per un'opzione spenta, una casella tolta, un automatismo fermato.",
+        "score": [
+            [
+                "a6",
+                0.03,
+                0.0,
+                -0.14
+            ],
+            [
+                "d6",
+                0.05,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_medaglia_oro": {
+        "descrizione": "MESS, nell'avanzamento un tuo atleta vince la medaglia d'oro in un torneo: sinusoide, la medaglia d'oro che squilla, un accordo maggiore di campanelle e l'ottava che risuona: un mi 6 di 60 ms, un sol diesis 6 di 60 ms, un si 6 di 60 ms e un mi 7 di 250 ms; 430 ms. Va bene per una vittoria, un oro, il primo posto.",
+        "score": [
+            [
+                "e6",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "g#6",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "b6",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "e7",
+                0.25,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            55.0,
+            25.0,
+            40.0
+        ]
+    },
+    "mess_medaglia_argento": {
+        "descrizione": "MESS, nell'avanzamento un tuo atleta vince la medaglia d'argento: sinusoide, la medaglia d'argento, tre campanelle che salgono, più brevi dell'oro: un re 6 di 60 ms, un fa diesis 6 di 60 ms e un la 6 di 200 ms; 320 ms. Va bene per un secondo posto, un argento, una finale persa a testa alta.",
+        "score": [
+            [
+                "d6",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "f#6",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "a6",
+                0.2,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            55.0,
+            25.0,
+            40.0
+        ]
+    },
+    "mess_medaglia_bronzo": {
+        "descrizione": "MESS, nell'avanzamento un tuo atleta vince la medaglia di bronzo: onda triangolare, la medaglia di bronzo, due rintocchi più scuri: un do 6 di 60 ms e un mi 6 di 160 ms; 220 ms. Va bene per un terzo posto, un bronzo, un podio guadagnato.",
+        "score": [
+            [
+                "c6",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.16,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            55.0,
+            25.0,
+            40.0
+        ]
+    },
+    "mess_medaglia_legno": {
+        "descrizione": "MESS, nell'avanzamento un tuo atleta arriva quarto, la medaglia di legno: rumore marrone, la medaglia di legno, toc toc su un tavolo: un colpo fra 150 e 900 Hz di 50 ms, una pausa di 60 ms e un colpo fra 120 e 700 Hz di 90 ms; 200 ms. Va bene per un quarto posto, un podio sfiorato, un legno.",
+        "score": [
+            [
+                "150-900",
+                0.05,
+                0.0,
+                -0.06
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "120-700",
+                0.09,
+                0.0,
+                -0.06
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_titolo_mondiale": {
+        "descrizione": "MESS, nell'avanzamento un tuo atleta vince il campionato mondiale: dente di sega, la fanfara del campione del mondo, un arpeggio di trombe e un richiamo che si ripete: un do 5 di 80 ms, un mi 5 di 80 ms, un sol 5 di 80 ms, un do 6 di 160 ms, una pausa di 60 ms, un sol 5 di 80 ms e un do 6 di 300 ms; 840 ms. Va bene per un titolo mondiale, un campionato vinto, un trionfo.",
+        "score": [
+            [
+                "c5",
+                0.08,
+                0.0,
+                -0.2
+            ],
+            [
+                "e5",
+                0.08,
+                0.0,
+                -0.2
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                -0.2
+            ],
+            [
+                "c6",
+                0.16,
+                0.0,
+                -0.18
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0.0,
+                -0.2
+            ],
+            [
+                "c6",
+                0.3,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_coppa_oro": {
+        "descrizione": "MESS, nell'avanzamento la tua polisportiva vince la coppa d'oro della Coppa delle polisportive: onda triangolare, la coppa d'oro alzata al cielo, quattro note che salgono e un do acuto che risuona: un sol 5 di 60 ms, un do 6 di 60 ms, un mi 6 di 60 ms, un sol 6 di 60 ms e un do 7 di 260 ms; 500 ms. Va bene per una coppa vinta, un trofeo di squadra, il primo posto di un club.",
+        "score": [
+            [
+                "g5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "c6",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "g6",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "c7",
+                0.26,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            55.0,
+            25.0,
+            40.0
+        ]
+    },
+    "mess_coppa_argento": {
+        "descrizione": "MESS, nell'avanzamento la tua polisportiva prende la coppa d'argento della Coppa delle polisportive: onda triangolare, la coppa d'argento, tre note che salgono e la quarta nota che risuona: un fa 5 di 60 ms, un la 5 di 60 ms, un do 6 di 60 ms e un fa 6 di 220 ms; 400 ms. Va bene per un secondo posto di squadra, una coppa d'argento.",
+        "score": [
+            [
+                "f5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "a5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "c6",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "f6",
+                0.22,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            55.0,
+            25.0,
+            40.0
+        ]
+    },
+    "mess_coppa_bronzo": {
+        "descrizione": "MESS, nell'avanzamento la tua polisportiva prende la coppa di bronzo della Coppa delle polisportive: onda triangolare, la coppa di bronzo, tre note più basse e brevi: un mi 5 di 60 ms, un sol diesis 5 di 60 ms e un si 5 di 200 ms; 320 ms. Va bene per un terzo posto di squadra, una coppa di bronzo.",
+        "score": [
+            [
+                "e5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "g#5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "b5",
+                0.2,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            55.0,
+            25.0,
+            40.0
+        ]
+    },
+    "mess_coppa_legno": {
+        "descrizione": "MESS, nell'avanzamento la tua polisportiva arriva quarta alla Coppa delle polisportive, la coppa di legno: rumore rosa, la coppa di legno, tre colpi sordi su una mensola: un colpo fra 200 e 1000 Hz di 60 ms, una pausa di 50 ms, un colpo fra 180 e 900 Hz di 60 ms, una pausa di 50 ms e un colpo fra 150 e 800 Hz di 100 ms; 320 ms. Va bene per un quarto posto di squadra, un podio sfiorato dal club.",
+        "score": [
+            [
+                "200-1000",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "180-900",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "150-800",
+                0.1,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_sfida_vinta": {
+        "descrizione": "MESS, nell'avanzamento la tua polisportiva vince una sfida: dente di sega, la sfida vinta, un accordo maggiore di trombe che sale per due ottave: un re 5 di 60 ms, un fa diesis 5 di 60 ms, un la 5 di 60 ms, un re 6 di 60 ms e un fa diesis 6 di 160 ms; 400 ms. Va bene per una gara a squadre vinta, una vittoria del club.",
+        "score": [
+            [
+                "d5",
+                0.06,
+                0.0,
+                -0.2
+            ],
+            [
+                "f#5",
+                0.06,
+                0.0,
+                -0.2
+            ],
+            [
+                "a5",
+                0.06,
+                0.0,
+                -0.2
+            ],
+            [
+                "d6",
+                0.06,
+                0.0,
+                -0.2
+            ],
+            [
+                "f#6",
+                0.16,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_sfida_persa": {
+        "descrizione": "MESS, nell'avanzamento la tua polisportiva perde una sfida: dente di sega, la sfida persa, l'accordo minore che scende: un re 6 di 60 ms, un la 5 di 60 ms, un fa 5 di 60 ms e un re 5 di 180 ms; 360 ms. Va bene per una gara a squadre persa, una sconfitta del club.",
+        "score": [
+            [
+                "d6",
+                0.06,
+                0.0,
+                -0.2
+            ],
+            [
+                "a5",
+                0.06,
+                0.0,
+                -0.2
+            ],
+            [
+                "f5",
+                0.06,
+                0.0,
+                -0.2
+            ],
+            [
+                "d5",
+                0.18,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_sfida_a_tavolino": {
+        "descrizione": "MESS, nell'avanzamento la tua polisportiva perde una sfida a tavolino, senza una squadra valida: dente di sega, il tavolo vuoto, due richiami che nessuno raccoglie e una nota che cade: un re 5 di 80 ms, una pausa di 60 ms, un re 5 di 80 ms, una pausa di 60 ms e un la 4 di 200 ms; 480 ms. Va bene per una gara persa a tavolino, una squadra che non si presenta.",
+        "score": [
+            [
+                "d5",
+                0.08,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.08,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "a4",
+                0.2,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_sfida_ricevuta": {
+        "descrizione": "MESS, nell'avanzamento una polisportiva del computer sfida la tua, e aspetta la risposta entro domani: sinusoide, qualcuno bussa con una sfida, due note da destra che arrivano al centro: un si 5 di 60 ms a destra, un mi 6 di 60 ms a destra, una pausa di 50 ms, un si 5 di 60 ms e un mi 6 di 100 ms; 330 ms. Va bene per un invito ricevuto, una richiesta che aspetta risposta.",
+        "score": [
+            [
+                "b5",
+                0.06,
+                0.6,
+                -0.12
+            ],
+            [
+                "e6",
+                0.06,
+                0.6,
+                -0.12
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.1,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_sfida_decaduta": {
+        "descrizione": "MESS, nell'avanzamento una sfida alla tua polisportiva decade, senza risposta: sinusoide, la sfida che scade, una scivolata che scende e una nota lontana: una scivolata dal mi 6 al si 5 di 120 ms e un mi 5 di 120 ms; 240 ms. Va bene per una proposta scaduta, un invito senza risposta.",
+        "score": [
+            [
+                "e6.b5",
+                0.12,
+                0.0,
+                -0.14
+            ],
+            [
+                "e5",
+                0.12,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_qualificati_mondiale": {
+        "descrizione": "MESS, nell'avanzamento tuoi atleti convocati al campionato mondiale: onda triangolare, la convocazione al mondiale, un arpeggio largo che sale: un do 5 di 50 ms, un sol 5 di 50 ms, un do 6 di 50 ms, un mi 6 di 50 ms e un sol 6 di 150 ms; 350 ms. Va bene per una qualificazione, una convocazione, un biglietto per la finale.",
+        "score": [
+            [
+                "c5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "c6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "g6",
+                0.15,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_qualificazione_coppa": {
+        "descrizione": "MESS, nell'avanzamento la tua polisportiva qualificata alla Coppa delle polisportive: sinusoide, la polisportiva qualificata alla coppa, quattro note che salgono: un fa 5 di 50 ms, un do 6 di 50 ms, un fa 6 di 50 ms e un la 6 di 150 ms; 300 ms. Va bene per una squadra qualificata, un club ammesso a una coppa.",
+        "score": [
+            [
+                "f5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "c6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "f6",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "a6",
+                0.15,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_iscrizioni_saltate": {
+        "descrizione": "MESS, nell'avanzamento l'iscrizione automatica di un tuo atleta salta, perché la cassa non ha la quota: onda triangolare, un'iscrizione che non parte, un accordo minore che scende: un la 4 di 60 ms, un fa 4 di 60 ms e un re 4 di 140 ms; 260 ms. Va bene per un pagamento automatico non riuscito, un'occasione persa per la cassa.",
+        "score": [
+            [
+                "a4",
+                0.06,
+                0.0,
+                -0.14
+            ],
+            [
+                "f4",
+                0.06,
+                0.0,
+                -0.14
+            ],
+            [
+                "d4",
+                0.14,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_infortunio_in_gara": {
+        "descrizione": "MESS, nell'avanzamento un tuo atleta si fa male in gara e si ferma, anche col ritiro: dente di sega, un atleta che si ferma in gara, una scivolata che cade e una nota sola: una scivolata dal la 4 al mi 4 di 180 ms, una pausa di 40 ms e un mi 4 di 80 ms; 300 ms. Va bene per un infortunio, un ritiro, un atleta fermo.",
+        "score": [
+            [
+                "a4.e4",
+                0.18,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "e4",
+                0.08,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_acciacco": {
+        "descrizione": "MESS, nell'avanzamento un tuo atleta esce da una gara con un acciacco, e per qualche giorno rende un poco meno: onda triangolare, un passo che zoppica appena, un semitono che scende: un sol 4 di 60 ms e un fa diesis 4 di 120 ms; 180 ms. Va bene per un piccolo dolore, un acciacco, un fastidio che passa in qualche giorno.",
+        "score": [
+            [
+                "g4",
+                0.06,
+                0.0,
+                -0.14
+            ],
+            [
+                "f#4",
+                0.12,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_tavolino": {
+        "descrizione": "MESS, nell'avanzamento un tuo atleta perde a tavolino, perché non si presenta: rumore marrone, la sedia vuota al tavolo, due tonfi sordi lontani fra loro: un colpo fra 100 e 500 Hz di 80 ms, una pausa di 120 ms e un colpo fra 100 e 500 Hz di 80 ms; 280 ms. Va bene per una partita persa a tavolino, un'assenza.",
+        "score": [
+            [
+                "100-500",
+                0.08,
+                0.0,
+                -0.06
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "100-500",
+                0.08,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
+    },
+    "mess_torneo_concluso": {
+        "descrizione": "MESS, nell'avanzamento finisce un torneo dei tuoi, senza medaglie: sinusoide, la cadenza che chiude il torneo, tre note che scendono e si posano: un sol 5 di 60 ms, un mi 5 di 60 ms e un do 5 di 160 ms; 280 ms. Va bene per una manifestazione finita, una giornata chiusa, un saluto.",
+        "score": [
+            [
+                "g5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "e5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "c5",
+                0.16,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_iscrizioni_automatiche": {
+        "descrizione": "MESS, nell'avanzamento l'iscrizione automatica iscrive tuoi atleti a un torneo: sinusoide, due gettoni e la conferma, le iscrizioni fatte da sole: un do 6 di 40 ms, un do 6 di 40 ms e un mi 6 di 60 ms; 140 ms. Va bene per delle iscrizioni automatiche, un abbonamento che si rinnova da sé.",
+        "score": [
+            [
+                "c6",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "c6",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.06,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_edizione_annullata": {
+        "descrizione": "MESS, nell'avanzamento un torneo con tuoi iscritti si annulla per pochi iscritti, e la quota torna: onda triangolare, il torneo annullato, tre note che scendono in minore: un mi 5 di 60 ms, un do 5 di 60 ms e un la 4 di 160 ms; 280 ms. Va bene per un evento annullato, un appuntamento saltato, una quota restituita.",
+        "score": [
+            [
+                "e5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "c5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "a4",
+                0.16,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_mondiale_concluso": {
+        "descrizione": "MESS, nell'avanzamento finisce un campionato mondiale: onda triangolare, la cerimonia di chiusura del mondiale, un motivo solenne e lento: un do 5 di 100 ms, un sol 4 di 100 ms, un do 5 di 100 ms, un mi 5 di 100 ms e un do 5 di 260 ms; 660 ms. Va bene per la fine di un grande evento, una cerimonia, un campionato chiuso.",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0.0,
+                -0.12
+            ],
+            [
+                "g4",
+                0.1,
+                0.0,
+                -0.12
+            ],
+            [
+                "c5",
+                0.1,
+                0.0,
+                -0.12
+            ],
+            [
+                "e5",
+                0.1,
+                0.0,
+                -0.12
+            ],
+            [
+                "c5",
+                0.26,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_partita_ritiro": {
+        "descrizione": "MESS, partita dal vivo, la chiamata dell'arbitro per il ritiro di chi si è fatto male a fine set, prima del triplice fischio: onda triangolare, la chiamata grave dell'arbitro che ferma l'incontro, una quarta che scende, lenta, ben diversa dai fischi e dal cicalino del fallo: un re 4 di 120 ms, una pausa di 40 ms e un la 3 di 260 ms; 420 ms. Va bene per un ritiro, una partita che si ferma, un atleta che non può continuare.",
+        "score": [
+            [
+                "d4",
+                0.12,
+                0.0,
+                -0.25
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "a3",
+                0.26,
+                0.0,
+                -0.25
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_partita_cambio_al_tavolo": {
+        "descrizione": "MESS, partita dal vivo, nella gara a squadre il cambio al tavolo della rotazione, quando chi ha battuto lascia il posto: rumore marrone, due passi brevi, chi lascia il tavolo e chi arriva: un colpo fra 250 e 1500 Hz di 40 ms, una pausa di 50 ms e un colpo fra 200 e 1200 Hz di 40 ms; 130 ms. Va bene per un cambio di giocatore, una staffetta, un turno che passa.",
+        "score": [
+            [
+                "250-1500",
+                0.04,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "200-1200",
+                0.04,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            10.0,
+            20.0,
+            50.0,
+            40.0
+        ]
     }
 }
