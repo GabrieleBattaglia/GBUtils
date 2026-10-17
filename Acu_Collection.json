@@ -24982,5 +24982,257 @@
             50.0,
             30.0
         ]
+    },
+    "meteora_statistiche": {
+        "descrizione": "MeTeOra, si aprono le statistiche: cinque tocchi pizzicati di onda triangolare sulla scala pentatonica, do 6, re 6, mi 6, sol 6 e la 6, che salgono da sinistra a destra come le colonne di un istogramma che crescono una dopo l'altra, poi un do 6 più lungo al centro, il totale; 268 ms. Diverso da meditimer_statistiche, la quinta di due note. Va bene per aprire una pagina di numeri, un riepilogo o un rapporto.",
+        "score": [
+            [
+                "c6",
+                0.02,
+                -0.6,
+                -0.1
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.02,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.02,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "g6",
+                0.02,
+                0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "a6",
+                0.02,
+                0.6,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "meteora_statistiche_azzerate": {
+        "descrizione": "MeTeOra, le statistiche si azzerano: onda sinusoidale, una scivolata veloce dal la 6 al do 5 che va da destra a sinistra, i contatori che tornano indietro, un do 4 grave al centro, lo zero, e un sol 4 breve, il conto che riparte; 300 ms. Diverso da meteora_marcatori_cancellati, la cascata sull'accordo di re minore. Va bene per azzerare contatori, punteggi o una raccolta di dati.",
+        "score": [
+            [
+                "a6.c5",
+                0.12,
+                "0.6.-0.6",
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.05,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "meteora_statistiche_trovato": {
+        "descrizione": "MeTeOra, la barra rovesciata nelle statistiche trova il testo più avanti: onda triangolare morbida, una scorsa rapida di tre note che salgono, re 5, mi 5 e fa diesis 5, da sinistra verso il centro, poi la 5 e re 6 al centro, il salto di quarta di chi ha trovato; 207 ms. È della stessa famiglia di meteora_statistiche_ripartito e meteora_statistiche_non_trovato, e cugino di meteora_marcatori_trovato, che è di seno e una quinta più su. Va bene per ogni ricerca riuscita in un testo lungo.",
+        "score": [
+            [
+                "d5",
+                0.02,
+                -0.5,
+                -0.15
+            ],
+            [
+                "e5",
+                0.02,
+                -0.25,
+                -0.15
+            ],
+            [
+                "f#5",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.045,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.09,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_statistiche_ripartito": {
+        "descrizione": "MeTeOra, la barra rovesciata nelle statistiche arriva in fondo al testo e trova ripartendo dall'inizio: onda triangolare morbida, una scivolata dal fa diesis 6 al re 5 che va da destra a sinistra, il ritorno a capo, poi la stessa chiusa di meteora_statistiche_trovato, la 5 e re 6 al centro; 210 ms. Va bene per una ricerca che ha fatto il giro, o per ogni testo che ricomincia dall'inizio.",
+        "score": [
+            [
+                "f#6.d5",
+                0.06,
+                "0.6.-0.6",
+                -0.15
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.045,
+                0.0,
+                0.0
+            ],
+            [
+                "d6",
+                0.09,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "meteora_statistiche_non_trovato": {
+        "descrizione": "MeTeOra, la barra rovesciata nelle statistiche non trova il testo: onda triangolare morbida, la stessa scorsa di meteora_statistiche_trovato, re 5, mi 5 e fa diesis 5 da sinistra verso il centro, che invece di salire si sgonfia sul fa 5 e ricade sul re 5 da cui era partita, più piano, al centro; 217 ms. Va bene per ogni ricerca senza risultati in un testo lungo.",
+        "score": [
+            [
+                "d5",
+                0.02,
+                -0.5,
+                -0.15
+            ],
+            [
+                "e5",
+                0.02,
+                -0.25,
+                -0.15
+            ],
+            [
+                "f#5",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "f5",
+                0.045,
+                0.0,
+                -0.05
+            ],
+            [
+                "d5",
+                0.1,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            30.0
+        ]
     }
 }
