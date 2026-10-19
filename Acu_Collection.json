@@ -25234,5 +25234,65 @@
             80.0,
             30.0
         ]
+    },
+    "meteora_pulizia_avviata": {
+        "descrizione": "MeTeOra, comincia la pulizia all'avvio, che toglie dagli archivi i file che non ci sono più: due colpi di scopa di rumore azzurro, ognuno una banda che scende da 2000-9000 a 700-3000 Hz, il primo da sinistra verso il centro e il secondo dal centro verso destra, come una scopa che comincia a passare; 195 ms. Il gesto che la chiude è meteora_pulizia_finita. Diverso da meditimer_pulizia, una spazzata sola e più lunga di rumore rosa, e da mazzo_mescolato, tanti colpetti fermi a destra e a sinistra. Va bene per l'avvio di ogni pulizia o riordino in sottofondo.",
+        "score": [
+            [
+                "2000-9000.700-3000",
+                0.08,
+                "-0.6.-0.2",
+                -0.1
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                0.0
+            ],
+            [
+                "2000-9000.700-3000",
+                0.08,
+                "0.2.0.6",
+                -0.1
+            ]
+        ],
+        "kind": 8,
+        "adsr": [
+            15.0,
+            0.0,
+            100.0,
+            55.0
+        ]
+    },
+    "meteora_pulizia_finita": {
+        "descrizione": "MeTeOra, la pulizia all'avvio è finita: sinusoide, do 6, fa 6 e la diesis 6, due salti di quarta che salgono e tornano da destra al centro, da dove la scopa di meteora_pulizia_avviata se n'era andata, con l'ultima nota più lunga, tutto in ordine; 220 ms. Diverso da meteora_statistiche_trovato e meteora_marcatori_trovato, che salgono di grado prima del salto di quarta, e da meteora_passata_finita e meteora_scaricamento_finito, arpeggi maggiori. Va bene per la fine di ogni pulizia o riordino in sottofondo.",
+        "score": [
+            [
+                "c6",
+                0.045,
+                0.5,
+                -0.08
+            ],
+            [
+                "f6",
+                0.045,
+                0.25,
+                -0.08
+            ],
+            [
+                "a#6",
+                0.13,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            35.0
+        ]
     }
 }
