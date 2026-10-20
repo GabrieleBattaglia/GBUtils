@@ -25672,5 +25672,89 @@
             60.0,
             30.0
         ]
+    },
+    "meteora_playlist_gia_importata": {
+        "descrizione": "MeTeOra, una playlist M3U o PLS arriva di nuovo, con il suo file com'era, e MeTeOra usa quella che aveva già importato: onda triangolare, come i suoni delle playlist, due tocchi uguali di sol 5, il primo appena a sinistra e il secondo appena a destra, e un re 5 più lungo al centro, una quarta che scende e si posa, come chi riconosce qualcosa che c'è già; 220 ms. Diverso da doppio_tic_conferma, due tic di seno che salgono, e da meteora_ramo_aggiornato, il re e il la che si alternano. Va bene per ogni cosa che si ritrova già al suo posto, senza farla di nuovo.",
+        "score": [
+            [
+                "g5",
+                0.035,
+                -0.2,
+                -0.12
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.035,
+                0.2,
+                -0.12
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.1,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            10.0,
+            75.0,
+            35.0
+        ]
+    },
+    "meteora_playlist_riletta": {
+        "descrizione": "MeTeOra, una playlist importata si rilegge dal suo file M3U o PLS, che è cambiato: sinusoide, una scivolata rapida che scende da si 6 a mi 6 a destra, come un nastro che si riavvolge, poi mi 5, si 5 e mi 6 che risalgono da sinistra a destra, il contenuto che torna da capo; 260 ms. Diverso da meteora_passata_finita e meteora_scaricamento_finito, arpeggi maggiori senza la scivolata, e da meteora_pulizia_finita, salti di quarta. Va bene per ogni elenco riletto dalla sua fonte, che prende il posto di quello di prima.",
+        "score": [
+            [
+                "b6.e6",
+                0.06,
+                0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.045,
+                -0.2,
+                -0.08
+            ],
+            [
+                "b5",
+                0.045,
+                0.0,
+                -0.08
+            ],
+            [
+                "e6",
+                0.09,
+                0.2,
+                -0.06
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            30.0
+        ]
     }
 }
