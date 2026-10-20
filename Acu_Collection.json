@@ -25294,5 +25294,41 @@
             70.0,
             35.0
         ]
+    },
+    "meteora_dove_sono": {
+        "descrizione": "MeTeOra, Dove sono: l'apostrofo, che dice il tempo, il brano e la lista di ciò che suona. Sinusoide, una scivolata che scende dal la 5 al mi 5, da sinistra, e una che risale fino al do diesis 6 andando verso il centro, come una voce che chiede dove sono; poi un'eco più piana del do diesis, a destra; 210 ms. Diverso da meteora_sottotitoli_accesi, due scivolate che salgono e basta, da meditimer_timer_impostato, una salita di quinta con la nota tenuta, e da meditimer_statistiche, due note ferme di onda triangolare. Va bene per ogni comando che dice a che punto si è.",
+        "score": [
+            [
+                "a5.e5",
+                0.05,
+                -0.25,
+                -0.08
+            ],
+            [
+                "e5.c#6",
+                0.08,
+                "-0.25.0.1",
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c#6",
+                0.05,
+                0.35,
+                -0.22
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            15.0,
+            75.0,
+            30.0
+        ]
     }
 }
