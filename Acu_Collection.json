@@ -25600,5 +25600,77 @@
             70.0,
             30.0
         ]
+    },
+    "meteora_disco_riconosciuto": {
+        "descrizione": "MeTeOra, Riconosci questo disco, dal menu di un'unità contesa in Questo PC: da adesso la lettera è del disco che risponde. Onda triangolare, una scivolata che sale dal re 5 al si 5 andando da sinistra verso il centro, come un disco che prende giri, poi una che ricade di una terza sul sol 5, e il sol tenuto al centro, più lungo: il disco si ferma al suo posto; 230 ms. Diverso da meteora_tag_cambiato, una scivolata sola che sale di quinta, da gioca_carta, una scivolata sola dal re al la, e da meteora_pulizia_finita, tre note di seno a salti di quarta. Va bene per ogni cosa riconosciuta o accettata come propria.",
+        "score": [
+            [
+                "d5.b5",
+                0.07,
+                "-0.4.-0.1",
+                -0.1
+            ],
+            [
+                "b5.g5",
+                0.05,
+                "-0.1.0.0",
+                -0.1
+            ],
+            [
+                "g5",
+                0.11,
+                0.0,
+                -0.06
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "meteora_disco_diverso": {
+        "descrizione": "MeTeOra, la Sentinella vede in una lettera un disco diverso da quello che conosce, a MeTeOra aperto, e la lettera diventa contesa: onda triangolare, due colpetti sul fa 5, il primo a sinistra e il secondo a destra, come chi bussa a una porta che conosce, poi un si 4 al centro, più lungo, che scende di tritono e resta sospeso: chi risponde non è quello di prima; 260 ms. Diverso da meteora_disco_riconosciuto, scivolate che salgono e si fermano sul sol, da errore_secco, due note basse di onda quadra, e da campanellino, la domanda. Va bene per ogni cosa che non è più quella che si conosceva.",
+        "score": [
+            [
+                "f5",
+                0.05,
+                -0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "f5",
+                0.05,
+                0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "b4",
+                0.11,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            20.0,
+            60.0,
+            30.0
+        ]
     }
 }
