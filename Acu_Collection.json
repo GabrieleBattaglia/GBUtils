@@ -25330,5 +25330,47 @@
             75.0,
             30.0
         ]
+    },
+    "meteora_durata_residua": {
+        "descrizione": "MeTeOra, durata residua: Maiuscolo con l'apostrofo, che dice quanto è passato e quanto manca di ciò che suonerà. Onda triangolare, due tocchi brevi che scendono dal sol diesis 6 al re diesis 6, dal centro verso destra, come il tic tac di un orologio; poi una scivolata lunga di un'ottava giù, dal re diesis 6 al re diesis 5, che va ancora più a destra, come la sabbia di una clessidra che scorre; 230 ms. Diverso da meteora_dove_sono, sinusoide con due scivolate e un'eco, da meteora_marker_eliminato, due note ferme a un'ottava, da meteora_tag_cancellato, una scivolata sola di quinta, e da rimbalzo_stereo, quattro note che scendono senza scivolate. Va bene per ogni comando che dice quanto manca alla fine.",
+        "score": [
+            [
+                "g#6",
+                0.025,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "d#6",
+                0.025,
+                0.25,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "d#6.d#5",
+                0.13,
+                "0.25.0.6",
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            20.0,
+            65.0,
+            40.0
+        ]
     }
 }
