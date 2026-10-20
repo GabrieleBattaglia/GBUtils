@@ -25372,5 +25372,233 @@
             65.0,
             40.0
         ]
+    },
+    "meteora_playlist_ordinata": {
+        "descrizione": "MeTeOra, Ordina mette in ordine una playlist: onda triangolare, sol 4, la 4, si 4 e do 5, quattro passi uguali della scala che salgono da sinistra a destra, come brani messi in fila, con il do più lungo, la sensibile che si risolve sulla tonica, tutto a posto; 241 ms. Lo specchio è meteora_ordine_invertito; meteora_playlist_mescolata butta le stesse note in disordine e meteora_ordine_di_prima torna indietro. Diverso da meteora_statistiche, cinque tocchi pentatonici più acuti, e da meteora_file_rinominato, tre note di seno a salti. Va bene per ogni elenco messo in ordine.",
+        "score": [
+            [
+                "g4",
+                0.035,
+                -0.45,
+                -0.08
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "a4",
+                0.035,
+                -0.15,
+                -0.08
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "b4",
+                0.035,
+                0.15,
+                -0.08
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.1,
+                0.45,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "meteora_ordine_invertito": {
+        "descrizione": "MeTeOra, Inverti l'ordine rovescia una playlist: onda triangolare, do 5, si 4, la 4 e sol 4, le note di meteora_playlist_ordinata al contrario, che scendono da destra a sinistra, con il sol più lungo, una fila letta dalla fine; 241 ms. Diverso da meteora_annullamento, tre semitoni di seno al centro. Va bene per ogni elenco rovesciato.",
+        "score": [
+            [
+                "c5",
+                0.035,
+                0.45,
+                -0.08
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "b4",
+                0.035,
+                0.15,
+                -0.08
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "a4",
+                0.035,
+                -0.15,
+                -0.08
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.1,
+                -0.45,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "meteora_playlist_mescolata": {
+        "descrizione": "MeTeOra, Mescola rimescola una playlist: onda triangolare, le quattro note di meteora_playlist_ordinata buttate in disordine, si 4, sol 4, do 5, la 4 e si 4, brevi, che rimbalzano fra destra e sinistra stringendosi verso il centro, e un la 4 finale al centro che resta sospeso, senza tornare al do; 250 ms. Diverso da mazzo_mescolato, una raffica di fruscii di rumore azzurro, e dalle due note di seno della riproduzione casuale. Va bene per ogni elenco messo in un ordine a caso.",
+        "score": [
+            [
+                "b4",
+                0.028,
+                0.5,
+                -0.1
+            ],
+            [
+                "p",
+                0.01,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.028,
+                -0.5,
+                -0.1
+            ],
+            [
+                "p",
+                0.01,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.028,
+                0.35,
+                -0.1
+            ],
+            [
+                "p",
+                0.01,
+                0.0,
+                0.0
+            ],
+            [
+                "a4",
+                0.028,
+                -0.35,
+                -0.1
+            ],
+            [
+                "p",
+                0.01,
+                0.0,
+                0.0
+            ],
+            [
+                "b4",
+                0.028,
+                0.15,
+                -0.1
+            ],
+            [
+                "p",
+                0.01,
+                0.0,
+                0.0
+            ],
+            [
+                "a4",
+                0.06,
+                0.0,
+                -0.06
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "meteora_ordine_di_prima": {
+        "descrizione": "MeTeOra, Ordine di prima rimette una playlist com'era prima di Ordina, Inverti l'ordine o Mescola: onda triangolare, una scivolata dal mi 5 al sol 4 che torna da destra a sinistra, come un nastro riavvolto, e due tocchi sul sol 4 a sinistra, da dove la fila di meteora_playlist_ordinata era partita; 242 ms. Diverso da meteora_statistiche_azzerate, una scivolata di seno con due note gravi, e da meteora_annullamento, tre semitoni che scendono. Va bene per ogni modifica annullata che riporta un elenco com'era.",
+        "score": [
+            [
+                "e5.g4",
+                0.1,
+                "0.5.-0.5",
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.035,
+                -0.5,
+                -0.08
+            ],
+            [
+                "p",
+                0.012,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.07,
+                -0.5,
+                -0.06
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
