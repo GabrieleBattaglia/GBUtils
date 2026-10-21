@@ -25828,5 +25828,1031 @@
             70.0,
             40.0
         ]
+    },
+    "mess_staff_aperto": {
+        "descrizione": "MESS, si apre il dialogo dello staff della polisportiva: sinusoide al centro, il fischietto dell'allenatore, tre trilli rapidi fra la 6 e do 7, 25 ms per nota, e un la 6 tenuto; 270 ms. Va bene per ogni squadra di tecnici, una panchina, una guida che chiama.",
+        "score": [
+            [
+                "a6",
+                0.025,
+                0.0,
+                -0.15
+            ],
+            [
+                "c7",
+                0.025,
+                0.0,
+                -0.15
+            ],
+            [
+                "a6",
+                0.025,
+                0.0,
+                -0.15
+            ],
+            [
+                "c7",
+                0.025,
+                0.0,
+                -0.15
+            ],
+            [
+                "a6",
+                0.025,
+                0.0,
+                -0.15
+            ],
+            [
+                "c7",
+                0.025,
+                0.0,
+                -0.15
+            ],
+            [
+                "a6",
+                0.12,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_mercato_allenatori": {
+        "descrizione": "MESS, si apre il mercato degli allenatori: onda triangolare, la bacheca degli annunci, do 5, mi 5, sol 5 e un do 6 che si posa, da sinistra a destra, e poi un trillo breve del fischietto al centro, la 6, do 7 e la 6; 320 ms. Va bene per un elenco di candidati, una bacheca di offerte di lavoro, una scelta di persone.",
+        "score": [
+            [
+                "c5",
+                0.04,
+                -0.4,
+                -0.1
+            ],
+            [
+                "e5",
+                0.04,
+                -0.15,
+                -0.1
+            ],
+            [
+                "g5",
+                0.04,
+                0.15,
+                -0.1
+            ],
+            [
+                "c6",
+                0.09,
+                0.4,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a6",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "c7",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "a6",
+                0.04,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_cifra_ingaggio_allenatore": {
+        "descrizione": "MESS, si apre il dialogo della cifra d'ingaggio di un allenatore: onda triangolare, due monete, un mi 7 e un si 6 brevi a destra, e dopo una pausa una scivolata di sesta che sale dal mi 5 al do diesis 6, al centro, come una voce che chiede quanto; 280 ms. Il fratello è mess_cifra_ingaggio, dei giocatori. Va bene per ogni richiesta di un compenso o di una paga.",
+        "score": [
+            [
+                "e7",
+                0.03,
+                0.3,
+                -0.22
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "b6",
+                0.03,
+                0.3,
+                -0.22
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5.c#6",
+                0.16,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_allenatore_assunto": {
+        "descrizione": "MESS, l'allenatore accetta l'ingaggio ed entra nello staff: sinusoide, il fischietto che chiama in campo, un trillo di la 6 e do 7 a sinistra, e poi l'accordo di sol maggiore che sale verso destra, sol 5, si 5, re 6 e un sol 6 lungo; 390 ms. Il gemello opposto è mess_allenatore_rifiuta. Va bene per un'assunzione, una guida che arriva, una squadra che si completa.",
+        "score": [
+            [
+                "a6",
+                0.02,
+                -0.3,
+                -0.15
+            ],
+            [
+                "c7",
+                0.02,
+                -0.3,
+                -0.15
+            ],
+            [
+                "a6",
+                0.02,
+                -0.3,
+                -0.15
+            ],
+            [
+                "c7",
+                0.02,
+                -0.3,
+                -0.15
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.05,
+                -0.2,
+                -0.08
+            ],
+            [
+                "b5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "d6",
+                0.05,
+                0.15,
+                -0.08
+            ],
+            [
+                "g6",
+                0.13,
+                0.3,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_allenatore_rifiuta": {
+        "descrizione": "MESS, l'allenatore rifiuta l'ingaggio: sinusoide, il gemello opposto di mess_allenatore_assunto, un trillo di do 7 e la 6 a destra, e l'accordo di sol minore che scende verso sinistra, re 6, si bemolle 5 e un sol 5 che scivola al re 5; 370 ms. Va bene per un'offerta di lavoro respinta, una guida che dice di no.",
+        "score": [
+            [
+                "c7",
+                0.02,
+                0.3,
+                -0.15
+            ],
+            [
+                "a6",
+                0.02,
+                0.3,
+                -0.15
+            ],
+            [
+                "c7",
+                0.02,
+                0.3,
+                -0.15
+            ],
+            [
+                "a6",
+                0.02,
+                0.3,
+                -0.15
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d6",
+                0.05,
+                0.15,
+                -0.08
+            ],
+            [
+                "a#5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "g5.d5",
+                0.16,
+                -0.3,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_allenatore_licenziato": {
+        "descrizione": "MESS, l'allenatore licenziato lascia lo staff: onda triangolare, il fischio finale, un la 6 lungo che cala d'un tono a destra, poi due colpi gravi a sinistra, mi 4 e una scivolata dal mi 4 al si 3, la porta dello spogliatoio che si chiude; 500 ms. Va bene per un licenziamento, un incarico tolto, un addio deciso.",
+        "score": [
+            [
+                "a6.g6",
+                0.15,
+                0.2,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4",
+                0.08,
+                -0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4.b3",
+                0.2,
+                -0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            15.0,
+            75.0,
+            35.0
+        ]
+    },
+    "mess_staff_rinnovo_concordato": {
+        "descrizione": "MESS, l'allenatore accetta il rinnovo del contratto: onda triangolare, un motivo di tre note che sale, do 5, fa 5 e la 5 a sinistra, ripetuto un'ottava sopra a destra, do 6, fa 6 e un la 6 lungo, il patto con lo staff che continua; 410 ms. Il gemello opposto è mess_staff_rinnovo_rifiutato. Va bene per un incarico confermato, una collaborazione che va avanti.",
+        "score": [
+            [
+                "c5",
+                0.04,
+                -0.3,
+                -0.08
+            ],
+            [
+                "f5",
+                0.04,
+                -0.3,
+                -0.08
+            ],
+            [
+                "a5",
+                0.06,
+                -0.3,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c6",
+                0.04,
+                0.3,
+                -0.08
+            ],
+            [
+                "f6",
+                0.04,
+                0.3,
+                -0.08
+            ],
+            [
+                "a6",
+                0.16,
+                0.3,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_staff_rinnovo_rifiutato": {
+        "descrizione": "MESS, l'allenatore rifiuta il rinnovo e si può riprovare un altro giorno: onda triangolare, il motivo di mess_staff_rinnovo_concordato che scende, la 5, fa 5 e do 5 a destra, e una scivolata dal si 4 al fa 4 a sinistra; 330 ms. Il rifiuto definitivo è mess_staff_rinnovo_chiuso. Va bene per una proposta respinta, un no per ora.",
+        "score": [
+            [
+                "a5",
+                0.04,
+                0.3,
+                -0.08
+            ],
+            [
+                "f5",
+                0.04,
+                0.3,
+                -0.08
+            ],
+            [
+                "c5",
+                0.06,
+                0.3,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4.f4",
+                0.16,
+                -0.3,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_staff_rinnovo_chiuso": {
+        "descrizione": "MESS, il terzo rifiuto del rinnovo, e l'allenatore non tratta più: dente di sega, più ruvido, la 5, fa 5 e do 5 che scendono a destra, e in fondo due colpi gravi a sinistra, do 4 e una scivolata dal do 4 al sol 3, la porta che si chiude; 560 ms. Più definitivo di mess_staff_rinnovo_rifiutato. Va bene per una trattativa chiusa per sempre.",
+        "score": [
+            [
+                "a5",
+                0.04,
+                0.3,
+                -0.12
+            ],
+            [
+                "f5",
+                0.04,
+                0.3,
+                -0.12
+            ],
+            [
+                "c5",
+                0.06,
+                0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "c4",
+                0.1,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c4.g3",
+                0.25,
+                -0.3,
+                -0.1
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_staff_posto_occupato": {
+        "descrizione": "MESS, il posto dello staff scelto è già occupato: onda triangolare al centro, due colpi secchi su una porta chiusa, mi 4 e mi 4, e un re 4 più piano; 170 ms. Va bene per un posto preso, una sedia già occupata, uno spazio che non c'è.",
+        "score": [
+            [
+                "e4",
+                0.04,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4",
+                0.04,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "d4",
+                0.04,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_staff_posto_scelto": {
+        "descrizione": "MESS, nel mercato degli allenatori cambia il posto da offrire: sinusoide al centro, un tocco minimo, un fa diesis 6 che scivola appena al la 6; 35 ms. Pensato per un evento che scatta a ogni freccia, va bene per ogni scelta di un ruolo o di una casella.",
+        "score": [
+            [
+                "f#6.a6",
+                0.035,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_scheda_allenatore": {
+        "descrizione": "MESS, si apre la scheda di un allenatore: rumore rosa, il cartellino girato, due sfiori, il primo fra 1500 e 5000 Hz a sinistra, il secondo più acuto, fra 2500 e 8000, a destra; 90 ms. Va bene per ogni scheda personale, un tesserino, un profilo.",
+        "score": [
+            [
+                "1500-5000",
+                0.03,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "2500-8000",
+                0.04,
+                0.3,
+                -0.1
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_diario_allenatore": {
+        "descrizione": "MESS, si apre il diario di un allenatore: rumore rosa, il taccuino sfogliato all'indietro, quattro pagine con la banda che scende da 3000-8000 a 1500-5000 Hz, da destra a sinistra; 190 ms. Va bene per un registro, un quaderno di appunti, una cronologia.",
+        "score": [
+            [
+                "3000-8000",
+                0.03,
+                0.4,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "2500-7000",
+                0.03,
+                0.15,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "2000-6000",
+                0.03,
+                -0.15,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-5000",
+                0.04,
+                -0.4,
+                -0.1
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_filtro_classe_allenatori": {
+        "descrizione": "MESS, nel mercato degli allenatori cambia la classe minima: sinusoide al centro, un passo di classe, due tocchi che salgono di una terza, do 6 e mi 6, 20 ms ciascuno; 45 ms. Pensato per un evento che scatta a ogni freccia, va bene per ogni soglia o livello.",
+        "score": [
+            [
+                "c6",
+                0.02,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.005,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.02,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_filtro_eta_allenatori": {
+        "descrizione": "MESS, nel mercato degli allenatori cambia l'età massima, quando ci si ferma: onda triangolare al centro, una scivolata breve che scende di una quarta dal sol 6 al re 6; 50 ms. Va bene per ogni limite d'età o di tempo.",
+        "score": [
+            [
+                "g6.d6",
+                0.05,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_filtro_tipo_allenatori": {
+        "descrizione": "MESS, nel mercato degli allenatori cambia il tipo, ex giocatori o nati allenatori: onda triangolare, tre tocchi a zig zag da sinistra a destra, mi 6, la 5 e mi 6, come un bivio da scegliere; 65 ms. Pensato per un evento che scatta a ogni freccia, va bene per ogni scelta fra categorie.",
+        "score": [
+            [
+                "e6",
+                0.015,
+                -0.4,
+                -0.15
+            ],
+            [
+                "p",
+                0.008,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.015,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.008,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.02,
+                0.4,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_filtro_sesso_allenatori": {
+        "descrizione": "MESS, nel mercato degli allenatori cambia il sesso: sinusoide, due tocchi su note diverse, re 6 a sinistra e la 5 a destra, una voce chiara e una scura; 50 ms. Pensato per un evento che scatta a ogni freccia, va bene per ogni scelta fra due.",
+        "score": [
+            [
+                "d6",
+                0.02,
+                -0.4,
+                -0.18
+            ],
+            [
+                "p",
+                0.01,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.02,
+                0.4,
+                -0.18
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_staff_partito": {
+        "descrizione": "MESS, nell'avanzamento un allenatore del tuo staff se ne va per lo stipendio non pagato: onda triangolare, un fischio breve di la 6 a destra, due passi che scendono, fa 5 e re 5, e una scivolata grave dal la 4 al mi 4 tutta a sinistra, chi esce sbattendo la porta; 440 ms. Va bene per un collaboratore che se ne va arrabbiato, un abbandono per un torto.",
+        "score": [
+            [
+                "a6",
+                0.05,
+                0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "f5",
+                0.06,
+                0.1,
+                -0.08
+            ],
+            [
+                "d5",
+                0.06,
+                -0.1,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4.e4",
+                0.2,
+                -0.4,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_staff_scaduto": {
+        "descrizione": "MESS, nell'avanzamento il contratto di un allenatore del tuo staff scade senza rinnovo, e lui torna libero: sinusoide, due rintocchi di un orologio a destra, mi 6 e do 6, e una scivolata lenta che scende di una quinta dal sol 5 al do 5 a sinistra; 340 ms. Diverso da mess_contratto_scaduto dei tesserati. Va bene per un incarico finito da sé, un termine passato.",
+        "score": [
+            [
+                "e6",
+                0.04,
+                0.2,
+                -0.1
+            ],
+            [
+                "c6",
+                0.04,
+                0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5.c5",
+                0.22,
+                -0.3,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_staff_uscito": {
+        "descrizione": "MESS, nell'avanzamento un allenatore del tuo staff smette di allenare, muore o lascia il mondo dello showdown: sinusoide, tre note lente e raccolte, la 4, mi 5 e un la 5 che ricade al mi 5, da sinistra verso destra; 490 ms. Va bene per un congedo, un addio sereno, una carriera che finisce.",
+        "score": [
+            [
+                "a4",
+                0.12,
+                -0.2,
+                -0.08
+            ],
+            [
+                "e5",
+                0.12,
+                0.0,
+                -0.08
+            ],
+            [
+                "a5.e5",
+                0.25,
+                0.2,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10.0,
+            15.0,
+            75.0,
+            40.0
+        ]
+    },
+    "mess_prelazione": {
+        "descrizione": "MESS, nell'avanzamento un tuo tesserato si ritira e può allenare, e per qualche giorno puoi assumerlo prima degli altri: onda triangolare, un trillo breve del fischietto, la 6, do 7 e la 6, e una salita di quarta e di quinta da sinistra a destra, re 5, sol 5 e un re 6 più lungo, l'occasione riservata a te; 310 ms. Va bene per un'opportunità in esclusiva, un diritto di precedenza.",
+        "score": [
+            [
+                "a6",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "c7",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "a6",
+                0.02,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5",
+                0.05,
+                -0.3,
+                -0.08
+            ],
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "d6",
+                0.12,
+                0.3,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_staff_in_scadenza": {
+        "descrizione": "MESS, nell'avanzamento il contratto di un allenatore del tuo staff entra nella finestra del rinnovo, o all'ultimo mese: sinusoide, il tic tac di un promemoria, due si 5 brevi a sinistra e a destra e un mi 6 al centro; 260 ms. Va bene per una scadenza che si avvicina, un avviso da non dimenticare.",
+        "score": [
+            [
+                "b5",
+                0.03,
+                -0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.03,
+                0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.08,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            10.0,
+            10.0,
+            75.0,
+            30.0
+        ]
+    },
+    "mess_staff_appena_nato": {
+        "descrizione": "MESS, all'apertura col mondo appena aggiornato nasce lo staff e il mercato degli allenatori è aperto: onda triangolare, una fanfara che sale da sinistra a destra, do 5, mi 5, sol 5, do 6 e mi 6, e in fondo il fischietto che chiama, due trilli di la 6 e do 7 e un la 6 tenuto, a destra; 530 ms. Va bene per una novità grande, un'apertura, l'inaugurazione di qualcosa.",
+        "score": [
+            [
+                "c5",
+                0.06,
+                -0.4,
+                -0.08
+            ],
+            [
+                "e5",
+                0.06,
+                -0.2,
+                -0.08
+            ],
+            [
+                "g5",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "c6",
+                0.06,
+                0.2,
+                -0.08
+            ],
+            [
+                "e6",
+                0.06,
+                0.3,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a6",
+                0.02,
+                0.4,
+                -0.15
+            ],
+            [
+                "c7",
+                0.02,
+                0.4,
+                -0.15
+            ],
+            [
+                "a6",
+                0.02,
+                0.4,
+                -0.15
+            ],
+            [
+                "c7",
+                0.02,
+                0.4,
+                -0.15
+            ],
+            [
+                "a6",
+                0.1,
+                0.4,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            10.0,
+            80.0,
+            30.0
+        ]
     }
 }
