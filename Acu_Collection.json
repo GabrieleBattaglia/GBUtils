@@ -25756,5 +25756,77 @@
             80.0,
             30.0
         ]
+    },
+    "mess_annunci_della_cronaca": {
+        "descrizione": "MESS, si apre il dialogo degli annunci della cronaca: sinusoide al centro, il din don degli annunci di una stazione, mi 6 e poi do 6, ciascuno di 90 ms con un respiro di 30 fra i due; 210 ms. Va bene per ogni impostazione di annunci, di voce o di lettura automatica.",
+        "score": [
+            [
+                "e6",
+                0.09,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c6",
+                0.09,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            20.0,
+            70.0,
+            40.0
+        ]
+    },
+    "mess_annunci_salvati": {
+        "descrizione": "MESS, gli annunci della cronaca confermati e salvati nelle impostazioni: sinusoide, il din don di mess_annunci_della_cronaca rovesciato, do 6 e mi 6 che salgono, e un sol 6 un poco più lungo che si posa, da sinistra a destra; 300 ms. Va bene per ogni impostazione di annunci o di voce confermata.",
+        "score": [
+            [
+                "c6",
+                0.07,
+                -0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "g6",
+                0.12,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            20.0,
+            70.0,
+            40.0
+        ]
     }
 }
