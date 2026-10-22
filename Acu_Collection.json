@@ -26854,5 +26854,113 @@
             80.0,
             30.0
         ]
+    },
+    "meteora_scheda_sparita": {
+        "descrizione": "MeTeOra, la scheda audio scelta non c'è più, per esempio delle cuffie Bluetooth spente o uscite di portata, e musica ed effetti passano alla scheda automatica: onda sinusoidale morbida, la 5 ed mi 5 brevi al centro che scendono, una pausa, poi un portamento lungo da la 4 a mi 4 che cala, come un suono che si allontana; 280 ms. È il gemello opposto di meteora_scheda_tornata. Va bene per un dispositivo scollegato o perso.",
+        "score": [
+            [
+                "a5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.05,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4.e4",
+                0.16,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            35.0
+        ]
+    },
+    "meteora_scheda_tornata": {
+        "descrizione": "MeTeOra, la scheda audio scelta è tornata, per esempio delle cuffie Bluetooth riaccese, e musica ed effetti ci rientrano: onda sinusoidale morbida, un portamento da mi 4 a la 4 che sale, una pausa, poi mi 5 breve e la 5 pieno al centro; 310 ms. È il gemello opposto di meteora_scheda_sparita, la stessa figura letta al contrario. Va bene per un dispositivo ricollegato o ritrovato.",
+        "score": [
+            [
+                "e4.a4",
+                0.12,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.05,
+                0.0,
+                -0.05
+            ],
+            [
+                "a5",
+                0.12,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            15.0,
+            75.0,
+            30.0
+        ]
+    },
+    "meteora_scheda_di_windows": {
+        "descrizione": "MeTeOra, con la scheda audio automatica Windows ne ha scelta un'altra, per esempio delle cuffie Bluetooth appena connesse, e gli effetti la seguono come la musica: onda triangolare morbida, un giro di re 5, si 4 e re 5 al centro, poi sol 5 più lungo, chi gira l'angolo e arriva altrove; 330 ms. Va bene per un'uscita o un dispositivo predefinito che cambia da solo.",
+        "score": [
+            [
+                "d5",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "b4",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "d5",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "g5",
+                0.12,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            8.0,
+            20.0,
+            65.0,
+            30.0
+        ]
     }
 }
