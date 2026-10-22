@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V215 di mercoledì 21 ottobre 2026
+	V216 di giovedì 22 ottobre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.6.1 di giovedì 1 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -28,6 +28,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
+	rileggi_dispositivi_audio V1.0.0 di giovedì 22 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	scegli_dispositivo_audio V1.1.1 di venerdì 18 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	scomponi_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -35,7 +36,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "212"
+VERSION = "216"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1367,6 +1368,83 @@ def elenco_interfacce_audio():
 		})
 	voci.sort(key=lambda v: (_ordine_api(v["nome"]), v["nome"]))
 	return voci
+
+def rileggi_dispositivi_audio():
+	"""V1.0.0 di giovedì 22 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+	Rilegge le schede audio della macchina, per vedere quelle arrivate o
+	sparite dopo l'avvio del programma.
+
+	Nasce per MeTeOra e le cuffie Bluetooth: PortAudio conta i dispositivi
+	una volta sola, quando parte, e delle cuffie connesse a programma aperto
+	non compaiono in elenco_dispositivi_audio, mentre una scheda tolta ci
+	resta con il suo indice. Qui PortAudio si chiude e si riapre: prima si
+	chiude il mixer condiviso, e con lui i suoni di Acusticator e di CWzator
+	in corso, e si ferma sd.play.
+	Gli indici cambiano, e quello di prima puo' portare a un'altra scheda o a
+	nessuna. Il mixer ci pensa da se': se aveva una scelta, ritrova per nome
+	la stessa scheda sulla stessa interfaccia e ne prende l'indice nuovo; se
+	non la trova torna a nessuna scelta, e alla prossima apertura sceglie da
+	se' come la prima volta. Una scelta fatta per interfaccia, per esempio
+	setup(device="wasapi"), resta sulla scheda che aveva trovato allora, non
+	segue il predefinito nuovo. Chi si era tenuto un indice suo, invece, lo
+	deve richiedere, per esempio a elenco_dispositivi_audio.
+	Le aperture del mixer da altri fili aspettano che la rilettura finisca;
+	un altro filo che apre uno stream suo con sounddevice, o che interroga i
+	dispositivi, non aspetta, e con PortAudio chiuso a meta' lavoro puo' far
+	cadere il processo: non va chiamata mentre succede.
+	Costa circa un decimo di secondo, misurato il 22 ottobre 2026 su una
+	macchina con ventitre' uscite in quattro interfacce.
+	Restituisce un dizionario:
+	  prima, dopo  quante uscite c'erano prima e quante ce ne sono adesso.
+	  arrivate     le uscite nuove, come coppie (dispositivo, interfaccia),
+	               per esempio ("Cuffie (WH-1000XM4)", "Windows WASAPI").
+	  sparite      quelle che non ci sono piu', nella stessa forma.
+	  mixer        "ritrovata" se il mixer aveva una scelta e la scheda c'e'
+	               ancora, "persa" se e' sparita, None se non aveva scelto.
+	Solleva RuntimeError, senza toccare PortAudio, se il filo del mixer non
+	si ferma entro due secondi; se PortAudio non si riapre, solleva l'errore
+	di sounddevice.
+	"""
+	import sounddevice as sd
+
+	def uscite():
+		api = [h["name"] for h in sd.query_hostapis()]
+		return [(d["name"], api[d["hostapi"]] if d["hostapi"] < len(api) else "", d["index"])
+				for d in sd.query_devices() if d["max_output_channels"] > 0]
+
+	mixer = _mixer_condiviso()
+	with mixer._avvio:
+		prima = uscite()
+		scelta = None
+		if mixer._device is not None:
+			scelta = next(((nome, api) for nome, api, indice in prima if indice == mixer._device), None)
+		mixer.chiudi()
+		with mixer._lock:
+			pompa = mixer._pompa
+		if pompa is not None and pompa.is_alive():
+			raise RuntimeError("il filo del mixer non si e' fermato: PortAudio resta com'era")
+		try:
+			sd.stop()
+		except Exception:  # noqa: BLE001, S110 - sd.play senza niente da fermare non ha niente da dire
+			pass
+		sd._terminate()
+		sd._initialize()
+		dopo = uscite()
+		esito = None
+		if mixer._device is not None:
+			nuovo = next((indice for nome, api, indice in dopo if (nome, api) == scelta), None) if scelta else None
+			if nuovo is None:
+				mixer._device, mixer._nome_api = None, None
+				esito = "persa"
+			else:
+				mixer._device = nuovo
+				esito = "ritrovata"
+	vecchie = {(nome, api) for nome, api, _ in prima}
+	nuove = {(nome, api) for nome, api, _ in dopo}
+	return {"prima": len(prima), "dopo": len(dopo),
+			"arrivate": [(nome, api) for nome, api, _ in dopo if (nome, api) not in vecchie],
+			"sparite": [(nome, api) for nome, api, _ in prima if (nome, api) not in nuove],
+			"mixer": esito}
 
 # Il mixer condiviso, nato con la issue 8 il 12 settembre 2026. Sta qui, fra
 # la scelta dell'uscita e CWzator, perche' e' di entrambi: Acusticator e
@@ -2836,6 +2914,7 @@ CWzator.scegli_dispositivo = staticmethod(scegli_dispositivo_audio)
 # conosce, non fra le funzioni di modulo che non sa di avere.
 CWzator.elenco_dispositivi = staticmethod(elenco_dispositivi_audio)
 CWzator.elenco_interfacce = staticmethod(elenco_interfacce_audio)
+CWzator.rileggi_dispositivi = staticmethod(rileggi_dispositivi_audio)
 # Quanti messaggi possono sovrapporsi. Sommarli e' il modo giusto: fino alla
 # V9.5 ognuno apriva il proprio stream e la somma la faceva il sistema
 # operativo, senza che nessuno la controllasse. Trentadue bastano a simulare
