@@ -26962,5 +26962,47 @@
             65.0,
             30.0
         ]
+    },
+    "mess_allenatore_in_prelazione": {
+        "descrizione": "MESS, si vuole assumere un allenatore in prelazione per un'altra tua polisportiva: sinusoide, la 5 a sinistra e re 6 a destra, brevi, e una scivolata che ricade dal re 6 al la 5 al centro, come un posto segnato a nome di un altro; 260 ms. Va bene per una cosa riservata a qualcun altro, una precedenza che non è tua.",
+        "score": [
+            [
+                "a5",
+                0.04,
+                -0.2,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d6",
+                0.04,
+                0.2,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d6.a5",
+                0.12,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            10.0,
+            80.0,
+            30.0
+        ]
     }
 }
