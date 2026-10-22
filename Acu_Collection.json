@@ -150,7 +150,7 @@
         ]
     },
     "conferma": {
-        "descrizione": "Conferma rapida di seno: due note acute che scendono, sol 6 e mi 6, una pausa e un punto acutissimo di fa 7, in 220 ms. Va bene per un'operazione riuscita o un controllo superato. Usato da: clz, mess, meteora.",
+        "descrizione": "Conferma rapida di seno: due note acute che scendono, sol 6 e mi 6, una pausa e un punto acutissimo di fa 7, in 220 ms. Va bene per un'operazione riuscita o un controllo superato. Usato da: clz, mess, meteora, stellaterm.",
         "score": [
             [
                 "g6",
@@ -186,7 +186,7 @@
         ]
     },
     "men_di_navigazione": {
-        "descrizione": "scorre delle voci",
+        "descrizione": "scorre delle voci. Usato da: stellaterm.",
         "score": [
             [
                 "f#5",
@@ -282,7 +282,7 @@
         ]
     },
     "convalida": {
-        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o è andato a buon fine",
+        "descrizione": "usalo per convalidare un dato, dare un ok, dire in generale che qualcosa va bene o è andato a buon fine. Usato da: stellaterm.",
         "score": [
             [
                 "g7",
@@ -318,7 +318,7 @@
         ]
     },
     "partenza": {
-        "descrizione": "un processo che inizia, qualcosa che comincia. Un suono piuttosto gentile e soft, da usare anche in serie ripetute. Usato da: batnav, cartella, clz, gabryscola, meteora.",
+        "descrizione": "un processo che inizia, qualcosa che comincia. Un suono piuttosto gentile e soft, da usare anche in serie ripetute. Usato da: batnav, cartella, clz, gabryscola, meteora, stellaterm.",
         "score": [
             [
                 "g2.g#3",
@@ -354,7 +354,7 @@
         ]
     },
     "sys_tick_basso": {
-        "descrizione": "Tick breve grave (singola nota (onda sinusoidale)). Usato da: gabryscola, meteora.",
+        "descrizione": "Tick breve grave (singola nota (onda sinusoidale)). Usato da: gabryscola, meteora, stellaterm.",
         "score": [
             [
                 "c5",
@@ -372,7 +372,7 @@
         ]
     },
     "avviso_di_sistema": {
-        "descrizione": "Avviso o errore (singola nota (onda sinusoidale)). Usato da: clz, gabryscola, meteora, tornello.",
+        "descrizione": "Avviso o errore (singola nota (onda sinusoidale)). Usato da: clz, gabryscola, meteora, stellaterm, tornello.",
         "score": [
             [
                 "f6",
@@ -3690,7 +3690,7 @@
         ]
     },
     "mostra": {
-        "descrizione": "compare un popup qualcosa viene mostrato un avviso richiede di essere visto anche una notifica un nuovo dato in una pila che vuole essere notato. Usato da: meteora, quinqu.",
+        "descrizione": "compare un popup qualcosa viene mostrato un avviso richiede di essere visto anche una notifica un nuovo dato in una pila che vuole essere notato. Usato da: meteora, quinqu, stellaterm.",
         "score": [
             [
                 "f2",
@@ -3756,7 +3756,7 @@
         ]
     },
     "lista": {
-        "descrizione": "quando compare una lunga lista di elementi da l'idea di un elenco che si riempie, una colonna che si popola di dati. Usato da: meteora, quinqu, tornello.",
+        "descrizione": "quando compare una lunga lista di elementi da l'idea di un elenco che si riempie, una colonna che si popola di dati. Usato da: meteora, quinqu, stellaterm, tornello.",
         "score": [
             [
                 "d4.a6",
@@ -3876,7 +3876,7 @@
         ]
     },
     "written_ok": {
-        "descrizione": "un file è stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta. Usato da: batnav, meteora, quinqu, tornello.",
+        "descrizione": "un file è stato scritto con successo un oggetto aggiunto qualcosa salvato sul disco con successo, un dato trasmesso, una conferma ricevuta. Usato da: batnav, meteora, quinqu, stellaterm, tornello.",
         "score": [
             [
                 "c4",
@@ -3960,7 +3960,7 @@
         ]
     },
     "apertura": {
-        "descrizione": "una finestra si apre, una classifica mostrata, un elenco appare, un diagramma, una videata di risultati compaiono a schermo. Usato da: batnav, gabryscola, mess, meteora, pokermachine, tornello.",
+        "descrizione": "una finestra si apre, una classifica mostrata, un elenco appare, un diagramma, una videata di risultati compaiono a schermo. Usato da: batnav, gabryscola, mess, meteora, pokermachine, stellaterm, tornello.",
         "score": [
             [
                 "g5",
@@ -3996,7 +3996,7 @@
         ]
     },
     "cancellato": {
-        "descrizione": "un elemento è stato cancellato da una lista, qualcosa è scomparso dallo schermo, una lista o un elenco si è ridotto di dimensioni, un dato è diminuito. Usato da: meteora, quinqu, tornello.",
+        "descrizione": "un elemento è stato cancellato da una lista, qualcosa è scomparso dallo schermo, una lista o un elenco si è ridotto di dimensioni, un dato è diminuito. Usato da: meteora, quinqu, stellaterm, tornello.",
         "score": [
             [
                 "b2.g#2",
@@ -4236,7 +4236,7 @@
         ]
     },
     "concluso": {
-        "descrizione": "una procedura rapida si è conclusa, un dato è stato validato o accettato",
+        "descrizione": "una procedura rapida si è conclusa, un dato è stato validato o accettato. Usato da: stellaterm.",
         "score": [
             [
                 "c5",
@@ -4326,7 +4326,7 @@
         ]
     },
     "notifica": {
-        "descrizione": "una notifica compare e richiede attenzione, un elemento cambia stato e richiede attenzione. Usato da: meteora, tornello.",
+        "descrizione": "una notifica compare e richiede attenzione, un elemento cambia stato e richiede attenzione. Usato da: meteora, stellaterm, tornello.",
         "score": [
             [
                 "e7",
@@ -4344,7 +4344,7 @@
         ]
     },
     "eliminato": {
-        "descrizione": "qualsiasi oggetto è stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta. Usato da: meteora.",
+        "descrizione": "qualsiasi oggetto è stato cancellato o eliminato, anche schermo svuotato, pulizia effettuata, ottimizzazione compiuta. Usato da: meteora, stellaterm.",
         "score": [
             [
                 "f4.d7",
@@ -5208,7 +5208,7 @@
         ]
     },
     "terminata": {
-        "descrizione": "elaborazione terminata, operazione conclusa. Usato da: cartella, mess, meteora.",
+        "descrizione": "elaborazione terminata, operazione conclusa. Usato da: cartella, mess, meteora, stellaterm.",
         "score": [
             [
                 "a#6",
@@ -5322,7 +5322,7 @@
         ]
     },
     "spostamento_f5": {
-        "descrizione": "Spostamento del fuoco, grave: due tocchi di seno brevissimi, sol 2 e mi 3, in 60 ms. È spostamento_f6 un'ottava sotto; insieme a f6 e f7 distingue tre aree in cui il fuoco può andare. Usato da: mess, meteora, tornello.",
+        "descrizione": "Spostamento del fuoco, grave: due tocchi di seno brevissimi, sol 2 e mi 3, in 60 ms. È spostamento_f6 un'ottava sotto; insieme a f6 e f7 distingue tre aree in cui il fuoco può andare. Usato da: mess, meteora, stellaterm, tornello.",
         "score": [
             [
                 "g2",
@@ -5370,7 +5370,7 @@
         ]
     },
     "spostamento_f7": {
-        "descrizione": "Spostamento del fuoco, acuto: due tocchi di seno brevissimi, sol 4 e mi 5, in 60 ms. È spostamento_f6 un'ottava sopra; insieme a f5 e f6 distingue tre aree in cui il fuoco può andare. Usato da: mess, meteora, tornello.",
+        "descrizione": "Spostamento del fuoco, acuto: due tocchi di seno brevissimi, sol 4 e mi 5, in 60 ms. È spostamento_f6 un'ottava sopra; insieme a f5 e f6 distingue tre aree in cui il fuoco può andare. Usato da: mess, meteora, stellaterm, tornello.",
         "score": [
             [
                 "g4",
@@ -5466,7 +5466,7 @@
         ]
     },
     "Digitazione": {
-        "descrizione": "Un tasto premuto e rilasciato: due note di seno secche, fa 3 e sol 4, in 140 ms. Va bene per la digitazione, per lettere premute su un controller o per un tasto che risponde. Usato da: meteora.",
+        "descrizione": "Un tasto premuto e rilasciato: due note di seno secche, fa 3 e sol 4, in 140 ms. Va bene per la digitazione, per lettere premute su un controller o per un tasto che risponde. Usato da: meteora, stellaterm.",
         "score": [
             [
                 "f3",
@@ -6138,7 +6138,7 @@
         ]
     },
     "annullato": {
-        "descrizione": "scivolata corta all'ingiu', operazione annullata. Usato da: gabryscola, meteora.",
+        "descrizione": "scivolata corta all'ingiu', operazione annullata. Usato da: gabryscola, meteora, stellaterm.",
         "score": [
             [
                 "a4.d4",
@@ -6216,7 +6216,7 @@
         ]
     },
     "validator": {
-        "descrizione": "conferma validazione ok prosegui bene accettato visto confermato approvato inserito preso aggiunto",
+        "descrizione": "conferma validazione ok prosegui bene accettato visto confermato approvato inserito preso aggiunto. Usato da: stellaterm.",
         "score": [
             [
                 "c4",
@@ -7878,7 +7878,7 @@
         ]
     },
     "meditimer_chiusura": {
-        "descrizione": "arrivederci di Meditimer: le stesse quattro note che scendono, da destra a sinistra",
+        "descrizione": "arrivederci di Meditimer: le stesse quattro note che scendono, da destra a sinistra. Usato da: stellaterm.",
         "score": [
             [
                 "c6",
@@ -8778,7 +8778,7 @@
         ]
     },
     "meditimer_manuale": {
-        "descrizione": "il manuale si apre: un fruscio di pagina, rumore bianco che scende Usato da: mess.",
+        "descrizione": "il manuale si apre: un fruscio di pagina, rumore bianco che scende Usato da: mess, stellaterm.",
         "score": [
             [
                 "800-6000.300-2000",
@@ -8796,7 +8796,7 @@
         ]
     },
     "meditimer_tasto_sconosciuto": {
-        "descrizione": "tasto non previsto: due note basse e vicine, un no gentile",
+        "descrizione": "tasto non previsto: due note basse e vicine, un no gentile. Usato da: stellaterm.",
         "score": [
             [
                 "b3",
@@ -13434,7 +13434,7 @@
         ]
     },
     "meteora_banda_al_limite": {
-        "descrizione": "MeTeOra, U o I sono già sulla prima o sull'ultima banda dell'equalizzatore: due soffi cupi di rumore rosa fra 300 e 450 Hz, al centro, il secondo più piano, come un cursore che batte contro il fondo della sua guida; 85 ms. Va bene per ogni scelta che non può andare oltre il primo o l'ultimo elemento di una fila.",
+        "descrizione": "MeTeOra, U o I sono già sulla prima o sull'ultima banda dell'equalizzatore: due soffi cupi di rumore rosa fra 300 e 450 Hz, al centro, il secondo più piano, come un cursore che batte contro il fondo della sua guida; 85 ms. Va bene per ogni scelta che non può andare oltre il primo o l'ultimo elemento di una fila. Usato da: stellaterm.",
         "score": [
             [
                 "300-450",
@@ -13650,7 +13650,7 @@
         ]
     },
     "spugna": {
-        "descrizione": "Suono per cancellazione rapida di qualcosa, eliminazione, pulizia, sgombro",
+        "descrizione": "Suono per cancellazione rapida di qualcosa, eliminazione, pulizia, sgombro. Usato da: stellaterm.",
         "score": [
             [
                 "e3.g#3",
@@ -14892,7 +14892,7 @@
         ]
     },
     "mess_salvataggio_non_riuscito": {
-        "descrizione": "MESS, un salvataggio non riesce, con Ctrl+S o dopo un'operazione: onda triangolare, tre tocchi che scendono per terze maggiori, sol 6, re diesis 6 e si 5, da destra a sinistra, e un tonfo che scivola dal mi 4 al la 3 al centro, in 450 ms. Lo specchio scuro di meditimer_banco_salvato. Va bene per una scrittura su disco fallita o un'operazione che non lascia traccia.",
+        "descrizione": "MESS, un salvataggio non riesce, con Ctrl+S o dopo un'operazione: onda triangolare, tre tocchi che scendono per terze maggiori, sol 6, re diesis 6 e si 5, da destra a sinistra, e un tonfo che scivola dal mi 4 al la 3 al centro, in 450 ms. Lo specchio scuro di meditimer_banco_salvato. Va bene per una scrittura su disco fallita o un'operazione che non lascia traccia. Usato da: stellaterm.",
         "score": [
             [
                 "g6",
@@ -14946,7 +14946,7 @@
         ]
     },
     "mess_tasto_a_vuoto": {
-        "descrizione": "MESS, un pulsante premuto senza niente su cui lavorare: due colpi sordi di rumore rosa al centro, il primo fra 500 e 2500 Hz, il secondo un poco più cupo e più piano, fra 400 e 2000 Hz, come bussare su una scatola vuota; 150 ms. Va bene per un elenco senza selezione, un comando a vuoto o un tasto che non trova niente.",
+        "descrizione": "MESS, un pulsante premuto senza niente su cui lavorare: due colpi sordi di rumore rosa al centro, il primo fra 500 e 2500 Hz, il secondo un poco più cupo e più piano, fra 400 e 2000 Hz, come bussare su una scatola vuota; 150 ms. Va bene per un elenco senza selezione, un comando a vuoto o un tasto che non trova niente. Usato da: stellaterm.",
         "score": [
             [
                 "500-2500",
@@ -16278,7 +16278,7 @@
         ]
     },
     "mess_campana_a_martello": {
-        "descrizione": "MESS, la domanda irreversibile se chiudere per sempre la polisportiva: la campana a martello dell'allarme, cinque rintocchi rapidi di seno sul la 4, poi una scivolata grave e inquieta che sale di un tritono, da re 4 a sol diesis 4, come una domanda allarmata; 890 ms. Va bene per una conferma pericolosa, una domanda che non ammette ripensamenti o un'azione definitiva.",
+        "descrizione": "MESS, la domanda irreversibile se chiudere per sempre la polisportiva: la campana a martello dell'allarme, cinque rintocchi rapidi di seno sul la 4, poi una scivolata grave e inquieta che sale di un tritono, da re 4 a sol diesis 4, come una domanda allarmata; 890 ms. Va bene per una conferma pericolosa, una domanda che non ammette ripensamenti o un'azione definitiva. Usato da: stellaterm.",
         "score": [
             [
                 "a4",
