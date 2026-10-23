@@ -3,10 +3,11 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V220 di venerdì 23 ottobre 2026
+	V221 di venerdì 23 ottobre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.6.1 di giovedì 1 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -20,6 +21,8 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	formatta_durata V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	frequenza_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	gestisci_aggiornamento V1.3.1 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+	indirizzo_mailto V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	informazioni_di_sistema V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	key V8.0.2 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
@@ -28,15 +31,18 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
+	programma_di_posta V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	PUB_GRUPPO e PUB_ISCRIZIONE, costanti di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	rileggi_dispositivi_audio V1.0.0 di giovedì 22 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	righe_informazioni V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	scegli_dispositivo_audio V1.1.1 di venerdì 18 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	scomponi_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "220"
+VERSION = "221"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6097,6 +6103,513 @@ def Donazione(lang=None, probabilita=20, stampa=True):
     if stampa:
         print(messaggio)
     return messaggio
+
+# Il PUB, la lista di supporto prg-user-blind su Google Groups. Al gruppo si
+# scrive per chiedere aiuto; all'iscrizione Google risponde con una mail di
+# conferma, e di oggetto e testo non tiene conto.
+PUB_GRUPPO = "prg-user-blind@googlegroups.com"
+PUB_ISCRIZIONE = "prg-user-blind+subscribe@googlegroups.com"
+
+# Gli screen reader che si riconoscono dal nome del processo: il nome del
+# prodotto, che non si traduce, e se leggerne la versione. Quella
+# dell'Assistente vocale e' la versione di Windows, che c'e' gia'.
+_SCREEN_READER = {"nvda.exe": ("NVDA", True), "jfw.exe": ("JAWS", True), "narrator.exe": ("Narrator", False)}
+# L'architettura di Windows, dal codice macchina di IsWow64Process2 e, dove
+# quella manca, dal nome di platform.machine.
+_ARCHITETTURE = {0x014C: "x86", 0x8664: "x64", 0xAA64: "ARM64"}
+_ARCHITETTURE_PLATFORM = {"amd64": "x64", "x86_64": "x64", "arm64": "ARM64", "aarch64": "ARM64", "x86": "x86", "i386": "x86", "i686": "x86"}
+
+def _letto(lettura, ripiego=None):
+	"""Il valore di una lettura del sistema, o il ripiego se fallisce in
+	qualunque modo: un'informazione che manca non deve impedire a nessuno di
+	chiedere aiuto."""
+	try:
+		return lettura()
+	except Exception:  # noqa: BLE001 - qualunque cosa vada storta, l'informazione manca e basta
+		return ripiego
+
+def _valori_registro(radice, percorso, nomi):
+	"""I valori di una chiave del registro di Windows, in un dizionario per
+	nome; quelli che mancano valgono None, e una chiave che non si apre li da'
+	tutti None. radice e' il nome della costante di winreg, per esempio
+	HKEY_LOCAL_MACHINE. Legge la vista a 64 bit anche da un Python a 32,
+	perche' le informazioni sono quelle della macchina e non del processo. Sta
+	in una funzione a se' perche' il banco possa sostituirla con un registro
+	simulato."""
+	import contextlib
+	valori = dict.fromkeys(nomi)
+	try:
+		import winreg
+		with winreg.OpenKey(getattr(winreg, radice), percorso, 0, winreg.KEY_READ | winreg.KEY_WOW64_64KEY) as chiave:
+			for nome in nomi:
+				with contextlib.suppress(OSError):
+					valori[nome] = winreg.QueryValueEx(chiave, nome)[0]
+	except (ImportError, OSError):
+		pass
+	return valori
+
+def _windows():
+	"""Edizione, versione e build di Windows, dal registro. ProductName dice
+	Windows 10 anche su Windows 11: vale la build, e da 22000 in su e' Windows
+	11. La build ha in coda l'UBR, il numero dell'aggiornamento cumulativo.
+	Fuori da Windows l'edizione e' il nome del sistema, con il suo rilascio."""
+	import platform
+	valori = _valori_registro("HKEY_LOCAL_MACHINE", r"SOFTWARE\Microsoft\Windows NT\CurrentVersion",
+		("ProductName", "DisplayVersion", "ReleaseId", "CurrentBuildNumber", "UBR"))
+	nome = str(valori["ProductName"] or "").strip()
+	build = str(valori["CurrentBuildNumber"] or "").strip()
+	if build.isdigit() and int(build) >= 22000 and nome.startswith("Windows 10"):
+		nome = "Windows 11" + nome[len("Windows 10"):]
+	if build and valori["UBR"] is not None:
+		build = f"{build}.{valori['UBR']}"
+	if not nome:
+		nome = f"{platform.system()} {platform.release()}".strip()
+	return nome or None, valori["DisplayVersion"] or valori["ReleaseId"] or None, build or None
+
+def _architettura():
+	"""L'architettura di Windows, non quella del processo: un Python a 32 bit
+	su una macchina a 64 dice x64, e un Python x64 emulato su ARM dice ARM64.
+	IsWow64Process2 c'e' da Windows 10 1709; dove manca, platform.machine."""
+	import platform
+	import sys
+	if sys.platform == "win32":
+		import ctypes
+		from ctypes import wintypes
+		kernel32 = ctypes.WinDLL("kernel32")
+		kernel32.GetCurrentProcess.restype = wintypes.HANDLE
+		funzione = _letto(lambda: kernel32.IsWow64Process2)
+		if funzione is not None:
+			funzione.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.USHORT), ctypes.POINTER(wintypes.USHORT)]
+			processo, nativa = wintypes.USHORT(), wintypes.USHORT()
+			if funzione(kernel32.GetCurrentProcess(), ctypes.byref(processo), ctypes.byref(nativa)) and nativa.value in _ARCHITETTURE:
+				return _ARCHITETTURE[nativa.value]
+	macchina = platform.machine()
+	return _ARCHITETTURE_PLATFORM.get(macchina.lower(), macchina or None)
+
+def _memoria():
+	"""La memoria fisica totale e quella disponibile, in byte, con
+	GlobalMemoryStatusEx e senza psutil; None e None se non si leggono."""
+	import ctypes
+	import sys
+	if sys.platform != "win32":
+		return None, None
+
+	class StatoMemoria(ctypes.Structure):
+		_fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+			("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
+			("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
+			("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
+			("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+
+	stato = StatoMemoria()
+	stato.dwLength = ctypes.sizeof(StatoMemoria)
+	if ctypes.WinDLL("kernel32").GlobalMemoryStatusEx(ctypes.byref(stato)):
+		return int(stato.ullTotalPhys), int(stato.ullAvailPhys)
+	return None, None
+
+def _processore():
+	"""Il nome del processore dal registro, con gli spazi ripuliti, o quello
+	di platform.processor dove il registro non c'e'."""
+	import platform
+	nome = _valori_registro("HKEY_LOCAL_MACHINE", r"HARDWARE\DESCRIPTION\System\CentralProcessor\0", ("ProcessorNameString",))["ProcessorNameString"]
+	return " ".join(str(nome or "").split()) or platform.processor() or None
+
+def _processi():
+	"""I processi in esecuzione, come coppie di nome dell'eseguibile in
+	minuscolo e identificativo, dall'istantanea di Toolhelp32. Sta in una
+	funzione a se' perche' il banco possa simulare uno screen reader."""
+	import ctypes
+	import sys
+	from ctypes import wintypes
+	if sys.platform != "win32":
+		return []
+
+	class Processo(ctypes.Structure):
+		_fields_ = [("dwSize", wintypes.DWORD), ("cntUsage", wintypes.DWORD), ("th32ProcessID", wintypes.DWORD),
+			("th32DefaultHeapID", ctypes.c_size_t), ("th32ModuleID", wintypes.DWORD), ("cntThreads", wintypes.DWORD),
+			("th32ParentProcessID", wintypes.DWORD), ("pcPriClassBase", ctypes.c_long), ("dwFlags", wintypes.DWORD),
+			("szExeFile", wintypes.WCHAR * 260)]
+
+	kernel32 = ctypes.WinDLL("kernel32")
+	kernel32.CreateToolhelp32Snapshot.restype = wintypes.HANDLE
+	kernel32.CreateToolhelp32Snapshot.argtypes = [wintypes.DWORD, wintypes.DWORD]
+	kernel32.Process32FirstW.argtypes = [wintypes.HANDLE, ctypes.POINTER(Processo)]
+	kernel32.Process32NextW.argtypes = [wintypes.HANDLE, ctypes.POINTER(Processo)]
+	kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+	istantanea = kernel32.CreateToolhelp32Snapshot(0x2, 0)
+	if not istantanea or istantanea == ctypes.c_void_p(-1).value:
+		return []
+	processi = []
+	try:
+		voce = Processo()
+		voce.dwSize = ctypes.sizeof(Processo)
+		presente = kernel32.Process32FirstW(istantanea, ctypes.byref(voce))
+		while presente:
+			processi.append((voce.szExeFile.lower(), voce.th32ProcessID))
+			presente = kernel32.Process32NextW(istantanea, ctypes.byref(voce))
+	finally:
+		kernel32.CloseHandle(istantanea)
+	return processi
+
+def _versione_file(percorso):
+	"""La versione del prodotto scritta in un eseguibile di Windows: la
+	ProductVersion della prima traduzione, che e' quella che il produttore
+	mostra, per esempio 2026.3.1 per NVDA; in mancanza i quattro numeri
+	fissi. None se il file non ne ha."""
+	import ctypes
+	from ctypes import wintypes
+	versione = ctypes.WinDLL("version")
+	versione.GetFileVersionInfoSizeW.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(wintypes.DWORD)]
+	versione.GetFileVersionInfoW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, ctypes.c_void_p]
+	versione.VerQueryValueW.argtypes = [ctypes.c_void_p, wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_void_p), ctypes.POINTER(wintypes.UINT)]
+	misura = versione.GetFileVersionInfoSizeW(percorso, None)
+	if not misura:
+		return None
+	dati = ctypes.create_string_buffer(misura)
+	if not versione.GetFileVersionInfoW(percorso, 0, misura, dati):
+		return None
+	puntatore, lunghezza = ctypes.c_void_p(), wintypes.UINT()
+
+	def valore(nome):
+		if versione.VerQueryValueW(dati, nome, ctypes.byref(puntatore), ctypes.byref(lunghezza)) and lunghezza.value and puntatore.value:
+			return puntatore.value
+		return None
+
+	traduzioni = valore(r"\VarFileInfo\Translation")
+	if traduzioni:
+		lingua, codifica = ctypes.cast(traduzioni, ctypes.POINTER(wintypes.WORD * 2)).contents
+		testo = valore(rf"\StringFileInfo\{lingua:04x}{codifica:04x}\ProductVersion")
+		if testo:
+			testo = " ".join(ctypes.wstring_at(testo).split())
+			if testo:
+				return testo
+	fissa = valore("\\")
+	if fissa:
+		# VS_FIXEDFILEINFO: dopo firma, versione della struttura e versione del
+		# file vengono le due parole della versione del prodotto.
+		parole = ctypes.cast(fissa, ctypes.POINTER(wintypes.DWORD * 6)).contents
+		alta, bassa = parole[4], parole[5]
+		return f"{alta >> 16}.{alta & 0xFFFF}.{bassa >> 16}.{bassa & 0xFFFF}"
+	return None
+
+def _versione_processo(identificativo):
+	"""La versione del prodotto dell'eseguibile di un processo in esecuzione,
+	o None se il processo non si apre. Il percorso dell'eseguibile, che per
+	un programma portatile contiene il nome dell'utente, non esce da qui."""
+	import ctypes
+	from ctypes import wintypes
+	kernel32 = ctypes.WinDLL("kernel32")
+	kernel32.OpenProcess.restype = wintypes.HANDLE
+	kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+	kernel32.QueryFullProcessImageNameW.argtypes = [wintypes.HANDLE, wintypes.DWORD, wintypes.LPWSTR, ctypes.POINTER(wintypes.DWORD)]
+	kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+	# PROCESS_QUERY_LIMITED_INFORMATION: basta a leggere il percorso, e
+	# Windows la concede anche per i processi con privilegi piu' alti.
+	manico = kernel32.OpenProcess(0x1000, False, identificativo)
+	if not manico:
+		return None
+	try:
+		percorso = ctypes.create_unicode_buffer(32768)
+		misura = wintypes.DWORD(32768)
+		if not kernel32.QueryFullProcessImageNameW(manico, 0, percorso, ctypes.byref(misura)):
+			return None
+	finally:
+		kernel32.CloseHandle(manico)
+	return _versione_file(percorso.value)
+
+def _segnale_screen_reader():
+	"""SPI_GETSCREENREADER, il segnale generale che uno screen reader e' in
+	funzione, che NVDA, JAWS e l'Assistente vocale accendono: vero o falso, o
+	None se non si legge."""
+	import ctypes
+	import sys
+	from ctypes import wintypes
+	if sys.platform != "win32":
+		return None
+	acceso = wintypes.BOOL()
+	if ctypes.WinDLL("user32").SystemParametersInfoW(0x0046, 0, ctypes.byref(acceso), 0):
+		return bool(acceso.value)
+	return None
+
+def _screen_reader():
+	"""Gli screen reader in funzione riconosciuti dal processo, con la
+	versione, separati da virgola; se nessuno si riconosce, il segnale
+	generale di Windows, vero o falso."""
+	trovati = []
+	for nome, identificativo in _letto(_processi, []):
+		prodotto, con_versione = _SCREEN_READER.get(nome, (None, False))
+		if prodotto is None:
+			continue
+		versione = _letto(lambda identificativo=identificativo: _versione_processo(identificativo)) if con_versione else None
+		voce = f"{prodotto} {versione}" if versione else prodotto
+		if voce not in trovati:
+			trovati.append(voce)
+	if trovati:
+		return ", ".join(trovati)
+	return _letto(_segnale_screen_reader)
+
+def _risoluzione():
+	"""La risoluzione vera dello schermo principale, larghezza per altezza.
+	DESKTOPHORZRES e DESKTOPVERTRES danno i pixel veri anche a un programma
+	che non dichiara di conoscere i DPI, a cui le altre misure arrivano
+	ridotte dalla scala."""
+	import ctypes
+	import sys
+	from ctypes import wintypes
+	if sys.platform != "win32":
+		return None
+	user32 = ctypes.WinDLL("user32")
+	gdi32 = ctypes.WinDLL("gdi32")
+	user32.GetDC.restype = wintypes.HDC
+	user32.GetDC.argtypes = [wintypes.HWND]
+	user32.ReleaseDC.argtypes = [wintypes.HWND, wintypes.HDC]
+	gdi32.GetDeviceCaps.argtypes = [wintypes.HDC, ctypes.c_int]
+	contesto = user32.GetDC(None)
+	if not contesto:
+		return None
+	try:
+		larghezza, altezza = gdi32.GetDeviceCaps(contesto, 118), gdi32.GetDeviceCaps(contesto, 117)
+	finally:
+		user32.ReleaseDC(None, contesto)
+	return f"{larghezza}x{altezza}" if larghezza > 0 and altezza > 0 else None
+
+def _scala():
+	"""La scala dello schermo principale in percento, per esempio 150%. Il
+	thread chiede per un momento di conoscere i DPI di ogni schermo, cosi'
+	GetDpiForMonitor risponde il valore vero anche in un programma che non li
+	dichiara, poi torna com'era. Dove questo non si puo', prima di Windows 10
+	1607, vale AppliedDPI del registro."""
+	import ctypes
+	import sys
+	from ctypes import wintypes
+	if sys.platform != "win32":
+		return None
+	user32 = ctypes.WinDLL("user32")
+	dpi = None
+	contesto = _letto(lambda: user32.SetThreadDpiAwarenessContext)
+	if contesto is not None:
+		contesto.restype = ctypes.c_void_p
+		contesto.argtypes = [ctypes.c_void_p]
+		user32.MonitorFromPoint.restype = wintypes.HMONITOR
+		user32.MonitorFromPoint.argtypes = [wintypes.POINT, wintypes.DWORD]
+		# DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+		precedente = contesto(ctypes.c_void_p(-4))
+		if precedente:
+			try:
+				shcore = ctypes.WinDLL("shcore")
+				shcore.GetDpiForMonitor.argtypes = [wintypes.HMONITOR, ctypes.c_int, ctypes.POINTER(wintypes.UINT), ctypes.POINTER(wintypes.UINT)]
+				x, y = wintypes.UINT(), wintypes.UINT()
+				# Lo schermo principale e' quello che contiene l'origine.
+				schermo = user32.MonitorFromPoint(wintypes.POINT(0, 0), 1)
+				if shcore.GetDpiForMonitor(schermo, 0, ctypes.byref(x), ctypes.byref(y)) == 0:
+					dpi = x.value
+			finally:
+				contesto(ctypes.c_void_p(precedente))
+	if not dpi:
+		dpi = _valori_registro("HKEY_CURRENT_USER", r"Control Panel\Desktop\WindowMetrics", ("AppliedDPI",))["AppliedDPI"]
+	return f"{round(dpi * 100 / 96)}%" if dpi else None
+
+def informazioni_di_sistema(separatore="."):
+	"""V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Le informazioni sul computer che servono a chi risponde a una richiesta
+	di aiuto, per esempio nel PUB: una lista di coppie di chiave e valore,
+	sempre le stesse chiavi nello stesso ordine. Le chiavi sono nomi neutri,
+	non frasi: le etichette in lingua le mette il chiamante, a mano o con
+	righe_informazioni.
+	  windows           l'edizione, per esempio Windows 11 Pro. ProductName
+	                    dice Windows 10 anche su Windows 11, e si corregge
+	                    con la build.
+	  windows_versione  la versione, per esempio 25H2.
+	  windows_build     la build con l'aggiornamento cumulativo, 26200.6899.
+	  architettura      quella di Windows: x64, ARM64 o x86.
+	  processore        il nome, come lo scrive il produttore.
+	  nuclei            i nuclei logici, un numero intero.
+	  memoria_totale    la memoria fisica, scritta con formatta_dimensione,
+	                    per esempio 31.9 GB.
+	  memoria_libera    quella disponibile in questo momento, allo stesso modo.
+	  lingua            la lingua di sistema, da lingua_di_sistema.
+	  screen_reader     quelli in funzione riconosciuti dal processo, con la
+	                    versione, per esempio NVDA 2026.3.1, separati da
+	                    virgola se sono piu' d'uno. Si riconoscono NVDA, JAWS
+	                    e Narrator, l'Assistente vocale, coi nomi dei
+	                    prodotti, che non si traducono. Se nessuno si
+	                    riconosce, vero o falso secondo il segnale generale di
+	                    Windows, SPI_GETSCREENREADER: vero vuol dire che uno
+	                    screen reader c'e' ma non si sa quale.
+	  schermo           la risoluzione vera dello schermo principale, larghezza
+	                    per altezza, per esempio 1920x1080.
+	  scala             la scala dello schermo principale, per esempio 150%.
+	  python            la versione e i bit dell'interprete, 3.14.5 64 bit.
+	  compilato         vero se il programma gira compilato con PyInstaller,
+	                    falso se gira dai sorgenti.
+	Un valore che non si riesce a leggere vale None, e fuori da Windows lo
+	sono quasi tutti. Le stringhe non contengono parole di GBUtils, solo nomi
+	di prodotti, numeri e unita' di misura.
+	separatore e' il punto decimale delle due memorie, il punto come nasce:
+	chi scrive in italiano passa la virgola.
+	Riservatezza: niente nome dell'utente, nome del computer, indirizzi o
+	percorsi. Le informazioni vanno nel corpo della mail, sotto gli occhi di
+	chi scrive, che puo' cancellarle prima di spedire.
+	Non solleva e non stampa niente. Interroga soltanto il sistema, senza
+	cambiarne niente: per leggere la scala il thread cambia per un momento il
+	modo in cui vede i DPI, e lo rimette subito com'era.
+	Nasce con la V221 dalla issue 57, per le voci Entra al PUB e Chiedi aiuto
+	al PUB dei programmi con una finestra."""
+	import os
+	import platform
+	import struct
+	import sys
+	windows, versione, build = _letto(_windows, (None, None, None))
+	totale, libera = _letto(_memoria, (None, None))
+
+	def dimensione(byte):
+		return formatta_dimensione(byte, decimali=1, separatore=separatore) if byte is not None else None
+
+	return [
+		("windows", windows),
+		("windows_versione", versione),
+		("windows_build", build),
+		("architettura", _letto(_architettura)),
+		("processore", _letto(_processore)),
+		("nuclei", os.cpu_count()),
+		("memoria_totale", dimensione(totale)),
+		("memoria_libera", dimensione(libera)),
+		("lingua", lingua_di_sistema()),
+		("screen_reader", _letto(_screen_reader)),
+		("schermo", _letto(_risoluzione)),
+		("scala", _letto(_scala)),
+		("python", f"{platform.python_version()} {struct.calcsize('P') * 8} bit"),
+		("compilato", bool(getattr(sys, "frozen", False))),
+	]
+
+def righe_informazioni(etichette, informazioni=None, parole=None, separatore=": "):
+	"""V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Le righe da mettere nel corpo di una mail, una per informazione:
+	l'etichetta del chiamante, il separatore e il valore. Serve perche' i
+	programmi del parco scrivano le informazioni tutti allo stesso modo.
+	  etichette: un dizionario dalla chiave all'etichetta, gia' tradotta.
+	    Decide anche quali informazioni entrano e in che ordine: quelle senza
+	    etichetta restano fuori.
+	  informazioni: le coppie di chiave e valore, quelle di
+	    informazioni_di_sistema se mancano. Un programma ci aggiunge le
+	    proprie, per esempio la scheda audio, con le chiavi che vuole e le
+	    loro etichette.
+	  parole: le parole per i valori vero, falso e None, in un dizionario con
+	    quelle tre chiavi, per esempio {True: "sì", False: "no"}. Una riga il
+	    cui valore non ha la sua parola resta fuori: cosi' un None, che vuol
+	    dire non letto, sparisce se il chiamante non dice altrimenti.
+	  separatore: fra etichetta e valore, due punti e spazio come nasce.
+	Restituisce la lista delle righe, senza a capo, che il chiamante unisce
+	con quelle sue, per esempio nome e versione del programma.
+	Nasce con la V221 dalla issue 57, insieme a informazioni_di_sistema."""
+	valori = dict(informazioni_di_sistema() if informazioni is None else informazioni)
+	parole = parole or {}
+	righe = []
+	for chiave, etichetta in etichette.items():
+		if chiave not in valori:
+			continue
+		valore = valori[chiave]
+		# Il controllo del tipo viene prima del dizionario: 1 e True per un
+		# dizionario sono la stessa chiave, e un nucleo solo diventerebbe si'.
+		if valore is None or isinstance(valore, bool):
+			if valore not in parole:
+				continue
+			valore = parole[valore]
+		righe.append(f"{etichetta}{separatore}{valore}")
+	return righe
+
+def indirizzo_mailto(destinatario, oggetto="", corpo=""):
+	"""V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	L'indirizzo mailto che apre una mail nuova con destinatario, oggetto e
+	corpo gia' scritti. Testo in UTF-8, spazi come %20 e mai come +, che
+	certi programmi di posta leggono come piu', a capo come %0D%0A, qualunque
+	sia l'a capo del corpo. Un oggetto su piu' righe diventa una riga sola.
+	Il destinatario tiene la chiocciola, il piu' di un indirizzo come quello
+	dell'iscrizione al PUB e la virgola fra piu' indirizzi. Oggetto e corpo
+	vuoti non entrano nell'indirizzo.
+	Una lettera accentata occupa sei caratteri, e certi programmi di posta
+	tagliano gli indirizzi oltre i duemila circa: il corpo resti breve.
+	Restituisce la stringa, senza aprire niente: apre apri_mail.
+	Nasce con la V221 dalla issue 57."""
+	from urllib.parse import quote
+	parti = []
+	if oggetto:
+		parti.append("subject=" + quote(" ".join(str(oggetto).splitlines()), safe=""))
+	if corpo:
+		righe = str(corpo).replace("\r\n", "\n").replace("\r", "\n").split("\n")
+		parti.append("body=" + "%0D%0A".join(quote(riga, safe="") for riga in righe))
+	indirizzo = "mailto:" + quote(str(destinatario).strip(), safe="@+,")
+	return indirizzo + ("?" + "&".join(parti) if parti else "")
+
+def _programma_associato(protocollo):
+	"""Il nome del programma che Windows apre per un protocollo, o None se
+	non ce n'e' uno. ASSOCF_INIT_IGNOREUNKNOWN fa fallire la richiesta quando
+	Windows proporrebbe soltanto di cercare un'app. Si chiede prima il nome
+	da mostrare, poi quello dell'eseguibile, senza cartella: il percorso puo'
+	contenere il nome dell'utente."""
+	import ctypes
+	import os
+	import sys
+	from ctypes import wintypes
+	if sys.platform != "win32":
+		return None
+	shlwapi = ctypes.WinDLL("shlwapi")
+	funzione = shlwapi.AssocQueryStringW
+	funzione.argtypes = [ctypes.c_uint, ctypes.c_uint, wintypes.LPCWSTR, wintypes.LPCWSTR, wintypes.LPWSTR, ctypes.POINTER(wintypes.DWORD)]
+	funzione.restype = ctypes.c_long
+	# ASSOCSTR_FRIENDLYAPPNAME, poi ASSOCSTR_EXECUTABLE.
+	for richiesta in (4, 2):
+		misura = wintypes.DWORD(1024)
+		risposta = ctypes.create_unicode_buffer(misura.value)
+		if funzione(0x400, richiesta, protocollo, None, risposta, ctypes.byref(misura)) == 0:
+			nome = risposta.value.strip()
+			if richiesta == 2:
+				nome = os.path.splitext(os.path.basename(nome))[0]
+			if nome:
+				return nome
+	return None
+
+def programma_di_posta():
+	"""V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Il programma di posta che Windows apre per gli indirizzi mailto, con il
+	nome che Windows mostra, per esempio Thunderbird; None se l'utente non ne
+	ha nessuno associato, e fuori da Windows. Si interroga
+	AssocQueryStringW, e non si apre niente.
+	Il nome serve al chiamante per dire all'utente dove trovera' la bozza.
+	Attenzione: su Windows 11 mailto e' spesso associato al nuovo Outlook,
+	preinstallato anche per chi non lo usa, e qui risulta presente anche
+	senza un account configurato.
+	Nasce con la V221 dalla issue 57."""
+	return _letto(lambda: _programma_associato("mailto"))
+
+def apri_mail(destinatario, oggetto="", corpo="", lunghezza_massima=2000):
+	"""V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Apre col programma di posta di sistema una mail nuova, con destinatario,
+	oggetto e corpo gia' scritti, attraverso l'indirizzo di indirizzo_mailto
+	e os.startfile: il programma lo sceglie Windows, quello associato
+	dall'utente. Non spedisce niente: spedisce l'utente, se vuole, dopo aver
+	letto e corretto.
+	Oggetto e corpo sono parole del chiamante, gia' tradotte.
+	Restituisce vero se Windows ha avviato il programma di posta, falso se
+	non ce n'e' uno associato a mailto, se l'avvio fallisce o se l'indirizzo
+	supera lunghezza_massima caratteri, duemila come nasce: oltre, certi
+	programmi lo taglierebbero e la mail arriverebbe a meta'. Zero o None
+	tolgono il limite. Al falso il chiamante mostra il ripiego, per esempio
+	la finestra_mail di GBwx, che lo fa da se'.
+	Vero non garantisce che la bozza sia comparsa: il nuovo Outlook senza un
+	account si apre e chiede di configurarlo.
+	Nasce con la V221 dalla issue 57."""
+	import os
+	indirizzo = indirizzo_mailto(destinatario, oggetto, corpo)
+	if lunghezza_massima and len(indirizzo) > lunghezza_massima:
+		return False
+	if programma_di_posta() is None:
+		return False
+	try:
+		os.startfile(indirizzo)
+	except (OSError, AttributeError):
+		return False
+	return True
 
 def polipo(domain='messages', localedir='locales', source_language='en', config_path=None,
            interattivo=True, lingua_predefinita=None):

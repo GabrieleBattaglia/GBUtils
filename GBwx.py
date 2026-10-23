@@ -1,5 +1,5 @@
 """GBwx, le utilita' per le finestre wxPython, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode).
-V1.0.1 di sabato 26 settembre 2026.
+V1.1.0 di venerdì 23 ottobre 2026.
 Nato con la issue 49 di Tornello: le finestre a misura fissa in pixel, con i
 caratteri di Windows al 150 per cento, lasciavano fuori dallo schermo campi e
 pulsanti, e lo stesso rimedio serviva a quattro applicazioni, Dadillo,
@@ -13,10 +13,14 @@ pannello, il controllo che aveva il fuoco alla chiusura non riceve
 EVT_KILL_FOCUS; se quello di prima non puo' riprenderlo, per esempio perche'
 e' spento, il fuoco va al primo controllo della finestra che si riattiva.
 Chi chiama non deve fare niente di nuovo.
+La 1.1.0, con la V221 di GBUtils e la issue 57, porta finestra_mail, la
+finestra delle voci Entra al PUB e Chiedi aiuto al PUB, comune a tutti i
+programmi con le finestre.
 Non fa parte di GBUtils.py perche' importa wx: PyInstaller lo porterebbe nei
 pacchetti di tutti i programmi da console che usano la libreria. Lo importano
 solo le applicazioni con le finestre.
-Come GBUtils, non scrive frasi: misure e posizioni soltanto.
+Come GBUtils, non scrive frasi sue: misure e posizioni, e le parole della
+finestra della posta le passa il chiamante, gia' tradotte.
 Cosa c'e' dentro:
   STILE_ADATTABILE     lo stile dei dialoghi che si ridimensionano e si ingrandiscono.
   MISURA_MINIMA        sotto questa misura una finestra non si stringe.
@@ -24,6 +28,8 @@ Cosa c'e' dentro:
   adatta_finestra      la misura dal contenuto, dentro lo schermo.
   dentro_area_utile    una misura data, dentro lo schermo, per chi non scorre.
   area_utile           l'area utile dello schermo su cui sta una finestra.
+  finestra_mail        prepara una mail col programma di posta, o passo per
+                       passo negli appunti per una webmail.
 Lo schema di un dialogo:
   super().__init__(genitore, title=titolo, style=STILE_ADATTABILE)
   pannello = pannello_scorrevole(self)
@@ -262,3 +268,170 @@ def _colloca(finestra, larghezza, altezza, area):
 	x = min(max(x, area.x), area.x + area.width - larghezza)
 	y = min(max(y, area.y), area.y + area.height - altezza)
 	finestra.Move(x, y)
+
+
+def finestra_mail(genitore, titolo, destinatario, oggetto, corpo, spiegazione, passi, pulsanti, senza_posta="", misura=(560, 420)):
+	"""La finestra che prepara una mail, per esempio per le voci Entra al PUB
+	e Chiedi aiuto al PUB, con le scelte di Gabriele del 23 ottobre 2026: si
+	apre sempre, anche quando il programma di posta c'e', perche' il nuovo
+	Outlook di Windows 11 e' spesso associato a mailto anche per chi non lo
+	usa, e senza un account la bozza non compare; e quando il programma di
+	posta manca accompagna l'utente un passo alla volta, copiando negli
+	appunti un campo per volta da incollare nella webmail.
+	Il fuoco sta sempre su un'area di testo in sola lettura, che si legge con
+	le frecce.
+	Con il programma di posta l'area mostra spiegazione, e i pulsanti sono
+	apri, il predefinito, passi e chiudi. apri prepara la bozza con apri_mail
+	di GBUtils; se Windows la apre, la finestra resta aperta, e Invio la
+	chiude: chi non trova la bozza torna qui e sceglie passi. Se non la apre,
+	la finestra passa da se' ai passi.
+	Senza programma di posta, o con passi, la finestra va un passo alla
+	volta, con i pulsanti ok, il predefinito, e annulla. Ogni passo copia il
+	suo testo negli appunti, dove resta anche a programma chiuso, e l'area
+	mostra l'istruzione seguita dal testo copiato, cosi' l'utente vede che
+	cosa incollera'. ok passa al passo dopo, e all'ultimo chiude.
+	Parametri, tutte parole del chiamante gia' tradotte:
+	  genitore, titolo: della finestra.
+	  destinatario, oggetto, corpo: la mail, per apri_mail.
+	  spiegazione: il testo con il programma di posta; {programma} diventa il
+	    suo nome, per esempio Thunderbird. Dica che verra' preparata una
+	    bozza da spedire, e che se non compare si torna qui e si sceglie il
+	    pulsante dei passi.
+	  passi: la sequenza dei passi, coppie di istruzione e testo da copiare,
+	    per esempio l'istruzione di incollare l'indirizzo nel campo A di una
+	    mail nuova, poi di tornare e premere OK, con l'indirizzo. Un testo
+	    None non copia niente, ed e' l'ultimo passo che dice di spedire. Per
+	    l'iscrizione al PUB basta l'indirizzo, perche' Google ignora oggetto
+	    e testo.
+	  pulsanti: le etichette, in un dizionario con le chiavi apri, passi, ok,
+	    chiudi e annulla, con la e commerciale degli acceleratori se si
+	    vuole. chiudi e annulla sono lo stesso pulsante, che chiude la
+	    finestra anche con Esc e cambia etichetta passando ai passi.
+	  senza_posta: la frase che precede il primo passo quando ci si arriva
+	    perche' la posta manca o non parte, non quando lo sceglie l'utente.
+	  misura: la misura minima, in pixel al 100 per cento.
+	Restituisce vero se la bozza si e' aperta o se l'utente ha percorso tutti
+	i passi, falso se ha chiuso prima. Solleva ValueError se passi e' vuota.
+	"""
+	finestra = _FinestraMail(genitore, titolo, (destinatario, oggetto, corpo), spiegazione, passi, pulsanti, senza_posta, misura)
+	try:
+		finestra.ShowModal()
+		return finestra.riuscita
+	finally:
+		finestra.Destroy()
+
+
+def _negli_appunti(testo):
+	"""Mette il testo negli appunti, dove resta anche dopo la chiusura del
+	programma. Vero se ci e' riuscita. Sta in una funzione a se' perche' il
+	banco possa sostituirla e lasciare stare gli appunti veri."""
+	if not wx.TheClipboard.Open():
+		return False
+	try:
+		riuscita = wx.TheClipboard.SetData(wx.TextDataObject(testo))
+	finally:
+		wx.TheClipboard.Close()
+	if riuscita:
+		wx.TheClipboard.Flush()
+	return riuscita
+
+
+class _FinestraMail(wx.Dialog):
+	"""Il dialogo di finestra_mail, che ne spiega il comportamento."""
+
+	def __init__(self, genitore, titolo, mail, spiegazione, passi, pulsanti, senza_posta, misura):
+		from GBUtils import programma_di_posta
+		if not passi:
+			raise ValueError("finestra_mail: serve almeno un passo")
+		super().__init__(genitore, title=titolo, style=STILE_ADATTABILE)
+		self.mail = mail
+		self.passi = list(passi)
+		self.senza_posta = senza_posta
+		self.riuscita = False
+		self.passo = None
+		self.annulla = pulsanti["annulla"]
+		self.pannello = pannello_scorrevole(self)
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		self.testo = self._area("")
+		sizer.Add(self.testo, 1, wx.EXPAND | wx.ALL, 8)
+		riga = wx.BoxSizer(wx.HORIZONTAL)
+		self.apri = wx.Button(self.pannello, label=pulsanti["apri"])
+		self.passo_per_passo = wx.Button(self.pannello, label=pulsanti["passi"])
+		self.ok = wx.Button(self.pannello, label=pulsanti["ok"])
+		self.chiudi = wx.Button(self.pannello, wx.ID_CANCEL, pulsanti["chiudi"])
+		for pulsante in (self.apri, self.passo_per_passo, self.ok, self.chiudi):
+			riga.Add(pulsante, 0, wx.ALL, 4)
+		sizer.Add(riga, 0, wx.ALIGN_RIGHT | wx.ALL, 4)
+		self.pannello.SetSizer(sizer)
+		self.apri.Bind(wx.EVT_BUTTON, self._apri)
+		self.passo_per_passo.Bind(wx.EVT_BUTTON, lambda evento: self._inizia_passi(""))
+		self.ok.Bind(wx.EVT_BUTTON, self._avanti)
+		programma = programma_di_posta()
+		if programma:
+			self.ok.Hide()
+			self.apri.SetDefault()
+			self.testo.SetValue(spiegazione.replace("{programma}", programma))
+		else:
+			self._inizia_passi(senza_posta)
+		adatta_finestra(self, self.pannello, misura)
+		wx.CallAfter(self._al_testo)
+
+	def _area(self, contenuto):
+		return wx.TextCtrl(self.pannello, value=contenuto, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2)
+
+	def _al_testo(self):
+		import contextlib
+		with contextlib.suppress(RuntimeError):
+			self.testo.SetInsertionPoint(0)
+			self.testo.SetFocus()
+
+	def _scrivi(self, contenuto):
+		"""Mette il contenuto in un'area nuova, al posto della vecchia, e le da'
+		il fuoco. Nuova e non la stessa riscritta: lo screen reader annuncia il
+		controllo che riceve il fuoco, e un'area che lo ha gia' cambierebbe
+		testo in silenzio, dopo un Invio premuto proprio li'. Il fuoco passa
+		prima che la vecchia se ne vada, perche' non resti a nessuno."""
+		vecchia = self.testo
+		self.testo = self._area(contenuto)
+		self.testo.MoveBeforeInTabOrder(vecchia)
+		self.pannello.GetSizer().Replace(vecchia, self.testo)
+		self.pannello.Layout()
+		self._al_testo()
+		vecchia.Destroy()
+
+	def _apri(self, evento=None):
+		from GBUtils import apri_mail
+		if apri_mail(*self.mail):
+			# La finestra resta: al ritorno Invio la chiude, e chi la bozza
+			# non l'ha trovata sceglie i passi.
+			self.riuscita = True
+			self.chiudi.SetDefault()
+			self._al_testo()
+		else:
+			self._inizia_passi(self.senza_posta)
+
+	def _inizia_passi(self, premessa):
+		self.apri.Hide()
+		self.passo_per_passo.Hide()
+		self.ok.Show()
+		self.ok.SetDefault()
+		self.chiudi.SetLabel(self.annulla)
+		self.passo = 0
+		self._mostra_passo(premessa)
+
+	def _mostra_passo(self, premessa=""):
+		istruzione, testo = self.passi[self.passo]
+		if testo:
+			_negli_appunti(testo)
+		self._scrivi("\n".join(parte for parte in (premessa, istruzione, testo) if parte))
+
+	def _avanti(self, evento=None):
+		self.passo += 1
+		if self.passo < len(self.passi):
+			self._mostra_passo()
+			return
+		self.riuscita = True
+		if self.IsModal():
+			self.EndModal(wx.ID_OK)
+		else:
+			self.SetReturnCode(wx.ID_OK)
