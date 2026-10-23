@@ -27376,5 +27376,41 @@
             70.0,
             25.0
         ]
+    },
+    "mess_aggiornamento_non_installato": {
+        "descrizione": "MESS, l'aggiornamento scaricato non si installa perché un messaggio o un dialogo è rimasto aperto troppo a lungo, e MESS resta aperto, con la versione nuova da riproporre: seno, una porta che non si chiude, un sol 5 di 100 ms, una pausa di 40 ms, una scivolata dal sol 5 al re 5 in 220 ms e un re 5 più piano di 120 ms, al centro; 480 ms. Va bene per un'operazione rimandata perché qualcosa la tratteneva, un'uscita mancata, un appuntamento saltato.",
+        "score": [
+            [
+                "g5",
+                0.1,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5.d5",
+                0.22,
+                0.0,
+                -0.08
+            ],
+            [
+                "d5",
+                0.12,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
