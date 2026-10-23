@@ -27672,7 +27672,7 @@
         ]
     },
     "mess_calendario_non_ripristinato": {
-        "descrizione": "MESS, il calendario predefinito dei tornei non si riesce a rimettere, e resta quello di prima: onda triangolare, il calendario riavvolto di mess_calendario_ripristinato che non riparte, la scivolata dal do 6 al do 5 in 120 ms, una pausa di 40 ms e poi l'arpeggio che invece di risalire scende, do 5 e la diesis 4 da 50 ms e un fa 4 di 120 ms, al centro; 380 ms. Va bene per un ripristino non riuscito, delle impostazioni di fabbrica che non tornano, un reset fallito.",
+        "descrizione": "MESS, il calendario predefinito dei tornei non si riesce a rimettere: onda triangolare, il calendario riavvolto di mess_calendario_ripristinato che non riparte, la scivolata dal do 6 al do 5 in 120 ms, una pausa di 40 ms e poi l'arpeggio che invece di risalire scende, do 5 e la diesis 4 da 50 ms e un fa 4 di 120 ms, al centro; 380 ms. Va bene per un ripristino non riuscito, delle impostazioni di fabbrica che non tornano, un reset fallito.",
         "score": [
             [
                 "c6.c5",
@@ -27777,6 +27777,414 @@
             15.0,
             70.0,
             25.0
+        ]
+    },
+    "mess_modello_non_scritto": {
+        "descrizione": "MESS, un modello di torneo che non si può salvare, duplicare o eliminare, per esempio perché il suo file non si scrive, e la vista dice il perché: sinusoide, la scheda di mess_modello_salvato che non si posa, la 5 e mi 6 da 40 ms, una pausa di 30 ms e, al posto del la 6, una scivolata che cade dal re diesis 6 al la 5 in 120 ms, al centro; 230 ms. Va bene per un file che non si scrive, una scheda che non si archivia, un'operazione su disco fallita.",
+        "score": [
+            [
+                "a5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#6.a5",
+                0.12,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_formule_non_scritte": {
+        "descrizione": "MESS, il file delle formule dei tornei non si scrive quando si salva o si elimina una formula, e la vista dice il perché: onda triangolare, la penna di mess_formula_salvata che scrive ma non firma, do 6, re 6, do 6 e la 5 da 25 ms da sinistra a destra, una pausa di 30 ms e, al posto del fa 6, una scivolata che cade dal fa 5 al si 4 in 130 ms, al centro; 260 ms. Va bene per un file che non si scrive, una regola che non resta, un salvataggio fallito.",
+        "score": [
+            [
+                "c6",
+                0.025,
+                -0.3,
+                -0.12
+            ],
+            [
+                "d6",
+                0.025,
+                -0.1,
+                -0.12
+            ],
+            [
+                "c6",
+                0.025,
+                0.1,
+                -0.12
+            ],
+            [
+                "a5",
+                0.025,
+                0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "f5.b4",
+                0.13,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            25.0,
+            50.0,
+            30.0
+        ]
+    },
+    "mess_sfida_riprova_domani": {
+        "descrizione": "MESS, nel lancio di una sfida la polisportiva scelta ha già rifiutato oggi, e si riprova domani: dente di sega, a destra, il richiamo respinto di mess_sfida_declinata appena accennato, sol 5 e re 5 da 50 ms, una pausa di 80 ms e lo stesso re 5 che risale di una quinta fino al la 5 in 100 ms, come l'arrivederci a domani di mess_rinnovo_domani; 280 ms. Va bene per un rinvio a domani, un tentativo già fatto oggi, una porta a cui bussare più tardi.",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0.5,
+                -0.18
+            ],
+            [
+                "d5",
+                0.05,
+                0.5,
+                -0.18
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5.a5",
+                0.1,
+                0.5,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_sfida_non_piu_valida": {
+        "descrizione": "MESS, nelle sfide in arrivo una sfida che non si può più accettare né rifiutare, perché non aspetta più una risposta, chi sfida ha chiuso o non ha più una squadra valida: sinusoide, a destra, dalla parte di chi sfida, un richiamo che sale, si 5 e mi 6 da 40 ms, una pausa di 40 ms e poi la sfida che svanisce come in mess_sfida_decaduta, una scivolata dal mi 6 al si 5 di 80 ms e un fa 5 lontano di 120 ms; 320 ms. Va bene per un invito che non vale più, una proposta ritirata, un appuntamento saltato dall'altra parte.",
+        "score": [
+            [
+                "b5",
+                0.04,
+                0.5,
+                -0.12
+            ],
+            [
+                "e6",
+                0.04,
+                0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6.b5",
+                0.08,
+                0.5,
+                -0.14
+            ],
+            [
+                "f5",
+                0.12,
+                0.5,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_iscrizioni_non_ancora": {
+        "descrizione": "MESS, nel calendario dei tornei Iscrivi o Togli su un'edizione prevista, che non ha ancora le iscrizioni aperte: sinusoide, il gettone di mess_iscrizione_fatta che resta in mano, due sol 5 da 40 ms separati da pause di 90 ms, il secondo più piano, e un mi 5 di 70 ms ancora più piano, al centro, come un'attesa allo sportello; 330 ms. Va bene per uno sportello non ancora aperto, un'apertura da aspettare, un momento non ancora arrivato.",
+        "score": [
+            [
+                "g5",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.09,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.04,
+                0.0,
+                -0.16
+            ],
+            [
+                "p",
+                0.09,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.07,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_iscrizioni_chiuse": {
+        "descrizione": "MESS, nel calendario dei tornei Iscrivi o Togli su un'edizione già cominciata, col sorteggio fatto: onda triangolare, le pagine di mess_calendario_tornei sfogliate all'indietro, do 6, sol 5 e mi 5 da 40 ms da destra verso sinistra, una pausa di 30 ms e un do 4 di 100 ms al centro, lo sportello già chiuso; 250 ms. Va bene per delle iscrizioni chiuse, un termine passato, una lista ormai fatta.",
+        "score": [
+            [
+                "c6",
+                0.04,
+                0.4,
+                -0.12
+            ],
+            [
+                "g5",
+                0.04,
+                0.15,
+                -0.12
+            ],
+            [
+                "e5",
+                0.04,
+                -0.15,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c4",
+                0.1,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_coppa_con_la_rosa": {
+        "descrizione": "MESS, nel calendario dei tornei Togli su un'edizione a squadre, la Coppa delle polisportive, dove la rosa si cambia con Rosa per la coppa: dente di sega, lo squillo dell'adunata di mess_formazione che non parte, tre re 5 da 30 ms, una pausa di 40 ms e il la 5 che invece di tenere ricade al re 5 in 100 ms, al centro; 230 ms. Va bene per un comando che in quel caso non vale, un'operazione che si fa da un'altra parte, un rimando alla porta giusta.",
+        "score": [
+            [
+                "d5",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "d5",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "d5",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5.d5",
+                0.1,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_errore_fatale": {
+        "descrizione": "MESS, un errore imprevisto ferma MESS, e un messaggio dice dove sta il resoconto da allegare quando si chiede aiuto: onda triangolare, la sirena di sirena_d_allarme_1 per un giro e mezzo, scivolate fra do 5 e sol 5 da 150 ms, che all'ultima discesa non si ferma al do 5 ma crolla fino al do 3 in 500 ms, come un motore che si spegne, poi una pausa di 50 ms e un do 3 di 250 ms, tutto al centro; 1,25 secondi. Va bene per un errore fatale, un programma che si ferma, un guasto senza rimedio.",
+        "score": [
+            [
+                "c5.g5",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c5",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.15,
+                0.0,
+                0.0
+            ],
+            [
+                "g5.c3",
+                0.5,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "c3",
+                0.25,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_squadra_ferma": {
+        "descrizione": "MESS, Allena tutti nella sala allenamento quando oggi nessun tesserato si allena, perché sono tutti infortunati: sinusoide, il passo zoppo di mess_allenando_fermo per tutta la squadra, tre volte un la 5 di 50 ms e un fa 5 di 30 ms seguiti da una pausa di 30 ms, a sinistra, al centro e a destra, e poi la scivolata che scende dal la 5 al re 5 in 120 ms e si ferma, al centro; 450 ms. Va bene per una squadra tutta ferma, un gruppo ai box, nessuno disponibile.",
+        "score": [
+            [
+                "a5",
+                0.05,
+                -0.6,
+                -0.1
+            ],
+            [
+                "f5",
+                0.03,
+                -0.6,
+                -0.15
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.1
+            ],
+            [
+                "f5",
+                0.03,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.05,
+                0.6,
+                -0.1
+            ],
+            [
+                "f5",
+                0.03,
+                0.6,
+                -0.15
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5.d5",
+                0.12,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            30.0,
+            50.0,
+            30.0
         ]
     }
 }
