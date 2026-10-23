@@ -23070,7 +23070,7 @@
         ]
     },
     "mess_classifica_mondiale": {
-        "descrizione": "MESS, la classifica mondiale per sempre, uomini e donne, con Ctrl+Shift+W: onda triangolare, la scala del podio mondiale, sei gradini che salgono: un sol 4 di 50 ms, un do 5 di 50 ms, un mi 5 di 50 ms, un sol 5 di 50 ms, un do 6 di 50 ms e un mi 6 di 120 ms; 370 ms. Va bene per una classifica di tutti i tempi, un medagliere, una graduatoria lunga.",
+        "descrizione": "MESS, la classifica nazionale per sempre, uomini e donne, con Ctrl+Shift+W: onda triangolare, la scala del podio nazionale, sei gradini che salgono: un sol 4 di 50 ms, un do 5 di 50 ms, un mi 5 di 50 ms, un sol 5 di 50 ms, un do 6 di 50 ms e un mi 6 di 120 ms; 370 ms. Va bene per una classifica di tutti i tempi, un medagliere, una graduatoria lunga.",
         "score": [
             [
                 "g4",
@@ -24168,7 +24168,7 @@
         ]
     },
     "mess_titolo_mondiale": {
-        "descrizione": "MESS, nell'avanzamento un tuo atleta vince il campionato mondiale: dente di sega, la fanfara del campione del mondo, un arpeggio di trombe e un richiamo che si ripete: un do 5 di 80 ms, un mi 5 di 80 ms, un sol 5 di 80 ms, un do 6 di 160 ms, una pausa di 60 ms, un sol 5 di 80 ms e un do 6 di 300 ms; 840 ms. Va bene per un titolo mondiale, un campionato vinto, un trionfo.",
+        "descrizione": "MESS, nell'avanzamento un tuo atleta vince il campionato italiano: dente di sega, la fanfara del campione d'Italia, un arpeggio di trombe e un richiamo che si ripete: un do 5 di 80 ms, un mi 5 di 80 ms, un sol 5 di 80 ms, un do 6 di 160 ms, una pausa di 60 ms, un sol 5 di 80 ms e un do 6 di 300 ms; 840 ms. Va bene per un titolo nazionale, un campionato vinto, un trionfo.",
         "score": [
             [
                 "c5",
@@ -24558,7 +24558,7 @@
         ]
     },
     "mess_qualificati_mondiale": {
-        "descrizione": "MESS, nell'avanzamento tuoi atleti convocati al campionato mondiale: onda triangolare, la convocazione al mondiale, un arpeggio largo che sale: un do 5 di 50 ms, un sol 5 di 50 ms, un do 6 di 50 ms, un mi 6 di 50 ms e un sol 6 di 150 ms; 350 ms. Va bene per una qualificazione, una convocazione, un biglietto per la finale.",
+        "descrizione": "MESS, nell'avanzamento tuoi atleti convocati al campionato italiano: onda triangolare, la convocazione al campionato italiano, un arpeggio largo che sale: un do 5 di 50 ms, un sol 5 di 50 ms, un do 6 di 50 ms, un mi 6 di 50 ms e un sol 6 di 150 ms; 350 ms. Va bene per una qualificazione, una convocazione, un biglietto per la finale.",
         "score": [
             [
                 "c5",
@@ -24846,7 +24846,7 @@
         ]
     },
     "mess_mondiale_concluso": {
-        "descrizione": "MESS, nell'avanzamento finisce un campionato mondiale: onda triangolare, la cerimonia di chiusura del mondiale, un motivo solenne e lento: un do 5 di 100 ms, un sol 4 di 100 ms, un do 5 di 100 ms, un mi 5 di 100 ms e un do 5 di 260 ms; 660 ms. Va bene per la fine di un grande evento, una cerimonia, un campionato chiuso.",
+        "descrizione": "MESS, nell'avanzamento finisce un campionato italiano: onda triangolare, la cerimonia di chiusura del campionato italiano, un motivo solenne e lento: un do 5 di 100 ms, un sol 4 di 100 ms, un do 5 di 100 ms, un mi 5 di 100 ms e un do 5 di 260 ms; 660 ms. Va bene per la fine di un grande evento, una cerimonia, un campionato chiuso.",
         "score": [
             [
                 "c5",
@@ -27003,6 +27003,174 @@
             10.0,
             80.0,
             30.0
+        ]
+    },
+    "mess_aggiornamento_disponibile": {
+        "descrizione": "MESS, all'avvio è pronta una versione nuova e il programma propone di aggiornarsi: onda triangolare, un pacco che arriva, l'arpeggio di do maggiore che sale, do 5, mi 5 e sol 5 da 70 ms, da sinistra verso il centro, una pausa di 40 ms, poi il sol 5 ripetuto più piano e l'arrivo sul do 6 di 240 ms, a destra; 550 ms. Va bene per un aggiornamento disponibile, una consegna, una novità che bussa alla porta.",
+        "score": [
+            [
+                "c5",
+                0.07,
+                -0.4,
+                -0.05
+            ],
+            [
+                "e5",
+                0.07,
+                -0.2,
+                -0.05
+            ],
+            [
+                "g5",
+                0.07,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.06,
+                0.2,
+                -0.1
+            ],
+            [
+                "c6",
+                0.24,
+                0.3,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            25.0
+        ]
+    },
+    "mess_aggiornamento_esito": {
+        "descrizione": "MESS, un esito dell'aggiornamento automatico, per esempio lo scaricamento finito o MESS che si chiude per installare la versione nuova: seno, una quinta che sale, re 5 di 90 ms e la 5 di 180 ms, al centro; 270 ms. Va bene per un avviso di sistema, un esito da leggere, un passaggio compiuto.",
+        "score": [
+            [
+                "d5",
+                0.09,
+                0.0,
+                -0.05
+            ],
+            [
+                "a5",
+                0.18,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_manuale": {
+        "descrizione": "MESS, Maiusc+F1, il manuale che si apre nel browser: rumore rosa, due fruscii di pagina che si sfoglia, il primo stretto e acuto, da 3.000 a 8.000 Hz per 35 ms a sinistra, una pausa di 50 ms, il secondo che scende da 2.500-7.000 a 1.800-5.000 Hz in 60 ms a destra; 145 ms. Va bene per un libro, un manuale, un documento lungo che si apre.",
+        "score": [
+            [
+                "3000-8000",
+                0.035,
+                -0.5,
+                -0.15
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "2500-7000.1800-5000",
+                0.06,
+                0.5,
+                -0.1
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_crash_precedente": {
+        "descrizione": "MESS, all'avvio la notizia che la volta prima il programma si è chiuso per un errore grave, con il resoconto da allegare quando si chiede aiuto: onda triangolare, una caduta in la minore, mi 5 e do 5 da 120 ms e l'arrivo sul la 4 di 320 ms, al centro; 560 ms. Un avvertimento serio ma non un allarme. Va bene per un problema della volta prima, un incidente da riferire, una brutta notizia detta con calma.",
+        "score": [
+            [
+                "e5",
+                0.12,
+                0.0,
+                -0.05
+            ],
+            [
+                "c5",
+                0.12,
+                0.0,
+                -0.05
+            ],
+            [
+                "a4",
+                0.32,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_primo_piano": {
+        "descrizione": "MESS, la finestra già aperta torna in primo piano perché si è tentato di aprire il programma una seconda volta: seno, un richiamo, due sol 5 brevi da 50 ms con una pausa di 30 ms e la risposta sul re 6 di 120 ms, al centro; 250 ms. Va bene per un eccomi, una finestra richiamata, qualcuno che bussa due volte.",
+        "score": [
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.1
+            ],
+            [
+                "d6",
+                0.12,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            20.0
         ]
     }
 }
