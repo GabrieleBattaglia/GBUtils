@@ -10,13 +10,25 @@ La finestra di GBwx si costruisce senza mostrarla, e i pulsanti si premono
 mandando i loro eventi. Cio' che il banco non puo' dire e' come suona a NVDA
 e sul display braille, e se la bozza arriva integra nel programma di posta:
 per quello c'e' la prova con Gabriele.
+Dalla 1.1.1 di GBwx, con la V224, le finestre nascono su un desktop di
+Windows nascosto, come nelle prove di MESS e di Tornello: una finestra mai
+mostrata che riceve il fuoco puo' prendere il primo piano sullo schermo vero,
+e NVDA ne leggerebbe il titolo. Se il passaggio non riesce, il banco non
+parte. Li' la finestra si apre anche davvero, modale, e riceve Invio ed Esc
+come messaggi di Windows messi in coda alla sua area di testo, sul modello
+della prova del revisore di MESS: Invio deve premere il pulsante
+predefinito, una volta sola anche se arriva a raffica, come fa NVDA con un
+tasto tenuto giu', ed Esc chiudere. Il gancio della tastiera di wx e NVDA
+non si riproducono: per quelli resta la prova di Gabriele.
 Si lancia con
   python banco_pub.py
 e stampa in fondo quante prove sono passate.
 """
+import ctypes
 import os
 import re
 import sys
+from ctypes import wintypes
 
 import GBwx
 import wx
@@ -39,6 +51,33 @@ SPIEGAZIONE = "Preparo una bozza in {programma}. Spediscila tu."
 SENZA_POSTA = "Il programma di posta non parte."
 PASSI = (("Incolla l'indirizzo nel campo A, poi premi OK.", PUB_GRUPPO), ("Incolla l'oggetto, poi premi OK.", "Aiuto con MESS"),
 	("Incolla il testo, poi premi OK.", "Riga uno\nRiga due"), ("Ora spedisci la mail.", None))
+# La grazia dell'Invio nel banco, in secondi, al posto di quella letta da
+# Windows, e il passo fra un Invio e l'altro, in millesimi, che la supera.
+GRAZIA = 0.3
+PASSO = 450
+WM_KEYDOWN, WM_KEYUP, WM_CHAR = 0x0100, 0x0101, 0x0102
+# Codice virtuale, codice di scansione e carattere di Invio ed Esc.
+INVIO = (0x0D, 0x1C, 0x0D)
+ESC = (0x1B, 0x01, 0x1B)
+# Il desktop nascosto resta aperto finche' il processo vive.
+DESKTOP_NASCOSTO = []
+
+def passa_al_desktop_nascosto():
+	"""Porta il thread su un desktop di Windows tutto suo, che nessuno vede,
+	prima che wx crei qualunque finestra. Falso se non ci riesce."""
+	user32 = ctypes.WinDLL("user32", use_last_error=True)
+	user32.CreateDesktopW.restype = wintypes.HANDLE
+	user32.CreateDesktopW.argtypes = [wintypes.LPCWSTR, wintypes.LPCWSTR, ctypes.c_void_p, wintypes.DWORD, wintypes.DWORD, ctypes.c_void_p]
+	user32.SetThreadDesktop.argtypes = [wintypes.HANDLE]
+	user32.CloseDesktop.argtypes = [wintypes.HANDLE]
+	desktop = user32.CreateDesktopW(f"banco_pub_{os.getpid()}", None, None, 0, 0x10000000, None)
+	if not desktop:
+		return False
+	if not user32.SetThreadDesktop(desktop):
+		user32.CloseDesktop(desktop)
+		return False
+	DESKTOP_NASCOSTO.append(desktop)
+	return True
 
 class Banco:
 	"""Il conteggio delle prove, una riga per prova."""
@@ -214,11 +253,134 @@ def prova_righe(b):
 	righe = righe_informazioni({"python": "Python", "lingua": "Lingua"})
 	b.verifica("senza informazioni: quelle del sistema", len(righe) >= 1 and righe[0].startswith("Python: "))
 
-def dialogo(posta, **altro):
+def dialogo(posta, passi=PASSI, **altro):
 	"""Una finestra_mail costruita senza mostrarla, con la posta data."""
 	with Sostituzioni((GBUtils, "programma_di_posta", Sostituto(posta))):
 		return GBwx._FinestraMail(None, "Chiedi aiuto al PUB", (PUB_GRUPPO, "Aiuto con MESS", "Riga uno\nRiga due"),
-			SPIEGAZIONE, altro.get("passi", PASSI), PULSANTI, SENZA_POSTA, (560, 420))
+			SPIEGAZIONE, passi, PULSANTI, SENZA_POSTA, (560, 420), **altro)
+
+def posta_tasto(finestra, tasto, ripetuto=False, rilascio=True):
+	"""Un tasto dal ciclo dei messaggi: WM_KEYDOWN, WM_CHAR e, se si vuole,
+	WM_KEYUP, in coda alla finestra. ripetuto accende il bit 30, come fa
+	Windows con le ripetizioni di un tasto tenuto giu'; NVDA invece, nei
+	campi di testo, rimanda ogni ripetizione come una pressione nuova, col
+	suo rilascio, e il bit resta spento."""
+	virtuale, scansione, carattere = tasto
+	user32 = ctypes.WinDLL("user32")
+	user32.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
+	giu = 1 | (scansione << 16) | (0x40000000 if ripetuto else 0)
+	maniglia = finestra.GetHandle()
+	user32.PostMessageW(maniglia, WM_KEYDOWN, virtuale, giu)
+	user32.PostMessageW(maniglia, WM_CHAR, carattere, giu)
+	if rilascio:
+		user32.PostMessageW(maniglia, WM_KEYUP, virtuale, 1 | (scansione << 16) | 0xC0000000)
+
+def modale(finestra, azioni, rete=4000):
+	"""Apre la finestra modale e fa le azioni ai tempi dati, in millesimi
+	dall'avvio del suo ciclo degli eventi, non dalla chiamata: se aprirla
+	prende tempo, i temporizzatori scaduti partirebbero tutti insieme. Se
+	nessuna azione la chiude, la rete la chiude col codice 4242.
+	Restituisce il codice di ShowModal."""
+	temporizzatori = []
+
+	def avvia():
+		temporizzatori.extend(wx.CallLater(ritardo, azione) for ritardo, azione in azioni)
+		temporizzatori.append(wx.CallLater(rete, lambda: finestra.IsModal() and finestra.EndModal(4242)))
+
+	wx.CallAfter(avvia)
+	try:
+		return finestra.ShowModal()
+	finally:
+		for temporizzatore in temporizzatori:
+			temporizzatore.Stop()
+
+def prova_tastiera(b):
+	appunti = Sostituto(True)
+	avvio = Sostituto()
+	visto = {}
+	with Sostituzioni((GBwx, "_negli_appunti", appunti), (os, "startfile", avvio), (GBUtils, "programma_di_posta", Sostituto("Thunderbird")),
+		(GBwx, "_grazia_invio", lambda: GRAZIA)):
+		d = dialogo("Thunderbird")
+		codice = modale(d, [(PASSO, lambda: posta_tasto(d.testo, INVIO)),
+			(PASSO + 150, lambda: visto.update(aperte=len(avvio.chiamate), aperta=d.IsModal())),
+			(2 * PASSO, lambda: posta_tasto(d.testo, INVIO))])
+		d.Destroy()
+		b.verifica("Invio sul testo preme Apri, e la finestra resta", visto.get("aperte") == 1 and visto.get("aperta") is True)
+		b.verifica("dopo la bozza, Invio sul testo chiude", codice == wx.ID_CANCEL and len(avvio.chiamate) == 1)
+		d = dialogo(None)
+		codice = modale(d, [(PASSO * volta, lambda: posta_tasto(d.testo, INVIO)) for volta in range(1, 5)])
+		d.Destroy()
+		b.verifica("nei passi, Invio sul testo preme OK fino in fondo",
+			codice == wx.ID_OK and d.riuscita and appunti.chiamate[-3:] == [(PUB_GRUPPO,), ("Aiuto con MESS",), ("Riga uno\nRiga due",)])
+
+		def raffica(d, ripetizione_di_windows):
+			def manda():
+				posta_tasto(d.testo, INVIO, rilascio=not ripetizione_di_windows)
+				for _volta in range(5):
+					posta_tasto(d.testo, INVIO, ripetuto=ripetizione_di_windows, rilascio=not ripetizione_di_windows)
+				if ripetizione_di_windows:
+					user32 = ctypes.WinDLL("user32")
+					user32.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
+					user32.PostMessageW(d.testo.GetHandle(), WM_KEYUP, INVIO[0], 1 | (INVIO[1] << 16) | 0xC0000000)
+			return manda
+
+		for titolo, ripetizione_di_windows in (("come la manda NVDA", False), ("con la ripetizione di Windows", True)):
+			d = dialogo(None)
+			codice = modale(d, [(PASSO, raffica(d, ripetizione_di_windows)), (PASSO + 150, lambda d=d: visto.update(passo=d.passo)),
+				(PASSO + 200, lambda d=d: posta_tasto(d.testo, ESC))])
+			d.Destroy()
+			b.verifica(f"Invio a raffica {titolo}: un passo solo", visto.get("passo") == 1 and codice == wx.ID_CANCEL)
+		# La grazia dall'apertura si conta dalla nascita della finestra, e fra
+		# la nascita e il ciclo degli eventi passa del tempo: qui la grazia e'
+		# di un secondo, perche' quel tempo non la consumi.
+		with Sostituzioni((GBwx, "_grazia_invio", lambda: 1.0)):
+			d = dialogo(None)
+		codice = modale(d, [(50, lambda: posta_tasto(d.testo, INVIO)), (200, lambda: visto.update(passo=d.passo)),
+			(1300, lambda: posta_tasto(d.testo, INVIO)), (1450, lambda: visto.update(dopo=d.passo)),
+			(1500, lambda: posta_tasto(d.testo, ESC))])
+		d.Destroy()
+		b.verifica("Invio appena aperta, tenuto dal menu: ignorato; il successivo vale", visto.get("passo") == 0 and visto.get("dopo") == 1)
+		d = dialogo(None)
+		codice = modale(d, [(PASSO, lambda: posta_tasto(d.testo, ESC))])
+		d.Destroy()
+		b.verifica("Esc sul testo chiude, come Annulla", codice == wx.ID_CANCEL and not d.riuscita)
+		d = dialogo("Thunderbird")
+		codice = modale(d, [(PASSO, lambda: posta_tasto(d.testo, ESC))])
+		d.Destroy()
+		b.verifica("Esc sul testo chiude anche con la posta", codice == wx.ID_CANCEL and not avvio.chiamate[1:])
+
+def prova_massimizzata(b):
+	visto = {}
+
+	def guarda(d):
+		visto["massimizzata"] = d.IsMaximized()
+		d.Restore()
+		visto["ripristinata"] = d.GetSize()
+		visto["minima"] = d.FromDIP(wx.Size(560, 420))
+
+	with Sostituzioni((GBwx, "_negli_appunti", Sostituto(True))):
+		d = dialogo(None)
+		modale(d, [(200, lambda: guarda(d)), (300, lambda: posta_tasto(d.testo, ESC))])
+		d.Destroy()
+		b.verifica("si apre massimizzata", visto.get("massimizzata") is True)
+		b.verifica("ripristinata torna alla sua misura",
+			visto["ripristinata"].width >= visto["minima"].width and visto["ripristinata"].height >= visto["minima"].height)
+		d = dialogo(None, massimizzata=False)
+		modale(d, [(200, lambda: visto.update(massimizzata=d.IsMaximized())), (300, lambda: posta_tasto(d.testo, ESC))])
+		d.Destroy()
+		b.verifica("con massimizzata falso no", visto.get("massimizzata") is False)
+
+		def dalla_funzione():
+			for finestra in wx.GetTopLevelWindows():
+				if isinstance(finestra, GBwx._FinestraMail) and finestra.IsModal():
+					visto["funzione"] = finestra.IsMaximized()
+					posta_tasto(finestra.testo, ESC)
+
+		with Sostituzioni((GBUtils, "programma_di_posta", Sostituto(None))):
+			temporizzatore = wx.CallLater(200, dalla_funzione)
+			esito = GBwx.finestra_mail(None, "Titolo", PUB_ISCRIZIONE, "", "Testo", SPIEGAZIONE, PASSI[:1], PULSANTI, SENZA_POSTA)
+			temporizzatore.Stop()
+		b.verifica("finestra_mail si apre massimizzata di serie, ed Esc la chiude", visto.get("funzione") is True and esito is False)
 
 def premi(pulsante):
 	evento = wx.CommandEvent(wx.EVT_BUTTON.typeId, pulsante.GetId())
@@ -281,7 +443,10 @@ def prova_finestra(b):
 	b.verifica("senza passi: ValueError", vuoti)
 
 def prova_finestra_mail(b):
-	modale = GBwx._FinestraMail.ShowModal
+	# ShowModal e' quello ereditato da wx.Dialog: alla fine si toglie la
+	# sostituzione, e non si rimette nella classe il metodo di sip, che li'
+	# non si legherebbe piu' alle istanze.
+	propria = vars(GBwx._FinestraMail).get("ShowModal")
 	avvio = Sostituto()
 	try:
 		with Sostituzioni((os, "startfile", avvio), (GBUtils, "programma_di_posta", Sostituto("Thunderbird"))):
@@ -290,11 +455,17 @@ def prova_finestra_mail(b):
 			GBwx._FinestraMail.ShowModal = lambda finestra: wx.ID_CANCEL
 			chiusa = GBwx.finestra_mail(None, "Titolo", PUB_ISCRIZIONE, "", "Testo", SPIEGAZIONE, PASSI[:1], PULSANTI, SENZA_POSTA)
 	finally:
-		GBwx._FinestraMail.ShowModal = modale
+		if propria is None:
+			del GBwx._FinestraMail.ShowModal
+		else:
+			GBwx._FinestraMail.ShowModal = propria
 	b.verifica("finestra_mail: vero se la bozza si e' aperta", aperta is True and len(avvio.chiamate) == 1)
 	b.verifica("finestra_mail: falso se si chiude e basta", chiusa is False)
 
 def main():
+	if sys.platform == "win32" and not passa_al_desktop_nascosto():
+		print("Il banco non parte: non si e' potuto passare al desktop nascosto, e le finestre nascerebbero su quello vero.")
+		return 1
 	b = Banco()
 	app = wx.App(False)
 	prova_costanti(b)
@@ -306,6 +477,8 @@ def main():
 	prova_righe(b)
 	prova_finestra(b)
 	prova_finestra_mail(b)
+	prova_tastiera(b)
+	prova_massimizzata(b)
 	del app
 	print(f"Prove {b.totale}, passate {b.passate}.")
 	return 0 if b.passate == b.totale else 1

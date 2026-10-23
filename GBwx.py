@@ -1,5 +1,5 @@
 """GBwx, le utilita' per le finestre wxPython, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode).
-V1.1.0 di venerdì 23 ottobre 2026.
+V1.1.1 di venerdì 23 ottobre 2026.
 Nato con la issue 49 di Tornello: le finestre a misura fissa in pixel, con i
 caratteri di Windows al 150 per cento, lasciavano fuori dallo schermo campi e
 pulsanti, e lo stesso rimedio serviva a quattro applicazioni, Dadillo,
@@ -15,7 +15,10 @@ e' spento, il fuoco va al primo controllo della finestra che si riattiva.
 Chi chiama non deve fare niente di nuovo.
 La 1.1.0, con la V221 di GBUtils e la issue 57, porta finestra_mail, la
 finestra delle voci Entra al PUB e Chiedi aiuto al PUB, comune a tutti i
-programmi con le finestre.
+programmi con le finestre. Con la 1.1.1, per la revisione della tappa 14 di
+MESS, Invio sull'area di testo di finestra_mail preme il pulsante
+predefinito, una volta sola anche col tasto tenuto giu', Esc la chiude, e
+si apre massimizzata.
 Non fa parte di GBUtils.py perche' importa wx: PyInstaller lo porterebbe nei
 pacchetti di tutti i programmi da console che usano la libreria. Lo importano
 solo le applicazioni con le finestre.
@@ -270,7 +273,8 @@ def _colloca(finestra, larghezza, altezza, area):
 	finestra.Move(x, y)
 
 
-def finestra_mail(genitore, titolo, destinatario, oggetto, corpo, spiegazione, passi, pulsanti, senza_posta="", misura=(560, 420)):
+def finestra_mail(genitore, titolo, destinatario, oggetto, corpo, spiegazione, passi, pulsanti, senza_posta="", misura=(560, 420),
+		massimizzata=True):
 	"""La finestra che prepara una mail, per esempio per le voci Entra al PUB
 	e Chiedi aiuto al PUB, con le scelte di Gabriele del 23 ottobre 2026: si
 	apre sempre, anche quando il programma di posta c'e', perche' il nuovo
@@ -279,7 +283,20 @@ def finestra_mail(genitore, titolo, destinatario, oggetto, corpo, spiegazione, p
 	posta manca accompagna l'utente un passo alla volta, copiando negli
 	appunti un campo per volta da incollare nella webmail.
 	Il fuoco sta sempre su un'area di testo in sola lettura, che si legge con
-	le frecce.
+	le frecce. Li' Invio preme il pulsante predefinito, ed Esc chiude: lo fa
+	la finestra da se', perche' un'area su piu' righe Invio lo tiene per se'
+	e wx non lo passa al predefinito. Un Invio che arriva entro la grazia
+	dal precedente, o entro la grazia dall'apertura, vale come tasto tenuto
+	giu' e non fa niente: nei passi ne scatta uno solo, e un Invio tenuto
+	dalla voce di menu non apre la bozza da se'. Serve il tempo perche' NVDA,
+	nei campi di testo, rimanda ogni ripetizione come una pressione nuova, e
+	IsAutoRepeat non la vede. La grazia supera di poco l'attesa prima della
+	ripetizione impostata in Windows, mezzo secondo di serie: chi preme
+	Invio due volte piu' in fretta deve premerlo una terza.
+	La finestra si apre massimizzata, come vuole Gabriele per tutte le
+	finestre interne delle sue applicazioni, piu' comode cosi' con lo screen
+	reader e il display braille; ripristinata torna alla misura del suo
+	contenuto.
 	Con il programma di posta l'area mostra spiegazione, e i pulsanti sono
 	apri, il predefinito, passi e chiudi. apri prepara la bozza con apri_mail
 	di GBUtils; se Windows la apre, la finestra resta aperta, e Invio la
@@ -309,11 +326,16 @@ def finestra_mail(genitore, titolo, destinatario, oggetto, corpo, spiegazione, p
 	    finestra anche con Esc e cambia etichetta passando ai passi.
 	  senza_posta: la frase che precede il primo passo quando ci si arriva
 	    perche' la posta manca o non parte, non quando lo sceglie l'utente.
-	  misura: la misura minima, in pixel al 100 per cento.
+	  misura: la misura minima, in pixel al 100 per cento, e quella a cui la
+	    finestra torna ripristinandola.
+	  massimizzata: vero di serie; falso per aprirla alla sua misura.
 	Restituisce vero se la bozza si e' aperta o se l'utente ha percorso tutti
 	i passi, falso se ha chiuso prima. Solleva ValueError se passi e' vuota.
+	Dalla 1.1.1, per la revisione della tappa 14 di MESS: Invio sull'area
+	preme il predefinito, con la grazia, Esc chiude, e la finestra si apre
+	massimizzata. Fino alla 1.1.0 Invio sull'area non faceva niente.
 	"""
-	finestra = _FinestraMail(genitore, titolo, (destinatario, oggetto, corpo), spiegazione, passi, pulsanti, senza_posta, misura)
+	finestra = _FinestraMail(genitore, titolo, (destinatario, oggetto, corpo), spiegazione, passi, pulsanti, senza_posta, misura, massimizzata)
 	try:
 		finestra.ShowModal()
 		return finestra.riuscita
@@ -336,10 +358,34 @@ def _negli_appunti(testo):
 	return riuscita
 
 
+def _grazia_invio():
+	"""Il tempo, in secondi, entro cui un Invio dopo l'altro vale come tasto
+	tenuto giu': un po' piu' del piu' lungo fra l'attesa prima della
+	ripetizione e l'intervallo fra due ripetizioni, come li ha impostati
+	l'utente in Windows. Di serie sono mezzo secondo e un trentesimo, e la
+	grazia e' di 0,65 secondi. Sta in una funzione a se' perche' il banco
+	possa accorciarla."""
+	import ctypes
+
+	attesa, velocita = ctypes.c_int(1), ctypes.c_uint(31)
+	try:
+		user32 = ctypes.WinDLL("user32")
+		# SPI_GETKEYBOARDDELAY, da 0 a 3, e SPI_GETKEYBOARDSPEED, da 0 a 31.
+		user32.SystemParametersInfoW(0x0016, 0, ctypes.byref(attesa), 0)
+		user32.SystemParametersInfoW(0x000A, 0, ctypes.byref(velocita), 0)
+	except (AttributeError, OSError):
+		pass
+	ritardo = (min(max(attesa.value, 0), 3) + 1) * 0.25
+	intervallo = 1 / (2.5 + min(velocita.value, 31) * 27.5 / 31)
+	return max(ritardo, intervallo) + 0.15
+
+
 class _FinestraMail(wx.Dialog):
 	"""Il dialogo di finestra_mail, che ne spiega il comportamento."""
 
-	def __init__(self, genitore, titolo, mail, spiegazione, passi, pulsanti, senza_posta, misura):
+	def __init__(self, genitore, titolo, mail, spiegazione, passi, pulsanti, senza_posta, misura, massimizzata=True):
+		import time
+
 		from GBUtils import programma_di_posta
 		if not passi:
 			raise ValueError("finestra_mail: serve almeno un passo")
@@ -350,6 +396,10 @@ class _FinestraMail(wx.Dialog):
 		self.riuscita = False
 		self.passo = None
 		self.annulla = pulsanti["annulla"]
+		# La grazia conta anche dall'apertura: un Invio tenuto giu' sulla voce
+		# di menu che apre la finestra non deve premere niente qui.
+		self.grazia = _grazia_invio()
+		self.ultimo_invio = time.monotonic()
 		self.pannello = pannello_scorrevole(self)
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		self.testo = self._area("")
@@ -374,10 +424,49 @@ class _FinestraMail(wx.Dialog):
 		else:
 			self._inizia_passi(senza_posta)
 		adatta_finestra(self, self.pannello, misura)
+		# Dopo adatta_finestra: la misura data li' e' quella che torna
+		# ripristinando la finestra.
+		if massimizzata:
+			self.Maximize()
 		wx.CallAfter(self._al_testo)
 
 	def _area(self, contenuto):
-		return wx.TextCtrl(self.pannello, value=contenuto, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2)
+		area = wx.TextCtrl(self.pannello, value=contenuto, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2)
+		area.Bind(wx.EVT_KEY_DOWN, self._tasto)
+		return area
+
+	def _tasto(self, evento):
+		"""Invio ed Esc sull'area di testo, che Invio lo tiene per se'. Il
+		tasto si prende all'arrivo all'area, con EVT_KEY_DOWN, e non prima con
+		EVT_CHAR_HOOK, che in wxMSW nasce da un gancio sui soli tasti veri:
+		cosi' lo vede anche il banco, che i tasti li mette in coda alla
+		finestra. Esc qui arriva solo se wx non ha gia' chiuso la finestra da
+		se'. Ogni Invio, anche quelli ignorati, sposta la grazia: finche' il
+		tasto resta giu' non ne passa nessuno."""
+		import time
+
+		tasto = evento.GetKeyCode()
+		if evento.HasAnyModifiers() or tasto not in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_ESCAPE):
+			evento.Skip()
+			return
+		if tasto == wx.WXK_ESCAPE:
+			self._premi(self.chiudi)
+			return
+		adesso = time.monotonic()
+		precedente, self.ultimo_invio = self.ultimo_invio, adesso
+		if evento.IsAutoRepeat() or adesso - precedente < self.grazia:
+			return
+		predefinito = self.GetDefaultItem()
+		if predefinito is not None:
+			self._premi(predefinito)
+
+	@staticmethod
+	def _premi(pulsante):
+		"""Preme il pulsante come un clic: l'evento sale al dialogo, e Chiudi,
+		che e' wx.ID_CANCEL, lo chiude."""
+		evento = wx.CommandEvent(wx.wxEVT_BUTTON, pulsante.GetId())
+		evento.SetEventObject(pulsante)
+		pulsante.GetEventHandler().ProcessEvent(evento)
 
 	def _al_testo(self):
 		import contextlib
