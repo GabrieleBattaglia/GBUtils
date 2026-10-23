@@ -27172,5 +27172,209 @@
             80.0,
             20.0
         ]
+    },
+    "mess_aggiornamento_scelto": {
+        "descrizione": "MESS, nella proposta dell'aggiornamento si preme Aggiorna e comincia lo scaricamento: onda triangolare, una spinta, una scivolata dal do 5 al sol 5 in 120 ms da sinistra e un do 6 di 90 ms a destra; 210 ms. Va bene per un via, una partenza, un download che comincia.",
+        "score": [
+            [
+                "c5.g5",
+                0.12,
+                -0.3,
+                -0.05
+            ],
+            [
+                "c6",
+                0.09,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            10.0,
+            75.0,
+            20.0
+        ]
+    },
+    "mess_aggiornamento_scaduto": {
+        "descrizione": "MESS, la proposta dell'aggiornamento resta senza risposta e si chiude da sola, da riproporre alla prossima apertura: seno, un orologio che si ferma, due tic di la 5 da 30 ms con pause di 120 ms e un mi 4 basso di 180 ms, al centro; 480 ms. Va bene per un tempo scaduto, un'attesa finita, una domanda lasciata cadere.",
+        "score": [
+            [
+                "a5",
+                0.03,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.03,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4",
+                0.18,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_aggiornamento_non_riuscito": {
+        "descrizione": "MESS, l'aggiornamento automatico non riesce, per esempio lo scaricamento si interrompe: onda triangolare, una scivolata che cade dal la 4 al re 4 in 250 ms e un re 4 più piano di 150 ms, al centro; 400 ms. Va bene per un tentativo fallito, un trasferimento interrotto, un'operazione da riprovare.",
+        "score": [
+            [
+                "a4.d4",
+                0.25,
+                0.0,
+                -0.05
+            ],
+            [
+                "d4",
+                0.15,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            35.0
+        ]
+    },
+    "mess_aggiornamento_non_pronto": {
+        "descrizione": "MESS, la versione nuova c'è ma il suo pacchetto non è ancora pronto da scaricare: seno, un non ancora, un mi 5 di 80 ms, una pausa di 50 ms e un semitono sotto, il re diesis 5 di 160 ms, al centro; 290 ms. Va bene per qualcosa che deve ancora arrivare, un rinvio, un appuntamento spostato.",
+        "score": [
+            [
+                "e5",
+                0.08,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#5",
+                0.16,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            10.0,
+            75.0,
+            25.0
+        ]
+    },
+    "mess_manuale_mancante": {
+        "descrizione": "MESS, Maiusc+F1 quando il manuale manca o il browser non lo apre: rumore rosa, il fruscio di una pagina, da 3.000 a 8.000 Hz per 35 ms, una pausa di 60 ms e un tonfo sordo, da 150 a 500 Hz per 140 ms, al centro; 235 ms. Il libro non c'è. Va bene per un documento che manca, uno scaffale vuoto, una pagina che non si apre.",
+        "score": [
+            [
+                "3000-8000",
+                0.035,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "150-500",
+                0.14,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_pub_entra": {
+        "descrizione": "MESS, Entra al PUB nel menu Aiuto, la mail per iscriversi alla lista di supporto: seno, il campanello della porta del pub, din don, un mi 6 di 150 ms a sinistra e un do 6 di 300 ms a destra; 450 ms. Va bene per un ingresso, un'iscrizione, una porta che si apre a un gruppo.",
+        "score": [
+            [
+                "e6",
+                0.15,
+                -0.2,
+                -0.05
+            ],
+            [
+                "c6",
+                0.3,
+                0.2,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            20.0,
+            60.0,
+            40.0
+        ]
+    },
+    "mess_pub_aiuto": {
+        "descrizione": "MESS, Chiedi aiuto al PUB nel menu Aiuto, la mail con la domanda e le informazioni del computer: onda triangolare, una domanda, sol 4 e do 5 da 80 ms e l'inflessione che sale dal mi 5 al fa diesis 5 in 200 ms, da sinistra a destra; 360 ms. Va bene per una richiesta d'aiuto, una domanda, un messaggio a chi sa.",
+        "score": [
+            [
+                "g4",
+                0.08,
+                -0.3,
+                -0.08
+            ],
+            [
+                "c5",
+                0.08,
+                0.0,
+                -0.08
+            ],
+            [
+                "e5.f#5",
+                0.2,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            25.0
+        ]
     }
 }
