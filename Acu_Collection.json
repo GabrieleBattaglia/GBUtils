@@ -27610,5 +27610,65 @@
             70.0,
             30.0
         ]
+    },
+    "mess_cartella_non_registrata": {
+        "descrizione": "MESS, il file accanto al programma che ricorda dove sta la cartella del mondo non si riesce a scrivere, e la cartella resta quella di prima: onda triangolare, una firma che non prende, un re 5 di 60 ms, una pausa di 40 ms e una scivolata giù dal re 5 al la 4 in 180 ms, al centro; 280 ms. Va bene per un'impostazione che non si registra, un indirizzo non annotato, un appunto che non resta.",
+        "score": [
+            [
+                "d5",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5.a4",
+                0.18,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_cartella_illeggibile": {
+        "descrizione": "MESS, a programma aperto si scopre rovinato il file che dice dove sta la cartella del mondo, e la si potrà scegliere di nuovo al prossimo avvio: seno, un indirizzo confuso, il tritono si 4 e fa 4 da 80 ms e poi una scivolata dall'uno all'altro in 200 ms, al centro; 360 ms. Va bene per un riferimento che non si legge più, una mappa strappata, un percorso perso.",
+        "score": [
+            [
+                "b4",
+                0.08,
+                0.0,
+                -0.1
+            ],
+            [
+                "f4",
+                0.08,
+                0.0,
+                -0.1
+            ],
+            [
+                "b4.f4",
+                0.2,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
