@@ -27532,5 +27532,83 @@
             70.0,
             30.0
         ]
+    },
+    "mess_cartella_non_spostata": {
+        "descrizione": "MESS, i dati del mondo non passano nella cartella nuova, e tutto resta com'era: onda triangolare, il trasloco riuscito di mess_cartella_spostata che torna indietro, mi 5 e do 5 da 70 ms da destra, poi invece di salire una scivolata giù dal do 5 al sol 4 in 220 ms verso sinistra; 360 ms. Va bene per uno spostamento fallito, un trasloco annullato, dei file rimasti dov'erano.",
+        "score": [
+            [
+                "e5",
+                0.07,
+                0.3,
+                -0.08
+            ],
+            [
+                "c5",
+                0.07,
+                0.0,
+                -0.08
+            ],
+            [
+                "c5.g4",
+                0.22,
+                -0.3,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_cartella_rifiutata": {
+        "descrizione": "MESS, la cartella scelta non va bene, perché è già quella del mondo o sta dentro i suoi dati, e niente cambia: seno, due la 4 uguali da 60 ms, il secondo più piano, al centro; 120 ms. Un no gentile. Va bene per una scelta che non si può accettare, un doppione, una destinazione che coincide con la partenza.",
+        "score": [
+            [
+                "a4",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "a4",
+                0.06,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            10.0,
+            75.0,
+            25.0
+        ]
+    },
+    "mess_riapertura_mancata": {
+        "descrizione": "MESS, dopo aver scelto il mondo di un'altra cartella il programma dovrebbe riaprirsi da solo, ma la copia nuova non parte, e va riaperto a mano: seno, la scivolata d'ottava di mess_cartella_cambiata che sale dal do 5 al do 6 in 180 ms e poi ricade al fa 5 in 200 ms, al centro; 380 ms. Va bene per un riavvio che non è riuscito, una porta che si apre e si richiude.",
+        "score": [
+            [
+                "c5.c6",
+                0.18,
+                0.0,
+                -0.08
+            ],
+            [
+                "c6.f5",
+                0.2,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
