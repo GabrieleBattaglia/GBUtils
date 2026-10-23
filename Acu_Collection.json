@@ -27412,5 +27412,125 @@
             70.0,
             30.0
         ]
+    },
+    "mess_cartella_mondo": {
+        "descrizione": "MESS, Cartella del mondo nel menu Impostazioni, la finestra di Windows che sceglie dove stanno il mondo e i dati di gioco: onda triangolare, un cassetto che si apre, la 4, re 5 da 50 ms e la 5 di 120 ms, salendo per quarte da sinistra a destra; 220 ms. Va bene per una cartella da scegliere, un percorso, un archivio che si apre.",
+        "score": [
+            [
+                "a4",
+                0.05,
+                -0.3,
+                -0.08
+            ],
+            [
+                "d5",
+                0.05,
+                0.0,
+                -0.08
+            ],
+            [
+                "a5",
+                0.12,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            25.0
+        ]
+    },
+    "mess_cartella_spostata": {
+        "descrizione": "MESS, il mondo e i dati di gioco sono passati nella cartella nuova: onda triangolare, un trasloco riuscito, mi 5 e do 5 da 70 ms e l'arrivo sul sol 5 di 160 ms, da sinistra a destra; 300 ms. Va bene per dei file spostati, un trasloco, una consegna arrivata a destinazione.",
+        "score": [
+            [
+                "e5",
+                0.07,
+                -0.3,
+                -0.08
+            ],
+            [
+                "c5",
+                0.07,
+                0.0,
+                -0.08
+            ],
+            [
+                "g5",
+                0.16,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            25.0
+        ]
+    },
+    "mess_cartella_cambiata": {
+        "descrizione": "MESS, si sceglie il mondo che c'è già nella cartella nuova, e MESS si riapre su di lui: seno, una scivolata d'ottava dal do 5 al do 6 in 250 ms e un sol 5 di 120 ms, da sinistra a destra; 370 ms. Va bene per un cambio di scena, un altro mondo, un programma che si riapre altrove.",
+        "score": [
+            [
+                "c5.c6",
+                0.25,
+                -0.2,
+                -0.08
+            ],
+            [
+                "g5",
+                0.12,
+                0.2,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            10.0,
+            75.0,
+            25.0
+        ]
+    },
+    "mess_cartella_assente": {
+        "descrizione": "MESS, all'avvio la cartella del mondo non c'è, per esempio la penna non è collegata o il cloud non è pronto: onda triangolare, una porta chiusa, due fa 4 da 120 ms con una pausa di 60 ms e un do 4 di 250 ms, al centro; 550 ms. Va bene per un disco che manca, una cartella irraggiungibile, qualcosa da collegare prima di continuare.",
+        "score": [
+            [
+                "f4",
+                0.12,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "f4",
+                0.12,
+                0.0,
+                -0.08
+            ],
+            [
+                "c4",
+                0.25,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
