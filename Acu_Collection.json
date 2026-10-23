@@ -27670,5 +27670,113 @@
             70.0,
             30.0
         ]
+    },
+    "mess_calendario_non_ripristinato": {
+        "descrizione": "MESS, il calendario predefinito dei tornei non si riesce a rimettere, e resta quello di prima: onda triangolare, il calendario riavvolto di mess_calendario_ripristinato che non riparte, la scivolata dal do 6 al do 5 in 120 ms, una pausa di 40 ms e poi l'arpeggio che invece di risalire scende, do 5 e la diesis 4 da 50 ms e un fa 4 di 120 ms, al centro; 380 ms. Va bene per un ripristino non riuscito, delle impostazioni di fabbrica che non tornano, un reset fallito.",
+        "score": [
+            [
+                "c6.c5",
+                0.12,
+                0.0,
+                -0.14
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "c5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "a#4",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "f4",
+                0.12,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_cartella_salvata_altrove": {
+        "descrizione": "MESS, la cartella del mondo di prima non si raggiunge più, per esempio una penna staccata, e il mondo con le impostazioni si salva nella cartella nuova, mentre cronache e tornei restano di là: onda triangolare, il trasloco di mess_cartella_spostata che parte da lontano, un mi 4 fioco da sinistra, un'ottava sotto, poi do 5 di 70 ms e l'arrivo sul sol 5 di 160 ms a destra; 300 ms. Va bene per un salvataggio di ripiego, un trasloco a metà, una partenza da un posto che non risponde.",
+        "score": [
+            [
+                "e4",
+                0.07,
+                -0.3,
+                -0.2
+            ],
+            [
+                "c5",
+                0.07,
+                0.0,
+                -0.08
+            ],
+            [
+                "g5",
+                0.16,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            25.0
+        ]
+    },
+    "mess_dati_in_riserva": {
+        "descrizione": "MESS, alla prima partenza con la cartella del mondo i dati che stavano accanto al programma vanno in una sua riserva, perché la cartella aveva già un mondo, che resta in uso: onda triangolare, il trasloco di mess_cartella_spostata che arriva e si posa due volte, mi 5 e do 5 da 70 ms e due sol 5 da 80 ms a destra, il secondo più piano, come una scatola riposta; 300 ms. Va bene per dei file messi da parte, un archivio, una copia conservata in un cassetto.",
+        "score": [
+            [
+                "e5",
+                0.07,
+                -0.3,
+                -0.08
+            ],
+            [
+                "c5",
+                0.07,
+                0.0,
+                -0.08
+            ],
+            [
+                "g5",
+                0.08,
+                0.3,
+                -0.08
+            ],
+            [
+                "g5",
+                0.08,
+                0.3,
+                -0.2
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            25.0
+        ]
     }
 }
