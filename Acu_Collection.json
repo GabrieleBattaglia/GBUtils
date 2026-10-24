@@ -30628,5 +30628,101 @@
             70.0,
             30.0
         ]
+    },
+    "mess_partita_schermo_legno": {
+        "descrizione": "MESS, partita dal vivo, la pallina che batte sullo schermo centrale, sulla tavola di legno: rumore rosa al centro, il colpo di 6 ms fra 800 e 3500 Hz e il rimbombo cavo della tavola, 110 ms fra 180 e 380 Hz, poi due grani dei pallini; 131 ms. Scelto da Gabriele all'ascolto di confronto del 24 ottobre 2026, sei punti su sei. Va bene per un urto su una tavola, una porta di legno, un colpo contro un pannello.",
+        "score": [
+            [
+                "800-3500",
+                0.006,
+                0.0,
+                0.4
+            ],
+            [
+                "180-380",
+                0.11,
+                0.0,
+                0.3
+            ],
+            [
+                "3000-8000",
+                0.004,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.008,
+                0.0,
+                -0.5
+            ],
+            [
+                "2800-8000",
+                0.003,
+                0.0,
+                -0.25
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            1.0,
+            99.0,
+            0.0,
+            0.0
+        ]
+    },
+    "mess_partita_ricaduta": {
+        "descrizione": "MESS, partita dal vivo, la pallina che dopo lo schermo ricade sul tavolo, prima di tornare rotolando verso chi l'ha tirata: rumore bianco al centro, il guscio che batte, 7 ms fra 250 e 900 Hz, due grani dei pallini, e un rimbalzo più piccolo 45 ms dopo; 71 ms. Va bene per una pallina che ricade, un rimbalzo leggero, un oggetto cavo che tocca il piano.",
+        "score": [
+            [
+                "250-900",
+                0.007,
+                0.0,
+                0.1
+            ],
+            [
+                "3000-9000",
+                0.004,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.004,
+                0.0,
+                -0.5
+            ],
+            [
+                "2500-8000",
+                0.003,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.045,
+                0.0,
+                -0.5
+            ],
+            [
+                "250-900",
+                0.005,
+                0.0,
+                -0.15
+            ],
+            [
+                "3000-9000",
+                0.003,
+                0.0,
+                -0.3
+            ]
+        ],
+        "kind": 5,
+        "adsr": [
+            1.0,
+            99.0,
+            0.0,
+            0.0
+        ]
     }
 }
