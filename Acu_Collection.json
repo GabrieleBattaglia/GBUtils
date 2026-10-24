@@ -28234,5 +28234,233 @@
             0.0,
             0.0
         ]
+    },
+    "mess_amichevoli_in_serie": {
+        "descrizione": "MESS, parte Gioca tutte le amichevoli, della polisportiva attiva o di tutte le tue: dente di sega morbido, l'invito di mess_invito_a_giocare chiamato a tutta la rosa, il salto d'ottava dal la 4 al la 5 e poi quattro passi rapidi che salgono, si 5, do diesis 6 e mi 6 da 40 ms e un la 6 di 130 ms, da sinistra verso destra come un giro di chiamate lungo il tavolo; 390 ms. Va bene per l'avvio di una serie, un giro di partite, un turno di gare che comincia.",
+        "score": [
+            [
+                "a4",
+                0.05,
+                -0.5,
+                -0.08
+            ],
+            [
+                "a5",
+                0.07,
+                -0.35,
+                -0.08
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.04,
+                -0.1,
+                -0.08
+            ],
+            [
+                "c#6",
+                0.04,
+                0.1,
+                -0.08
+            ],
+            [
+                "e6",
+                0.04,
+                0.3,
+                -0.08
+            ],
+            [
+                "a6",
+                0.13,
+                0.5,
+                -0.05
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_amichevoli_in_serie_finite": {
+        "descrizione": "MESS, Gioca tutte le amichevoli è finita con almeno un incontro, e la vista ne fa il riepilogo: dente di sega morbido, l'arpeggio in la maggiore della fanfara di mess_amichevole_vinta che gira e scende da destra verso il centro, do diesis 6, mi 6, la 5 e mi 5 da 70 ms, poi una pausa e un la 5 di 300 ms al centro che chiude il giro, senza dire chi ha vinto; 620 ms. Va bene per la fine di una serie di partite, un turno concluso, un elenco di risultati pronto.",
+        "score": [
+            [
+                "c#6",
+                0.07,
+                0.4,
+                -0.08
+            ],
+            [
+                "e6",
+                0.07,
+                0.2,
+                -0.08
+            ],
+            [
+                "a5",
+                0.07,
+                0.0,
+                -0.08
+            ],
+            [
+                "e5",
+                0.07,
+                -0.2,
+                -0.08
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.3,
+                0.0,
+                -0.04
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            25.0
+        ]
+    },
+    "mess_nessuno_per_la_serie": {
+        "descrizione": "MESS, Gioca tutte le amichevoli non parte, perché oggi nessun tuo tesserato può giocare un'amichevole: dente di sega morbido, l'avvio di mess_amichevoli_in_serie che si ferma a metà, la 4, la 5, si 5 e do diesis 6, e dopo un silenzio di 120 ms ricade di un tritono sul sol 5, come mess_torna_domani; 590 ms. Va bene per un giro di chiamate senza nessuno da chiamare, un turno che salta, un elenco vuoto.",
+        "score": [
+            [
+                "a4",
+                0.05,
+                -0.5,
+                -0.06
+            ],
+            [
+                "a5",
+                0.07,
+                -0.35,
+                -0.06
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.04,
+                -0.1,
+                -0.08
+            ],
+            [
+                "c#6",
+                0.04,
+                0.1,
+                -0.08
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.25,
+                0.1,
+                -0.1
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_nessun_avversario_nel_raggio": {
+        "descrizione": "MESS, Gioca tutte le amichevoli finisce senza incontri, perché per nessuno dei tuoi c'era oggi un avversario entro 15 classi dalla sua: dente di sega morbido, l'avvio di mess_amichevoli_in_serie fino al mi 6, poi soltanto due echi del mi 6 sempre più piani e lontani a destra, dove dovrebbe rispondere mess_avversario_che_risponde; 520 ms. Va bene per una ricerca senza risultati, una chiamata a vuoto, un'attesa che resta senza risposta.",
+        "score": [
+            [
+                "a4",
+                0.05,
+                -0.5,
+                -0.08
+            ],
+            [
+                "a5",
+                0.07,
+                -0.35,
+                -0.08
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.04,
+                -0.1,
+                -0.08
+            ],
+            [
+                "c#6",
+                0.04,
+                0.1,
+                -0.08
+            ],
+            [
+                "e6",
+                0.04,
+                0.3,
+                -0.08
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.05,
+                0.6,
+                -0.2
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.05,
+                0.85,
+                -0.3
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
     }
 }
