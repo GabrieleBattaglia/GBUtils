@@ -17418,7 +17418,7 @@
         ]
     },
     "mess_filtro_aggiunto": {
-        "descrizione": "MESS, un filtro entra nell'elenco dei filtri del mercato: onda triangolare, due tocchi rapidi sul do diesis 6 e una scivolata di quinta fino al sol diesis 6, al centro, come un fermo che scatta e una maglia che entra; 150 ms. Lo specchio è mess_filtro_tolto. Va bene per ogni criterio, condizione o regola che si aggiunge.",
+        "descrizione": "MESS, un filtro entra nell'elenco dei filtri del mercato, e nella finestra Mercato e ricerca Aggiungi regola mette la regola in preparazione in fondo all'elenco delle regole: onda triangolare, due tocchi rapidi sul do diesis 6 e una scivolata di quinta fino al sol diesis 6, al centro, come un fermo che scatta e una maglia che entra; 150 ms. Lo specchio è mess_filtro_tolto. Va bene per ogni criterio, condizione o regola che si aggiunge.",
         "score": [
             [
                 "c#6",
@@ -17460,7 +17460,7 @@
         ]
     },
     "mess_filtro_tolto": {
-        "descrizione": "MESS, un filtro esce dall'elenco dei filtri del mercato: mess_filtro_aggiunto al contrario, onda triangolare, una scivolata di quinta che scende dal sol diesis 6 al do diesis 6 e due tocchi rapidi sul do diesis 6, il secondo più piano, al centro; 150 ms. Va bene per ogni criterio, condizione o regola che si toglie.",
+        "descrizione": "MESS, un filtro esce dall'elenco dei filtri del mercato, e nella finestra Mercato e ricerca Canc toglie la regola scelta dall'elenco delle regole: mess_filtro_aggiunto al contrario, onda triangolare, una scivolata di quinta che scende dal sol diesis 6 al do diesis 6 e due tocchi rapidi sul do diesis 6, il secondo più piano, al centro; 150 ms. Va bene per ogni criterio, condizione o regola che si toglie.",
         "score": [
             [
                 "g#6.c#6",
@@ -17502,7 +17502,7 @@
         ]
     },
     "mess_filtri_tutti_tolti": {
-        "descrizione": "MESS, si tolgono tutti i filtri del mercato e tornano tutti i candidati: onda triangolare, la scivolata di mess_filtro_tolto tre volte, dal sol diesis 6 al do diesis 6 a destra e al centro, e l'ultima, più lunga e piena, che scende di un'ottava e una quinta fino al do diesis 5 a sinistra; 350 ms. Va bene per ogni azzeramento di criteri, un elenco riaperto per intero o una pulizia completa di condizioni.",
+        "descrizione": "MESS, si tolgono tutti i filtri del mercato e tornano tutti i candidati, e nella finestra Mercato e ricerca Azzera toglie tutte le regole: onda triangolare, la scivolata di mess_filtro_tolto tre volte, dal sol diesis 6 al do diesis 6 a destra e al centro, e l'ultima, più lunga e piena, che scende di un'ottava e una quinta fino al do diesis 5 a sinistra; 350 ms. Va bene per ogni azzeramento di criteri, un elenco riaperto per intero o una pulizia completa di condizioni.",
         "score": [
             [
                 "g#6.c#6",
@@ -28464,7 +28464,7 @@
         ]
     },
     "mess_scheda_risultati": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si passa alla scheda Risultati, con Ctrl+Tab o Ctrl+Maiusc+Tab, o con Invio in un filtro: onda triangolare, la linguetta di una cartellina, un tocco solo, perché è la prima delle quattro schede, sull'accordo di sol che sale e con l'ultimo che scivola in su, dal lato dove la linguetta sta nella fila, che va da sinistra a destra: una scivolata dal sol 5 al si 5 in 45 ms, tutto a sinistra; 45 ms. Va bene per una scheda, una pagina o una sezione fra poche, riconoscibile dal numero dei tocchi.",
+        "descrizione": "MESS, nella finestra Mercato e ricerca si passa alla scheda Risultati, con Ctrl+Tab o Ctrl+Maiusc+Tab, o con Invio nella scheda Filtri: onda triangolare, la linguetta di una cartellina, un tocco solo, perché è la prima delle due schede, sull'accordo di sol che sale e con l'ultimo che scivola in su, dal lato dove la linguetta sta nella fila, che va da sinistra a destra: una scivolata dal sol 5 al si 5 in 45 ms, tutto a sinistra; 45 ms. Va bene per una scheda, una pagina o una sezione fra poche, riconoscibile dal numero dei tocchi.",
         "score": [
             [
                 "g5.b5",
@@ -28482,7 +28482,7 @@
         ]
     },
     "mess_scheda_filtri": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si passa alla scheda Filtri, con Ctrl+Tab o Ctrl+Maiusc+Tab: onda triangolare, la linguetta di una cartellina, due tocchi, perché è la seconda delle quattro schede, sull'accordo di sol che sale e con l'ultimo che scivola in su, dal lato dove la linguetta sta nella fila, che va da sinistra a destra: un sol 5 di 22 ms, una pausa di 18 ms e una scivolata dal si 5 al re 6 in 45 ms, tutto un poco a sinistra; 85 ms. Va bene per una scheda, una pagina o una sezione fra poche, riconoscibile dal numero dei tocchi.",
+        "descrizione": "MESS, nella finestra Mercato e ricerca si passa alla scheda Filtri, con Ctrl+Tab o Ctrl+Maiusc+Tab: onda triangolare, la linguetta di una cartellina, due tocchi, perché è la seconda delle due schede, sull'accordo di sol che sale e con l'ultimo che scivola in su, dal lato dove la linguetta sta nella fila, che va da sinistra a destra: un sol 5 di 22 ms, una pausa di 18 ms e una scivolata dal si 5 al re 6 in 45 ms, tutto un poco a sinistra; 85 ms. Va bene per una scheda, una pagina o una sezione fra poche, riconoscibile dal numero dei tocchi.",
         "score": [
             [
                 "g5",
@@ -28511,8 +28511,8 @@
             30.0
         ]
     },
-    "mess_scheda_altri_filtri": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si passa alla scheda Altri filtri, con Ctrl+Tab o Ctrl+Maiusc+Tab: onda triangolare, la linguetta di una cartellina, tre tocchi, perché è la terza delle quattro schede, sull'accordo di sol che sale e con l'ultimo che scivola in su, dal lato dove la linguetta sta nella fila, che va da sinistra a destra: un sol 5 di 22 ms, una pausa di 18 ms, un si 5 di 22 ms, una pausa di 18 ms e una scivolata dal re 6 al sol 6 in 45 ms, tutto un poco a destra; 125 ms. Va bene per una scheda, una pagina o una sezione fra poche, riconoscibile dal numero dei tocchi.",
+    "scheda_altri_filtri": {
+        "descrizione": "In una finestra di ricerca si passa alla scheda Altri filtri, con Ctrl+Tab o Ctrl+Maiusc+Tab: onda triangolare, la linguetta di una cartellina, tre tocchi, perché è la terza delle quattro schede, sull'accordo di sol che sale e con l'ultimo che scivola in su, dal lato dove la linguetta sta nella fila, che va da sinistra a destra: un sol 5 di 22 ms, una pausa di 18 ms, un si 5 di 22 ms, una pausa di 18 ms e una scivolata dal re 6 al sol 6 in 45 ms, tutto un poco a destra; 125 ms. Va bene per una scheda, una pagina o una sezione fra poche, riconoscibile dal numero dei tocchi.",
         "score": [
             [
                 "g5",
@@ -28553,8 +28553,8 @@
             30.0
         ]
     },
-    "mess_scheda_filtri_allenatori": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si passa alla scheda Filtri degli allenatori, con Ctrl+Tab o Ctrl+Maiusc+Tab: onda triangolare, la linguetta di una cartellina, quattro tocchi, perché è la quarta delle quattro schede, sull'accordo di sol che sale e con l'ultimo che scivola in su, dal lato dove la linguetta sta nella fila, che va da sinistra a destra: un sol 5 di 22 ms, una pausa di 18 ms, un si 5 di 22 ms, una pausa di 18 ms, un re 6 di 22 ms, una pausa di 18 ms e una scivolata dal sol 6 al si 6 in 45 ms, tutto a destra; 165 ms. Va bene per una scheda, una pagina o una sezione fra poche, riconoscibile dal numero dei tocchi.",
+    "scheda_filtri_allenatori": {
+        "descrizione": "In una finestra di ricerca si passa alla scheda Filtri degli allenatori, con Ctrl+Tab o Ctrl+Maiusc+Tab: onda triangolare, la linguetta di una cartellina, quattro tocchi, perché è la quarta delle quattro schede, sull'accordo di sol che sale e con l'ultimo che scivola in su, dal lato dove la linguetta sta nella fila, che va da sinistra a destra: un sol 5 di 22 ms, una pausa di 18 ms, un si 5 di 22 ms, una pausa di 18 ms, un re 6 di 22 ms, una pausa di 18 ms e una scivolata dal sol 6 al si 6 in 45 ms, tutto a destra; 165 ms. Va bene per una scheda, una pagina o una sezione fra poche, riconoscibile dal numero dei tocchi.",
         "score": [
             [
                 "g5",
@@ -29081,8 +29081,8 @@
             40.0
         ]
     },
-    "mess_casella_allenatori_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Allenatori invece dei giocatori: onda triangolare, il trillo del fischietto di mess_staff_aperto, fra la 6 e do 7, che scappa in su: un la 6 di 20 ms, un do 7 di 20 ms, un la 6 di 20 ms e un mi 7 di 40 ms, al centro; 100 ms. Va bene per una casella spuntata, un'opzione accesa: il passaggio a un elenco di tecnici, un cambio di categoria.",
+    "mess_bersaglio_allenatori": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca il bersaglio della regola in preparazione passa agli allenatori, a ogni freccia: onda triangolare, il trillo del fischietto di mess_staff_aperto, fra la 6 e do 7, che scappa in su: un la 6 di 20 ms, un do 7 di 20 ms, un la 6 di 20 ms e un mi 7 di 40 ms, al centro; 100 ms. Va bene per il passaggio a un elenco di tecnici, un cambio di categoria verso chi allena.",
         "score": [
             [
                 "a6",
@@ -29117,8 +29117,8 @@
             30.0
         ]
     },
-    "mess_casella_allenatori_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Allenatori invece dei giocatori: onda triangolare, lo specchio di mess_casella_allenatori_spuntata, con lo stesso timbro, che scende: un mi 7 di 40 ms, un la 6 di 20 ms, un do 7 di 20 ms e un la 6 di 20 ms, al centro; 100 ms. Va bene per una casella tolta, un'opzione spenta: il passaggio a un elenco di tecnici, un cambio di categoria.",
+    "mess_bersaglio_giocatori": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca il bersaglio della regola in preparazione torna ai giocatori, a ogni freccia: onda triangolare, lo specchio di mess_bersaglio_allenatori, con lo stesso timbro, che scende: un mi 7 di 40 ms, un la 6 di 20 ms, un do 7 di 20 ms e un la 6 di 20 ms, al centro; 100 ms. Va bene per il ritorno a un elenco di atleti, un cambio di categoria verso chi gioca.",
         "score": [
             [
                 "e7",
@@ -29153,8 +29153,8 @@
             30.0
         ]
     },
-    "mess_casella_liberi_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Liberi: sinusoide, una porta che si apre, due passi che salgono di una quarta e di una terza e una scivolata: un sol 5 di 30 ms, un do 6 di 30 ms e una scivolata dal mi 6 al sol 6 in 50 ms, al centro; 110 ms. Va bene per una casella spuntata, un'opzione accesa: chi è libero, un posto aperto, una scelta senza vincoli.",
+    "casella_liberi_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Liberi: sinusoide, una porta che si apre, due passi che salgono di una quarta e di una terza e una scivolata: un sol 5 di 30 ms, un do 6 di 30 ms e una scivolata dal mi 6 al sol 6 in 50 ms, al centro; 110 ms. Va bene per una casella spuntata, un'opzione accesa: chi è libero, un posto aperto, una scelta senza vincoli.",
         "score": [
             [
                 "g5",
@@ -29183,8 +29183,8 @@
             30.0
         ]
     },
-    "mess_casella_liberi_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Liberi: sinusoide, lo specchio di mess_casella_liberi_spuntata, con lo stesso timbro, che scende: una scivolata dal sol 6 al mi 6 in 50 ms, un do 6 di 30 ms e un sol 5 di 30 ms, al centro; 110 ms. Va bene per una casella tolta, un'opzione spenta: chi è libero, un posto aperto, una scelta senza vincoli.",
+    "casella_liberi_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Liberi: sinusoide, lo specchio di casella_liberi_spuntata, con lo stesso timbro, che scende: una scivolata dal sol 6 al mi 6 in 50 ms, un do 6 di 30 ms e un sol 5 di 30 ms, al centro; 110 ms. Va bene per una casella tolta, un'opzione spenta: chi è libero, un posto aperto, una scelta senza vincoli.",
         "score": [
             [
                 "g6.e6",
@@ -29213,8 +29213,8 @@
             30.0
         ]
     },
-    "mess_casella_in_vendita_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella In vendita da altri, solo per i giocatori: dente di sega, il cartellino del prezzo appeso, una nota e una scivolata morbida: un re 5 di 30 ms, una pausa di 10 ms e una scivolata dal la 5 al re 6 in 60 ms, al centro; 100 ms. Va bene per una casella spuntata, un'opzione accesa: chi è in vendita, un'offerta esposta, un listino.",
+    "casella_in_vendita_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella In vendita da altri, solo per i giocatori: dente di sega, il cartellino del prezzo appeso, una nota e una scivolata morbida: un re 5 di 30 ms, una pausa di 10 ms e una scivolata dal la 5 al re 6 in 60 ms, al centro; 100 ms. Va bene per una casella spuntata, un'opzione accesa: chi è in vendita, un'offerta esposta, un listino.",
         "score": [
             [
                 "d5",
@@ -29243,8 +29243,8 @@
             30.0
         ]
     },
-    "mess_casella_in_vendita_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella In vendita da altri, solo per i giocatori: dente di sega, lo specchio di mess_casella_in_vendita_spuntata, con lo stesso timbro, che scende: una scivolata dal re 6 al la 5 in 60 ms, una pausa di 10 ms e un re 5 di 30 ms, al centro; 100 ms. Va bene per una casella tolta, un'opzione spenta: chi è in vendita, un'offerta esposta, un listino.",
+    "casella_in_vendita_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella In vendita da altri, solo per i giocatori: dente di sega, lo specchio di casella_in_vendita_spuntata, con lo stesso timbro, che scende: una scivolata dal re 6 al la 5 in 60 ms, una pausa di 10 ms e un re 5 di 30 ms, al centro; 100 ms. Va bene per una casella tolta, un'opzione spenta: chi è in vendita, un'offerta esposta, un listino.",
         "score": [
             [
                 "d6.a5",
@@ -29273,8 +29273,8 @@
             30.0
         ]
     },
-    "mess_casella_del_computer_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Tesserati del computer: sinusoide, il bip di un computer, due tocchi acuti e una scivolata: un do 7 di 15 ms, una pausa di 10 ms, un sol 6 di 15 ms, una pausa di 10 ms e una scivolata dal do 7 al sol 7 in 40 ms, al centro; 90 ms. Va bene per una casella spuntata, un'opzione accesa: le squadre dell'avversario automatico, un giocatore virtuale.",
+    "casella_del_computer_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Tesserati del computer: sinusoide, il bip di un computer, due tocchi acuti e una scivolata: un do 7 di 15 ms, una pausa di 10 ms, un sol 6 di 15 ms, una pausa di 10 ms e una scivolata dal do 7 al sol 7 in 40 ms, al centro; 90 ms. Va bene per una casella spuntata, un'opzione accesa: le squadre dell'avversario automatico, un giocatore virtuale.",
         "score": [
             [
                 "c7",
@@ -29315,8 +29315,8 @@
             30.0
         ]
     },
-    "mess_casella_del_computer_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Tesserati del computer: sinusoide, lo specchio di mess_casella_del_computer_spuntata, con lo stesso timbro, che scende: una scivolata dal sol 7 al do 7 in 40 ms, una pausa di 10 ms, un sol 6 di 15 ms, una pausa di 10 ms e un do 7 di 15 ms, al centro; 90 ms. Va bene per una casella tolta, un'opzione spenta: le squadre dell'avversario automatico, un giocatore virtuale.",
+    "casella_del_computer_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Tesserati del computer: sinusoide, lo specchio di casella_del_computer_spuntata, con lo stesso timbro, che scende: una scivolata dal sol 7 al do 7 in 40 ms, una pausa di 10 ms, un sol 6 di 15 ms, una pausa di 10 ms e un do 7 di 15 ms, al centro; 90 ms. Va bene per una casella tolta, un'opzione spenta: le squadre dell'avversario automatico, un giocatore virtuale.",
         "score": [
             [
                 "g7.c7",
@@ -29357,8 +29357,8 @@
             30.0
         ]
     },
-    "mess_casella_tuoi_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Tuoi tesserati: onda triangolare, la tua casa, l'accordo caldo di do maggiore nel registro medio: un do 5 di 30 ms, un mi 5 di 30 ms, un sol 5 di 30 ms e un do 6 di 40 ms, al centro; 130 ms. Va bene per una casella spuntata, un'opzione accesa: le proprie cose, la propria squadra, ciò che è tuo.",
+    "casella_tuoi_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Tuoi tesserati: onda triangolare, la tua casa, l'accordo caldo di do maggiore nel registro medio: un do 5 di 30 ms, un mi 5 di 30 ms, un sol 5 di 30 ms e un do 6 di 40 ms, al centro; 130 ms. Va bene per una casella spuntata, un'opzione accesa: le proprie cose, la propria squadra, ciò che è tuo.",
         "score": [
             [
                 "c5",
@@ -29393,8 +29393,8 @@
             30.0
         ]
     },
-    "mess_casella_tuoi_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Tuoi tesserati: onda triangolare, lo specchio di mess_casella_tuoi_spuntata, con lo stesso timbro, che scende: un do 6 di 40 ms, un sol 5 di 30 ms, un mi 5 di 30 ms e un do 5 di 30 ms, al centro; 130 ms. Va bene per una casella tolta, un'opzione spenta: le proprie cose, la propria squadra, ciò che è tuo.",
+    "casella_tuoi_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Tuoi tesserati: onda triangolare, lo specchio di casella_tuoi_spuntata, con lo stesso timbro, che scende: un do 6 di 40 ms, un sol 5 di 30 ms, un mi 5 di 30 ms e un do 5 di 30 ms, al centro; 130 ms. Va bene per una casella tolta, un'opzione spenta: le proprie cose, la propria squadra, ciò che è tuo.",
         "score": [
             [
                 "c6",
@@ -29429,8 +29429,8 @@
             30.0
         ]
     },
-    "mess_casella_ritirati_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Ritirati, solo per i giocatori: rumore marrone, la panchina dei veterani, un soffio cupo che si alza e un colpetto: una banda che scorre da 150-500 a 300-1000 Hz in 70 ms, una pausa di 15 ms e una banda fra 300 e 1000 Hz di 30 ms, al centro; 115 ms. Va bene per una casella spuntata, un'opzione accesa: chi ha smesso, gli anziani, un archivio di chi c'era.",
+    "casella_ritirati_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Ritirati, solo per i giocatori: rumore marrone, la panchina dei veterani, un soffio cupo che si alza e un colpetto: una banda che scorre da 150-500 a 300-1000 Hz in 70 ms, una pausa di 15 ms e una banda fra 300 e 1000 Hz di 30 ms, al centro; 115 ms. Va bene per una casella spuntata, un'opzione accesa: chi ha smesso, gli anziani, un archivio di chi c'era.",
         "score": [
             [
                 "150-500.300-1000",
@@ -29459,8 +29459,8 @@
             30.0
         ]
     },
-    "mess_casella_ritirati_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Ritirati, solo per i giocatori: rumore marrone, lo specchio di mess_casella_ritirati_spuntata, con lo stesso timbro, che scende: una banda fra 300 e 1000 Hz di 30 ms, una pausa di 15 ms e una banda che scorre da 300-1000 a 150-500 Hz in 70 ms, al centro; 115 ms. Va bene per una casella tolta, un'opzione spenta: chi ha smesso, gli anziani, un archivio di chi c'era.",
+    "casella_ritirati_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Ritirati, solo per i giocatori: rumore marrone, lo specchio di casella_ritirati_spuntata, con lo stesso timbro, che scende: una banda fra 300 e 1000 Hz di 30 ms, una pausa di 15 ms e una banda che scorre da 300-1000 a 150-500 Hz in 70 ms, al centro; 115 ms. Va bene per una casella tolta, un'opzione spenta: chi ha smesso, gli anziani, un archivio di chi c'era.",
         "score": [
             [
                 "300-1000",
@@ -29489,8 +29489,8 @@
             30.0
         ]
     },
-    "mess_casella_disponibili_oggi_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Disponibili oggi per un'amichevole: rumore rosa, la pallina che rimbalza tre volte sul tavolo, da sinistra a destra: una banda fra 800 e 2000 Hz di 20 ms un poco a sinistra, una pausa di 30 ms, una banda fra 1200 e 3000 Hz di 20 ms, una pausa di 25 ms e una banda fra 1800 e 4500 Hz di 25 ms un poco a destra; 120 ms. Va bene per una casella spuntata, un'opzione accesa: chi è pronto a giocare oggi, una partita possibile, un invito.",
+    "casella_disponibili_oggi_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Disponibili oggi per un'amichevole: rumore rosa, la pallina che rimbalza tre volte sul tavolo, da sinistra a destra: una banda fra 800 e 2000 Hz di 20 ms un poco a sinistra, una pausa di 30 ms, una banda fra 1200 e 3000 Hz di 20 ms, una pausa di 25 ms e una banda fra 1800 e 4500 Hz di 25 ms un poco a destra; 120 ms. Va bene per una casella spuntata, un'opzione accesa: chi è pronto a giocare oggi, una partita possibile, un invito.",
         "score": [
             [
                 "800-2000",
@@ -29531,8 +29531,8 @@
             30.0
         ]
     },
-    "mess_casella_disponibili_oggi_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Disponibili oggi per un'amichevole: rumore rosa, lo specchio di mess_casella_disponibili_oggi_spuntata, con lo stesso timbro, che scende: una banda fra 1800 e 4500 Hz di 25 ms un poco a destra, una pausa di 25 ms, una banda fra 1200 e 3000 Hz di 20 ms, una pausa di 30 ms e una banda fra 800 e 2000 Hz di 20 ms un poco a sinistra; 120 ms. Va bene per una casella tolta, un'opzione spenta: chi è pronto a giocare oggi, una partita possibile, un invito.",
+    "casella_disponibili_oggi_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Disponibili oggi per un'amichevole: rumore rosa, lo specchio di casella_disponibili_oggi_spuntata, con lo stesso timbro, che scende: una banda fra 1800 e 4500 Hz di 25 ms un poco a destra, una pausa di 25 ms, una banda fra 1200 e 3000 Hz di 20 ms, una pausa di 30 ms e una banda fra 800 e 2000 Hz di 20 ms un poco a sinistra; 120 ms. Va bene per una casella tolta, un'opzione spenta: chi è pronto a giocare oggi, una partita possibile, un invito.",
         "score": [
             [
                 "1800-4500",
@@ -29573,8 +29573,8 @@
             30.0
         ]
     },
-    "mess_casella_senza_acciacchi_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Escludi infortunati e acciaccati: onda triangolare, un passo che torna sano, una scivolata di quinta e una nota ferma: una scivolata dal fa 5 al do 6 in 50 ms, una pausa di 10 ms e un fa 6 di 40 ms, al centro; 100 ms. Va bene per una casella spuntata, un'opzione accesa: la salute, chi è in forma, un'esclusione dei malati.",
+    "casella_senza_acciacchi_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Escludi infortunati e acciaccati: onda triangolare, un passo che torna sano, una scivolata di quinta e una nota ferma: una scivolata dal fa 5 al do 6 in 50 ms, una pausa di 10 ms e un fa 6 di 40 ms, al centro; 100 ms. Va bene per una casella spuntata, un'opzione accesa: la salute, chi è in forma, un'esclusione dei malati.",
         "score": [
             [
                 "f5.c6",
@@ -29603,8 +29603,8 @@
             30.0
         ]
     },
-    "mess_casella_senza_acciacchi_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Escludi infortunati e acciaccati: onda triangolare, lo specchio di mess_casella_senza_acciacchi_spuntata, con lo stesso timbro, che scende: un fa 6 di 40 ms, una pausa di 10 ms e una scivolata dal do 6 al fa 5 in 50 ms, al centro; 100 ms. Va bene per una casella tolta, un'opzione spenta: la salute, chi è in forma, un'esclusione dei malati.",
+    "casella_senza_acciacchi_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Escludi infortunati e acciaccati: onda triangolare, lo specchio di casella_senza_acciacchi_spuntata, con lo stesso timbro, che scende: un fa 6 di 40 ms, una pausa di 10 ms e una scivolata dal do 6 al fa 5 in 50 ms, al centro; 100 ms. Va bene per una casella tolta, un'opzione spenta: la salute, chi è in forma, un'esclusione dei malati.",
         "score": [
             [
                 "f6",
@@ -29633,8 +29633,8 @@
             30.0
         ]
     },
-    "mess_casella_ritirati_che_allenano_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Solo i ritirati che allenano: rumore azzurro, il fischio dell'ex giocatore che allena, il gesto di mess_casella_ritirati_spuntata portato in alto: una banda che scorre da 3000-6000 a 4500-9000 Hz in 40 ms, una pausa di 15 ms e una banda fra 4500 e 9000 Hz di 30 ms, al centro; 85 ms. Va bene per una casella spuntata, un'opzione accesa: gli ex atleti diventati tecnici, chi insegna.",
+    "casella_ritirati_che_allenano_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Solo i ritirati che allenano: rumore azzurro, il fischio dell'ex giocatore che allena, il gesto di casella_ritirati_spuntata portato in alto: una banda che scorre da 3000-6000 a 4500-9000 Hz in 40 ms, una pausa di 15 ms e una banda fra 4500 e 9000 Hz di 30 ms, al centro; 85 ms. Va bene per una casella spuntata, un'opzione accesa: gli ex atleti diventati tecnici, chi insegna.",
         "score": [
             [
                 "3000-6000.4500-9000",
@@ -29663,8 +29663,8 @@
             30.0
         ]
     },
-    "mess_casella_ritirati_che_allenano_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Solo i ritirati che allenano: rumore azzurro, lo specchio di mess_casella_ritirati_che_allenano_spuntata, con lo stesso timbro, che scende: una banda fra 4500 e 9000 Hz di 30 ms, una pausa di 15 ms e una banda che scorre da 4500-9000 a 3000-6000 Hz in 40 ms, al centro; 85 ms. Va bene per una casella tolta, un'opzione spenta: gli ex atleti diventati tecnici, chi insegna.",
+    "casella_ritirati_che_allenano_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Solo i ritirati che allenano: rumore azzurro, lo specchio di casella_ritirati_che_allenano_spuntata, con lo stesso timbro, che scende: una banda fra 4500 e 9000 Hz di 30 ms, una pausa di 15 ms e una banda che scorre da 4500-9000 a 3000-6000 Hz in 40 ms, al centro; 85 ms. Va bene per una casella tolta, un'opzione spenta: gli ex atleti diventati tecnici, chi insegna.",
         "score": [
             [
                 "4500-9000",
@@ -29693,8 +29693,8 @@
             30.0
         ]
     },
-    "mess_casella_solo_nuovi_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Solo i nuovi arrivati della sessione: sinusoide, uno scintillio di novità, quattro note in fila: un mi 6 di 20 ms, un si 6 di 20 ms, un mi 7 di 20 ms e un sol diesis 7 di 30 ms, al centro; 90 ms. Va bene per una casella spuntata, un'opzione accesa: i nuovi arrivati, le novità della sessione, chi è appena entrato.",
+    "casella_solo_nuovi_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Solo i nuovi arrivati della sessione: sinusoide, uno scintillio di novità, quattro note in fila: un mi 6 di 20 ms, un si 6 di 20 ms, un mi 7 di 20 ms e un sol diesis 7 di 30 ms, al centro; 90 ms. Va bene per una casella spuntata, un'opzione accesa: i nuovi arrivati, le novità della sessione, chi è appena entrato.",
         "score": [
             [
                 "e6",
@@ -29729,8 +29729,8 @@
             30.0
         ]
     },
-    "mess_casella_solo_nuovi_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Solo i nuovi arrivati della sessione: sinusoide, lo specchio di mess_casella_solo_nuovi_spuntata, con lo stesso timbro, che scende: un sol diesis 7 di 30 ms, un mi 7 di 20 ms, un si 6 di 20 ms e un mi 6 di 20 ms, al centro; 90 ms. Va bene per una casella tolta, un'opzione spenta: i nuovi arrivati, le novità della sessione, chi è appena entrato.",
+    "casella_solo_nuovi_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Solo i nuovi arrivati della sessione: sinusoide, lo specchio di casella_solo_nuovi_spuntata, con lo stesso timbro, che scende: un sol diesis 7 di 30 ms, un mi 7 di 20 ms, un si 6 di 20 ms e un mi 6 di 20 ms, al centro; 90 ms. Va bene per una casella tolta, un'opzione spenta: i nuovi arrivati, le novità della sessione, chi è appena entrato.",
         "score": [
             [
                 "g#7",
@@ -29765,8 +29765,8 @@
             30.0
         ]
     },
-    "mess_casella_usciti_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Comprendi gli usciti di scena: rumore bianco, un soffio che attraversa da sinistra a destra, chi era uscito di scena che rientra nel conto: una banda che scorre da 1000-3000 a 2000-6000 Hz in 40 ms un poco a sinistra e una banda che scorre da 2000-6000 a 3000-9000 Hz in 40 ms un poco a destra; 80 ms. Va bene per una casella spuntata, un'opzione accesa: chi non c'è più, un elenco che comprende anche gli assenti.",
+    "casella_usciti_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Comprendi gli usciti di scena: rumore bianco, un soffio che attraversa da sinistra a destra, chi era uscito di scena che rientra nel conto: una banda che scorre da 1000-3000 a 2000-6000 Hz in 40 ms un poco a sinistra e una banda che scorre da 2000-6000 a 3000-9000 Hz in 40 ms un poco a destra; 80 ms. Va bene per una casella spuntata, un'opzione accesa: chi non c'è più, un elenco che comprende anche gli assenti.",
         "score": [
             [
                 "1000-3000.2000-6000",
@@ -29789,8 +29789,8 @@
             30.0
         ]
     },
-    "mess_casella_usciti_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Comprendi gli usciti di scena: rumore bianco, lo specchio di mess_casella_usciti_spuntata, con lo stesso timbro, che scende: una banda che scorre da 3000-9000 a 2000-6000 Hz in 40 ms un poco a destra e una banda che scorre da 2000-6000 a 1000-3000 Hz in 40 ms un poco a sinistra; 80 ms. Va bene per una casella tolta, un'opzione spenta: chi non c'è più, un elenco che comprende anche gli assenti.",
+    "casella_usciti_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Comprendi gli usciti di scena: rumore bianco, lo specchio di casella_usciti_spuntata, con lo stesso timbro, che scende: una banda che scorre da 3000-9000 a 2000-6000 Hz in 40 ms un poco a destra e una banda che scorre da 2000-6000 a 1000-3000 Hz in 40 ms un poco a sinistra; 80 ms. Va bene per una casella tolta, un'opzione spenta: chi non c'è più, un elenco che comprende anche gli assenti.",
         "score": [
             [
                 "3000-9000.2000-6000",
@@ -29813,8 +29813,8 @@
             30.0
         ]
     },
-    "mess_casella_senza_prelazione_spuntata": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si spunta la casella Escludi chi è in prelazione per altri: dente di sega, il posto segnato a nome di un altro di mess_allenatore_in_prelazione, che invece di ricadere sale: un la 5 di 25 ms, una pausa di 10 ms, un re 6 di 25 ms, una pausa di 10 ms e una scivolata dal re 6 al la 6 in 50 ms, al centro; 120 ms. Va bene per una casella spuntata, un'opzione accesa: una riserva per altri da lasciare fuori, una precedenza.",
+    "casella_senza_prelazione_spuntata": {
+        "descrizione": "In una finestra di ricerca si spunta la casella Escludi chi è in prelazione per altri: dente di sega, il posto segnato a nome di un altro di mess_allenatore_in_prelazione, che invece di ricadere sale: un la 5 di 25 ms, una pausa di 10 ms, un re 6 di 25 ms, una pausa di 10 ms e una scivolata dal re 6 al la 6 in 50 ms, al centro; 120 ms. Va bene per una casella spuntata, un'opzione accesa: una riserva per altri da lasciare fuori, una precedenza.",
         "score": [
             [
                 "a5",
@@ -29855,8 +29855,8 @@
             30.0
         ]
     },
-    "mess_casella_senza_prelazione_tolta": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca si toglie la spunta alla casella Escludi chi è in prelazione per altri: dente di sega, lo specchio di mess_casella_senza_prelazione_spuntata, con lo stesso timbro, che scende: una scivolata dal la 6 al re 6 in 50 ms, una pausa di 10 ms, un re 6 di 25 ms, una pausa di 10 ms e un la 5 di 25 ms, al centro; 120 ms. Va bene per una casella tolta, un'opzione spenta: una riserva per altri da lasciare fuori, una precedenza.",
+    "casella_senza_prelazione_tolta": {
+        "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Escludi chi è in prelazione per altri: dente di sega, lo specchio di casella_senza_prelazione_spuntata, con lo stesso timbro, che scende: una scivolata dal la 6 al re 6 in 50 ms, una pausa di 10 ms, un re 6 di 25 ms, una pausa di 10 ms e un la 5 di 25 ms, al centro; 120 ms. Va bene per una casella tolta, un'opzione spenta: una riserva per altri da lasciare fuori, una precedenza.",
         "score": [
             [
                 "a6.d6",
@@ -29897,8 +29897,8 @@
             30.0
         ]
     },
-    "mess_filtro_classe_peggiore": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia la classe peggiore, a ogni freccia: sinusoide, lo specchio di mess_filtro_classe_allenatori, un passo di classe che scende di una terza: un mi 6 di 20 ms, una pausa di 5 ms e un do 6 di 20 ms, al centro; 45 ms. Va bene per ogni soglia o livello più basso, un limite inferiore.",
+    "filtro_classe_peggiore": {
+        "descrizione": "In una finestra di ricerca cambia la classe peggiore, a ogni freccia: sinusoide, lo specchio di mess_filtro_classe_allenatori, un passo di classe che scende di una terza: un mi 6 di 20 ms, una pausa di 5 ms e un do 6 di 20 ms, al centro; 45 ms. Va bene per ogni soglia o livello più basso, un limite inferiore.",
         "score": [
             [
                 "e6",
@@ -29927,8 +29927,8 @@
             30.0
         ]
     },
-    "mess_filtro_regione": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia la regione, a ogni freccia: dente di sega, un passo largo sulla carta d'Italia, una quinta che sale da sinistra a destra: un la 5 di 20 ms un poco a sinistra, una pausa di 5 ms e un mi 6 di 25 ms un poco a destra; 50 ms. Va bene per ogni scelta di un luogo grande, una zona, un territorio.",
+    "filtro_regione": {
+        "descrizione": "In una finestra di ricerca cambia la regione, a ogni freccia: dente di sega, un passo largo sulla carta d'Italia, una quinta che sale da sinistra a destra: un la 5 di 20 ms un poco a sinistra, una pausa di 5 ms e un mi 6 di 25 ms un poco a destra; 50 ms. Va bene per ogni scelta di un luogo grande, una zona, un territorio.",
         "score": [
             [
                 "a5",
@@ -29957,8 +29957,8 @@
             30.0
         ]
     },
-    "mess_filtro_provincia": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia la provincia, a ogni freccia: dente di sega, un passo stretto dentro la regione di mess_filtro_regione, una quarta giù e su: un la 6 di 15 ms, una pausa di 5 ms, un mi 6 di 15 ms, una pausa di 5 ms e un la 6 di 20 ms, tutto un poco a destra; 60 ms. Va bene per ogni scelta di un luogo più piccolo dentro uno grande.",
+    "filtro_provincia": {
+        "descrizione": "In una finestra di ricerca cambia la provincia, a ogni freccia: dente di sega, un passo stretto dentro la regione di filtro_regione, una quarta giù e su: un la 6 di 15 ms, una pausa di 5 ms, un mi 6 di 15 ms, una pausa di 5 ms e un la 6 di 20 ms, tutto un poco a destra; 60 ms. Va bene per ogni scelta di un luogo più piccolo dentro uno grande.",
         "score": [
             [
                 "a6",
@@ -29999,8 +29999,8 @@
             30.0
         ]
     },
-    "mess_filtro_tratto_si": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca un tratto, come mancino o maturazione tardiva, passa a Sì, a ogni freccia: onda triangolare, un sì, una nota e la stessa che sale di una quinta: un mi 6 di 20 ms, una pausa di 5 ms e una scivolata dal mi 6 al si 6 in 35 ms, al centro; 60 ms. Va bene per ogni risposta sì in una scelta fra sì, no e indifferente.",
+    "filtro_tratto_si": {
+        "descrizione": "In una finestra di ricerca un tratto, come mancino o maturazione tardiva, passa a Sì, a ogni freccia: onda triangolare, un sì, una nota e la stessa che sale di una quinta: un mi 6 di 20 ms, una pausa di 5 ms e una scivolata dal mi 6 al si 6 in 35 ms, al centro; 60 ms. Va bene per ogni risposta sì in una scelta fra sì, no e indifferente.",
         "score": [
             [
                 "e6",
@@ -30029,8 +30029,8 @@
             30.0
         ]
     },
-    "mess_filtro_tratto_no": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca un tratto passa a No, a ogni freccia: onda triangolare, lo specchio di mess_filtro_tratto_si, un no che scende di una quinta: un si 6 di 20 ms, una pausa di 5 ms e una scivolata dal si 6 al mi 6 in 35 ms, al centro; 60 ms. Va bene per ogni risposta no in una scelta fra sì, no e indifferente.",
+    "filtro_tratto_no": {
+        "descrizione": "In una finestra di ricerca un tratto passa a No, a ogni freccia: onda triangolare, lo specchio di filtro_tratto_si, un no che scende di una quinta: un si 6 di 20 ms, una pausa di 5 ms e una scivolata dal si 6 al mi 6 in 35 ms, al centro; 60 ms. Va bene per ogni risposta no in una scelta fra sì, no e indifferente.",
         "score": [
             [
                 "b6",
@@ -30059,8 +30059,8 @@
             30.0
         ]
     },
-    "mess_filtro_tratto_indifferente": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca un tratto torna Indifferente, a ogni freccia: onda triangolare, una spalla alzata, una terza su e giù che torna al punto di partenza: un mi 6 di 20 ms, un sol 6 di 20 ms e un mi 6 di 20 ms, al centro; 60 ms. Va bene per ogni scelta neutra, un criterio che non conta più.",
+    "filtro_tratto_indifferente": {
+        "descrizione": "In una finestra di ricerca un tratto torna Indifferente, a ogni freccia: onda triangolare, una spalla alzata, una terza su e giù che torna al punto di partenza: un mi 6 di 20 ms, un sol 6 di 20 ms e un mi 6 di 20 ms, al centro; 60 ms. Va bene per ogni scelta neutra, un criterio che non conta più.",
         "score": [
             [
                 "e6",
@@ -30089,8 +30089,8 @@
             30.0
         ]
     },
-    "mess_filtro_indole": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia l'indole, a ogni freccia: sinusoide, un carattere, due passi che salgono e un'inflessione che ricade di un tono: un re 6 di 20 ms, un fa 6 di 20 ms e una scivolata dal la 6 al sol 6 in 30 ms, al centro; 70 ms. Va bene per ogni scelta di un carattere, di un umore, di una personalità.",
+    "filtro_indole": {
+        "descrizione": "In una finestra di ricerca cambia l'indole, a ogni freccia: sinusoide, un carattere, due passi che salgono e un'inflessione che ricade di un tono: un re 6 di 20 ms, un fa 6 di 20 ms e una scivolata dal la 6 al sol 6 in 30 ms, al centro; 70 ms. Va bene per ogni scelta di un carattere, di un umore, di una personalità.",
         "score": [
             [
                 "d6",
@@ -30119,8 +30119,8 @@
             30.0
         ]
     },
-    "mess_filtro_visus": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia il visus degli allenatori, a ogni freccia: sinusoide, un colpo d'occhio, una quinta acuta su e giù: un si 6 di 15 ms, una pausa di 5 ms, un fa diesis 7 di 15 ms, una pausa di 5 ms e un si 6 di 20 ms, al centro; 60 ms. Va bene per ogni scelta che riguarda la vista, uno sguardo, una categoria di visione.",
+    "filtro_visus": {
+        "descrizione": "In una finestra di ricerca cambia il visus degli allenatori, a ogni freccia: sinusoide, un colpo d'occhio, una quinta acuta su e giù: un si 6 di 15 ms, una pausa di 5 ms, un fa diesis 7 di 15 ms, una pausa di 5 ms e un si 6 di 20 ms, al centro; 60 ms. Va bene per ogni scelta che riguarda la vista, uno sguardo, una categoria di visione.",
         "score": [
             [
                 "b6",
@@ -30161,8 +30161,8 @@
             30.0
         ]
     },
-    "mess_filtro_posto_attuale": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia il posto attuale degli allenatori, capo o assistente, a ogni freccia: sinusoide, lo specchio di mess_staff_posto_scelto, un tocco minimo che scivola appena in giù: una scivolata dal la 6 al fa diesis 6 in 35 ms, al centro; 35 ms. Va bene per ogni scelta di un ruolo già occupato, di un incarico.",
+    "filtro_posto_attuale": {
+        "descrizione": "In una finestra di ricerca cambia il posto attuale degli allenatori, capo o assistente, a ogni freccia: sinusoide, lo specchio di mess_staff_posto_scelto, un tocco minimo che scivola appena in giù: una scivolata dal la 6 al fa diesis 6 in 35 ms, al centro; 35 ms. Va bene per ogni scelta di un ruolo già occupato, di un incarico.",
         "score": [
             [
                 "a6.f#6",
@@ -30179,8 +30179,8 @@
             30.0
         ]
     },
-    "mess_filtro_eta_minima": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia l'età minima, quando ci si ferma: onda triangolare, lo specchio di mess_filtro_eta_allenatori, una scivolata breve che sale di una quarta: una scivolata dal re 6 al sol 6 in 50 ms, al centro; 50 ms. Va bene per ogni limite d'età o di tempo dal basso.",
+    "filtro_eta_minima": {
+        "descrizione": "In una finestra di ricerca cambia l'età minima, quando ci si ferma: onda triangolare, lo specchio di mess_filtro_eta_allenatori, una scivolata breve che sale di una quarta: una scivolata dal re 6 al sol 6 in 50 ms, al centro; 50 ms. Va bene per ogni limite d'età o di tempo dal basso.",
         "score": [
             [
                 "d6.g6",
@@ -30197,8 +30197,8 @@
             30.0
         ]
     },
-    "mess_filtro_costo_massimo": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia il costo massimo, quando ci si ferma: onda triangolare, le due monete di mess_cifra_ingaggio_allenatore e un tetto più grave: un mi 7 di 20 ms un poco a destra, una pausa di 15 ms, un si 6 di 20 ms un poco a destra, una pausa di 20 ms e un mi 6 di 40 ms; 115 ms. Va bene per ogni limite di spesa, un prezzo massimo, un budget.",
+    "filtro_costo_massimo": {
+        "descrizione": "In una finestra di ricerca cambia il costo massimo, quando ci si ferma: onda triangolare, le due monete di mess_cifra_ingaggio_allenatore e un tetto più grave: un mi 7 di 20 ms un poco a destra, una pausa di 15 ms, un si 6 di 20 ms un poco a destra, una pausa di 20 ms e un mi 6 di 40 ms; 115 ms. Va bene per ogni limite di spesa, un prezzo massimo, un budget.",
         "score": [
             [
                 "e7",
@@ -30239,8 +30239,8 @@
             30.0
         ]
     },
-    "mess_filtro_valore_minimo": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia il valore minimo, quando ci si ferma: sinusoide, un gradino da superare, una nota e la stessa che sale di una quinta: un sol 5 di 25 ms, una pausa di 10 ms e una scivolata dal sol 5 al re 6 in 40 ms, al centro; 75 ms. Va bene per ogni soglia minima di qualità, di punteggio o di valore.",
+    "filtro_valore_minimo": {
+        "descrizione": "In una finestra di ricerca cambia il valore minimo, quando ci si ferma: sinusoide, un gradino da superare, una nota e la stessa che sale di una quinta: un sol 5 di 25 ms, una pausa di 10 ms e una scivolata dal sol 5 al re 6 in 40 ms, al centro; 75 ms. Va bene per ogni soglia minima di qualità, di punteggio o di valore.",
         "score": [
             [
                 "g5",
@@ -30269,8 +30269,8 @@
             30.0
         ]
     },
-    "mess_filtro_stipendio_massimo": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia lo stipendio massimo dei giocatori, quando ci si ferma: dente di sega, la busta paga che si chiude, una terza su e giù e una scivolata che scende: un do 6 di 30 ms, un mi 6 di 30 ms e una scivolata dal do 6 al sol 5 in 50 ms, al centro; 110 ms. Va bene per ogni limite di paga o di costo mensile.",
+    "filtro_stipendio_massimo": {
+        "descrizione": "In una finestra di ricerca cambia lo stipendio massimo dei giocatori, quando ci si ferma: dente di sega, la busta paga che si chiude, una terza su e giù e una scivolata che scende: un do 6 di 30 ms, un mi 6 di 30 ms e una scivolata dal do 6 al sol 5 in 50 ms, al centro; 110 ms. Va bene per ogni limite di paga o di costo mensile.",
         "score": [
             [
                 "c6",
@@ -30299,8 +30299,8 @@
             30.0
         ]
     },
-    "mess_filtro_mesi_contratto": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia i mesi di contratto rimasti al massimo, quando ci si ferma: onda triangolare, le pagine del calendario, due tocchi uguali e un terzo più alto: un la 5 di 20 ms, una pausa di 10 ms, un la 5 di 20 ms, una pausa di 10 ms e un re 6 di 30 ms, al centro; 90 ms. Va bene per ogni durata massima, una scadenza, un conto dei mesi.",
+    "filtro_mesi_contratto": {
+        "descrizione": "In una finestra di ricerca cambia i mesi di contratto rimasti al massimo, quando ci si ferma: onda triangolare, le pagine del calendario, due tocchi uguali e un terzo più alto: un la 5 di 20 ms, una pausa di 10 ms, un la 5 di 20 ms, una pausa di 10 ms e un re 6 di 30 ms, al centro; 90 ms. Va bene per ogni durata massima, una scadenza, un conto dei mesi.",
         "score": [
             [
                 "a5",
@@ -30341,8 +30341,8 @@
             30.0
         ]
     },
-    "mess_filtro_stipendio_capo": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia lo stipendio chiesto da capo allenatore al massimo, quando ci si ferma: dente di sega, la busta paga di mess_filtro_stipendio_massimo che invece di chiudersi sale, per chi guida lo staff: un do 6 di 30 ms, un mi 6 di 30 ms e una scivolata dal sol 6 al do 7 in 50 ms, al centro; 110 ms. Va bene per ogni limite di paga di un responsabile, di un capo.",
+    "filtro_stipendio_capo": {
+        "descrizione": "In una finestra di ricerca cambia lo stipendio chiesto da capo allenatore al massimo, quando ci si ferma: dente di sega, la busta paga di filtro_stipendio_massimo che invece di chiudersi sale, per chi guida lo staff: un do 6 di 30 ms, un mi 6 di 30 ms e una scivolata dal sol 6 al do 7 in 50 ms, al centro; 110 ms. Va bene per ogni limite di paga di un responsabile, di un capo.",
         "score": [
             [
                 "c6",
@@ -30371,8 +30371,8 @@
             30.0
         ]
     },
-    "mess_filtro_comune": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia la parte del nome del comune, quando ci si ferma: rumore rosa, un nome scritto sulla mappa, un colpetto e un tratto che scende: una banda fra 2000 e 5000 Hz di 20 ms un poco a sinistra, una pausa di 10 ms e una banda che scorre da 2500-6000 a 1500-4000 Hz in 40 ms un poco a destra; 70 ms. Va bene per ogni ricerca per una parte di un nome di luogo.",
+    "filtro_comune": {
+        "descrizione": "In una finestra di ricerca cambia la parte del nome del comune, quando ci si ferma: rumore rosa, un nome scritto sulla mappa, un colpetto e un tratto che scende: una banda fra 2000 e 5000 Hz di 20 ms un poco a sinistra, una pausa di 10 ms e una banda che scorre da 2500-6000 a 1500-4000 Hz in 40 ms un poco a destra; 70 ms. Va bene per ogni ricerca per una parte di un nome di luogo.",
         "score": [
             [
                 "2000-5000",
@@ -30401,8 +30401,8 @@
             40.0
         ]
     },
-    "mess_filtro_polisportiva": {
-        "descrizione": "MESS, nella finestra Mercato e ricerca cambia la parte del nome della polisportiva, quando ci si ferma: rumore rosa, lo specchio di mess_filtro_comune, un tratto che sale e un colpetto, il nome scritto sulla maglia: una banda che scorre da 1500-4000 a 2500-6000 Hz in 40 ms un poco a sinistra, una pausa di 10 ms e una banda fra 2500 e 6000 Hz di 20 ms un poco a destra; 70 ms. Va bene per ogni ricerca per una parte di un nome di squadra o di società.",
+    "filtro_polisportiva": {
+        "descrizione": "In una finestra di ricerca cambia la parte del nome della polisportiva, quando ci si ferma: rumore rosa, lo specchio di filtro_comune, un tratto che sale e un colpetto, il nome scritto sulla maglia: una banda che scorre da 1500-4000 a 2500-6000 Hz in 40 ms un poco a sinistra, una pausa di 10 ms e una banda fra 2500 e 6000 Hz di 20 ms un poco a destra; 70 ms. Va bene per ogni ricerca per una parte di un nome di squadra o di società.",
         "score": [
             [
                 "1500-4000.2500-6000",
@@ -30431,8 +30431,8 @@
             40.0
         ]
     },
-    "mess_filtri_azzerati": {
-        "descrizione": "MESS, nella scheda Altri filtri della finestra Mercato e ricerca, Azzera questi filtri li riporta tutti ai valori di serie: onda triangolare, la pulizia di mess_filtri_tutti_tolti in ottave, due scivolate da destra e da sinistra e l'ultima, più piena, che scende ancora: una scivolata dal mi 7 al mi 6 in 60 ms a destra, una pausa di 15 ms, una scivolata dal mi 7 al mi 6 in 60 ms a sinistra, una pausa di 15 ms e una scivolata dal mi 6 al mi 5 in 100 ms; 250 ms. Va bene per ogni azzeramento di un gruppo di impostazioni, un ritorno ai valori di serie.",
+    "filtri_azzerati": {
+        "descrizione": "In una scheda di filtri, Azzera questi filtri li riporta tutti ai valori di serie: onda triangolare, la pulizia di mess_filtri_tutti_tolti in ottave, due scivolate da destra e da sinistra e l'ultima, più piena, che scende ancora: una scivolata dal mi 7 al mi 6 in 60 ms a destra, una pausa di 15 ms, una scivolata dal mi 7 al mi 6 in 60 ms a sinistra, una pausa di 15 ms e una scivolata dal mi 6 al mi 5 in 100 ms; 250 ms. Va bene per ogni azzeramento di un gruppo di impostazioni, un ritorno ai valori di serie.",
         "score": [
             [
                 "e7.e6",
@@ -30723,6 +30723,534 @@
             99.0,
             0.0,
             0.0
+        ]
+    },
+    "mess_collegamento_e": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca il collegamento di una regola passa alla e, che la lega alle altre regole della sua alternativa, nella regola in preparazione a ogni freccia o in una regola fatta con la lettera E sull'elenco delle regole: onda triangolare, due note da sinistra e da destra che si uniscono al centro nell'accordo di do diesis minore, la maglia di mess_filtro_aggiunto che si chiude: un mi 6 di 25 ms a sinistra, un sol diesis 6 di 25 ms a destra e un do diesis 7 di 50 ms; 100 ms. Va bene per ogni legame fra condizioni che valgono insieme, una e, un'unione.",
+        "score": [
+            [
+                "e6",
+                0.025,
+                -0.35,
+                -0.16
+            ],
+            [
+                "g#6",
+                0.025,
+                0.35,
+                -0.16
+            ],
+            [
+                "c#7",
+                0.05,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_collegamento_o": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca il collegamento di una regola passa alla o, che con lei apre un'alternativa nuova, nella regola in preparazione a ogni freccia o in una regola fatta con la lettera O sull'elenco delle regole: onda triangolare, le note di mess_collegamento_e che invece di unirsi oscillano due volte fra sinistra e destra, l'una o l'altra, l'ultima più piano: un sol diesis 6 di 25 ms a sinistra, un mi 6 di 25 ms a destra, un sol diesis 6 di 25 ms a sinistra e un mi 6 di 25 ms a destra; 100 ms. Va bene per ogni scelta fra alternative, una o, un bivio.",
+        "score": [
+            [
+                "g#6",
+                0.025,
+                -0.35,
+                -0.16
+            ],
+            [
+                "e6",
+                0.025,
+                0.35,
+                -0.16
+            ],
+            [
+                "g#6",
+                0.025,
+                -0.35,
+                -0.16
+            ],
+            [
+                "e6",
+                0.025,
+                0.35,
+                -0.2
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_caratteristica_numero": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca la caratteristica della regola in preparazione passa a una che si misura con un numero, come l'età, il costo o una caratteristica di gioco, a ogni freccia: sinusoide, tre tic che contano, uno, due e tre, salendo di un tono alla volta: un do 6 di 12 ms, una pausa di 6 ms, un re 6 di 12 ms, una pausa di 6 ms e un mi 6 di 16 ms, al centro; 52 ms. Va bene per ogni scelta di un dato numerico, una misura, un conteggio.",
+        "score": [
+            [
+                "c6",
+                0.012,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "d6",
+                0.012,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.016,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_caratteristica_classe": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca la caratteristica della regola in preparazione passa alla classe, a ogni freccia: onda triangolare, un gradino della scala delle classi, una scivolata di terza minore e una nota che sale ancora di una terza: una scivolata dal re 6 al fa 6 in 25 ms, una pausa di 5 ms e un la 6 di 20 ms, al centro; 50 ms. Va bene per ogni scelta di un livello, di un grado, di una categoria in ordine.",
+        "score": [
+            [
+                "d6.f6",
+                0.025,
+                0.0,
+                -0.18
+            ],
+            [
+                "p",
+                0.005,
+                0.0,
+                -0.5
+            ],
+            [
+                "a6",
+                0.02,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_caratteristica_testo": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca la caratteristica della regola in preparazione passa a una che si scrive, come il nome o numero, il comune o la polisportiva, a ogni freccia: rumore rosa, il tratto di una penna, un colpetto e una riga che scende: una banda fra 2500 e 6000 Hz di 15 ms, una pausa di 8 ms e una banda che scorre da 3500-8000 a 2500-6000 Hz in 25 ms, al centro; 48 ms. Va bene per ogni scelta di un dato da scrivere, un nome, una parola da cercare.",
+        "score": [
+            [
+                "2500-6000",
+                0.015,
+                0.0,
+                0.25
+            ],
+            [
+                "p",
+                0.008,
+                0.0,
+                -0.5
+            ],
+            [
+                "3500-8000.2500-6000",
+                0.025,
+                0.0,
+                0.25
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            10.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "mess_caratteristica_scelta": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca la caratteristica della regola in preparazione passa a una che si sceglie da un elenco, come lo stato, il sesso, la regione o l'indole, a ogni freccia: dente di sega, un dito che scorre le voci di un elenco, una terza che sale e una quinta che ricade: un sol diesis 6 di 20 ms, un si 6 di 12 ms e un mi 6 di 25 ms, al centro; 57 ms. Va bene per ogni scelta di un dato fra voci fisse, un menu, una categoria.",
+        "score": [
+            [
+                "g#6",
+                0.02,
+                0.0,
+                -0.24
+            ],
+            [
+                "b6",
+                0.012,
+                0.0,
+                -0.24
+            ],
+            [
+                "e6",
+                0.025,
+                0.0,
+                -0.24
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_caratteristica_si_no": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca la caratteristica della regola in preparazione passa a una che è sì o no, come la disponibilità oggi per un'amichevole, mancino o nuovo arrivato, a ogni freccia: onda triangolare, un cenno del capo, una scivolata di quinta che scende e la stessa che risale: una scivolata dal si 6 al mi 6 in 20 ms, una pausa di 10 ms e una scivolata dal mi 6 al si 6 in 25 ms, al centro; 55 ms. Va bene per ogni scelta di un dato che c'è o non c'è, un sì o no, un interruttore.",
+        "score": [
+            [
+                "b6.e6",
+                0.02,
+                0.0,
+                -0.18
+            ],
+            [
+                "p",
+                0.01,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6.b6",
+                0.025,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_regola_operatore": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca cambia l'operatore della regola in preparazione, come uguale a, minore o uguale a, contiene o non ha il dato, a ogni freccia: sinusoide, una leva che scatta e si assesta, un tic che salta di una quinta e ricade di una terza: un fa 6 di 12 ms, una pausa di 8 ms, un do 7 di 12 ms, una pausa di 8 ms e un la 6 di 16 ms, al centro; 56 ms. Va bene per ogni scelta di un confronto, di un segno, di un modo di misurare.",
+        "score": [
+            [
+                "f6",
+                0.012,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.008,
+                0.0,
+                -0.5
+            ],
+            [
+                "c7",
+                0.012,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.008,
+                0.0,
+                -0.5
+            ],
+            [
+                "a6",
+                0.016,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_valore_scelto": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca il Valore a scelta della regola in preparazione passa a una voce, come libero o donna, a ogni freccia: sinusoide, un segno di spunta minimo, un tic e uno scatto che sale di una quarta e scivola ancora di un tono: un la 6 di 12 ms, una pausa di 6 ms e una scivolata dal re 7 al mi 7 in 20 ms, al centro; 38 ms. Va bene per ogni voce presa da un elenco a tendina, una risposta scelta fra poche.",
+        "score": [
+            [
+                "a6",
+                0.012,
+                0.0,
+                -0.22
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "d7.e7",
+                0.02,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_valore_tolto": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca il Valore della regola in preparazione resta senza valore, e la regola non conta, sulla voce nessun valore a ogni freccia o col campo svuotato quando ci si ferma: onda triangolare, un valore che scivola via, una scivolata morbida che scende di una quinta: una scivolata dal la 6 al re 6 in 50 ms, al centro; 50 ms. Va bene per un campo svuotato, una scelta tolta, un dato che non c'è più.",
+        "score": [
+            [
+                "a6.d6",
+                0.05,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_valore_scritto": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca il valore scritto nel Valore diventa buono, e la regola in preparazione conta, quando ci si ferma: sinusoide, un valore che va bene, una quarta e un tono che salgono e si posano: un mi 6 di 20 ms, un la 6 di 20 ms e un si 6 di 35 ms, al centro; 75 ms. Va bene per un dato scritto bene, un campo valido, un valore accettato mentre si scrive.",
+        "score": [
+            [
+                "e6",
+                0.02,
+                0.0,
+                -0.18
+            ],
+            [
+                "a6",
+                0.02,
+                0.0,
+                -0.18
+            ],
+            [
+                "b6",
+                0.035,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            12.0,
+            10.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_valore_da_correggere": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca il valore scritto nel Valore diventa sbagliato, come un numero fuori misura o un punto fuori posto, e la regola in preparazione non conta, quando ci si ferma: onda triangolare, il rifiuto di mess_campo_da_correggere più lieve e più acuto, una scivolata che cede di un tono, una pausa e un punto acutissimo, più piano: una scivolata dal mi 5 al re 5 in 60 ms, una pausa di 20 ms e un mi 7 di 15 ms, al centro; 95 ms. Va bene per un dato scritto male mentre lo si scrive, un avviso leggero che non ferma niente.",
+        "score": [
+            [
+                "e5.d5",
+                0.06,
+                0.0,
+                -0.14
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "e7",
+                0.015,
+                0.0,
+                -0.24
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_regola_spostata_su": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca Ctrl+Su sull'elenco delle regole sposta la regola scelta un posto più su: onda triangolare, la maglia di mess_filtro_aggiunto che sale di un posto, l'accordo di do diesis minore e una scivolata di quarta in su: un do diesis 6 di 20 ms, un mi 6 di 20 ms e una scivolata dal sol diesis 6 al do diesis 7 in 35 ms, al centro; 75 ms. Va bene per una voce che sale di un posto in un elenco ordinato a mano, una condizione anticipata.",
+        "score": [
+            [
+                "c#6",
+                0.02,
+                0.0,
+                -0.16
+            ],
+            [
+                "e6",
+                0.02,
+                0.0,
+                -0.16
+            ],
+            [
+                "g#6.c#7",
+                0.035,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_regola_spostata_giu": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca Ctrl+Giù sull'elenco delle regole sposta la regola scelta un posto più giù: onda triangolare, lo specchio di mess_regola_spostata_su, con lo stesso timbro, che scende: una scivolata dal do diesis 7 al sol diesis 6 in 35 ms, un mi 6 di 20 ms e un do diesis 6 di 20 ms, al centro; 75 ms. Va bene per una voce che scende di un posto in un elenco ordinato a mano, una condizione rimandata.",
+        "score": [
+            [
+                "c#7.g#6",
+                0.035,
+                0.0,
+                -0.14
+            ],
+            [
+                "e6",
+                0.02,
+                0.0,
+                -0.16
+            ],
+            [
+                "c#6",
+                0.02,
+                0.0,
+                -0.16
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_regola_al_bordo": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca Ctrl+Su sulla prima regola, o Ctrl+Giù sull'ultima, che non si sposta oltre: onda triangolare, la salita di mess_regola_spostata_su che urta il bordo dopo un semitono e ricade, più piano: un do diesis 6 di 20 ms, un mi 6 di 20 ms, una scivolata dal sol diesis 6 al la 6 in 30 ms, una pausa di 15 ms e un sol diesis 6 di 30 ms, al centro; 115 ms. Va bene per una voce già al primo o all'ultimo posto, uno spostamento che arriva al limite.",
+        "score": [
+            [
+                "c#6",
+                0.02,
+                0.0,
+                -0.16
+            ],
+            [
+                "e6",
+                0.02,
+                0.0,
+                -0.16
+            ],
+            [
+                "g#6.a6",
+                0.03,
+                0.0,
+                -0.16
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#6",
+                0.03,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_regole_al_limite": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca Aggiungi regola con già 50 regole nell'elenco, e la regola in preparazione non entra: onda triangolare, la maglia di mess_filtro_aggiunto che non entra, i due tocchi sul do diesis 6 e la scivolata che si ferma dopo un tono e ricade sotto la partenza: un do diesis 6 di 25 ms, una pausa di 15 ms, un do diesis 6 di 25 ms, una pausa di 15 ms, una scivolata dal do diesis 6 al re diesis 6 in 40 ms e una scivolata dal re diesis 6 al do 6 in 70 ms, al centro; 190 ms. Va bene per un elenco pieno, un limite raggiunto, un'aggiunta che non trova posto.",
+        "score": [
+            [
+                "c#6",
+                0.025,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6",
+                0.025,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6.d#6",
+                0.04,
+                0.0,
+                -0.1
+            ],
+            [
+                "d#6.c6",
+                0.07,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
         ]
     }
 }
