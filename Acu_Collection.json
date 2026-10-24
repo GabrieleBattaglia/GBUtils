@@ -28186,5 +28186,53 @@
             50.0,
             30.0
         ]
+    },
+    "mess_partita_blocco": {
+        "descrizione": "MESS, partita dal vivo, il blocco, la paletta che ferma di botto la pallina contro la sponda: rumore rosa al centro, lo scatto della pallina sul legno della sponda, 4 ms fra 1500 e 5000 Hz, e subito la paletta che la schiaccia, un urto pieno di 9 ms fra 400 e 1800 Hz, con il corpo sordo di sponda e paletta insieme, 24 ms fra 450 e 900 Hz, più basso della sponda; poi un grano dei pallini e uno soffocato, perché la pallina si ferma di colpo, senza l'assestamento della parata, mess_partita_parata; 50 ms. Nella partita dal vivo MESS lo mette nello spazio del tavolo, sulla sponda dove avviene il blocco, vicino o lontano, e lo alza insieme agli altri suoni della partita. Va bene per un colpo fermato di netto, una pallina schiacciata contro un bordo, una presa secca.",
+        "score": [
+            [
+                "1500-5000",
+                0.004,
+                0.0,
+                0.16
+            ],
+            [
+                "400-1800",
+                0.009,
+                0.0,
+                0.38
+            ],
+            [
+                "450-900",
+                0.024,
+                0.0,
+                0.18
+            ],
+            [
+                "3000-8000",
+                0.004,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.006,
+                0.0,
+                -0.5
+            ],
+            [
+                "2500-6500",
+                0.003,
+                0.0,
+                -0.42
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            1.0,
+            99.0,
+            0.0,
+            0.0
+        ]
     }
 }
