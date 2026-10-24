@@ -31252,5 +31252,77 @@
             80.0,
             30.0
         ]
+    },
+    "mess_collegamento_della_prima": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca la lettera O sulla prima regola dell'elenco delle regole, che ha sempre la e e non apre un'alternativa: onda triangolare, l'oscillazione di mess_collegamento_o che si ferma dopo un solo passo fra sinistra e destra e ricade al centro, più in basso e più piano: un sol diesis 6 di 25 ms a sinistra, un mi 6 di 25 ms a destra, una pausa di 15 ms e un do diesis 6 di 40 ms; 105 ms. Va bene per un'alternativa che non si può aprire, un primo posto che resta com'è, una scelta rifiutata con garbo.",
+        "score": [
+            [
+                "g#6",
+                0.025,
+                -0.35,
+                -0.16
+            ],
+            [
+                "e6",
+                0.025,
+                0.35,
+                -0.16
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6",
+                0.04,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
+    },
+    "mess_collegamento_invariato": {
+        "descrizione": "MESS, nella scheda Filtri della finestra Mercato e ricerca la lettera E od O su una regola dell'elenco delle regole che ha già quel collegamento, compresa la E sulla prima, e niente cambia: onda triangolare, il nodo di mess_collegamento_e già stretto, la sua nota d'arrivo presa dalla quarta sotto e ribattuta più piano: un sol diesis 6 di 15 ms, un do diesis 7 di 20 ms, una pausa di 30 ms e un do diesis 7 di 20 ms, al centro; 85 ms. Va bene per una conferma senza cambiamento, un'impostazione che c'era già, un tasto che trova tutto a posto.",
+        "score": [
+            [
+                "g#6",
+                0.015,
+                0.0,
+                -0.22
+            ],
+            [
+                "c#7",
+                0.02,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#7",
+                0.02,
+                0.0,
+                -0.28
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            10.0,
+            10.0,
+            80.0,
+            30.0
+        ]
     }
 }
