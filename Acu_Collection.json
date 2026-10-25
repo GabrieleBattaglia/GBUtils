@@ -31324,5 +31324,365 @@
             80.0,
             30.0
         ]
+    },
+    "mess_barra_di_stato": {
+        "descrizione": "MESS, si apre la finestra della barra di stato, dal menu Impostazioni: sinusoide, le palline del pallottoliere che si allineano da sinistra a destra sull'accordo di fa maggiore: un do 5 di 30 ms a sinistra, un fa 5 di 30 ms un poco a sinistra, un la 5 di 30 ms un poco a destra e un do 6 di 70 ms a destra; 160 ms. Va bene per l'apertura di una finestra di impostazioni, una fila di cose da mettere in ordine.",
+        "score": [
+            [
+                "c5",
+                0.03,
+                -0.6,
+                -0.18
+            ],
+            [
+                "f5",
+                0.03,
+                -0.2,
+                -0.17
+            ],
+            [
+                "a5",
+                0.03,
+                0.2,
+                -0.16
+            ],
+            [
+                "c6",
+                0.07,
+                0.6,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_barra_dato_aggiunto": {
+        "descrizione": "MESS, nella finestra della barra di stato Invio o Spazio su Dati disponibili, e il dato va in fondo alla riga: sinusoide, una pallina che scivola verso destra e si posa nella riga: una scivolata dal do 6 al fa 6 in 60 ms un poco a sinistra e un fa 6 di 40 ms un poco a destra; 100 ms. Va bene per un elemento aggiunto in fondo a un elenco, una scelta che entra.",
+        "score": [
+            [
+                "c6.f6",
+                0.06,
+                -0.3,
+                -0.17
+            ],
+            [
+                "f6",
+                0.04,
+                0.3,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_barra_dato_tolto": {
+        "descrizione": "MESS, nella finestra della barra di stato Invio, Spazio o Canc su Dati della riga, e il dato torna fra i disponibili: sinusoide, lo specchio di mess_barra_dato_aggiunto: la pallina si stacca dalla riga e scivola indietro verso sinistra: un fa 6 di 40 ms un poco a destra e una scivolata dal fa 6 al do 6 in 60 ms un poco a sinistra; 100 ms. Va bene per un elemento tolto da un elenco, una scelta che esce e torna fra le altre.",
+        "score": [
+            [
+                "f6",
+                0.04,
+                0.3,
+                -0.14
+            ],
+            [
+                "f6.c6",
+                0.06,
+                -0.3,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_barra_dato_su": {
+        "descrizione": "MESS, nella finestra della barra di stato Sposta su porta il dato scelto della riga un posto più su: sinusoide, una pallina che sale di un passo verso sinistra, un tono sopra: un sol 6 di 30 ms un poco a destra e un la 6 di 50 ms un poco a sinistra; 80 ms. Va bene per un elemento spostato di un posto verso l'inizio di un elenco.",
+        "score": [
+            [
+                "g6",
+                0.03,
+                0.2,
+                -0.18
+            ],
+            [
+                "a6",
+                0.05,
+                -0.2,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_barra_dato_giu": {
+        "descrizione": "MESS, nella finestra della barra di stato Sposta giù porta il dato scelto della riga un posto più giù: sinusoide, lo specchio di mess_barra_dato_su: la pallina scende di un passo verso destra, un tono sotto: un la 6 di 30 ms un poco a sinistra e un sol 6 di 50 ms un poco a destra; 80 ms. Va bene per un elemento spostato di un posto verso la fine di un elenco.",
+        "score": [
+            [
+                "a6",
+                0.03,
+                -0.2,
+                -0.18
+            ],
+            [
+                "g6",
+                0.05,
+                0.2,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_barra_dato_al_bordo": {
+        "descrizione": "MESS, nella finestra della barra di stato Sposta su sul primo dato della riga, o Sposta giù sull'ultimo, che non si sposta oltre: onda triangolare, la pallina che batte due volte sul bordo del telaio e cala di un semitono: un mi 6 di 20 ms, una pausa di 15 ms e un re diesis 6 di 35 ms, al centro; 70 ms. Va bene per un elemento già in cima o in fondo, uno spostamento che trova il limite.",
+        "score": [
+            [
+                "e6",
+                0.02,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#6",
+                0.035,
+                0.0,
+                -0.24
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            10.0,
+            60.0,
+            25.0
+        ]
+    },
+    "mess_barra_riga_aggiunta": {
+        "descrizione": "MESS, nella finestra della barra di stato Aggiungi riga mette una riga vuota dopo quella scelta: sinusoide, il campanello della macchina da scrivere a destra e il carrello che torna a capo a sinistra, salendo di una quarta: un la 6 di 90 ms a destra e una scivolata dal do 5 al fa 5 in 50 ms a sinistra; 140 ms. Va bene per una riga nuova, un a capo, uno spazio vuoto pronto a riempirsi.",
+        "score": [
+            [
+                "a6",
+                0.09,
+                0.4,
+                -0.17
+            ],
+            [
+                "c5.f5",
+                0.05,
+                -0.4,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            40.0
+        ]
+    },
+    "mess_barra_riga_tolta": {
+        "descrizione": "MESS, nella finestra della barra di stato Togli riga toglie la riga scelta, e i suoi dati tornano disponibili: sinusoide, il carrello che torna indietro scendendo di una quarta e il campanello più basso, una riga che si chiude: una scivolata dal fa 5 al do 5 in 50 ms a sinistra e un mi 6 di 90 ms a destra; 140 ms. Va bene per una riga tolta, un elenco che si accorcia di un blocco intero.",
+        "score": [
+            [
+                "f5.c5",
+                0.05,
+                -0.4,
+                -0.2
+            ],
+            [
+                "e6",
+                0.09,
+                0.4,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            40.0
+        ]
+    },
+    "mess_barra_righe_piene": {
+        "descrizione": "MESS, nella finestra della barra di stato Aggiungi riga con già sedici righe, il massimo, e un avviso lo dice: sinusoide, due tocchi sul la diesis che non trovano posto e ricadono di un semitono: un la diesis 5 di 30 ms, una pausa di 20 ms, un la diesis 5 di 30 ms, una pausa di 20 ms e un la 5 di 80 ms, al centro; 180 ms. Va bene per un contenitore pieno, un limite di quantità raggiunto, un'aggiunta che non entra.",
+        "score": [
+            [
+                "a#5",
+                0.03,
+                0.0,
+                -0.17
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "a#5",
+                0.03,
+                0.0,
+                -0.17
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.08,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_barra_riga_sola": {
+        "descrizione": "MESS, nella finestra della barra di stato Togli riga con una riga sola, che si può svuotare ma non togliere, e un avviso lo dice: sinusoide, una quarta che si posa ferma sul fa e lo ribatte piano, come chi resta al suo posto: un do 5 di 40 ms, un fa 5 di 100 ms, una pausa di 20 ms e un fa 5 di 40 ms, al centro; 200 ms. Va bene per l'ultimo elemento che non si può togliere, un minimo che resta.",
+        "score": [
+            [
+                "c5",
+                0.04,
+                0.0,
+                -0.18
+            ],
+            [
+                "f5",
+                0.1,
+                0.0,
+                -0.16
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "f5",
+                0.04,
+                0.0,
+                -0.26
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_barra_di_serie": {
+        "descrizione": "MESS, nella finestra della barra di stato Barra di serie rimette la barra di partenza, che si salva soltanto con Salva: sinusoide, le palline che scivolano giù tutte insieme di un'ottava e si riallineano sull'accordo di partenza: una scivolata dal fa 6 al fa 5 in 80 ms, un fa 5 di 30 ms a sinistra, un la 5 di 30 ms e un do 6 di 60 ms a destra; 200 ms. Va bene per le impostazioni rimesse come all'inizio, un ripristino dei valori di serie.",
+        "score": [
+            [
+                "f6.f5",
+                0.08,
+                0.0,
+                -0.2
+            ],
+            [
+                "f5",
+                0.03,
+                -0.4,
+                -0.17
+            ],
+            [
+                "a5",
+                0.03,
+                0.0,
+                -0.17
+            ],
+            [
+                "c6",
+                0.06,
+                0.4,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_barra_salvata": {
+        "descrizione": "MESS, nella finestra della barra di stato Salva, e la barra nuova si vede subito ed è salvata nel file delle impostazioni: sinusoide, una quinta e una terza che si chiudono sul fa, la cadenza di una fila messa in ordine: un do 6 di 40 ms, un la 6 di 40 ms, una pausa di 20 ms e un fa 6 di 140 ms, al centro; 240 ms. Va bene per impostazioni salvate, una configurazione confermata.",
+        "score": [
+            [
+                "c6",
+                0.04,
+                0.0,
+                -0.17
+            ],
+            [
+                "a6",
+                0.04,
+                0.0,
+                -0.16
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "f6",
+                0.14,
+                0.0,
+                -0.14
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            12.0,
+            70.0,
+            30.0
+        ]
     }
 }
