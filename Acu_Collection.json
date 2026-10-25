@@ -31684,5 +31684,41 @@
             70.0,
             30.0
         ]
+    },
+    "mess_nessuna_sfida_in_arrivo": {
+        "descrizione": "MESS, Ctrl+Maiusc+F quando nessuna delle tue polisportive ha sfide che aspettano risposta, e la finestra non si apre: sinusoide, la chiamata di mess_sfide_in_arrivo che non arriva al do diesis e ricade sul mi, come chi bussa e non trova nessuno: un mi 5 di 50 ms a destra, un la 5 di 50 ms un poco a destra, una pausa di 40 ms e un mi 5 di 100 ms; 240 ms. Va bene per un elenco senza niente da guardare, un'attesa vuota, nessuna richiesta in arrivo.",
+        "score": [
+            [
+                "e5",
+                0.05,
+                0.6,
+                -0.16
+            ],
+            [
+                "a5",
+                0.05,
+                0.3,
+                -0.16
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.1,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
     }
 }
