@@ -4170,7 +4170,7 @@
         ]
     },
     "salita_ideale": {
-        "descrizione": "Portamento ascendente - valore superiore all'ideale. Usato da: meteora, quinqu.",
+        "descrizione": "Portamento ascendente - valore superiore all'ideale. Usato da: quinqu.",
         "score": [
             [
                 "c4.g4",
@@ -4188,7 +4188,7 @@
         ]
     },
     "discesa_ideale": {
-        "descrizione": "Portamento discendente - valore inferiore all'ideale. Usato da: meteora, quinqu.",
+        "descrizione": "Portamento discendente - valore inferiore all'ideale. Usato da: quinqu.",
         "score": [
             [
                 "g4.c4",
