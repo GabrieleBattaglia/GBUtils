@@ -31720,5 +31720,23 @@
             60.0,
             30.0
         ]
+    },
+    "nuovo_preset": {
+        "descrizione": "Nuovo preset vuoto",
+        "score": [
+            [
+                "c4",
+                0.5,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.002,
+            0.0,
+            100.0,
+            0.002
+        ]
     }
 }
