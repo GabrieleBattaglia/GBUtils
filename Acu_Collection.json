@@ -31721,6 +31721,1140 @@
             30.0
         ]
     },
+    "mess_vendita_fra_tue": {
+        "descrizione": "MESS, nella finestra Mercato e ricerca l'acquisto di un tuo tesserato in vendita da un'altra tua polisportiva, che fra le tue non si fa: onda triangolare, due mani che si passano la stessa nota, un do 5 di 35 ms a sinistra e uno a destra, poi dopo 40 ms due note opache al centro che scendono di un tritono e di un altro, fa diesis 4 di 60 ms e do 4 di 100 ms; 270 ms. Va bene per uno scambio interno vietato, un passaggio fra due conti dello stesso titolare, un giro che non si chiude.",
+        "score": [
+            [
+                "c5",
+                0.035,
+                -0.6,
+                -0.12
+            ],
+            [
+                "c5",
+                0.035,
+                0.6,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "f#4",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "c4",
+                0.1,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_convocato_bloccato": {
+        "descrizione": "MESS, chi è convocato in una sfida accettata o sta nella rosa di una Coppa, e fino alla partita non si vende, non si compra, non riceve offerte d'acquisto e non si svincola: dente di sega morbido, il richiamo della convocazione che sale, sol 4, re 5 e sol 5, poi dopo 40 ms un colpo secco sul sol 5 e l'ottava sotto che lo tiene fermo, al centro; 285 ms. Va bene per un elemento bloccato da un impegno, un oggetto prenotato, una cosa che non si tocca fino a una data.",
+        "score": [
+            [
+                "g4",
+                0.03,
+                0.0,
+                -0.22
+            ],
+            [
+                "d5",
+                0.03,
+                0.0,
+                -0.22
+            ],
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.025,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "g4",
+                0.09,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_prezzo_sotto_gli_arretrati": {
+        "descrizione": "MESS, nelle Vendite un prezzo che, con la cassa, non salda gli arretrati del tesserato: onda triangolare, tre monete che tintinnano a destra, mi 6, sol 6 e mi 6 di 25 ms, poi dopo 35 ms una nota opaca che scende di una quarta, dal re 4 al la 3 in 140 ms, al centro, come un conto che non torna; 250 ms. Va bene per una cifra che non copre un debito, un pagamento che resta scoperto.",
+        "score": [
+            [
+                "e6",
+                0.025,
+                0.3,
+                -0.25
+            ],
+            [
+                "g6",
+                0.025,
+                0.3,
+                -0.25
+            ],
+            [
+                "e6",
+                0.025,
+                0.3,
+                -0.25
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "d4.a3",
+                0.14,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_chiusura_non_possibile": {
+        "descrizione": "MESS, Chiudi la polisportiva attiva quando la sua cassa e le altre tue polisportive, oltre la loro riserva, non bastano per i suoi debiti, e la polisportiva non si chiude: sinusoide, la campana a martello di mess_campana_a_martello che si ferma al secondo rintocco, due la 4 di 60 ms, e la sua scivolata rovesciata che ricade di un tritono, dal sol diesis 4 al re 4 in 200 ms, al centro; 425 ms. Va bene per un'azione definitiva rifiutata, una chiusura che non si può fare, un debito che blocca un'uscita.",
+        "score": [
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.07,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#4.d4",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            30.0,
+            50.0,
+            35.0
+        ]
+    },
+    "mess_mondo_piu_recente": {
+        "descrizione": "MESS, all'avvio il mondo viene da una versione più recente di MESS, col formato del salvataggio o della copia che questa non sa leggere, e un avviso chiede di aggiornare MESS, con Scegli un'altra cartella ed Esci, senza toccare i file: onda triangolare, l'inizio del motivo di mess_avvio, la diesis 4 e re diesis 5 da sinistra, che invece di arrivare cerca un fa 6 troppo alto, due tocchi di 60 ms che si allontanano verso destra sempre più deboli, poi dopo 50 ms la scivolata che torna giù dal re diesis 5 al la diesis 4 in 200 ms, al centro; 570 ms. Va bene per un file di una versione futura, un aggiornamento che serve, una cosa ancora fuori portata.",
+        "score": [
+            [
+                "a#4",
+                0.07,
+                -0.3,
+                -0.1
+            ],
+            [
+                "d#5",
+                0.1,
+                -0.2,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "f6",
+                0.06,
+                0.4,
+                -0.18
+            ],
+            [
+                "f6",
+                0.06,
+                0.7,
+                -0.3
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "d#5.a#4",
+                0.2,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_fondazione_non_possibile": {
+        "descrizione": "MESS, Nuova polisportiva quando la fondazione costa e la polisportiva attiva che la paga, oltre la sua riserva, non ha abbastanza, e il dialogo non si apre: sinusoide, le prime due quinte del dialogo della nuova polisportiva, do 5 e sol 5 da sinistra, che si fermano a metà; dopo 50 ms due monete deboli sul mi 6 a destra, e dopo 40 ms una scivolata grave dal sol 4 al re 4 in 180 ms, al centro; 450 ms. Va bene per una creazione rifiutata perché i fondi non bastano, un acquisto troppo caro, una porta nuova che resta chiusa.",
+        "score": [
+            [
+                "c5",
+                0.06,
+                -0.4,
+                -0.05
+            ],
+            [
+                "g5",
+                0.06,
+                -0.1,
+                -0.05
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.03,
+                0.4,
+                -0.25
+            ],
+            [
+                "e6",
+                0.03,
+                0.4,
+                -0.3
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "g4.d4",
+                0.18,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_fondazione_a_pagamento": {
+        "descrizione": "MESS, una polisportiva fondata a pagamento, dalla terza aperta, col prezzo pagato dalla polisportiva attiva: sinusoide, tre monete che escono scendendo da destra, sol 6, mi 6 e do 6 di 25 ms, poi dopo 50 ms il fischio d'inizio di mess_fischio_d_inizio in breve, quattro colpi di 22 ms fra re 7 e re diesis 7, e dopo 60 ms una quinta che si apre, re 5 a sinistra e la 5 lungo a destra; 513 ms. Va bene per un acquisto importante andato a buon fine, una creazione che costa, un nuovo inizio pagato.",
+        "score": [
+            [
+                "g6",
+                0.025,
+                0.4,
+                -0.25
+            ],
+            [
+                "e6",
+                0.025,
+                0.3,
+                -0.25
+            ],
+            [
+                "c6",
+                0.025,
+                0.2,
+                -0.25
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "d7",
+                0.022,
+                0.0,
+                -0.26
+            ],
+            [
+                "d#7",
+                0.022,
+                0.0,
+                -0.26
+            ],
+            [
+                "d7",
+                0.022,
+                0.0,
+                -0.26
+            ],
+            [
+                "d#7",
+                0.022,
+                0.0,
+                -0.26
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5",
+                0.08,
+                -0.2,
+                0.0
+            ],
+            [
+                "a5",
+                0.16,
+                0.2,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_fondazione_annullata": {
+        "descrizione": "MESS, Chiudi la polisportiva attiva entro 10 giorni dalla fondazione, senza tesserati né staff e con la cassa ancora piena, che si perde, e la fondazione non conta più: onda triangolare, un nastro che si riavvolge, una scivolata veloce dal la 6 al la 5 in 120 ms da destra, poi dopo 40 ms un solo scatto sul mi 5 al centro, il contatore che torna indietro di uno, e dopo 50 ms una scivolata calma dal la 4 al re 4 in 180 ms verso sinistra; 425 ms. Va bene per un'operazione annullata, un conteggio che torna indietro, un ripensamento.",
+        "score": [
+            [
+                "a6.a5",
+                0.12,
+                0.5,
+                -0.2
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.035,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4.d4",
+                0.18,
+                -0.4,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_sposta_fondi": {
+        "descrizione": "MESS, si apre il dialogo di Sposta fondi, Ctrl+Maiusc+I, per passare soldi da una tua polisportiva a un'altra: sinusoide, una moneta che scivola da sinistra a destra, dal mi 5 al la 5 in 100 ms, poi dopo 30 ms la cassa che la riceve a destra, do 6 di 30 ms e mi 6 di 80 ms; 240 ms. Va bene per l'apertura di un trasferimento, un giroconto, un passaggio di soldi fra due conti.",
+        "score": [
+            [
+                "e5.a5",
+                0.1,
+                "-0.6.0.6",
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c6",
+                0.03,
+                0.6,
+                -0.15
+            ],
+            [
+                "e6",
+                0.08,
+                0.6,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            6.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_fondi_spostati": {
+        "descrizione": "MESS, Sposta fondi passa la cifra scelta da una tua polisportiva a un'altra: onda triangolare, tre monete che passano da sinistra a destra salendo, do 6, mi 6 e sol 6 di 25 ms, poi dopo 50 ms la cassa che le accoglie a destra, una quinta che si chiude, do 5 di 60 ms e sol 5 di 140 ms; 325 ms. Va bene per un trasferimento riuscito, un giroconto, soldi arrivati a destinazione.",
+        "score": [
+            [
+                "c6",
+                0.025,
+                -0.6,
+                -0.2
+            ],
+            [
+                "e6",
+                0.025,
+                0.0,
+                -0.2
+            ],
+            [
+                "g6",
+                0.025,
+                0.6,
+                -0.2
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "c5",
+                0.06,
+                0.5,
+                -0.05
+            ],
+            [
+                "g5",
+                0.14,
+                0.5,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_fondi_oltre_la_riserva": {
+        "descrizione": "MESS, nel dialogo di Sposta fondi una cifra che supera quello che la polisportiva che paga ha oltre la sua riserva, cioè oltre quello che deve al prossimo primo del mese, e il dialogo resta aperto: onda triangolare, la moneta di mess_sposta_fondi che parte da sinistra, dal mi 5 al la 5 in 80 ms, ma si ferma a metà strada e dopo 30 ms torna indietro, dal la 4 al mi 4 in 130 ms, poi dopo 30 ms un colpo sordo di sol 3 a sinistra, il cassetto che la tiene; 330 ms. Va bene per un trasferimento rifiutato, un limite di prelievo superato, soldi che devono restare dove sono.",
+        "score": [
+            [
+                "e5.a5",
+                0.08,
+                "-0.6.0.1",
+                -0.1
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4.e4",
+                0.13,
+                "0.1.-0.6",
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "g3",
+                0.06,
+                -0.6,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_sposta_fondi_non_disponibile": {
+        "descrizione": "MESS, Sposta fondi, Ctrl+Maiusc+I, quando hai una sola polisportiva o nessuna, e la voce del menu non è disponibile: sinusoide, una moneta di mi 6 a sinistra che aspetta una risposta da destra, e dopo 120 ms soltanto la sua eco, più debole, poi dopo 40 ms una scivolata di un tritono, dal si 4 al fa 4 in 120 ms, al centro; 340 ms. Va bene per un comando senza la sua controparte, uno scambio senza nessuno dall'altra parte, una voce non disponibile.",
+        "score": [
+            [
+                "e6",
+                0.03,
+                -0.6,
+                -0.15
+            ],
+            [
+                "p",
+                0.12,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.03,
+                -0.6,
+                -0.35
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4.f4",
+                0.12,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_allenatore_escluso": {
+        "descrizione": "MESS, nella finestra Mercato e ricerca si vuole assumere un allenatore che una tua polisportiva ha licenziato da meno di 30 giorni, e che fino ad allora non firma con le tue: onda triangolare, l'eco breve del fischio finale di mess_allenatore_licenziato, dal la 6 al sol 6 in 70 ms a destra, poi dopo 40 ms due colpi di mi 4 da una parte e dall'altra della porta, che resta chiusa, e un do 4 di 100 ms al centro; 350 ms. Va bene per un ritorno vietato per un periodo, una persona allontanata, un'attesa imposta prima di riprovare.",
+        "score": [
+            [
+                "a6.g6",
+                0.07,
+                0.3,
+                -0.2
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4",
+                0.04,
+                -0.3,
+                -0.06
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4",
+                0.04,
+                0.3,
+                -0.06
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c4",
+                0.1,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_rivendita_in_attesa": {
+        "descrizione": "MESS, nelle Vendite un tesserato messo in vendita sopra il prezzo che il computer paga oggi, che con la rampa del prezzo lo comprerà soltanto da un giorno più avanti, o che non lo comprerà: un avviso, non un rifiuto. Sinusoide, la puntina della messa in vendita, mi 6 e si 6 di 30 e 50 ms al centro, poi dopo 50 ms il tic tac di un orologio, la 5 a sinistra e mi 5 a destra di 20 ms, a 80 ms l'uno dall'altro, e dopo 50 ms una nota che sale di un tono, dal do 5 al re 5 in 120 ms, e resta sospesa; 420 ms. Va bene per un'operazione fatta che avrà effetto più avanti, una data d'attesa, un conto alla rovescia.",
+        "score": [
+            [
+                "e6",
+                0.03,
+                0.0,
+                -0.15
+            ],
+            [
+                "b6",
+                0.05,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.02,
+                -0.6,
+                -0.3
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.02,
+                0.6,
+                -0.3
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "c5.d5",
+                0.12,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_prezzo_cambiato_in_attesa": {
+        "descrizione": "MESS, nelle Vendite il prezzo cambiato di un tesserato già in vendita, sopra quello che il computer paga oggi: l'esito dice da quale giorno lo comprerà a quel prezzo, o che non lo comprerà; un avviso, non un rifiuto. Sinusoide, la puntina riscritta, due tocchi sul si 6 di 30 ms, a 20 ms l'uno dall'altro, e la discesa al mi 6 di 50 ms, al centro, poi dopo 50 ms il tic tac di un orologio, mi 5 a destra e la 5 a sinistra di 20 ms, a 80 ms l'uno dall'altro, e dopo 50 ms una nota che sale di un tono, dal re 5 al mi 5 in 120 ms, e resta sospesa; 470 ms. Va bene per un valore cambiato che avrà effetto più avanti, una scadenza spostata, un'attesa che ricomincia.",
+        "score": [
+            [
+                "b6",
+                0.03,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "b6",
+                0.03,
+                0.0,
+                -0.15
+            ],
+            [
+                "e6",
+                0.05,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.02,
+                0.6,
+                -0.3
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.02,
+                -0.6,
+                -0.3
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5.e5",
+                0.12,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "mess_password_dei_fondi": {
+        "descrizione": "MESS, Sposta fondi prende i soldi da una tua polisportiva protetta che non è l'attiva, e prima di spostarli chiede la sua password: onda triangolare, la moneta di mess_sposta_fondi che parte da sinistra, dal mi 5 al la 5 in 70 ms, e si ferma al centro, poi dopo 40 ms due colpi sul fa 4 a sinistra, alla porta della cassa che paga, a 60 ms l'uno dall'altro; 230 ms. Va bene per un prelievo che chiede un permesso, un conto protetto, una firma chiesta prima di un pagamento.",
+        "score": [
+            [
+                "e5.a5",
+                0.07,
+                "-0.6.0.0",
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "f4",
+                0.03,
+                -0.5,
+                0.05
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "f4",
+                0.03,
+                -0.5,
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            40.0,
+            30.0,
+            30.0
+        ]
+    },
+    "mess_fondi_senza_password": {
+        "descrizione": "MESS, Sposta fondi senza la password della tua polisportiva protetta che doveva pagare: non si sposta niente: sinusoide, la moneta che torna indietro, dal la 5 al mi 5 in 90 ms, dal centro a sinistra, poi dopo 40 ms la serratura che resta chiusa, un re 4 di 40 ms e dopo 30 ms un la 3 di 80 ms, a sinistra; 280 ms. Va bene per un prelievo negato, un conto che resta chiuso, soldi che restano dove sono.",
+        "score": [
+            [
+                "a5.e5",
+                0.09,
+                "0.0.-0.6",
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "d4",
+                0.04,
+                -0.6,
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "a3",
+                0.08,
+                -0.6,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            25.0,
+            55.0,
+            30.0
+        ]
+    },
+    "mess_password_della_sorella": {
+        "descrizione": "MESS, la chiusura della polisportiva attiva farebbe pagare parte dei debiti a un'altra tua polisportiva, protetta, e prima della domanda chiede la sua password: onda triangolare, due rintocchi della campana a martello di mess_campana_a_martello, la 4 di 50 ms a sinistra, poi dopo 70 ms due colpi sul mi 4 a destra, alla porta dell'altra polisportiva, a 60 ms l'uno dall'altro; 325 ms. Va bene per un aiuto chiesto a chi deve dare il permesso, una firma di garanzia, una visita prima di un conto da dividere.",
+        "score": [
+            [
+                "a4",
+                0.05,
+                -0.5,
+                -0.05
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.05,
+                -0.5,
+                -0.05
+            ],
+            [
+                "p",
+                0.07,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4",
+                0.03,
+                0.5,
+                0.05
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "e4",
+                0.03,
+                0.5,
+                0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            6.0,
+            40.0,
+            30.0,
+            30.0
+        ]
+    },
+    "mess_sorella_fuori": {
+        "descrizione": "MESS, nella chiusura la password di un'altra tua polisportiva protetta non arriva, e lei resta fuori: non paga, e il piano dei debiti si rifà senza di lei: onda triangolare, un colpo sul mi 4 alla sua porta, a destra, poi dopo 80 ms una scivolata che scende di una quarta, dal si 3 al fa diesis 3 in 160 ms, che si allontana ancora verso destra: nessuno apre; 270 ms. Va bene per una porta che resta chiusa, un aiuto che non arriva, qualcuno che resta fuori da un conto.",
+        "score": [
+            [
+                "e4",
+                0.03,
+                0.5,
+                0.05
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "b3.f#3",
+                0.16,
+                "0.5.0.8",
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            35.0
+        ]
+    },
+    "mess_chiusura_senza_password": {
+        "descrizione": "MESS, la chiusura della polisportiva attiva si blocca perché le tue polisportive protette di cui non hai dato la password non pagano, e i soldi delle altre non bastano: sinusoide, la campana a martello di mess_chiusura_non_possibile che si ferma al secondo rintocco, due la 4 di 60 ms, poi due tocchi leggeri sul mi 5 a destra, alla porta che resta chiusa, e la scivolata che ricade di un tritono, dal sol diesis 4 al re 4 in 180 ms, al centro; 555 ms. Va bene per un'azione definitiva bloccata da un permesso che manca, una chiusura che aspetta una firma, un conto che non torna senza l'aiuto di qualcuno.",
+        "score": [
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "a4",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.03,
+                0.6,
+                -0.15
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.03,
+                0.6,
+                -0.2
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#4.d4",
+                0.18,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            30.0,
+            50.0,
+            35.0
+        ]
+    },
+    "mess_iscrizione_senza_rimborso": {
+        "descrizione": "MESS, nel calendario l'iscrizione a mano di un tuo atleta tolta dal primo del mese che segue il giorno in cui l'hai fatta, e la quota non torna: onda triangolare, il gettone di mess_iscrizione_tolta che torna indietro, dal do 6 al sol 5 in 60 ms, ma non si posa: dopo 30 ms cade ancora, dal re 5 al sol 4 in 110 ms, allontanandosi verso sinistra; 200 ms. Va bene per una prenotazione annullata senza rimborso, una caparra persa, una spesa che non torna indietro.",
+        "score": [
+            [
+                "c6.g5",
+                0.06,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5.g4",
+                0.11,
+                "0.0.-0.6",
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_rosa_doppia": {
+        "descrizione": "MESS, nel calendario dei tornei la rosa per la Coppa delle polisportive che rifiuta un giocatore, perché sta già nella rosa di un'altra polisportiva iscritta alla stessa coppa: onda triangolare, lo squillo dell'adunata di mess_formazione due volte, re 5 di 30 ms e la 5 di 60 ms a sinistra, poi dopo 30 ms lo stesso re 5 a destra, e il la 5 che invece di tenere ricade di un tritono, al re diesis 5 in 130 ms: lo stesso nome chiamato da due parti; 280 ms. Va bene per un elemento che sta già in un altro gruppo, un doppione fra due elenchi, un posto conteso.",
+        "score": [
+            [
+                "d5",
+                0.03,
+                -0.6,
+                -0.15
+            ],
+            [
+                "a5",
+                0.06,
+                -0.6,
+                -0.15
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5",
+                0.03,
+                0.6,
+                -0.15
+            ],
+            [
+                "a5.d#5",
+                0.13,
+                0.6,
+                -0.12
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "mess_svincolo_sotto_gli_arretrati": {
+        "descrizione": "MESS, lo svincolo di un tuo tesserato che la cassa non copre per via degli arretrati: la cassa pagherebbe la buonuscita, ma non anche gli arretrati, che lo svincolo salda. Onda triangolare, la porta di mess_porta_che_cigola che comincia ad aprirsi, do diesis 4, mi 4 e re 4 di 24 ms da sinistra verso il centro, poi dopo 30 ms tre monete a sinistra, sol 6, mi 6 e sol 6 di 25 ms, e dopo 35 ms la porta che ricade chiusa, una nota opaca dal fa 4 al si 3 in 140 ms, al centro; 352 ms. È il fratello di mess_prezzo_sotto_gli_arretrati, che ha le monete a destra e nessuna porta. Va bene per un'uscita fermata da un debito, un congedo che costa più di quel che c'è.",
+        "score": [
+            [
+                "c#4",
+                0.024,
+                -0.5,
+                -0.2
+            ],
+            [
+                "e4",
+                0.024,
+                -0.3,
+                -0.2
+            ],
+            [
+                "d4",
+                0.024,
+                -0.1,
+                -0.2
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "g6",
+                0.025,
+                -0.3,
+                -0.25
+            ],
+            [
+                "e6",
+                0.025,
+                -0.3,
+                -0.25
+            ],
+            [
+                "g6",
+                0.025,
+                -0.3,
+                -0.25
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "f4.b3",
+                0.14,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
     "nuovo_preset": {
         "descrizione": "Nuovo preset vuoto",
         "score": [
