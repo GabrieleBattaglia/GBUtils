@@ -20,6 +20,9 @@ della prova del revisore di MESS: Invio deve premere il pulsante
 predefinito, una volta sola anche se arriva a raffica, come fa NVDA con un
 tasto tenuto giu', ed Esc chiudere. Il gancio della tastiera di wx e NVDA
 non si riproducono: per quelli resta la prova di Gabriele.
+Dalla 1.2.0 di GBwx, con la V239, anche la casella di finestra_mail: la
+mail che cambia con lei, il fuoco che resta, gli appunti di Apri e la
+casella che sparisce a scelta fatta.
 Si lancia con
   python banco_pub.py
 e stampa in fondo quante prove sono passate.
@@ -442,6 +445,50 @@ def prova_finestra(b):
 		vuoti = True
 	b.verifica("senza passi: ValueError", vuoti)
 
+def prova_casella(b):
+	"""La casella di finestra_mail (1.2.0): cambia la mail nella stessa
+	schermata, e sparisce quando la scelta e' fatta."""
+	allegato = "C:\\registri.txt"
+	chiamate = []
+
+	def cambi(spuntata):
+		chiamate.append(spuntata)
+		if not spuntata:
+			return {}
+		return {"corpo": "Riga uno\nAllegato", "spiegazione": "Con l'allegato, in {programma}.",
+			"passi": (*PASSI[:3], ("Allega il file, poi premi OK.", allegato), PASSI[3]), "appunti": allegato}
+
+	appunti = Sostituto(True)
+	avvio = Sostituto()
+	with Sostituzioni((GBwx, "_negli_appunti", appunti), (os, "startfile", avvio), (GBUtils, "programma_di_posta", Sostituto("Thunderbird"))):
+		d = dialogo("Thunderbird", casella=("&Includi i registri", cambi))
+		figli = list(d.pannello.GetChildren())
+		b.verifica("casella: spenta di partenza, subito dopo l'area di testo",
+			d.casella.IsShown() and not d.casella.GetValue() and chiamate == [False] and figli.index(d.casella) == 1)
+		d.casella.SetValue(True)
+		d._casella_cambiata()
+		b.verifica("casella spuntata: la spiegazione nuova, nella stessa area", d.testo.GetValue() == "Con l'allegato, in Thunderbird." and chiamate[-1] is True)
+		premi(d.apri)
+		b.verifica("Apri con la casella: il corpo nuovo, e dopo il percorso negli appunti",
+			avvio.chiamate == [(indirizzo_mailto(PUB_GRUPPO, "Aiuto con MESS", "Riga uno\nAllegato"),)] and appunti.chiamate == [(allegato,)])
+		b.verifica("dopo Apri la casella sparisce", not d.casella.IsShown())
+		premi(d.passo_per_passo)
+		for _ in range(3):
+			premi(d.ok)
+		b.verifica("il passo in piu' copia il percorso", appunti.chiamate[-1] == (allegato,) and d.testo.GetValue().startswith("Allega il file"))
+		d.Destroy()
+	appunti = Sostituto(True)
+	with Sostituzioni((GBwx, "_negli_appunti", appunti)):
+		d = dialogo(None, casella=("&Includi i registri", cambi, True))
+		b.verifica("senza posta: la casella nel primo passo, spuntata di partenza", d.casella.IsShown() and d.casella.GetValue() and len(d.passi) == 5)
+		d.casella.SetValue(False)
+		d._casella_cambiata()
+		b.verifica("tolta la spunta: i passi di partenza, nella stessa schermata",
+			len(d.passi) == 4 and d.testo.GetValue() == f"{SENZA_POSTA}\n{PASSI[0][0]}\n{PUB_GRUPPO}")
+		premi(d.ok)
+		b.verifica("dopo il primo OK la casella sparisce", not d.casella.IsShown())
+		d.Destroy()
+
 def prova_finestra_mail(b):
 	# ShowModal e' quello ereditato da wx.Dialog: alla fine si toglie la
 	# sostituzione, e non si rimette nella classe il metodo di sip, che li'
@@ -476,6 +523,7 @@ def main():
 	prova_screen_reader_simulato(b)
 	prova_righe(b)
 	prova_finestra(b)
+	prova_casella(b)
 	prova_finestra_mail(b)
 	prova_tastiera(b)
 	prova_massimizzata(b)

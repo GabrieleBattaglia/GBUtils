@@ -1,5 +1,5 @@
 """GBwx, le utilita' per le finestre wxPython, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode).
-V1.1.1 di venerdì 23 ottobre 2026.
+V1.2.0 di martedì 3 novembre 2026.
 Nato con la issue 49 di Tornello: le finestre a misura fissa in pixel, con i
 caratteri di Windows al 150 per cento, lasciavano fuori dallo schermo campi e
 pulsanti, e lo stesso rimedio serviva a quattro applicazioni, Dadillo,
@@ -18,7 +18,9 @@ finestra delle voci Entra al PUB e Chiedi aiuto al PUB, comune a tutti i
 programmi con le finestre. Con la 1.1.1, per la revisione della tappa 14 di
 MESS, Invio sull'area di testo di finestra_mail preme il pulsante
 predefinito, una volta sola anche col tasto tenuto giu', Esc la chiude, e
-si apre massimizzata.
+si apre massimizzata. La 1.2.0, con la V239 di GBUtils, porta la casella di
+finestra_mail, per una scelta che cambia la mail, come i registri degli
+errori allegati alla richiesta d'aiuto di MeTeOra 2.4.0.
 Non fa parte di GBUtils.py perche' importa wx: PyInstaller lo porterebbe nei
 pacchetti di tutti i programmi da console che usano la libreria. Lo importano
 solo le applicazioni con le finestre.
@@ -274,7 +276,7 @@ def _colloca(finestra, larghezza, altezza, area):
 
 
 def finestra_mail(genitore, titolo, destinatario, oggetto, corpo, spiegazione, passi, pulsanti, senza_posta="", misura=(560, 420),
-		massimizzata=True):
+		massimizzata=True, casella=None):
 	"""La finestra che prepara una mail, per esempio per le voci Entra al PUB
 	e Chiedi aiuto al PUB, con le scelte di Gabriele del 23 ottobre 2026: si
 	apre sempre, anche quando il programma di posta c'e', perche' il nuovo
@@ -329,13 +331,29 @@ def finestra_mail(genitore, titolo, destinatario, oggetto, corpo, spiegazione, p
 	  misura: la misura minima, in pixel al 100 per cento, e quella a cui la
 	    finestra torna ripristinandola.
 	  massimizzata: vero di serie; falso per aprirla alla sua misura.
+	  casella: facoltativa, dalla 1.2.0, una casella da spuntare fra l'area di
+	    testo e i pulsanti, per una scelta che cambia la mail, per esempio
+	    allegare i registri degli errori. E' la coppia (etichetta, cambi), o
+	    la terna con in piu' il valore di partenza, falso se manca. cambi e'
+	    una funzione che riceve vero o falso, lo stato della casella, e
+	    restituisce un dizionario con le parti della mail che cambiano, fra
+	    oggetto, corpo, spiegazione e passi, che prendono il posto di quelle
+	    date; e appunti, un testo che Apri copia negli appunti dopo aver
+	    preparato la bozza, per esempio il percorso del file da allegare. Le
+	    parti che il dizionario non ha restano quelle date. La finestra la
+	    chiama alla costruzione, con il valore di partenza, e a ogni cambio
+	    della casella, che riscrive la schermata senza spostare il fuoco. La
+	    casella c'e' solo nella prima schermata: quella della spiegazione, e il
+	    primo passo; dopo Apri riuscito, o dopo il primo OK, la scelta resta
+	    quella e la casella sparisce.
 	Restituisce vero se la bozza si e' aperta o se l'utente ha percorso tutti
 	i passi, falso se ha chiuso prima. Solleva ValueError se passi e' vuota.
 	Dalla 1.1.1, per la revisione della tappa 14 di MESS: Invio sull'area
 	preme il predefinito, con la grazia, Esc chiude, e la finestra si apre
 	massimizzata. Fino alla 1.1.0 Invio sull'area non faceva niente.
 	"""
-	finestra = _FinestraMail(genitore, titolo, (destinatario, oggetto, corpo), spiegazione, passi, pulsanti, senza_posta, misura, massimizzata)
+	finestra = _FinestraMail(genitore, titolo, (destinatario, oggetto, corpo), spiegazione, passi, pulsanti, senza_posta, misura, massimizzata,
+		casella)
 	try:
 		finestra.ShowModal()
 		return finestra.riuscita
@@ -383,7 +401,7 @@ def _grazia_invio():
 class _FinestraMail(wx.Dialog):
 	"""Il dialogo di finestra_mail, che ne spiega il comportamento."""
 
-	def __init__(self, genitore, titolo, mail, spiegazione, passi, pulsanti, senza_posta, misura, massimizzata=True):
+	def __init__(self, genitore, titolo, mail, spiegazione, passi, pulsanti, senza_posta, misura, massimizzata=True, casella=None):
 		import time
 
 		from GBUtils import programma_di_posta
@@ -391,8 +409,13 @@ class _FinestraMail(wx.Dialog):
 			raise ValueError("finestra_mail: serve almeno un passo")
 		super().__init__(genitore, title=titolo, style=STILE_ADATTABILE)
 		self.mail = mail
+		self.spiegazione = spiegazione
 		self.passi = list(passi)
+		# La mail data, a cui tornano i cambi della casella (1.2.0).
+		self.di_partenza = (mail, spiegazione, self.passi)
+		self.appunti = None
 		self.senza_posta = senza_posta
+		self.premessa = ""
 		self.riuscita = False
 		self.passo = None
 		self.annulla = pulsanti["annulla"]
@@ -404,6 +427,15 @@ class _FinestraMail(wx.Dialog):
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		self.testo = self._area("")
 		sizer.Add(self.testo, 1, wx.EXPAND | wx.ALL, 8)
+		# La casella, fra l'area e i pulsanti, anche nell'ordine di Tab (1.2.0).
+		self.casella = self.cambi = None
+		if casella:
+			etichetta, self.cambi, *partenza = casella
+			self.casella = wx.CheckBox(self.pannello, label=etichetta)
+			self.casella.SetValue(bool(partenza and partenza[0]))
+			self.casella.Bind(wx.EVT_CHECKBOX, self._casella_cambiata)
+			sizer.Add(self.casella, 0, wx.LEFT | wx.RIGHT, 8)
+			self._applica_la_casella()
 		riga = wx.BoxSizer(wx.HORIZONTAL)
 		self.apri = wx.Button(self.pannello, label=pulsanti["apri"])
 		self.passo_per_passo = wx.Button(self.pannello, label=pulsanti["passi"])
@@ -416,11 +448,11 @@ class _FinestraMail(wx.Dialog):
 		self.apri.Bind(wx.EVT_BUTTON, self._apri)
 		self.passo_per_passo.Bind(wx.EVT_BUTTON, lambda evento: self._inizia_passi(""))
 		self.ok.Bind(wx.EVT_BUTTON, self._avanti)
-		programma = programma_di_posta()
+		self.programma = programma = programma_di_posta()
 		if programma:
 			self.ok.Hide()
 			self.apri.SetDefault()
-			self.testo.SetValue(spiegazione.replace("{programma}", programma))
+			self.testo.SetValue(self.spiegazione.replace("{programma}", programma))
 		else:
 			self._inizia_passi(senza_posta)
 		adatta_finestra(self, self.pannello, misura)
@@ -488,12 +520,45 @@ class _FinestraMail(wx.Dialog):
 		self._al_testo()
 		vecchia.Destroy()
 
+	def _applica_la_casella(self):
+		"""Le parti della mail secondo la casella, a partire da quelle date."""
+		mail, spiegazione, passi = self.di_partenza
+		cambi = self.cambi(self.casella.GetValue()) or {}
+		self.mail = (mail[0], cambi.get("oggetto", mail[1]), cambi.get("corpo", mail[2]))
+		self.spiegazione = cambi.get("spiegazione", spiegazione)
+		self.passi = list(cambi.get("passi", passi))
+		if not self.passi:
+			raise ValueError("finestra_mail: serve almeno un passo")
+		self.appunti = cambi.get("appunti")
+
+	def _casella_cambiata(self, evento=None):
+		"""La schermata si riscrive nella stessa area, e il fuoco resta sulla
+		casella: lo screen reader ne dice lo stato, e il testo nuovo si legge
+		tornando all'area."""
+		self._applica_la_casella()
+		if self.passo is None:
+			self.testo.ChangeValue(self.spiegazione.replace("{programma}", self.programma or ""))
+		else:
+			testo, da_copiare = self._testo_del_passo(self.premessa)
+			if da_copiare:
+				_negli_appunti(da_copiare)
+			self.testo.ChangeValue(testo)
+
+	def _togli_la_casella(self):
+		"""La scelta e' fatta: la casella sparisce."""
+		if self.casella is not None and self.casella.IsShown():
+			self.casella.Hide()
+			self.pannello.Layout()
+
 	def _apri(self, evento=None):
 		from GBUtils import apri_mail
 		if apri_mail(*self.mail):
 			# La finestra resta: al ritorno Invio la chiude, e chi la bozza
 			# non l'ha trovata sceglie i passi.
 			self.riuscita = True
+			self._togli_la_casella()
+			if self.appunti:
+				_negli_appunti(self.appunti)
 			self.chiudi.SetDefault()
 			self._al_testo()
 		else:
@@ -506,15 +571,22 @@ class _FinestraMail(wx.Dialog):
 		self.ok.SetDefault()
 		self.chiudi.SetLabel(self.annulla)
 		self.passo = 0
+		self.premessa = premessa
 		self._mostra_passo(premessa)
 
-	def _mostra_passo(self, premessa=""):
+	def _testo_del_passo(self, premessa=""):
+		"""Il testo della schermata del passo e quello da copiare negli appunti."""
 		istruzione, testo = self.passi[self.passo]
+		return "\n".join(parte for parte in (premessa, istruzione, testo) if parte), testo
+
+	def _mostra_passo(self, premessa=""):
+		contenuto, testo = self._testo_del_passo(premessa)
 		if testo:
 			_negli_appunti(testo)
-		self._scrivi("\n".join(parte for parte in (premessa, istruzione, testo) if parte))
+		self._scrivi(contenuto)
 
 	def _avanti(self, evento=None):
+		self._togli_la_casella()
 		self.passo += 1
 		if self.passo < len(self.passi):
 			self._mostra_passo()
