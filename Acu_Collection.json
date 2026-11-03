@@ -27324,7 +27324,7 @@
         ]
     },
     "mess_pub_entra": {
-        "descrizione": "MESS, Entra al PUB nel menu Aiuto, la mail per iscriversi alla lista di supporto: seno, il campanello della porta del pub, din don, un mi 6 di 150 ms a sinistra e un do 6 di 300 ms a destra; 450 ms. Va bene per un ingresso, un'iscrizione, una porta che si apre a un gruppo.",
+        "descrizione": "MESS, Entra al PUB nel menu Aiuto, la mail per iscriversi alla lista di supporto: seno, il campanello della porta del pub, din don, un mi 6 di 150 ms a sinistra e un do 6 di 300 ms a destra; 450 ms. Va bene per un ingresso, un'iscrizione, una porta che si apre a un gruppo. Usato da: meteora.",
         "score": [
             [
                 "e6",
@@ -27348,7 +27348,7 @@
         ]
     },
     "mess_pub_aiuto": {
-        "descrizione": "MESS, Chiedi aiuto al PUB nel menu Aiuto, la mail con la domanda e le informazioni del computer: onda triangolare, una domanda, sol 4 e do 5 da 80 ms e l'inflessione che sale dal mi 5 al fa diesis 5 in 200 ms, da sinistra a destra; 360 ms. Va bene per una richiesta d'aiuto, una domanda, un messaggio a chi sa.",
+        "descrizione": "MESS, Chiedi aiuto al PUB nel menu Aiuto, la mail con la domanda e le informazioni del computer: onda triangolare, una domanda, sol 4 e do 5 da 80 ms e l'inflessione che sale dal mi 5 al fa diesis 5 in 200 ms, da sinistra a destra; 360 ms. Va bene per una richiesta d'aiuto, una domanda, un messaggio a chi sa. Usato da: meteora.",
         "score": [
             [
                 "g4",
@@ -31737,6 +31737,96 @@
             0.0,
             100.0,
             0.002
+        ]
+    },
+    "meteora_segnalibro_messo": {
+        "descrizione": "MeTeOra, Ctrl e Maiuscolo con H mettono il segnalibro: onda triangolare, il nastro che scivola fra le pagine, un portamento dal sol 5 al re 6 a sinistra, e il segno che resta, un la 6 a destra; 180 ms. E' lo specchio di meteora_segnalibro_tolto. Va bene per mettere un segnalibro, segnare un punto da ritrovare, appuntare.",
+        "score": [
+            [
+                "g5.d6",
+                0.07,
+                -0.3,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "a6",
+                0.09,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            75.0,
+            30.0
+        ]
+    },
+    "meteora_segnalibro_tolto": {
+        "descrizione": "MeTeOra, Ctrl con H toglie il segnalibro: onda triangolare, il segno che si stacca, un la 6 a destra, e il nastro che scivola fuori, un portamento dal re 6 al sol 5 a sinistra; 160 ms. E' lo specchio di meteora_segnalibro_messo. Va bene per togliere un segnalibro, cancellare un punto segnato.",
+        "score": [
+            [
+                "a6",
+                0.05,
+                0.3,
+                -0.05
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "d6.g5",
+                0.09,
+                -0.3,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            15.0,
+            75.0,
+            30.0
+        ]
+    },
+    "meteora_al_segnalibro": {
+        "descrizione": "MeTeOra, Maiuscolo con H torna al segnalibro e suona da li': seno, le pagine sfogliate fino al segno, un portamento dal mi 5 al mi 6 che va da sinistra a destra, e l'arrivo, un si 6 a destra; 220 ms. Va bene per tornare a un punto segnato, riprendere una lettura o un ascolto.",
+        "score": [
+            [
+                "e5.e6",
+                0.12,
+                "-0.6.0.4",
+                -0.05
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                0.0
+            ],
+            [
+                "b6",
+                0.08,
+                0.4,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            30.0
         ]
     }
 }
