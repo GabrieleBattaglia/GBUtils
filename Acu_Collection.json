@@ -318,7 +318,7 @@
         ]
     },
     "partenza": {
-        "descrizione": "un processo che inizia, qualcosa che comincia. Un suono piuttosto gentile e soft, da usare anche in serie ripetute. Usato da: batnav, cartella, clz, gabryscola, meteora, stellaterm.",
+        "descrizione": "un processo che inizia, qualcosa che comincia. Un suono piuttosto gentile e soft, da usare anche in serie ripetute. Usato da: batnav, cartella, clz, gabryscola, meteora, stellaterm, tornello.",
         "score": [
             [
                 "g2.g#3",
@@ -4326,7 +4326,7 @@
         ]
     },
     "notifica": {
-        "descrizione": "una notifica compare e richiede attenzione, un elemento cambia stato e richiede attenzione. Usato da: meteora, stellaterm, tornello.",
+        "descrizione": "una notifica compare e richiede attenzione, un elemento cambia stato e richiede attenzione. Usato da: meteora, stellaterm.",
         "score": [
             [
                 "e7",
@@ -15186,7 +15186,7 @@
         ]
     },
     "mess_prova_volume": {
-        "descrizione": "MESS, prova del volume degli effetti: una sola nota di onda triangolare, sol 5 al centro, che cresce fino al livello scelto e si spegne, in 160 ms. Breve e neutra, si può ripetere a ogni ritocco. Va bene per provare un volume, un livello o un guadagno.",
+        "descrizione": "MESS, prova del volume degli effetti: una sola nota di onda triangolare, sol 5 al centro, che cresce fino al livello scelto e si spegne, in 160 ms. Breve e neutra, si può ripetere a ogni ritocco. Va bene per provare un volume, un livello o un guadagno. Usato da: tornello.",
         "score": [
             [
                 "g5",
@@ -18162,7 +18162,7 @@
         ]
     },
     "mess_arretrati_aperti": {
-        "descrizione": "MESS, si apre l'elenco dei tesserati che aspettano gli arretrati: onda triangolare, quattro note in re minore armonico, re 5, fa 5 e mi 5 da sinistra a destra, che ricadono e restano sospese su un do diesis 5 più lungo al centro, come un conto in sospeso, in 440 ms. Va bene per aprire un elenco di debiti, di attese o di cose ancora da sistemare.",
+        "descrizione": "MESS, si apre l'elenco dei tesserati che aspettano gli arretrati: onda triangolare, quattro note in re minore armonico, re 5, fa 5 e mi 5 da sinistra a destra, che ricadono e restano sospese su un do diesis 5 più lungo al centro, come un conto in sospeso, in 440 ms. Va bene per aprire un elenco di debiti, di attese o di cose ancora da sistemare. Usato da: tornello.",
         "score": [
             [
                 "d5",
