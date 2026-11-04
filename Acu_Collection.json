@@ -27324,7 +27324,7 @@
         ]
     },
     "mess_pub_entra": {
-        "descrizione": "MESS, Entra al PUB nel menu Aiuto, la mail per iscriversi alla lista di supporto: seno, il campanello della porta del pub, din don, un mi 6 di 150 ms a sinistra e un do 6 di 300 ms a destra; 450 ms. Va bene per un ingresso, un'iscrizione, una porta che si apre a un gruppo. Usato da: meteora.",
+        "descrizione": "MESS, Entra al PUB nel menu Aiuto, la mail per iscriversi alla lista di supporto: seno, il campanello della porta del pub, din don, un mi 6 di 150 ms a sinistra e un do 6 di 300 ms a destra; 450 ms. Va bene per un ingresso, un'iscrizione, una porta che si apre a un gruppo. Usato da: meteora, tornello.",
         "score": [
             [
                 "e6",
@@ -27348,7 +27348,7 @@
         ]
     },
     "mess_pub_aiuto": {
-        "descrizione": "MESS, Chiedi aiuto al PUB nel menu Aiuto, la mail con la domanda e le informazioni del computer: onda triangolare, una domanda, sol 4 e do 5 da 80 ms e l'inflessione che sale dal mi 5 al fa diesis 5 in 200 ms, da sinistra a destra; 360 ms. Va bene per una richiesta d'aiuto, una domanda, un messaggio a chi sa. Usato da: meteora.",
+        "descrizione": "MESS, Chiedi aiuto al PUB nel menu Aiuto, la mail con la domanda e le informazioni del computer: onda triangolare, una domanda, sol 4 e do 5 da 80 ms e l'inflessione che sale dal mi 5 al fa diesis 5 in 200 ms, da sinistra a destra; 360 ms. Va bene per una richiesta d'aiuto, una domanda, un messaggio a chi sa. Usato da: meteora, tornello.",
         "score": [
             [
                 "g4",
