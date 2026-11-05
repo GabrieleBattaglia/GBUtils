@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V242 di mercoledì 4 novembre 2026
+	V243 di giovedì 5 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.6.1 di giovedì 1 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -30,7 +30,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
-	polipo V6.1.0 del 18 luglio 2025 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5, modalità auto) il 4 settembre 2026
+	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	programma_di_posta V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	PUB_GRUPPO e PUB_ISCRIZIONE, costanti di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	rileggi_dispositivi_audio V1.0.0 di giovedì 22 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "242"
+VERSION = "243"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6612,10 +6612,12 @@ def apri_mail(destinatario, oggetto="", corpo="", lunghezza_massima=2000):
 	return True
 
 def polipo(domain='messages', localedir='locales', source_language='en', config_path=None,
-           interattivo=True, lingua_predefinita=None):
+           interattivo=True, lingua_predefinita=None, lingua=None, plurali=False):
     """
-    polipo V6.1.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026
-    Restituisce la coppia (codice della lingua, funzione di traduzione).
+    polipo V6.2.0 by Gabriele Battaglia and Gemini - 18/07/2025, poi ClaudIA (Claude Opus 5, modalità auto) - 4/9/2026,
+    e ClaudIA (Claude Opus 5.5, UltraCode) - 5/11/2026
+    Restituisce la coppia (codice della lingua, funzione di traduzione), o con
+    plurali=True la terna (codice della lingua, gettext, ngettext).
     Versione autonoma e compatibile con PyInstaller.
     - Trova autonomamente le risorse (es. cartella 'locales').
     - Salva il file di configurazione della lingua accanto all'eseguibile o al
@@ -6635,6 +6637,14 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
     - lingua_predefinita e' la lingua da usare quando la scelta non viene
       chiesta o viene annullata; se non e' indicata o non e' disponibile, si
       usa quella di sistema, e in mancanza di quella la lingua sorgente.
+    - lingua e' la lingua scelta dal programma, per esempio da una voce delle
+      sue impostazioni: se ha il catalogo vale subito, senza menu, e si salva
+      come le altre scelte; se non ce l'ha non conta, e si decide come sempre.
+      Nasce con la V243 per MeTeOra, che non ha un terminale per il menu.
+    - plurali=True aggiunge ngettext(singolare, plurale, n), per le lingue con
+      piu' forme del plurale, come il polacco o il russo: lo sceglie il
+      catalogo, con la sua regola Plural-Forms. Nella lingua sorgente il
+      singolare vale per n uguale a 1, il plurale per tutti gli altri.
     - Non richiede funzioni esterne di supporto.
     """
     import gettext
@@ -6642,6 +6652,17 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
     import os
     import struct
     import sys
+
+    def esito(codice, traduzione=None):
+        """La risposta di polipo: senza traduzione, quella della lingua
+        sorgente, che lascia i testi come sono."""
+        if traduzione is None:
+            if not plurali:
+                return codice, lambda text: text
+            return codice, lambda text: text, lambda singolare, plurale, n: singolare if n == 1 else plurale
+        if not plurali:
+            return codice, traduzione.gettext
+        return codice, traduzione.gettext, traduzione.ngettext
     # Rileva se l'app è "congelata" (compilata con PyInstaller)
     is_frozen = getattr(sys, 'frozen', False)
     # Cartella dell'eseguibile se congelato, altrimenti quella del file che ha
@@ -6680,7 +6701,7 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
         print(f"Warning: could not create the configuration directory: {e}")
         # Senza quella cartella la scelta non si puo' salvare: si prosegue
         # nella lingua sorgente invece di fermare il programma.
-        return source_language, lambda text: text
+        return esito(source_language)
     # Costruisce i percorsi completi
     localedir_abs = os.path.join(resources_base_path, localedir)
     selected_lang_file = os.path.join(config_save_path, 'selected_language.json')
@@ -6696,7 +6717,7 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
     except OSError:
         print(f"Warning: translations folder '{localedir_abs}' not found.")
         print(f"The application will use the source language ('{source_language}').")
-        return source_language, lambda text: text
+        return esito(source_language)
     current_choices_set = {source_language}
     # La lingua di sistema si propone solo se qualcuno l'ha davvero tradotta,
     # altrimenti si offriva una scelta che lasciava i testi come prima.
@@ -6706,7 +6727,7 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
     current_available_languages = sorted(current_choices_set)
     if len(current_available_languages) < 2:
         # C'e' solo la lingua sorgente: non ha senso chiedere niente.
-        return source_language, lambda text: text
+        return esito(source_language)
     language_code = None
     show_menu = False
     # La rilettura non si fida di cio' che trova: un file troncato da un
@@ -6741,6 +6762,16 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
             except OSError:
                 pass
 
+    if lingua in current_available_languages and (show_menu or lingua != language_code):
+        # La lingua scelta dal programma vale senza menu, e si salva come le
+        # altre scelte: al prossimo avvio la ritrova anche chi non la passa.
+        language_code = lingua
+        show_menu = False
+        try:
+            with open(selected_lang_file, 'w', encoding='utf-8') as f:
+                json.dump({'language_code': language_code, 'available_languages': current_available_languages}, f, indent=4)
+        except OSError as e:
+            print(f"Warning: could not save the selected language: {e}")
     if show_menu:
         if lingua_predefinita in current_available_languages:
             default_fallback = lingua_predefinita
@@ -6791,7 +6822,7 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
         except OSError as e:
             print(f"Warning: could not save the selected language: {e}")
     if language_code == source_language:
-        return source_language, lambda text: text
+        return esito(source_language)
     else:
         # fallback=True copre il catalogo mancante, che qui non puo' comunque
         # accadere perche' si propongono solo le lingue che il catalogo ce
@@ -6809,5 +6840,5 @@ def polipo(domain='messages', localedir='locales', source_language='en', config_
             )
         except (OSError, struct.error) as e:
             print(f"Warning: the '{language_code}' catalogue could not be read: {e}")
-            return source_language, lambda text: text
-        return language_code, translation.gettext
+            return esito(source_language)
+        return esito(language_code, translation)
