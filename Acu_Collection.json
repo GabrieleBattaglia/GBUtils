@@ -33130,5 +33130,35 @@
             80.0,
             15.0
         ]
+    },
+    "orologic_sfida_in_arrivo": {
+        "descrizione": "Una sfida in arrivo su Lichess, annunciata in Orolichess: un din-don di seno, mi 5 di 80 ms e do 5 di 140 ms separati da una pausa di 30 ms, con l'attacco morbido, come un campanello alla porta.",
+        "score": [
+            [
+                "e5",
+                0.08,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.14,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            15.0
+        ]
     }
 }
