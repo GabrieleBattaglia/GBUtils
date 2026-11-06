@@ -33022,5 +33022,113 @@
             100.0,
             0.05
         ]
+    },
+    "orologic_forza_lichess": {
+        "descrizione": "Livello di Lichess scelto per il motore, in Easyfish: tre note di seno che salgono come una scala di livelli, re 5, fa diesis 5 e la 5, 40, 40 e 60 ms, con l'attacco morbido.",
+        "score": [
+            [
+                "d5",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "f#5",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "a5",
+                0.06,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            10.0
+        ]
+    },
+    "orologic_profondita": {
+        "descrizione": "Profondita' della ricerca del motore impostata, in Easyfish: tre note di seno che scendono, sol 5, re 5 e sol 4, 40, 40 e 70 ms, come a calarsi in profondita'.",
+        "score": [
+            [
+                "g5",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "d5",
+                0.04,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.07,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            10.0,
+            80.0,
+            10.0
+        ]
+    },
+    "orologic_punteggio_sale": {
+        "descrizione": "Il punteggio contro il motore e' salito, a fine partita in Easyfish: due note triangolari che salgono di una quinta, mi 5 e si 5, 70 e 120 ms. Gemello di orologic_punteggio_scende.",
+        "score": [
+            [
+                "e5",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.12,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            15.0
+        ]
+    },
+    "orologic_punteggio_scende": {
+        "descrizione": "Il punteggio contro il motore e' sceso, a fine partita in Easyfish: due note triangolari che scendono di una quinta, si 5 e mi 5, 70 e 120 ms. Gemello di orologic_punteggio_sale.",
+        "score": [
+            [
+                "b5",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.12,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            15.0
+        ]
     }
 }
