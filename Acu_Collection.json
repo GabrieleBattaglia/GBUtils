@@ -108,7 +108,7 @@
         ]
     },
     "timbratura": {
-        "descrizione": "Il lettore di badge dell'Esselunga, imitato: onda quadra, un re 4 corto, un fa 3 grave più lungo e un re diesis 6 acuto, separati da brevi pause, 300 ms. Va bene per una timbratura, una registrazione o una conferma di passaggio. Usato da: clz, meteora, tornello.",
+        "descrizione": "Il lettore di badge dell'Esselunga, imitato: onda quadra, un re 4 corto, un fa 3 grave più lungo e un re diesis 6 acuto, separati da brevi pause, 300 ms. Va bene per una timbratura, una registrazione o una conferma di passaggio. Usato da: clz, meteora, orologic, tornello.",
         "score": [
             [
                 "d4",
@@ -1638,7 +1638,7 @@
         ]
     },
     "notifica_ui_1": {
-        "descrizione": "Notifica UI breve 1",
+        "descrizione": "Notifica UI breve 1: due note acute di seno, un re 6 di 50 ms e un la diesis 7 di 100 ms. Usato da: orologic.",
         "score": [
             [
                 "d6",
@@ -2250,7 +2250,7 @@
         ]
     },
     "laser_da_gioco_1": {
-        "descrizione": "Effetto laser/zap 1",
+        "descrizione": "Effetto laser/zap 1: una glissata di seno dal fa diesis 6 al do 2, di 170 ms, che si spegne lungo tutta la durata. Usato da: orologic.",
         "score": [
             [
                 "f#6.c2",
@@ -32961,6 +32961,66 @@
             10.0,
             80.0,
             30.0
+        ]
+    },
+    "orologic_allarme_4": {
+        "descrizione": "Quarto allarme dell'orologio di Orologic: un doppio colpo ruvido, due fa 4 a dente di sega di 120 e 140 ms separati da una pausa di 60 ms, con l'attacco morbido. Si distingue dagli altri allarmi per il timbro.",
+        "score": [
+            [
+                "f4",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "f4",
+                0.14,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            1.0,
+            10.0,
+            70.0,
+            20.0
+        ]
+    },
+    "orologic_allarme_5": {
+        "descrizione": "Quinto e ultimo allarme dell'orologio di Orologic: due salite di seno dal do 5 al sol 5, di 300 ms ciascuna, separate da una pausa di 60 ms. L'andamento che sale e si ripete da' l'urgenza dell'ultimo avviso.",
+        "score": [
+            [
+                "c5.g5",
+                0.3,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                0.0
+            ],
+            [
+                "c5.g5",
+                0.3,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            0.05,
+            0.0,
+            100.0,
+            0.05
         ]
     }
 }
