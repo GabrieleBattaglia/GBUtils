@@ -33160,5 +33160,263 @@
             80.0,
             15.0
         ]
+    },
+    "orologic_statistiche_motore": {
+        "descrizione": "Pagina delle statistiche contro il motore, comando .gs di Easyfish: quattro note triangolari staccate che salgono come a contare, sol 4, si 4, re 5 e sol 5, 40 ms ciascuna con pause di 20 ms, l'ultima di 80.",
+        "score": [
+            [
+                "g4",
+                0.04,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "b4",
+                0.04,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "d5",
+                0.04,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.02,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.08,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            15.0
+        ]
+    },
+    "orologic_prompt_salvato": {
+        "descrizione": "Modello del prompt di gioco salvato, nelle impostazioni di Orologic: una scivolata di seno che sale dal do 5 al sol 5 in 140 ms, morbida. Gemello di orologic_prompt_predefinito.",
+        "score": [
+            [
+                "c5.g5",
+                0.14,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            10.0,
+            80.0,
+            20.0
+        ]
+    },
+    "orologic_prompt_predefinito": {
+        "descrizione": "Torna il prompt di gioco predefinito, nelle impostazioni di Orologic: una scivolata di seno che scende dal sol 5 al do 5 in 140 ms, morbida. Gemello di orologic_prompt_salvato.",
+        "score": [
+            [
+                "g5.c5",
+                0.14,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            10.0,
+            80.0,
+            20.0
+        ]
+    },
+    "orologic_torneo_iscrizione": {
+        "descrizione": "Iscrizione a un torneo arena di Lichess riuscita, in Orolichess: piccola fanfara triangolare che sale, do 5, sol 5 e do 6, 60, 60 e 120 ms. Gemello di orologic_torneo_ritiro.",
+        "score": [
+            [
+                "c5",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "c6",
+                0.12,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            10.0,
+            85.0,
+            15.0
+        ]
+    },
+    "orologic_torneo_ritiro": {
+        "descrizione": "Ritiro o pausa in un torneo arena di Lichess, in Orolichess: la fanfara triangolare dell'iscrizione al contrario, do 6, sol 5 e do 5, 60, 60 e 120 ms. Gemello di orologic_torneo_iscrizione.",
+        "score": [
+            [
+                "c6",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "c5",
+                0.12,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            10.0,
+            85.0,
+            15.0
+        ]
+    },
+    "orologic_torneo_abbinamento": {
+        "descrizione": "Lichess ha abbinato una partita di torneo arena, e Orolichess la apre: un richiamo di seno che salta d'ottava due volte, la 4, la 5, la 4 e la 5, 60 ms ciascuno e l'ultimo di 120, come una chiamata al tavolo.",
+        "score": [
+            [
+                "a4",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "a5",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "a4",
+                0.06,
+                0,
+                0.0
+            ],
+            [
+                "a5",
+                0.12,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            8.0,
+            85.0,
+            15.0
+        ]
+    },
+    "orologic_torneo_finito": {
+        "descrizione": "Fine di un torneo arena di Lichess, nell'attesa di Orolichess: arpeggio di seno in do maggiore, do 5, mi 5, sol 5 di 100 ms e do 6 lungo 300 ms, disteso, come un sipario che si chiude.",
+        "score": [
+            [
+                "c5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0,
+                0.0
+            ],
+            [
+                "c6",
+                0.3,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            10.0,
+            75.0,
+            30.0
+        ]
+    },
+    "orologic_berserk": {
+        "descrizione": "Berserk dichiarato in una partita di torneo arena su Lichess, in Orolichess: una salita a dente di sega su un accordo diminuito, mi 4, sol 4, la diesis 4 e mi 5, 50 ms e l'ultima di 150, con un che di furioso.",
+        "score": [
+            [
+                "e4",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "g4",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "a#4",
+                0.05,
+                0,
+                0.0
+            ],
+            [
+                "e5",
+                0.15,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            15.0
+        ]
     }
 }
