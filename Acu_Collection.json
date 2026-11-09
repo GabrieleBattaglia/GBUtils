@@ -33418,5 +33418,65 @@
             80.0,
             15.0
         ]
+    },
+    "orologic_ea_acceso": {
+        "descrizione": "Partita a punteggio accesa, comando .ea di Easyfish in Orologic: un interruttore di seno che scatta in su d'ottava, sol 4 di 40 ms, pausa di 30 e sol 5 di 100. Gemello di orologic_ea_spento.",
+        "score": [
+            [
+                "g4",
+                0.04,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0,
+                0.0
+            ],
+            [
+                "g5",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            15.0
+        ]
+    },
+    "orologic_ea_spento": {
+        "descrizione": "Partita a punteggio spenta, comando .ea di Easyfish in Orologic: l'interruttore di seno che scende d'ottava, sol 5 di 40 ms, pausa di 30 e sol 4 di 100. Gemello di orologic_ea_acceso.",
+        "score": [
+            [
+                "g5",
+                0.04,
+                0,
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0,
+                0.0
+            ],
+            [
+                "g4",
+                0.1,
+                0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            15.0
+        ]
     }
 }
