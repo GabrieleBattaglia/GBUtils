@@ -33419,8 +33419,8 @@
             15.0
         ]
     },
-    "orologic_ea_acceso": {
-        "descrizione": "Partita a punteggio accesa, comando .ea di Easyfish in Orologic: un interruttore di seno che scatta in su d'ottava, sol 4 di 40 ms, pausa di 30 e sol 5 di 100. Gemello di orologic_ea_spento.",
+    "orologic_carriera": {
+        "descrizione": "Entrata nella carriera contro il motore, menu gioca di Orologic: un interruttore di seno che scatta in su d'ottava, sol 4 di 40 ms, pausa di 30 e sol 5 di 100. Gemello di orologic_libero.",
         "score": [
             [
                 "g4",
@@ -33449,8 +33449,8 @@
             15.0
         ]
     },
-    "orologic_ea_spento": {
-        "descrizione": "Partita a punteggio spenta, comando .ea di Easyfish in Orologic: l'interruttore di seno che scende d'ottava, sol 5 di 40 ms, pausa di 30 e sol 4 di 100. Gemello di orologic_ea_acceso.",
+    "orologic_libero": {
+        "descrizione": "Entrata nella partita libera contro il motore, menu gioca di Orologic: l'interruttore di seno che scende d'ottava, sol 5 di 40 ms, pausa di 30 e sol 4 di 100. Gemello di orologic_carriera.",
         "score": [
             [
                 "g5",
@@ -33477,6 +33477,144 @@
             10.0,
             80.0,
             15.0
+        ]
+    },
+    "orologic_motore_abbandona": {
+        "descrizione": "Il motore abbandona la partita, nel gioco contro il motore di Orologic: quattro note triangolari che scendono adagio, sol 5, mi 5 e do 5 di 120 ms e sol 4 lungo 350, come chi rovescia il suo re.",
+        "score": [
+            [
+                "g5",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "e5",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "g4",
+                0.35,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            10.0,
+            75.0,
+            30.0
+        ]
+    },
+    "orologic_carriera_azzerata": {
+        "descrizione": "Carriera contro il motore cancellata, voce inizializza di Orologic: una scivolata di seno che sale di due ottave, dal do 4 al do 6 in 250 ms, pausa e un do 4 secco: si riparte da capo.",
+        "score": [
+            [
+                "c4.c6",
+                0.25,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "c4",
+                0.08,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            20.0
+        ]
+    },
+    "orologic_modello_scelto": {
+        "descrizione": "Modello del motore scelto, nella carriera di Orologic: un arpeggio di seno in mi maggiore, mi 5, sol diesis 5 e si 5 di 50 ms e mi 6 di 100, rapido e luminoso.",
+        "score": [
+            [
+                "e5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "g#5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "b5",
+                0.05,
+                0.0,
+                0.0
+            ],
+            [
+                "e6",
+                0.1,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            2.0,
+            10.0,
+            80.0,
+            15.0
+        ]
+    },
+    "orologic_record": {
+        "descrizione": "Pagina dei record della carriera contro il motore, in Orologic: squillo a dente di sega, do 5 ripetuto di 70 ms, sol 5 e do 6 lungo 200, come una piccola premiazione.",
+        "score": [
+            [
+                "c5",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "c5",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "g5",
+                0.07,
+                0.0,
+                0.0
+            ],
+            [
+                "c6",
+                0.2,
+                0.0,
+                0.0
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            2.0,
+            10.0,
+            70.0,
+            20.0
         ]
     }
 }
