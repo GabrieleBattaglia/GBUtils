@@ -34128,7 +34128,7 @@
         ]
     },
     "soffio_che_si_ferma": {
-        "descrizione": "Rumore rosa, un soffio lungo che scende da 3000-8000 a 150-600 Hz, un nastro che si ferma; 240 ms. Va bene per ogni arresto o chiusura.",
+        "descrizione": "Rumore rosa, un soffio lungo che scende da 3000-8000 a 150-600 Hz, un nastro che si ferma; 240 ms. Va bene per ogni arresto o chiusura. Usato da: meteora.",
         "score": [
             [
                 "3000-8000.150-600",
@@ -34146,7 +34146,7 @@
         ]
     },
     "sonar_con_due_echi": {
-        "descrizione": "Seno, un segnale di sonar su la 5 con due echi, a destra e a sinistra, sempre più piano; 270 ms. Va bene per ogni ricerca o attesa in ascolto.",
+        "descrizione": "Seno, un segnale di sonar su la 5 con due echi, a destra e a sinistra, sempre più piano; 270 ms. Va bene per ogni ricerca o attesa in ascolto. Usato da: meteora.",
         "score": [
             [
                 "a5",
@@ -34314,7 +34314,7 @@
         ]
     },
     "folata_verso_destra": {
-        "descrizione": "Rumore rosa, una folata che sale da 500-2000 a 3000-9000 Hz passando da sinistra a destra; 90 ms. Va bene per ogni salto o passaggio veloce.",
+        "descrizione": "Rumore rosa, una folata che sale da 500-2000 a 3000-9000 Hz passando da sinistra a destra; 90 ms. Va bene per ogni salto o passaggio veloce. Usato da: meteora.",
         "score": [
             [
                 "500-2000.3000-9000",
