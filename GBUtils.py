@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V259 di giovedì 12 novembre 2026
+	V260 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.6.5 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
@@ -12,7 +12,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	CWzator V11.7.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
-	dgt V2.0.0 di lunedì 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	dgt V3.0.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	elenco_dispositivi_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	elenco_interfacce_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "259"
+VERSION = "260"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5781,8 +5781,21 @@ def _dgt_limita_default(default, kind, minimo, massimo):
 			raise ValueError(f"dgt: il default {default!r} non e' convertibile in decimale.") from None
 		return min(max(valore, minimo), massimo)
 	return str(default)[:massimo]
-def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None):
-	'''V2.0.0 di lunedi' 7 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalita' auto)
+# I limiti di serie di dgt: un limite uguale a questi vuol dire che chi chiama
+# non ne ha dichiarato nessuno, e i limiti in cifre non lo nominano.
+_DGT_DI_SERIE = {"imin": -999999999, "imax": 999999999, "fmin": -999999999.9, "fmax": 999999999.9}
+# Le situazioni in cui dgt rifiuta cio' che si e' digitato: sono le chiavi
+# del dizionario avvisi.
+_DGT_AVVISI = ("non_intero", "non_decimale", "troppo_basso", "troppo_alto", "troppo_corta", "troppo_lunga")
+
+def _dgt_cifre(valore):
+	"""Un limite scritto in cifre, senza il .0 di un decimale intero."""
+	if isinstance(valore, float) and valore.is_integer():
+		return str(int(valore))
+	return str(valore)
+
+def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None, avvisi=None):
+	'''V3.0.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	Potenzia input con i controlli che input non ha, e ripete la domanda
 	finche' non riceve un valore accettabile.
 	Riceve il prompt, il tipo e i limiti:
@@ -5790,28 +5803,62 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 	  fmin e fmax, minimo e massimo per i decimali;
 	  smin e smax, lunghezza minima e massima per le stringhe.
 	kind vale s per stringa, i per intero, f per decimale.
-	Un valore digitato fuori dai limiti viene riportato al limite piu' vicino,
-	e la funzione lo dice; con pwd vero viene invece rifiutato e la domanda si
-	ripete, perche' cio' che si digita mascherato non si puo' rileggere.
+	Un valore digitato fuori dai limiti, o che non e' del tipo chiesto, si
+	rifiuta e la domanda si ripete: dgt non lo cambia mai. Fino alla V2.0.0 lo
+	riportava al limite piu' vicino, e una stringa piu' lunga di smax veniva
+	tagliata: in PokerMachine, con smax=1, il no al raddoppio diventava n, cioe'
+	una scommessa sul nero (issue 45, scelta di Gabriele del 12 novembre 2026).
+	Un decimale che non e' un numero vero, come nan o inf, non e' un decimale.
+	avvisi sono le parole del rifiuto, perche' dgt non sa in che lingua parla
+	chi la chiama: un dizionario che a ogni situazione da' la sua frase, gia'
+	tradotta. Le chiavi sono non_intero, non_decimale, troppo_basso,
+	troppo_alto, troppo_corta e troppo_lunga; nelle frasi {minimo} e {massimo}
+	sono i limiti, per le stringhe le lunghezze, e {lunghezza} e' quanto e'
+	lunga la stringa digitata. Per esempio
+	  dgt("Quante carte? ", kind="i", imin=1, imax=5, avvisi={
+	      "non_intero": "Serve un numero.",
+	      "troppo_basso": "Almeno {minimo}.", "troppo_alto": "Al massimo {massimo}."})
+	Una frase vuota fa tacere quella situazione. Dove chi chiama non ha
+	passato una frase, dgt stampa soltanto i limiti in cifre, uguali in ogni
+	lingua, come il conteggio di menu: 1 - 10 per un numero fuori da quei
+	limiti, >= 1 o <= 10 quando ne e' dichiarato uno solo, e per un testo la
+	sua lunghezza e quella ammessa, 3 / 1 per tre caratteri dove ne e' ammesso
+	uno. Un numero che non si legge, quando non e' dichiarato nessun limite,
+	fa ripetere la domanda e basta.
 	default viene restituito quando si preme invio senza aver digitato niente.
 	Dalla V2.0.0, prima di essere restituito, viene convertito al tipo chiesto
 	e riportato dentro i limiti: fino alla 1.10 li scavalcava, quindi una
 	chiamata che dichiarava dei limiti poteva restituire un valore che li
 	violava, e perfino di un tipo diverso da quello chiesto. Fa eccezione il
-	predefinito piu' corto di smin, che viene restituito com'e'.
+	predefinito piu' corto di smin, che viene restituito com'e'. Attenzione:
+	un predefinito piu' lungo di smax viene tagliato, come prima, quindi chi
+	ne offre uno lungo, per esempio una descrizione da riconfermare, alzi
+	smax. Il predefinito non compare nel prompt: se conta che l'utente lo
+	sappia, lo scrive chi chiama.
 	Cio' che l'utente digita viene restituito fedelmente, spazi ai bordi
 	compresi: e' chi chiama a decidere se toglierli.
 	Solleva ValueError quando kind non e' valido, quando i limiti sono
-	incoerenti fra loro e quando il predefinito non e' convertibile al tipo
-	chiesto; solleva EOFError quando non c'e' un terminale da cui leggere.
-	Sono errori di chi programma, e dalla V2.0.0 la funzione li riferisce a
-	chi l'ha chiamata invece di stamparli su una console che, in una
-	applicazione con interfaccia grafica, potrebbe non esistere. Restano
-	stampati soltanto i messaggi rivolti a chi sta digitando, che sono il
-	dialogo di cui la funzione vive.
+	incoerenti fra loro, quando il predefinito non e' convertibile al tipo
+	chiesto e quando avvisi ha una chiave sconosciuta o una frase con un segno
+	fra graffe che non e' minimo, massimo o lunghezza; solleva EOFError quando
+	non c'e' un terminale da cui leggere. Sono errori di chi programma, e la
+	funzione li riferisce a chi l'ha chiamata invece di stamparli su una
+	console che, in una applicazione con interfaccia grafica, potrebbe non
+	esistere.
 	'''
 	import getpass
 	import math
+	avvisi = {} if avvisi is None else dict(avvisi)
+	sconosciute = sorted(set(avvisi) - set(_DGT_AVVISI))
+	if sconosciute:
+		raise ValueError(f"dgt: avvisi ha chiavi sconosciute {sconosciute}; valgono {', '.join(_DGT_AVVISI)}.")
+	for chiave, frase in avvisi.items():
+		if not isinstance(frase, str):
+			raise ValueError(f"dgt: l'avviso {chiave} deve essere una stringa, ricevuto {frase!r}.")
+		try:
+			frase.format(minimo=0, massimo=0, lunghezza=0)
+		except (KeyError, IndexError, ValueError) as errore:
+			raise ValueError(f"dgt: l'avviso {chiave} non si compone: {errore}. Fra graffe valgono minimo, massimo e lunghezza.") from None
 	if not isinstance(kind, str) or not kind:
 		raise ValueError(f"dgt: kind deve essere una stringa non vuota, ricevuto {kind!r}.")
 	kind = kind[0].lower()
@@ -5833,6 +5880,32 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 		if smin > smax:
 			raise ValueError(f"dgt: smin {smin} e' maggiore di smax {smax}.")
 		minimo, massimo = smin, smax
+	# I limiti in cifre, la voce di dgt quando chi chiama non ha dato parole:
+	# si nominano soltanto quelli dichiarati.
+	if kind == "s":
+		intervallo = ""
+	else:
+		nomi = ("imin", "imax") if kind == "i" else ("fmin", "fmax")
+		basso = (imin if kind == "i" else fmin) != _DGT_DI_SERIE[nomi[0]]
+		alto = (imax if kind == "i" else fmax) != _DGT_DI_SERIE[nomi[1]]
+		if basso and alto:
+			intervallo = f"{_dgt_cifre(minimo)} - {_dgt_cifre(massimo)}"
+		elif basso:
+			intervallo = f">= {_dgt_cifre(minimo)}"
+		elif alto:
+			intervallo = f"<= {_dgt_cifre(massimo)}"
+		else:
+			intervallo = ""
+
+	def rifiuta(chiave, cifre, lunghezza=0):
+		"""Dice perche' il valore non va, con la frase del chiamante o con le
+		cifre, e lascia che la domanda si ripeta."""
+		frase = avvisi.get(chiave)
+		if frase is not None:
+			cifre = frase.format(minimo=_dgt_cifre(minimo), massimo=_dgt_cifre(massimo), lunghezza=lunghezza)
+		if cifre:
+			print(cifre)
+
 	while True:
 		try:
 			p = getpass.getpass(prompt) if pwd else input(prompt)
@@ -5841,36 +5914,38 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 		if p == "" and default is not None:
 			return _dgt_limita_default(default, kind, minimo, massimo)
 		if kind == "i":
-			try: valore = int(p)
+			try:
+				valore = int(p)
 			except ValueError:
-				print("Serve un numero intero.")
+				rifiuta("non_intero", intervallo)
 				continue
 		elif kind == "f":
-			try: valore = float(p)
+			try:
+				valore = float(p)
 			except ValueError:
-				print("Serve un numero decimale.")
+				valore = math.nan
+			if not math.isfinite(valore):
+				rifiuta("non_decimale", intervallo)
 				continue
 		else:
 			valore = p
-		misura = len(valore) if kind == "s" else valore
-		if pwd:
-			if misura < minimo or misura > massimo:
-				if kind == "s": print(f"Lunghezza fuori da {smin} a {smax}.")
-				else: print(f"Fuori dai limiti {minimo} - {massimo}.")
+		if kind == "s":
+			if len(valore) < minimo:
+				rifiuta("troppo_corta", f"{len(valore)} / {_dgt_cifre(minimo)}", len(valore))
+				continue
+			if len(valore) > massimo:
+				rifiuta("troppo_lunga", f"{len(valore)} / {_dgt_cifre(massimo)}", len(valore))
 				continue
 			return valore
-		if misura < minimo:
-			if kind == "s":
-				print(f"Troppo corta, servono {smin} caratteri.")
-				continue
-			print(f"Troppo basso, accettato {minimo}.")
-			return minimo
-		if misura > massimo:
-			if kind == "s":
-				print(f"Troppo lunga, accettati {smax} caratteri.")
-				return valore[:smax]
-			print(f"Troppo alto, accettato {massimo}.")
-			return massimo
+		# Fuori dai limiti senza averne dichiarato nessuno vuol dire oltre
+		# quelli di serie: le cifre li nominano tutti e due.
+		cifre = intervallo or f"{_dgt_cifre(minimo)} - {_dgt_cifre(massimo)}"
+		if valore < minimo:
+			rifiuta("troppo_basso", cifre)
+			continue
+		if valore > massimo:
+			rifiuta("troppo_alto", cifre)
+			continue
 		return valore
 # Le tre formattazioni della issue 9: una dimensione, una durata e un testo
 # troppo lungo, scritti allo stesso modo da tutto il parco software invece che

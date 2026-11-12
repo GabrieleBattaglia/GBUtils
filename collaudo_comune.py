@@ -85,7 +85,10 @@ class Esiti:
 				else:
 					riproduci()
 			elif scelta in ("c", "C"):
-				commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000).strip()
+				# Dalla V3.0.0 dgt non taglia piu' un commento troppo lungo: lo
+				# rifiuta e chiede di nuovo, con le parole che le si danno qui.
+				commento = dgt("\rImpressioni\r", kind="s", smin=0, smax=2000,
+							   avvisi={"troppo_lunga": "Troppo lungo: {lunghezza} caratteri, al massimo {massimo}."}).strip()
 				self.registra(titolo, commento, misura)
 				annotato = True
 				print("Annotato.")
