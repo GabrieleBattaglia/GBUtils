@@ -1,5 +1,5 @@
 """GBsintesi, la voce degli screen reader e il display braille, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode).
-V1.0.0 di mercoledì 21 ottobre 2026.
+V1.0.1 di giovedì 12 novembre 2026.
 Nato da sintesi.py e braille.py di MeTeOra 1.113.5, dove leggevano i
 sottotitoli, perche' anche MESS 1.79.0 vuole la cronaca della partita dal vivo
 letta in automatico: due programmi, quindi una famiglia di GBUtils, decisione
@@ -62,12 +62,17 @@ class _VoceDiWindows:
     installate: accessible_output2 lo legge all'apertura, e su certi Windows,
     con una voce registrata male, l'elenco fallisce e l'uscita non si apriva,
     lasciando chi non ha uno screen reader senza la voce di ripiego (MeTeOra
-    1.83.3, sul PC di Gabriele)."""
+    1.83.3, sul PC di Gabriele).
+    Dalla 1.0.1 si apre con il collegamento dinamico di win32com, che non
+    legge e non scrive la cache dei moduli generati, gen_py: una generazione
+    rimasta a meta', per un programma chiuso mentre generava, faceva stampare
+    in console a ogni apertura che la cache si stava ricostruendo (issue 61
+    di GBUtils, vista alla chiusura di MESS 1.94.0)."""
 
     def __init__(self):
-        import win32com.client
+        import win32com.client.dynamic
 
-        self._voce = win32com.client.Dispatch("SAPI.SpVoice")
+        self._voce = win32com.client.dynamic.Dispatch("SAPI.SpVoice")
 
     def speak(self, testo, interrupt=False):
         # SVSFlagsAsync, e con interrupt SVSFPurgeBeforeSpeak.
@@ -82,17 +87,20 @@ class _VoceDiWindows:
 
 def _crea(chiave):
     """L'uscita, o None se non si apre: accessible_output2 solleva errori suoi
-    e di COM, e una libreria che manca non deve fermare il programma. La voce
-    di Windows che accessible_output2 non apre la apre _VoceDiWindows."""
+    e di COM, e una libreria che manca non deve fermare il programma.
+    La voce di Windows la apre sempre _VoceDiWindows, dalla 1.0.1: prima si
+    provava accessible_output2, che passa dalla cache gen_py di win32com e la
+    genera al primo uso, e sul PC di Gabriele falliva comunque leggendo
+    l'elenco delle voci (issue 61 di GBUtils)."""
+    if chiave == VOCE_DI_SISTEMA:
+        try:
+            return _VoceDiWindows()
+        except Exception:  # noqa: BLE001 - SAPI non risponde
+            return None
     modulo, classe = USCITE[chiave]
     try:
         return getattr(importlib.import_module(f"accessible_output2.outputs.{modulo}"), classe)()
     except Exception:  # noqa: BLE001 - qualunque errore vuol dire che quell'uscita non c'e'
-        if chiave != VOCE_DI_SISTEMA:
-            return None
-    try:
-        return _VoceDiWindows()
-    except Exception:  # noqa: BLE001 - nemmeno SAPI risponde
         return None
 
 
