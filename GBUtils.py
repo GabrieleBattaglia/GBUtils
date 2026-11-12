@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V253 di giovedì 12 novembre 2026
+	V254 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.6.1 di giovedì 1 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+	Acusticator V8.6.2 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "253"
+VERSION = "254"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -4737,7 +4737,14 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 					f_start, f_end = freq
 					freq_array = np.linspace(f_start, f_end, total_note_samples, endpoint=False)
 					passi = 2.0 * np.pi * freq_array.astype(np.float64) / fs
-					phase = fase_portata + np.cumsum(passi)
+					# Il primo campione sta su fase_portata, e ognuno avanza del
+					# passo di quello prima: e' la somma esclusiva dei passi.
+					# Fino alla V8.6.1 la somma comprendeva anche il passo del
+					# campione stesso, e a ogni giunzione fra due quartine di
+					# portamento la fase saltava avanti di un campione intero,
+					# circa 25 gradi a 3000 Hz: un clic a ogni quartina dei
+					# trilli e degli sweep spezzati (issue 56).
+					phase = fase_portata + np.cumsum(passi) - passi
 					fase_dopo = phase[-1] + passi[-1]
 				else:
 					t = np.linspace(0, dur, total_note_samples, endpoint=False)
@@ -4774,10 +4781,13 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 					freq_array_ovs = f_start + (f_end - f_start) * indici_ovs / total_ovs_samples
 					dt_ovs = freq_array_ovs / fs_ovs
 					passi_ovs = 2.0 * np.pi * freq_array_ovs.astype(np.float64) / fs_ovs
-					# Il margine non deve spostare la fase della nota: quella del primo
-					# campione vero resta quella di prima, altrimenti salterebbe la
-					# continuita' di fase della V149.
-					phase_ovs = fase_portata + np.cumsum(passi_ovs) - np.sum(passi_ovs[:MARGINE_OVS])
+					# Il margine non deve spostare la fase della nota: il primo
+					# campione vero sta su fase_portata, altrimenti salterebbe la
+					# continuita' di fase della V149. Come per la sinusoide, la
+					# somma dei passi e' esclusiva: fino alla V8.6.1 comprendeva
+					# anche il passo del campione stesso, e la fase saltava di un
+					# campione sovracampionato a ogni giunzione (issue 56).
+					phase_ovs = fase_portata + np.cumsum(passi_ovs) - passi_ovs - np.sum(passi_ovs[:MARGINE_OVS])
 					fase_dopo = phase_ovs[ultimo_vero] + passi_ovs[ultimo_vero]
 				else:
 					dt_ovs = np.full(quanti_ovs, freq / fs_ovs, dtype=np.float64)
@@ -4880,7 +4890,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.6.1 di giovedì 1 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+    """V8.6.2 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
