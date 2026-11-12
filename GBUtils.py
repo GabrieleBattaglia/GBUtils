@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V256 di giovedì 12 novembre 2026
+	V257 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.6.4 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.6.5 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "256"
+VERSION = "257"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1458,6 +1458,71 @@ def rileggi_dispositivi_audio():
 # due. Le classi sono private perche' chi le usa non le vede: vede Acusticator
 # e CWzator, che gli passano davanti.
 
+# L'intervallo con cui l'interprete passa il lucchetto da un filo all'altro
+# mentre il mixer suona, e quanti mixer lo stanno chiedendo, con quello che
+# c'era prima, da rimettere quando l'ultimo smette.
+_SCAMBIO_MIXER = 0.001
+_SCAMBIO = {"quanti": 0, "prima": None, "lucchetto": None}
+
+def _lucchetto_tempi():
+	"""Il lucchetto del conto qui sopra, creato alla prima richiesta come il
+	mixer: gli import del pacchetto stanno dentro le funzioni."""
+	if _SCAMBIO["lucchetto"] is None:
+		import threading
+		_SCAMBIO["lucchetto"] = threading.Lock()
+	return _SCAMBIO["lucchetto"]
+
+def _alza_timer():
+	"""Stringe i tempi per il mixer che suona: il timer di Windows a un
+	millesimo, e il passaggio del lucchetto dell'interprete ogni millesimo
+	invece che ogni cinque.
+
+	Restituisce il periodo del timer chiesto, da rendere con _abbassa_timer,
+	oppure None se non si e' su Windows o se la richiesta non e' andata.
+	_abbassa_timer va chiamata comunque, perche' rende anche l'intervallo.
+	Misurato il 12 novembre 2026 su WASAPI, latenza 46 millesimi, con quattro
+	fili in Python puro che calcolano senza fermarsi: silenzio inserito 54 per
+	cento senza niente, 9,6 con il solo timer, 0 con tutti e due; il calcolo
+	di quei fili rallenta dell'uno per cento. Vedi _MixerCondiviso._pompa_audio
+	e la issue 53.
+	"""
+	import sys
+	with _lucchetto_tempi():
+		if _SCAMBIO["quanti"] == 0:
+			_SCAMBIO["prima"] = sys.getswitchinterval()
+			if _SCAMBIO["prima"] > _SCAMBIO_MIXER:
+				sys.setswitchinterval(_SCAMBIO_MIXER)
+		_SCAMBIO["quanti"] += 1
+	if sys.platform != "win32":
+		return None
+	try:
+		import ctypes
+		if ctypes.windll.winmm.timeBeginPeriod(1) == 0:
+			return 1
+	except (AttributeError, OSError):
+		pass
+	return None
+
+def _abbassa_timer(periodo):
+	"""Rende cio' che _alza_timer ha chiesto. L'intervallo dell'interprete
+	torna com'era quando smette l'ultimo mixer, e soltanto se nel frattempo
+	nessun altro l'ha cambiato."""
+	import sys
+	with _lucchetto_tempi():
+		_SCAMBIO["quanti"] = max(0, _SCAMBIO["quanti"] - 1)
+		prima = _SCAMBIO["prima"]
+		if (_SCAMBIO["quanti"] == 0 and prima is not None and prima > _SCAMBIO_MIXER
+				and sys.getswitchinterval() == _SCAMBIO_MIXER):
+			sys.setswitchinterval(prima)
+	if periodo is None:
+		return
+	try:
+		import ctypes
+		ctypes.windll.winmm.timeEndPeriod(periodo)
+	except (AttributeError, OSError):
+		pass
+
+
 class _Voce:
 	"""Un suono in riproduzione: il buffer, dove siamo arrivati, la panoramica
 	e l'evento con cui chi l'ha mandato puo' aspettarne la fine."""
@@ -1625,6 +1690,10 @@ class _MixerCondiviso:
 		# stampi niente per conto suo.
 		self.ultimo_errore = None
 		self.buchi = 0
+		# I secondi di silenzio che la scheda ha suonato perche' la pompa era
+		# rimasta indietro: e' il numero che dice quanto il suono si e'
+		# spezzettato, issue 53.
+		self.silenzio_inserito = 0.0
 
 	# --- Cio' che serve a chi manda un suono ---
 
@@ -1721,6 +1790,7 @@ class _MixerCondiviso:
 				"blocco": self._blocco,
 				"canali": self._canali,
 				"buchi": self.buchi,
+				"silenzio_inserito": self.silenzio_inserito,
 				"guadagno": self._guadagno,
 				"ultimo_errore": self.ultimo_errore,
 			}
@@ -1840,12 +1910,39 @@ class _MixerCondiviso:
 
 	def _pompa_audio(self):
 		"""Il filo che scrive senza mai interrompersi, finche' c'e' qualcosa da
-		suonare o finche' il silenzio non e' durato abbastanza."""
+		suonare o finche' il silenzio non e' durato abbastanza.
+
+		Mentre gira tiene il timer di Windows a un millesimo, con
+		timeBeginPeriod, e lo rilascia quando si ferma. E' la issue 53: il
+		lucchetto dell'interprete, su Windows, passa da un filo all'altro al
+		ritmo del timer di sistema, 15,6 millesimi, e un filo in Python puro
+		che calcola senza fermarsi teneva la pompa lontana dalla scheda per
+		quasi la meta' del tempo, misurato su WASAPI: il suono si spezzettava.
+		Con il timer a un millesimo, sotto lo stesso carico, il silenzio
+		inserito scende sotto l'uno per cento. Su Windows 10 2004 e successivi
+		il timer vale soltanto per questo processo.
+		I buchi si contano confrontando i campioni scritti con il tempo
+		trascorso, oltre che col segnale di write, che su WASAPI non scatta
+		mai: quando la pompa resta indietro rispetto al tempo vero di piu' di
+		mezzo blocco, la scheda ha suonato silenzio, e quel silenzio si somma
+		in silenzio_inserito."""
+		import time
+
 		import numpy as np
 		import sounddevice as sd
 		stream = self._stream
 		silenzio = np.zeros((self._blocco, self._canali), dtype=np.float32)
 		ultimo_suono = self._orologio()
+		periodo = _alza_timer()
+		# Il conto dei buchi a tempo: da quando e' tornata la prima scrittura,
+		# la scheda consuma fs campioni al secondo, e la pompa deve averne
+		# scritti almeno tanti, contando anche quel primo blocco. Se ne ha
+		# scritti meno, e di piu' di mezzo blocco, la differenza e' stata
+		# silenzio di sicuro: finche' resta meno, la scheda potrebbe stare
+		# ancora finendo il primo blocco, e non lo si conta.
+		partenza = None
+		scritti = 0
+		soglia = self._blocco / 2
 		try:
 			while not self._ferma.is_set():
 				blocco = self._prepara_blocco()
@@ -1859,13 +1956,28 @@ class _MixerCondiviso:
 				# write dice vero quando la scheda e' rimasta a secco: e' il
 				# segnale che il codice di prima non guardava mai, ed e' per
 				# questo che un difetto del genere si scopriva solo a orecchio.
-				if stream.write(blocco):
+				secco = stream.write(blocco)
+				ora = time.perf_counter()
+				if partenza is None:
+					partenza, scritti = ora, len(blocco)
+				else:
+					scritti += len(blocco)
+				ritardo = (ora - partenza) * self._fs - scritti
+				if ritardo > soglia:
+					# La scheda e' andata avanti senza di noi: si conta il buco,
+					# si somma il silenzio e si riparte da qui, con il blocco
+					# appena scritto, cosi' lo stesso buco non si conta due volte.
+					self.buchi += 1
+					self.silenzio_inserito += ritardo / self._fs
+					partenza, scritti = ora, len(blocco)
+				elif secco:
 					self.buchi += 1
 		except sd.PortAudioError as errore:
 			self.ultimo_errore = f"PortAudioError durante la riproduzione: {errore}"
 		except Exception as errore:  # noqa: BLE001 - il filo del mixer non deve morire in silenzio
 			self.ultimo_errore = f"errore durante la riproduzione: {errore}"
 		finally:
+			_abbassa_timer(periodo)
 			self._smonta(stream)
 
 	def _prepara_blocco(self):
@@ -4971,7 +5083,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.6.4 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.6.5 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5334,7 +5446,13 @@ class _Acusticator:
         return c_era
 
     def stato(self):
-        """Come sta il mixer adesso, come dizionario. Utile per capire i guai."""
+        """Come sta il mixer adesso, come dizionario. Utile per capire i guai.
+
+        buchi conta le volte che la scheda e' rimasta senza campioni, e
+        silenzio_inserito somma i secondi di silenzio che ha suonato al loro
+        posto: dalla V8.6.5 si misurano confrontando i campioni scritti con il
+        tempo trascorso, perche' su WASAPI il segnale di write non scatta mai.
+        """
         mixer = _mixer_condiviso()
         dentro = mixer.stato()
         return {"stream_aperto": dentro["aperto"], "voci_attive": dentro["voci"],
@@ -5342,7 +5460,8 @@ class _Acusticator:
                 "silenzio": mixer._silenzio, "fs": dentro["frequenza"],
                 "canali": dentro["canali"], "device": mixer._device,
                 "interfaccia": mixer._nome_api,
-                "buchi": dentro["buchi"], "guadagno": dentro["guadagno"]}
+                "buchi": dentro["buchi"], "silenzio_inserito": dentro["silenzio_inserito"],
+                "guadagno": dentro["guadagno"]}
 
     def _sposta(self, score, pan):
         """Applica lo spostamento di panorama, dopo aver controllato che sia
