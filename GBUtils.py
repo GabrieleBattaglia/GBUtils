@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V255 di giovedì 12 novembre 2026
+	V256 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.6.3 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.6.4 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "255"
+VERSION = "256"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1596,6 +1596,9 @@ class _MixerCondiviso:
 	# Misurato: a 0.8 la rete di sicurezza non taglia niente e il guadagno
 	# oscilla di 1,4 decibel invece di 1,8.
 	SOGLIA_TENUTA = 0.8
+	# In quanti secondi si spegne una voce fermata con ferma: cinque
+	# millesimi bastano a togliere il gradino e non si sentono come una coda.
+	SFUMATURA_STOP = 0.005
 
 	def __init__(self):
 		import threading
@@ -1673,7 +1676,10 @@ class _MixerCondiviso:
 		return voce
 
 	def ferma(self, voce=None):
-		"""Ferma una voce, o tutte quante se non se ne indica nessuna."""
+		"""Ferma una voce, o tutte quante se non se ne indica nessuna.
+
+		La voce non si tronca: nel blocco seguente si spegne in
+		SFUMATURA_STOP secondi, poi esce e sveglia chi la aspetta."""
 		with self._lock:
 			bersagli = list(self._voci) if voce is None else [v for v in self._voci if v is voce]
 			for v in bersagli:
@@ -1876,17 +1882,29 @@ class _MixerCondiviso:
 		somma = np.zeros((self._blocco, self._canali), dtype=np.float32)
 		finite = []
 		for voce in voci:
+			quanti_sfuma = 0
 			if voce.fermata:
+				# Una voce fermata non si tronca sul campione a cui e' arrivata,
+				# che puo' valere quanto un gradino udibile: si spegne in pochi
+				# millesimi e poi esce. Fino alla V8.6.3 si toglieva di colpo
+				# (issue 54). Se non aveva ancora suonato niente, non c'e'
+				# niente da spegnere.
 				finite.append(voce)
-				continue
+				if voce.pos == 0:
+					continue
+				quanti_sfuma = max(1, min(self._blocco, round(self.SFUMATURA_STOP * self._fs)))
+			lunghezza = quanti_sfuma or self._blocco
 			if voce.ciclo:
 				# Il blocco si prende con l'avvolgimento: fra la fine di un giro
 				# e l'inizio del seguente non resta un solo campione di silenzio,
 				# che e' quello che distingue un fondo continuo da un fondo che
 				# schiocca a ogni ripetizione.
-				pezzo = voce.buffer[(voce.pos + np.arange(self._blocco)) % len(voce.buffer)]
+				pezzo = voce.buffer[(voce.pos + np.arange(lunghezza)) % len(voce.buffer)]
 			else:
-				pezzo = voce.buffer[voce.pos:voce.pos + self._blocco]
+				pezzo = voce.buffer[voce.pos:voce.pos + lunghezza]
+			if quanti_sfuma:
+				rampa = np.linspace(1.0, 0.0, quanti_sfuma + 1, dtype=np.float32)[1:len(pezzo) + 1]
+				pezzo = pezzo * rampa[:, None]
 			quanti = len(pezzo)
 			if quanti:
 				if pezzo.shape[1] == 1:
@@ -1900,6 +1918,10 @@ class _MixerCondiviso:
 					somma[:quanti] += pezzo
 				else:
 					somma[:quanti, 0] += pezzo.mean(axis=1)
+			if quanti_sfuma:
+				# Gia' fra le finite: un secondo posto le chiamerebbe due volte
+				# la funzione di fine.
+				continue
 			if voce.ciclo:
 				voce.pos = (voce.pos + self._blocco) % len(voce.buffer)
 			else:
@@ -4450,13 +4472,22 @@ def _ponderazione_a(frequenze):
 	return guadagno * (10 ** 0.1)
 
 
-def _livello_ponderato(onda, fs):
-	"""Quanto forte si sente un suono, pesando le frequenze come l'orecchio."""
+def _livello_ponderato(onda, fs, lunghezza=None):
+	"""Quanto forte si sente un suono, pesando le frequenze come l'orecchio.
+
+	lunghezza, se piu' grande del suono, e' quella su cui fare la trasformata,
+	con il suono imbottito di zeri: serve a scegliere una lunghezza comoda per
+	la FFT. Il risultato e' corretto per l'imbottitura, per Parseval: l'energia
+	dello spettro cresce con la lunghezza della trasformata, quella del suono
+	no.
+	"""
 	import numpy as np
-	spettro = np.fft.rfft(onda)
-	frequenze = np.fft.rfftfreq(len(onda), 1.0 / fs)
+	n = len(onda)
+	lunghezza = n if lunghezza is None else max(n, int(lunghezza))
+	spettro = np.fft.rfft(onda, lunghezza)
+	frequenze = np.fft.rfftfreq(lunghezza, 1.0 / fs)
 	pesato = spettro * _ponderazione_a(frequenze)
-	return float(np.sqrt(np.sum(np.abs(pesato) ** 2)) / len(onda) * np.sqrt(2))
+	return float(np.sqrt(np.sum(np.abs(pesato) ** 2)) / np.sqrt(n * lunghezza) * np.sqrt(2))
 
 
 def _limita_morbido(onda):
@@ -4486,17 +4517,25 @@ def _genera_rumore(kind, banda, campioni, fs):
 	molto diversa a seconda del filtro.
 	"""
 	import numpy as np
+	from scipy.fft import next_fast_len
+	# Le trasformate si fanno su una lunghezza che la FFT digerisce in
+	# fretta, la prima fatta solo di fattori piccoli, e alla fine si taglia.
+	# Fino alla V8.6.3 erano lunghe quanto il suono: con una lunghezza che ha
+	# fattori primi grandi la sintesi rallentava fino a sei o sette volte, 15
+	# millesimi invece di 3 per lo stesso rumore (issue 54). Il rumore e'
+	# stazionario, quindi tagliarlo non cambia ne' il colore ne' il livello.
+	lungo = next_fast_len(campioni, real=True)
 	generatore = np.random.default_rng()
-	bianco = generatore.standard_normal(campioni)
+	bianco = generatore.standard_normal(lungo)
 	esponente = _RUMORE_ESPONENTE[kind]
 	if esponente == 0.0:
 		onda = bianco
 	else:
 		spettro = np.fft.rfft(bianco)
-		f = np.fft.rfftfreq(campioni)
+		f = np.fft.rfftfreq(lungo)
 		scala = np.zeros_like(f)
 		scala[1:] = f[1:] ** esponente
-		onda = np.fft.irfft(spettro * scala, campioni)
+		onda = np.fft.irfft(spettro * scala, lungo)
 	b0, b1, a0, a1 = banda
 	nyquist = fs / 2.0
 	# Il taglio basso non scende mai sotto la soglia dell'udibile, anche
@@ -4510,15 +4549,19 @@ def _genera_rumore(kind, banda, campioni, fs):
 	a0 = tetto if a0 is None else min(a0, tetto)
 	a1 = tetto if a1 is None else min(a1, tetto)
 	if b0 == b1 and a0 == a1:
-		onda = _filtra_banda_fissa(onda, b0, a0, fs)
+		# La banda ferma si filtra sulla lunghezza comoda, e poi si taglia.
+		onda = _filtra_banda_fissa(onda, b0, a0, fs)[:campioni]
 	else:
-		onda = _filtra_banda_mobile(onda, b0, b1, a0, a1, fs)
+		# La banda che scorre deve scorrere lungo il suono e non oltre: si
+		# taglia prima. Il filtro lavora a blocchi di lunghezza sua, quindi
+		# non soffre delle lunghezze scomode.
+		onda = _filtra_banda_mobile(onda[:campioni], b0, b1, a0, a1, fs)
 	# Si pareggia il livello ponderato, cioe' quanto forte si sente, e non il
 	# valore efficace, che pesa allo stesso modo frequenze che l'orecchio
 	# sente in modo molto diverso. Poi il limitatore morbido tiene i picchi
 	# senza tagliarli di netto: al marrone serve quasi il doppio e mezzo, che
 	# altrimenti sfonderebbe.
-	livello = _livello_ponderato(onda, fs)
+	livello = _livello_ponderato(onda, fs, lungo)
 	if livello > 0:
 		onda = onda * (_LIVELLO_RUMORE / livello)
 	onda = _limita_morbido(onda)
@@ -4661,13 +4704,40 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 					raise ValueError(f"Formato portamento non valido: '{note}'")
 			return parse_single(note_lower)
 		else: raise TypeError(f"Tipo nota non riconosciuto: {type(note)}.")
+	# Un kind o un adsr fuori dalla grammatica non fanno cadere chi chiama:
+	# come per le quartine malformate, un avviso su stderr e un ripiego, kind
+	# 1 e l'inviluppo predefinito. Fino alla V8.6.3 il kind sbagliato
+	# sollevava UnboundLocalError e l'adsr sbagliato ValueError, fuori da ogni
+	# try, e l'applicazione che chiamava play cadeva (issue 54). Un kind
+	# scritto come decimale intero, 2.0, o come testo, "2", vale come il
+	# numero.
+	try:
+		if isinstance(kind, bool):
+			raise TypeError
+		numero = float(kind)
+		if not numero.is_integer() or not 1 <= numero <= 8:
+			raise ValueError
+		kind = int(numero)
+	except (TypeError, ValueError):
+		print(f"Acusticator Warn: kind {kind!r} non valido, da 1 a 8. Uso 1, la sinusoide.", file=sys.stderr)
+		kind = 1
 	# adsr predefinito costruito a ogni chiamata: una lista come valore di
 	# default sarebbe creata una volta sola e condivisa da tutti i chiamanti.
-	if adsr is None: adsr = [.002, 0, 100, .002]
-	if len(adsr) != 4: raise ValueError("ADSR deve contenere 4 valori")
+	predefinito = [.002, 0, 100, .002]
+	if adsr is None:
+		adsr = predefinito
+	else:
+		try:
+			valori = [float(val) for val in adsr]
+			if (len(valori) != 4 or not all(0 <= val <= 100 for val in valori)
+					or valori[0] + valori[1] + valori[3] > 100.001):
+				raise ValueError
+			adsr = valori
+		except (TypeError, ValueError):
+			print(f"Acusticator Warn: adsr {adsr!r} non valido: servono quattro percentuali da 0 a 100, "
+				  "e attacco, decadimento e rilascio insieme non oltre 100. Uso quello predefinito.", file=sys.stderr)
+			adsr = predefinito
 	a_pct, d_pct, s_level_pct, r_pct = adsr
-	if not all(0 <= val <= 100 for val in adsr): raise ValueError("Valori ADSR devono essere tra 0 e 100.")
-	if a_pct + d_pct + r_pct > 100.001: raise ValueError(f"Somma A%({a_pct})+D%({d_pct})+R%({r_pct}) > 100 non permessa.")
 	attack_frac = a_pct / 100.0
 	decay_frac = d_pct / 100.0
 	sustain_level = s_level_pct / 100.0
@@ -4901,7 +4971,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.6.3 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.6.4 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5048,15 +5118,10 @@ class _Acusticator:
 
     NOME_COLLEZIONE = "Acu_Collection.json"
     BASE_VOL = 0.5
-    # Quante voci insieme: erano 16 finche' il mixer era solo di Acusticator,
-    # e dal mixer condiviso sono quelle che bastano anche a CWzator.
-    VOCI_MAX = 32
-    # Quanto si concede a un suono oltre la sua durata, prima di considerare
-    # che il mixer si sia fermato. Comprende la latenza del dispositivo, che
-    # sulle schede lente arriva a un decimo di secondo, e un po' di respiro.
-    MARGINE_ATTESA = 2.0
-    SILENZIO_MAX = 120.0
-    BLOCCO = 256
+    # Blocco, voci e silenzio non stanno piu' qui: dalla V8.6.4 li tiene
+    # soltanto _MixerCondiviso, che e' chi li usa. Fino alla V8.6.3 c'erano
+    # anche qui, con BLOCCO a 256 mentre il mixer scrive a 1024, e nessuno li
+    # leggeva: chi studiava la classe si faceva un'idea sbagliata (issue 54).
 
     def __init__(self):
         # Lo stato del mixer non sta piu' qui: sta nel mixer condiviso, che
@@ -5250,6 +5315,9 @@ class _Acusticator:
         preme Esc e vuole silenzio immediato. Restituisce quante voci ha
         interrotto. Zittisce il mixer condiviso, quindi anche cio' che vi
         stesse suonando qualcun altro.
+        Dalla V8.6.4 ogni voce si spegne in cinque millesimi invece di
+        fermarsi sul campione a cui era arrivata, che poteva valere quanto un
+        gradino udibile; vale anche per stop() della maniglia di ciclo.
         """
         return _mixer_condiviso().ferma()
 
@@ -5294,6 +5362,31 @@ class _Acusticator:
     def _avvisa(self, messaggio):
         import sys
         print(f"Acusticator: {messaggio}", file=sys.stderr)
+
+    def _base_volume(self, volume):
+        """La base su cui preset e play applicano gli scarti delle quartine.
+
+        None da' la base 0.5. Un numero la sostituisce, e a stare fra 0 e 1
+        ci pensa poi ogni quartina, sommata al suo scarto. Una coppia,
+        o qualunque cosa non sia un numero, non fa cadere il suono: lo si
+        segnala e si suona alla base 0.5, come per il pan non valido. Fino
+        alla V8.6.3 una coppia sollevava TypeError (issue 54). Una scivolata di
+        volume giusta non si otterrebbe comunque da qui: cambiare la base
+        sposterebbe i rapporti fra le quartine, che sono scarti; va fatta
+        moltiplicando il buffer dopo la sintesi.
+        """
+        import math
+        if volume is None:
+            return self.BASE_VOL
+        if not isinstance(volume, bool):
+            try:
+                valore = float(volume)
+                if math.isfinite(valore):
+                    return valore
+            except (TypeError, ValueError):
+                pass
+        self._avvisa(f"volume ({volume!r}) non valido: un numero fra 0 e 1. Lo ignoro e uso {self.BASE_VOL}.")
+        return self.BASE_VOL
 
     def _percorso_hub(self):
         """Dove sta la collezione condivisa, da sorgente e da eseguibile."""
@@ -5382,7 +5475,7 @@ class _Acusticator:
         if dati is None:
             self._avvisa(f"preset sconosciuto: {nome}")
             return None, None, None
-        base = self.BASE_VOL if volume is None else float(volume)
+        base = self._base_volume(volume)
         piatto = []
         for quartina in dati.get("score", []):
             try:
