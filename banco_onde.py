@@ -75,7 +75,29 @@ for kind in (1, 3):
 	prova(f"{NOMI[kind]}, nessun salto alla giunzione a 3000 Hz", passo <= float(np.max(vicini)) * 1.01,
 		  f"passo {passo:.4f}, vicini fino a {float(np.max(vicini)):.4f}")
 
-# 4. Nessuna onda esce dal fondo scala, e un portamento lungo resta pulito.
+# 4. Issue 48: dal silenzio, con l'attacco a zero, ogni onda comincia da zero
+#    e sale. Per la quadra non vale: comincia per forza da un gradino.
+for kind in (1, 3, 4):
+	buffer = onda(["a4", 0.05, 0, 1.0], kind)
+	prova(f"{NOMI[kind]} comincia da zero", abs(buffer[0]) < 0.03, f"primo campione {buffer[0]:.4f}")
+	prova(f"{NOMI[kind]} sale dal primo campione", buffer[1] > buffer[0] and buffer[2] > buffer[1],
+		  f"primi tre {buffer[:3].round(4).tolist()}")
+	salto = float(np.max(np.abs(np.diff(buffer[:20]))))
+	prova(f"{NOMI[kind]} senza salti nei primi venti campioni", salto < 0.1, f"salto massimo {salto:.4f}")
+
+# 5. Le onde hanno la fase della sinusoide: il picco a un quarto di periodo,
+#    lo zero a mezzo periodo. Il dente di sega sale per mezzo periodo e li'
+#    torna giu'.
+periodo = FS / 440.0
+quarto, mezzo = round(periodo / 4), round(periodo / 2)
+triangolo = onda(["a4", 0.05, 0, 1.0], 3)
+prova("triangolare al picco dopo un quarto di periodo", triangolo[quarto] > 0.95, f"{triangolo[quarto]:.4f}")
+prova("triangolare a zero dopo mezzo periodo", abs(triangolo[mezzo]) < 0.05, f"{triangolo[mezzo]:.4f}")
+sega = onda(["a4", 0.05, 0, 1.0], 4)
+prova("dente di sega in salita fino a mezzo periodo", sega[mezzo - 3] > 0.85, f"{sega[mezzo - 3]:.4f}")
+prova("dente di sega torna giu' a mezzo periodo", sega[mezzo + 3] < -0.85, f"{sega[mezzo + 3]:.4f}")
+
+# 6. Nessuna onda esce dal fondo scala, e un portamento lungo resta pulito.
 for kind in (1, 2, 3, 4):
 	buffer = onda(["c3.c7", 0.5, 0, 1.0], kind)
 	prova(f"{NOMI[kind]}, scivolata da c3 a c7 dentro il fondo scala", float(np.max(np.abs(buffer))) <= 1.0 / math.cos(math.pi / 4) + 1e-6)

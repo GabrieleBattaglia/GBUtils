@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V254 di giovedì 12 novembre 2026
+	V255 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.6.2 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.6.3 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "254"
+VERSION = "255"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -4797,6 +4797,17 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 				
 				t_phase = (phase_ovs / (2.0 * np.pi)) % 1.0
 				dt_ovs = np.clip(dt_ovs, 1e-8, 0.5)
+				# Triangolare e dente di sega hanno la fase della sinusoide: a
+				# fase zero valgono zero e salgono. Fino alla V8.6.2 la
+				# triangolare cominciava dal suo picco e il dente di sega dal
+				# fondo, con il ritorno sul primo campione, e con l'attacco a
+				# zero ogni nota si apriva con un gradino che schioccava (issue
+				# 48). Lo spostamento sta sulla forma dell'onda e non sul tempo:
+				# la fase che passa da una nota all'altra resta quella di prima.
+				if kind == 3:
+					t_phase = (t_phase + 0.75) % 1.0
+				elif kind == 4:
+					t_phase = (t_phase + 0.5) % 1.0
 				
 				def poly_blep(t_val, dt_val):
 					res = np.zeros_like(t_val)
@@ -4890,7 +4901,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.6.2 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.6.3 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -4911,7 +4922,9 @@ class _Acusticator:
               portamento, come "-1.1".
       volume  da 0 a 1; anche in portamento.
     kind sceglie l'onda: 1 sinusoide, 2 quadra, 3 triangolare, 4 dente di
-    sega, e da 5 a 8 il rumore, vedi piu' sotto. adsr sono quattro
+    sega, e da 5 a 8 il rumore, vedi piu' sotto. Le onde hanno tutte la
+    fase della sinusoide: cominciano da zero e salgono, la quadra da un
+    gradino, perche' altro non puo'. adsr sono quattro
     percentuali [attacco, decadimento, sostegno, rilascio]. Con sync a False
     il suono parte e il controllo torna subito.
 
