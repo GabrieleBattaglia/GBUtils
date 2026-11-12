@@ -135,10 +135,10 @@ prova("del gemello non usato resta il preset firmato, anche con la descrizione p
 db = {"uno": {**suono, "descrizione": "x. Usato da: mess."}, "due": {**suono, "descrizione": "x. Usato da: tornello."}}
 tolti, testo = zitto(am.togli_doppioni, db)
 prova("due gemelli usati da app diverse restano tutti e due, e lo si dice", len(db) == 2 and tolti == [] and "restano tutti" in testo, testo)
-db = {"mess_suono": {**suono, "descrizione": "breve"}, "altro": {**suono, "descrizione": "molto piu' lunga di quella di mess"},
-	  "firmato": {"score": [["e4", 0.1, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1], "descrizione": "x. Usato da: mess."}}
+# Dalla 1.13.0, issue 60, conta il campo usato_da, e il prefisso non piu'.
+db = {"mess_suono": {**suono, "descrizione": "breve"}, "altro": {**suono, "descrizione": "breve", "usato_da": ["mess"]}}
 zitto(am.togli_doppioni, db)
-prova("il prefisso di un'app che firma vale come uso", "mess_suono" in db and "altro" not in db, list(db))
+prova("conta usato_da: resta il preset firmato, anche senza il prefisso", list(db) == ["altro"], list(db))
 
 # Perdite 4 e 7, e la descrizione: con una collezione di prova.
 with tempfile.TemporaryDirectory() as cartella:

@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.12.0)
+Manuale Utente: Acu_Maker (v1.13.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -102,9 +102,19 @@ Dalla versione 1.12.0 l'opzione '\' del menu principale apre un player semplific
 - [?] : ripete i tasti.
 - [Esc] : torna al menu principale.
 
+# Le firme: quali app usano un preset
+
+Dalla versione 1.13.0 le firme non stanno più in fondo alla descrizione, come "Usato da: meteora, mess.", ma in un campo loro del preset, usato_da: la lista delle app che lo usano, in minuscolo e in ordine, subito dopo la descrizione. La descrizione resta testo puro, e toccarla non può più rovinare le firme. Quando nessuna app usa un preset il campo non c'è. Il prefisso del nome, come mess_ o meteora_, non dice più niente: conta chi usa il preset, non chi l'ha creato. Con la migrazione del 12 novembre 2026 le firme sono passate dalle descrizioni al campo, e l'app del prefisso è entrata nell'usato_da dei suoi preset.
+Per Gabriele la lettura non cambia: il menu principale e la ricerca mostrano la descrizione con le firme ricomposte in coda, come prima.
+- Nella ricerca, una parola che comincia con la chiocciola, come @mess, vuole quell'app esatta fra le firme: non trova più messo cercando mess. Le altre parole si cercano nel nome, nella descrizione e fra le firme.
+- Scelto un preset, Acu_Maker dice quante e quali app lo usano, e il menu delle azioni ha la voce [f], le firme: si può aggiungere un'app, toglierne una, o cambiarne il nome soltanto lì. Le scritture sono sicure come i salvataggi.
+- Salvando con nome un preset nuovo le firme non si copiano: un preset appena nato non lo usa ancora nessuna app.
+- Sovrascrivendo o eliminando un preset usato, l'app dice quali app lo usano e chiede conferma: lo sentiranno cambiato, o resterebbero mute.
+- I programmi e gli script che firmano i preset lo fanno con i metodi di Acusticator: firma, togli_firma e cambia_firma, che scrivono sotto il lucchetto, e usato_da, usati_da e firme per leggere.
+
 # Le statistiche di chiusura
 
-Uscendo da Acu_Maker compaiono nove righe di numeri sulla collezione: quanti preset e quante quartine contiene e quanto suono fanno in tutto; la media di quartine e di durata per preset; come si dividono in percentuale le quattro onde intonate; quanti preset usano i rumori e di che colore; qual è il più lungo, quale il più corto e quale ha più quartine; quante quartine hanno una scivolata, divise fra nota, banda e panoramica; quanti preset muovono lo stereo e quanti lo tengono fermo ma fuori centro; da quale nota a quale nota arriva la collezione, con quante ottave di escursione, e qual è la famiglia di preset più numerosa.
+Uscendo da Acu_Maker compaiono dieci righe di numeri sulla collezione: quanti preset e quante quartine contiene e quanto suono fanno in tutto; la media di quartine e di durata per preset; come si dividono in percentuale le quattro onde intonate; quanti preset usano i rumori e di che colore; qual è il più lungo, quale il più corto e quale ha più quartine; quante quartine hanno una scivolata, divise fra nota, banda e panoramica; quanti preset muovono lo stereo e quanti lo tengono fermo ma fuori centro; da quale nota a quale nota arriva la collezione, con quante ottave di escursione, e qual è la famiglia di preset più numerosa; e dalla versione 1.13.0 quanti preset sono usati dalle app, e quanti ne usa ciascuna.
 
 # Modalità Edit (Modifica Preset)
 

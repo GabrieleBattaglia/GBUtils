@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V264 di giovedì 12 novembre 2026
+	V265 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.8.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "264"
+VERSION = "265"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5082,6 +5082,33 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	full_signal_float = np.clip(full_signal_float, -1.0, 1.0)
 	return full_signal_float
 
+def _firme_di(preset):
+	"""Le app che firmano un preset, cioe' il suo usato_da, come lista nuova
+	in ordine; vuota se non c'e' o non e' una lista. Vedi la issue 60."""
+	firme = preset.get("usato_da") if isinstance(preset, dict) else None
+	if not isinstance(firme, list):
+		return []
+	return sorted({str(a).strip().lower() for a in firme if str(a).strip()})
+
+def _metti_firme(preset, firme):
+	"""Scrive le firme nel preset, subito dopo la descrizione, come vuole il
+	formato della issue 60; senza firme il campo sparisce. Gli altri campi
+	restano al loro posto."""
+	voci = [(k, v) for k, v in preset.items() if k != "usato_da"]
+	preset.clear()
+	messe = not firme
+	for chiave, valore in voci:
+		preset[chiave] = valore
+		if chiave == "descrizione" and not messe:
+			preset["usato_da"] = list(firme)
+			messe = True
+	if not messe:
+		# Senza descrizione le firme vanno in testa.
+		voci = list(preset.items())
+		preset.clear()
+		preset["usato_da"] = list(firme)
+		preset.update(voci)
+
 def _volume_assoluto(scarto, base):
 	"""Il volume di una quartina del file per il motore, o None se non si legge.
 
@@ -5108,7 +5135,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.8.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5189,6 +5216,18 @@ class _Acusticator:
         Acusticator.info()                      due conti sulla collezione
         Acusticator.save(...)                   aggiunge o sostituisce un preset
         Acusticator.aggiorna(cambia)            cambia la collezione sul disco, al sicuro
+        Acusticator.usato_da("conferma")        le app che usano un preset
+        Acusticator.usati_da("meteora")         i preset che un'app usa
+        Acusticator.firme()                     tutte le app che firmano, con quanti preset
+        Acusticator.firma(nomi, "meteora")      l'app firma uno o piu' preset
+        Acusticator.togli_firma(nomi, "mess")   l'app non li usa piu'
+        Acusticator.cambia_firma("vecchia", "nuova")  un'app che cambia nome
+
+    Le firme dicono quali app usano un preset: sono il campo usato_da, una
+    lista di identificativi in minuscolo, subito dopo la descrizione, che
+    resta testo puro. Un'app che comincia a usare un preset lo firma, e
+    quando smette toglie la firma; il nome del preset, prefisso compreso, non
+    dice niente su chi lo usa.
 
     La collezione si scrive soltanto con save e aggiorna, che rileggono il
     file sotto lucchetto, cambiano cio' che serve e lo sostituiscono in un
@@ -5837,12 +5876,8 @@ class _Acusticator:
         self(score, kind=kind, adsr=adsr, sync=sync)
         return True
 
-    def list(self, filtro=None):
-        """I nomi dei preset, in ordine.
-
-        Con un filtro restituisce solo quelli il cui nome o la cui
-        descrizione contengono quel testo, senza badare alle maiuscole.
-        """
+    def _tutti(self):
+        """I preset di tutte le collezioni consultabili, il primo per nome."""
         nomi = {}
         for percorso in self._percorsi():
             dati = self._carica(percorso)
@@ -5850,18 +5885,123 @@ class _Acusticator:
                 continue
             for nome, v in dati.items():
                 nomi.setdefault(nome, v)
+        return nomi
+
+    def list(self, filtro=None, app=None):
+        """I nomi dei preset, in ordine.
+
+        Con un filtro restituisce solo quelli il cui nome, la cui
+        descrizione o le cui firme contengono quel testo, senza badare alle
+        maiuscole. app, dalla V8.9.0, tiene soltanto quelli che quell'app usa,
+        cioe' che hanno il suo nome in usato_da: un filtro esatto, dove il
+        testo cercando mess trovava anche messo.
+        """
+        nomi = self._tutti()
+        if app is not None:
+            cercata = self._app(app)
+            nomi = {n: v for n, v in nomi.items() if cercata in _firme_di(v)}
         if not filtro:
             return sorted(nomi)
         cercato = str(filtro).lower()
         return sorted(
             n for n, v in nomi.items()
             if cercato in n.lower() or cercato in str(v.get("descrizione", "")).lower()
+            or any(cercato in a for a in _firme_di(v))
         )
 
     def descrizione(self, nome):
-        """La descrizione di un preset, stringa vuota se non ce l'ha."""
+        """La descrizione di un preset, stringa vuota se non ce l'ha. Dalla
+        V8.9.0 e' testo puro: le firme stanno in usato_da."""
         dati, _ = self._cerca(nome)
         return "" if dati is None else str(dati.get("descrizione", ""))
+
+    # --- Le firme: quali app usano un preset ------------------------------
+    # Dalla V8.9.0, per la issue 60. Fino alla V8.8.0 la firma era un testo in
+    # fondo alla descrizione, "Usato da: meteora, mess.", che ogni strumento
+    # doveva staccare e riattaccare con una regex, e che si rovinava toccando
+    # la descrizione. Adesso e' il campo usato_da del preset: la lista degli
+    # identificativi delle app che lo usano, in minuscolo, in ordine e senza
+    # ripetizioni, subito dopo la descrizione. Quando nessuna app lo usa il
+    # campo non c'e'. Il prefisso del nome non conta piu' niente: chi ha
+    # creato il preset non interessa, conta chi lo usa (scelta di Gabriele
+    # del 12 novembre 2026). Le scritture passano da aggiorna, quindi sono
+    # sicure quanto save, e una chiamata sola firma quanti preset si vuole
+    # con una scrittura sola.
+
+    def _app(self, app):
+        """L'identificativo di un'app come si scrive in usato_da."""
+        nome = str(app).strip().lower()
+        if not nome or any(segno in nome for segno in ",.\r\n\t"):
+            raise ValueError(f"Acusticator: identificativo d'app non valido: {app!r}")
+        return nome
+
+    def usato_da(self, nome):
+        """Le app che usano un preset, in ordine: una lista nuova, vuota se
+        il preset non esiste o nessuna app lo usa."""
+        dati, _ = self._cerca(nome)
+        return [] if dati is None else _firme_di(dati)
+
+    def usati_da(self, app):
+        """I preset che un'app usa, in ordine: quelli con il suo nome in
+        usato_da, in tutte le collezioni consultabili."""
+        return self.list(app=app)
+
+    def firme(self):
+        """Tutte le app che firmano almeno un preset, con quanti ne usano,
+        dalla piu' presente."""
+        conti = {}
+        for v in self._tutti().values():
+            for a in _firme_di(v):
+                conti[a] = conti.get(a, 0) + 1
+        return dict(sorted(conti.items(), key=lambda c: (-c[1], c[0])))
+
+    def _cambia_firme(self, nomi, cambia, percorso):
+        """Applica cambia(firme) alla lista delle firme di ciascun preset, in
+        una scrittura sola. Restituisce quanti preset sono cambiati, o None
+        se non ha potuto scrivere. Un preset che non c'e' si salta, con un
+        avviso."""
+        if isinstance(nomi, str):
+            nomi = [nomi]
+        nomi = list(nomi)
+        cambiati = []
+
+        def tocca(dati):
+            for nome in (nomi if nomi else list(dati)):
+                preset = dati.get(nome)
+                if not isinstance(preset, dict):
+                    self._avvisa(f"preset sconosciuto: {nome}, non lo firmo")
+                    continue
+                prima = _firme_di(preset)
+                dopo = sorted(set(cambia(list(prima))))
+                if dopo != prima:
+                    _metti_firme(preset, dopo)
+                    cambiati.append(nome)
+            return bool(cambiati)
+
+        if self.aggiorna(tocca, percorso) is None:
+            return None
+        return len(cambiati)
+
+    def firma(self, nomi, app, percorso=None):
+        """Aggiunge l'app alle firme di uno o piu' preset: nomi e' un nome o
+        un elenco. Restituisce quanti preset ha cambiato, zero se l'app c'era
+        gia' dappertutto, None se non ha potuto scrivere."""
+        app = self._app(app)
+        return self._cambia_firme(nomi, lambda firme: [*firme, app], percorso) if nomi else 0
+
+    def togli_firma(self, nomi, app, percorso=None):
+        """Toglie l'app dalle firme di uno o piu' preset. Restituisce quanti
+        ne ha cambiati, o None se non ha potuto scrivere."""
+        app = self._app(app)
+        return self._cambia_firme(nomi, lambda firme: [a for a in firme if a != app], percorso) if nomi else 0
+
+    def cambia_firma(self, vecchia, nuova, nomi=None, percorso=None):
+        """Sostituisce un'app con un'altra nelle firme, per esempio quando
+        un'app cambia nome: in tutti i preset, o soltanto in quelli di nomi.
+        Restituisce quanti preset ha cambiato, o None se non ha potuto
+        scrivere."""
+        vecchia, nuova = self._app(vecchia), self._app(nuova)
+        return self._cambia_firme(nomi or [], lambda firme: [nuova if a == vecchia else a for a in firme], percorso)
 
     def info(self):
         """Due conti sulle collezioni consultabili, come dizionario."""

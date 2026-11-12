@@ -9,6 +9,7 @@ import textwrap
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import (
     Acusticator,
+    _firme_di,
     dgt,
     frequenza_nota,
     key,
@@ -20,7 +21,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.12.0" # Il player per fare zapping fra i preset, issue 51
+VERSION = "1.13.0" # Le firme nel campo usato_da, issue 60
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "12 novembre 2026"
@@ -702,6 +703,41 @@ def apri_collezione(coll):
 		print(f"Collezione {percorso}, {len(coll.dati)} preset.")
 
 
+def gestisci_firme(coll, nome):
+	"""Le firme di un preset: dirle, aggiungerne, toglierne, cambiarne una.
+	Scrive con i metodi di Acusticator, sotto il lucchetto. Dalla 1.13.0,
+	issue 60."""
+	while True:
+		firme = app_che_usano(coll.dati, nome)
+		print(f"Lo usano: {', '.join(firme)}." if firme else "Nessuna app lo usa.")
+		voci = {"a": "Aggiungi un'app"}
+		if firme:
+			voci.update({"t": "Togli un'app", "c": "Cambia il nome di un'app, soltanto qui"})
+		scelta = menu(voci, p="Firme> ", show=True)
+		if scelta is None:
+			return
+		try:
+			if scelta == "a":
+				app = input("\rApp che lo usa\r").strip().lower()
+				esito = Acusticator.firma(nome, app, percorso=coll.percorso) if app else 0
+			elif scelta == "t":
+				app = menu({a: "" for a in firme}, p="Togli> ", show=True) if len(firme) > 1 else firme[0]
+				esito = Acusticator.togli_firma(nome, app, percorso=coll.percorso) if app else 0
+			else:
+				vecchia = menu({a: "" for a in firme}, p="Quale> ", show=True) if len(firme) > 1 else firme[0]
+				nuova = input("\rNome nuovo dell'app\r").strip().lower() if vecchia else ""
+				esito = Acusticator.cambia_firma(vecchia, nuova, [nome], percorso=coll.percorso) if nuova else 0
+		except ValueError:
+			print("Il nome di un'app non puo' essere vuoto, ne' avere virgole o punti.")
+			continue
+		if esito is None:
+			print("Non ho potuto scrivere la collezione.")
+		coll.leggi()
+		if nome not in coll.dati:
+			print(f"Il preset {nome} non c'e' piu'.")
+			return
+
+
 def durata_preset(preset):
 	"""Quanti secondi dura un preset, sommando le quartine che si leggono."""
 	totale = 0.0
@@ -886,6 +922,11 @@ def togli_doppioni(db):
             if nome != tenuto:
                 tolti.append((nome, tenuto))
     for nome, tenuto in tolti:
+        # Le firme del tolto passano a chi resta, issue 60: oggi un preset
+        # usato non si toglie mai, quindi di solito non c'e' niente da unire.
+        firme = sorted(set(_firme_di(db[tenuto])) | set(_firme_di(db[nome])))
+        if firme != _firme_di(db[tenuto]):
+            db[tenuto]["usato_da"] = firme
         del db[nome]
         print(f"Doppione tolto: '{nome}' suonava identico a '{tenuto}', che resta.")
     return tolti
@@ -896,19 +937,45 @@ FIRMA = re.compile(r"\s*Usato da: ([^.]*)\.\s*$")
 
 
 def app_che_usano(db, nome):
-	"""Le app che usano un preset: quelle della sua firma, e quella del suo
-	prefisso, quando il prefisso e' il nome di un'app che firma altrove."""
-	firme = set()
-	for preset in db.values():
-		trovata = FIRMA.search(str(preset.get("descrizione", "")))
-		if trovata:
-			firme.update(a.strip().lower() for a in trovata.group(1).split(",") if a.strip())
+	"""Le app che usano un preset: dalla 1.13.0 il suo campo usato_da, issue 60.
+
+	La firma scritta in fondo alla descrizione, la forma di prima, vale
+	ancora, per le collezioni che non sono state migrate. Il prefisso del
+	nome invece non conta piu': conta chi usa il preset, non chi l'ha creato,
+	e nella collezione condivisa il prefisso delle app e' entrato in
+	usato_da con la migrazione."""
+	sue = set(_firme_di(db[nome]))
 	trovata = FIRMA.search(str(db[nome].get("descrizione", "")))
-	sue = {a.strip().lower() for a in trovata.group(1).split(",") if a.strip()} if trovata else set()
-	prefisso = nome.split("_", 1)[0].lower() if "_" in nome else ""
-	if prefisso in firme:
-		sue.add(prefisso)
+	if trovata:
+		sue.update(a.strip().lower() for a in trovata.group(1).split(",") if a.strip())
 	return sorted(sue)
+
+
+def descrizione_mostrata(preset):
+	"""La descrizione come la legge Gabriele: il testo, e in coda le firme
+	ricomposte, "Usato da: meteora, mess.", come stavano prima nel file."""
+	testo = str(preset.get("descrizione", ""))
+	firme = _firme_di(preset)
+	if not firme:
+		return testo
+	return f"{testo} Usato da: {', '.join(firme)}." if testo else f"Usato da: {', '.join(firme)}."
+
+
+def cerca(db, query):
+	"""I preset che corrispondono alla ricerca, con la descrizione mostrata.
+
+	Ogni parola deve comparire nel nome, nella descrizione o fra le firme.
+	Una parola che comincia con la chiocciola, come @mess, vuole invece
+	quell'app esatta fra le firme: dalla 1.13.0, perche' cercando mess si
+	trovava anche messo (issue 60)."""
+	parole = query.strip().lower().split()
+	risultati = {}
+	for nome, preset in sorted(db.items()):
+		firme = app_che_usano(db, nome)
+		testo = f"{nome} {preset.get('descrizione', '')} {' '.join(firme)}".lower()
+		if all(p[1:] in firme if p.startswith("@") else p in testo for p in parole):
+			risultati[nome] = descrizione_mostrata(preset)
+	return risultati
 
 
 def trova_gemello(db, preset, escludi=None):
@@ -1940,6 +2007,22 @@ def chiedi_conflitto(conflitti):
 	return {"m": "mio", "d": "disco"}.get(scelta)
 
 
+def sovrascrivi_con_avviso(coll, preset_name, state):
+	"""Sovrascrive il preset, chiedendo conferma quando lo usano delle app:
+	lo sentiranno cambiato anche loro. Dalla 1.13.0, issue 60."""
+	app = app_che_usano(coll.dati, preset_name) if preset_name in coll.dati else []
+	if app:
+		print(f"Lo usano {len(app)} app, {', '.join(app)}: cambiandolo, cambia anche per loro.")
+		if input("Lo sovrascrivo? (s/n): ").strip().lower() != "s":
+			print("Preset non sovrascritto.")
+			return False
+	if coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto):
+		print(f"Preset '{preset_name}' aggiornato.")
+		return True
+	print("Preset non sovrascritto.")
+	return False
+
+
 def salva_preset(coll, preset_name, state, nuovo):
 	"""Il salvataggio all'uscita dall'editor, scritto subito sul disco.
 
@@ -1969,10 +2052,7 @@ def salva_preset(coll, preset_name, state, nuovo):
 		# scarta soltanto scegliendolo.
 		return "torna"
 	if scelta == "1" and not nuovo:
-		if coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto):
-			print(f"Preset '{preset_name}' aggiornato.")
-		else:
-			print("Preset non sovrascritto.")
+		sovrascrivi_con_avviso(coll, preset_name, state)
 	elif scelta in ("1", "2"):
 		# Il nome che il preset ha gia' e' li' pronto: invio lo accetta.
 		new_name = dgt(f"Nome breve [{preset_name}]: ", kind="s", smax=50, default=preset_name,
@@ -1987,12 +2067,13 @@ def salva_preset(coll, preset_name, state, nuovo):
 		state.preset['descrizione'] = new_desc
 		if not nuovo and new_name == preset_name:
 			# Lo stesso nome di un preset che c'e': e' una sovrascrittura.
-			if coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto):
-				print(f"Preset '{preset_name}' aggiornato.")
-			else:
-				print("Preset non sovrascritto.")
+			sovrascrivi_con_avviso(coll, preset_name, state)
 			return
-		usato = coll.salva_nuovo(new_name, state.preset)
+		# Un preset nuovo non lo usa ancora nessuna app: le firme non si
+		# copiano. Fino alla 1.12.0 Salva come portava con se' la firma.
+		da_salvare = copia(state.preset)
+		da_salvare.pop("usato_da", None)
+		usato = coll.salva_nuovo(new_name, da_salvare)
 		if usato:
 			print(f"Salvato come preset: '{usato}'.")
 		else:
@@ -2031,7 +2112,8 @@ def _riga(testo):
 
 
 def statistiche(db):
-    """Nove righe di numeri sulla collezione, per il gusto di leggerli."""
+    """Dieci righe di numeri sulla collezione, per il gusto di leggerli: dalla
+    1.13.0 l'ultima conta i preset usati da ciascuna app."""
     if not db:
         print("La collezione e' vuota, niente da contare.")
         return
@@ -2124,6 +2206,15 @@ def statistiche(db):
               f"{_num(math.log2(acuto / grave))} ottave; famiglia " + coda)
     else:
         _riga("Nessuna nota da contare; famiglia " + coda)
+    # Dalla 1.13.0 anche per app, dalle firme, issue 60.
+    per_app = {}
+    for dati in db.values():
+        for app in _firme_di(dati):
+            per_app[app] = per_app.get(app, 0) + 1
+    if per_app:
+        voci = [f"{a} {n}" for a, n in sorted(per_app.items(), key=lambda x: (-x[1], x[0]))]
+        usati = sum(1 for dati in db.values() if _firme_di(dati))
+        _riga(f"Usati dalle app: {usati} preset ({_perc(usati, quanti)}); " + ", ".join(voci) + ".")
 
 
 def main():
@@ -2161,7 +2252,7 @@ def sessione(coll):
         coll.ricarica()
         db = coll.dati
         # Ordiniamo esplicitamente il dizionario alfabeticamente per nome del preset
-        menu_dict = {k: v.get("descrizione", "") for k, v in sorted(db.items())}
+        menu_dict = {k: descrizione_mostrata(v) for k, v in sorted(db.items())}
         menu_dict["+"] = "Nuovo preset vuoto (Default)"
         menu_dict["/"] = "Cerca preset per parola chiave"
         menu_dict["!"] = "Apri un'altra collezione"
@@ -2198,17 +2289,11 @@ def sessione(coll):
             continue
 
         if scelta == "/":
-            query = input("\nInserisci parole chiave da cercare (spazio per separare): ").strip().lower()
+            query = input("\nInserisci parole chiave da cercare (spazio per separare, @app per un'app esatta): ").strip().lower()
             if not query:
                 continue
-            words = query.split()
+            risultati = cerca(db, query)
 
-            risultati = {}
-            for k, v in sorted(db.items()):
-                test_str = (k + " " + v.get("descrizione", "")).lower()
-                if all(w in test_str for w in words):
-                    risultati[k] = v.get("descrizione", "")
-                    
             if not risultati:
                 print("Nessun preset trovato corrispondente alla ricerca.")
                 continue
@@ -2222,7 +2307,11 @@ def sessione(coll):
                     continue
 
         print(f"\nHai selezionato: '{scelta}'")
-        action_dict = {"c": "Carica (Edit Mode)", "e": "Elimina", "r": "Rinomina", "d": "Cambia la descrizione"}
+        app = app_che_usano(db, scelta) if scelta in db else []
+        if app:
+            print(f"Lo usano {len(app)} app: {', '.join(app)}.")
+        action_dict = {"c": "Carica (Edit Mode)", "e": "Elimina", "r": "Rinomina", "d": "Cambia la descrizione",
+                       "f": "Le firme, cioe' le app che lo usano"}
         azione = menu(d=action_dict, p="Azione> ", show=True)
         # Prima di entrare nel preset, la collezione di adesso.
         coll.ricarica()
@@ -2231,6 +2320,10 @@ def sessione(coll):
             continue
 
         if azione == "e":
+            app = app_che_usano(coll.dati, scelta)
+            if app:
+                # Dalla 1.13.0 lo si dice prima di chiedere, issue 60.
+                print(f"Attenzione: lo usano {len(app)} app, {', '.join(app)}, che resterebbero mute.")
             if input(f"Sei sicuro di voler eliminare '{scelta}'? (s/n): ").lower() == 's':
                 # Dal disco si toglie soltanto lui.
                 if coll.elimina(scelta):
@@ -2243,6 +2336,8 @@ def sessione(coll):
             rinomina(coll, scelta)
         elif azione == "d":
             cambia_descrizione(coll, scelta)
+        elif azione == "f":
+            gestisci_firme(coll, scelta)
 
 if __name__ == "__main__":
     main()
