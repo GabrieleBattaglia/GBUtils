@@ -11,6 +11,7 @@ from GBUtils import (
     Acusticator,
     dgt,
     frequenza_nota,
+    key,
     menu,
     panorama_spostato,
     parse_pan_parts,
@@ -19,7 +20,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.11.0" # Acu_Maker segue il motore: note, pan a lista, ascolto, collezioni, rinomina
+VERSION = "1.12.0" # Il player per fare zapping fra i preset, issue 51
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "12 novembre 2026"
@@ -699,6 +700,127 @@ def apri_collezione(coll):
 	coll.dati, coll.impronta = {}, None
 	if coll.apri():
 		print(f"Collezione {percorso}, {len(coll.dati)} preset.")
+
+
+def durata_preset(preset):
+	"""Quanti secondi dura un preset, sommando le quartine che si leggono."""
+	totale = 0.0
+	for quartina in preset.get("score", []):
+		try:
+			totale += max(0.0, float(quartina[1]))
+		except (TypeError, ValueError, IndexError):
+			pass
+	return totale
+
+
+def suona_nel_player(coll, nome):
+	"""Suona un preset come lo suonano le app, zittendo prima il precedente."""
+	Acusticator.stop()
+	score, kind, adsr = Acusticator.prepara(coll.dati[nome], nome=nome)
+	if score:
+		Acusticator(score, kind=kind, adsr=adsr, sync=False)
+
+
+def cerca_nome(nomi, testo):
+	"""La prima occorrenza di testo fra i nomi: prima quelli che cominciano
+	cosi', poi quelli che lo contengono. None se non c'e'."""
+	testo = testo.strip().lower()
+	if not testo:
+		return None
+	for confronta in (lambda n: n.lower().startswith(testo), lambda n: testo in n.lower()):
+		for indice, nome in enumerate(nomi):
+			if confronta(nome):
+				return indice
+	return None
+
+
+AIUTO_PLAYER = ("Destra e Sinistra scorrono i preset, Inizio e Fine vanno al primo e all'ultimo, Spazio riascolta, "
+				"n chiede il numero, / il nome, Invio li suona in sequenza finche' non premi un tasto, "
+				"k zittisce, ? ripete i tasti, Esc torna al menu.")
+
+
+def player(coll):
+	"""Il player per fare zapping fra i preset, issue 51, dalla 1.12.0.
+
+	Ogni passo suona subito il preset su cui si arriva, nell'ordine del menu.
+	Il prompt dice il numero e il nome, fra due ritorni carrello perche' il
+	display braille vi resti sopra. I tasti li legge key di GBUtils."""
+	nomi = sorted(coll.dati)
+	if not nomi:
+		print("La collezione e' vuota.")
+		return
+	print(f"Player, {len(nomi)} preset. " + AIUTO_PLAYER)
+	indice = 0
+	suona_nel_player(coll, nomi[indice])
+	while True:
+		tasto = key(f"\r{indice + 1} {nomi[indice]}\r")
+		nuovo = indice
+		if tasto in ("right", "down"):
+			nuovo = min(len(nomi) - 1, indice + 1)
+		elif tasto in ("left", "up"):
+			nuovo = max(0, indice - 1)
+		elif tasto == "home":
+			nuovo = 0
+		elif tasto == "end":
+			nuovo = len(nomi) - 1
+		elif tasto == " ":
+			suona_nel_player(coll, nomi[indice])
+			continue
+		elif tasto == "k":
+			Acusticator.stop()
+			continue
+		elif tasto == "?":
+			print()
+			print(AIUTO_PLAYER)
+			continue
+		elif tasto == "n":
+			print()
+			numero = dgt(f"\rNumero, da 1 a {len(nomi)}\r", kind="i", imin=1, imax=len(nomi), default=indice + 1,
+						 avvisi={"non_intero": "Serve un numero.", "troppo_basso": "Da {minimo} a {massimo}.",
+								 "troppo_alto": "Da {minimo} a {massimo}."})
+			nuovo = numero - 1
+		elif tasto == "/":
+			print()
+			trovato = cerca_nome(nomi, input("\rNome o parte del nome\r"))
+			if trovato is None:
+				print("Nessun preset con quel nome.")
+				continue
+			nuovo = trovato
+		elif tasto == "\r":
+			print()
+			indice = sequenza(coll, nomi, indice)
+			continue
+		elif tasto == "\x1b":
+			Acusticator.stop()
+			print()
+			return
+		else:
+			continue
+		if nuovo == indice and tasto not in ("n", "/"):
+			# Al bordo non si gira: si dice dove si e', e si riascolta.
+			print()
+			print("Primo preset." if nuovo == 0 else "Ultimo preset.")
+		indice = nuovo
+		print()
+		suona_nel_player(coll, nomi[indice])
+
+
+def sequenza(coll, nomi, indice):
+	"""Suona i preset uno dopo l'altro dall'indice dato, finche' non si preme
+	un tasto o la collezione finisce. Restituisce l'indice a cui si e' fermata."""
+	while True:
+		suona_nel_player(coll, nomi[indice])
+		tasto = key(f"\r{indice + 1} {nomi[indice]}\r", attesa=durata_preset(coll.dati[nomi[indice]]) + 0.4, alla_scadenza=None)
+		if tasto is not None:
+			Acusticator.stop()
+			print()
+			return indice
+		if indice == len(nomi) - 1:
+			print()
+			print("Fine della collezione.")
+			return indice
+		indice += 1
+		print()
 
 
 def differenze(prima, dopo):
@@ -2044,6 +2166,7 @@ def sessione(coll):
         menu_dict["/"] = "Cerca preset per parola chiave"
         menu_dict["!"] = "Apri un'altra collezione"
         menu_dict["*"] = "Scegli la scheda audio"
+        menu_dict["\\"] = "Player, per ascoltare i preset uno dopo l'altro"
         print("\nScegli un preset (digita '?' per la lista, Esc/Invio vuoto per uscire):")
         scelta = menu(d=menu_dict, p="Preset> ", show=False, ordered=True)
 
@@ -2056,6 +2179,10 @@ def sessione(coll):
 
         if scelta == "*":
             scegli_scheda()
+            continue
+
+        if scelta == "\\":
+            player(coll)
             continue
 
         if scelta == "+":

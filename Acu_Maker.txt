@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.11.0)
+Manuale Utente: Acu_Maker (v1.12.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -7,6 +7,7 @@ Dal menù principale è possibile:
 - Cercare preset per parola chiave (opzione '/'). Le parole cercate (anche parziali e non in sequenza) verranno confrontate con i nomi e le descrizioni dei preset. Se c'è un solo risultato, viene selezionato in automatico; altrimenti verrà mostrato un menù filtrato.
 - Aprire un'altra collezione (opzione '!'), per esempio quella di un progetto come Terminal_Beast/sounds.json; Invio senza scrivere niente torna a quella condivisa. La si può aprire anche da subito, passandone il percorso: Acu_Maker.py ..\Terminal_Beast\sounds.json.
 - Scegliere la scheda audio su cui suonare (opzione '*').
+- Ascoltare i preset uno dopo l'altro nel player (opzione '\'): vedi il capitolo dedicato.
 Scelto un preset, il menu delle azioni offre, oltre a caricarlo nell'editor e a eliminarlo, di rinominarlo, al suo posto nella collezione, e di cambiarne soltanto la descrizione senza entrare nell'editor. Rinominando un preset che un programma usa, l'app avverte e chiede conferma: i programmi lo chiamano per nome, e vanno cambiati anche loro.
 
 I preset stanno nel file "Acu_Collection.json". Dalla versione 1.9.0 ogni cambiamento si scrive subito, da solo, quando lo si conferma: un preset salvato, uno eliminato, i doppioni tolti all'avvio e all'uscita. Acu_Maker non riscrive mai la collezione intera, e prima di scrivere rilegge il file com'è in quel momento: ciò che un altro programma, un'altra sessione di lavoro o un git pull vi hanno scritto nel frattempo resta. Prima di ogni giro del menu, e prima di entrare in un preset, guarda se il file è cambiato, e se sì lo rilegge e dice quanti preset sono nuovi, cambiati e tolti. Uscire con Ctrl+C non perde niente di ciò che si è salvato.
@@ -87,6 +88,19 @@ Due portamenti contrari si compongono invece di litigare. Una quartina che va da
 La posizione non fa parte del preset e non viene salvata: è soltanto il modo in cui lo stai ascoltando. Se però quello che senti ti piace e vuoi che diventi il preset, il tasto [u] lo unisce alle quartine, che vengono riscritte con il panorama spostato; la posizione si azzera, il preset risulta modificato e alla prossima uscita verrà proposto il salvataggio. Da quel momento è il preset ad avere quel panorama, e un programma potrà comunque spostarlo ancora.
 
 Un avvertimento sull'uso: un preset destinato a essere spostato dai programmi conviene tenerlo centrato, perché è il programma a sapere dove il suono deve arrivare. Il tasto [u] serve ai suoni che di loro natura vivono da un lato, non a fissare una posizione che il chiamante saprebbe scegliere meglio.
+
+# Il player
+
+Dalla versione 1.12.0 l'opzione '\' del menu principale apre un player semplificato, per fare zapping fra i preset senza entrare nell'editor. Si scorre la collezione nello stesso ordine del menu, e ogni passo suona subito il preset su cui si arriva, zittendo il precedente. Il prompt dice il numero del preset e il suo nome, fra due ritorni carrello, così il display braille vi resta sopra.
+- [Destra] e [Sinistra], o [Giù] e [Su] : il preset seguente e il precedente. Al primo e all'ultimo non si gira, e il player lo dice.
+- [Inizio] e [Fine] : il primo e l'ultimo preset.
+- [Spazio] : riascolta il preset attuale.
+- [n] : chiede il numero del preset a cui andare; Invio lascia quello attuale.
+- [/] : chiede un nome, o una parte, e va alla prima occorrenza: prima fra i nomi che cominciano così, poi fra quelli che lo contengono.
+- [Invio] : suona i preset in sequenza, dall'attuale in avanti, uno dopo l'altro, finché non premi un tasto qualsiasi o la collezione finisce. Ci si ferma sul preset che stava suonando.
+- [k] : zittisce.
+- [?] : ripete i tasti.
+- [Esc] : torna al menu principale.
 
 # Le statistiche di chiusura
 
