@@ -128,6 +128,30 @@ def main():
 	b.prova("una voce sola torna subito e in silenzio", [], "unica", non_contiene=["unica", "("], d={"unica": "x"})
 	b.prova("dizionario vuoto torna None in silenzio", [], None, non_contiene=["("], d={})
 	b.prova("ctrl c interrompe", [CTRL_C], "KeyboardInterrupt", d=TRE)
+	# V5.2.0, issue 52: il completamento si lascia ricopiare, e fra le chiavi
+	# uguali a meno delle maiuscole vince quella identica.
+	SCALE = {"blues": "", "blues_maggiore": "", "bebop": ""}
+	b.prova("la parola intera dopo il completamento", ["b", "l", "u", "e", "s", INVIO], "blues", non_contiene=["bluesues"], d=SCALE)
+	b.prova("la parola intera, maiuscole a caso", ["B", "L", "U", "e", "S", INVIO], "blues", d=SCALE)
+	b.prova("ricopiare e poi proseguire", ["s", "u", "s", "4"], "sus4", d={"sus2": "", "sus4": "", "maj": ""})
+	b.prova("una lettera diversa si aggiunge in coda come prima", ["b", "l", "_"], "blues_maggiore", d=SCALE)
+	b.prova("backspace dopo il completamento, poi la lettera tolta", ["b", "l", BACKSPACE, "s", INVIO], "blues", d=SCALE)
+	SIGLE = {"M9": "maggiore nona", "m9": "minore nona", "M11": "", "m11": "", "7": ""}
+	b.prova("m9 sceglie la minuscola", ["m", "9", INVIO], "m9", d=SIGLE)
+	b.prova("M9 sceglie la maiuscola", ["M", "9", INVIO], "M9", d=SIGLE)
+	b.prova("m e il completamento tengono la minuscola", ["m", INVIO], "m11", d={"M11": "", "m11": ""})
+	b.prova("M e il completamento tengono la maiuscola", ["M", INVIO], "M11", d={"M11": "", "m11": ""})
+	b.prova("ricopiando, la minuscola digitata conta", ["x", "a", "b", INVIO], "xab", d={"xAB": "", "xab": ""})
+	b.prova("senza ricopiare vince il completamento", ["x", INVIO], "xAB", d={"xAB": "", "xab": ""})
+	b.prova("senza una chiave identica vince la prima come prima", ["A", "B", INVIO], "ab", d={"ab": "", "abc": ""})
+	# V5.2.0, issue 62: l'intestazione prima di ogni elenco.
+	RIGA = "Nome, spiegazione, numero DL."
+	b.prova("l'intestazione sta prima dell'elenco", [], None, contiene=[f"{RIGA}\nalfa: Primo\n"], d=TRE, show_only=True, intestazione=RIGA)
+	b.prova("e torna prima di ogni elenco", ["?", "b"], "beta", contiene=[f"(A, B, G)>\n{RIGA}\nalfa: Primo"], d=TRE, show=False, intestazione=RIGA)
+	b.prova("anche prima dell'elenco filtrato", ["a", "e"], "abete", contiene=[f"(A, C)>a\n{RIGA}\nabaco: 2\nabete: 1\n(2 / 2)\n"],
+			d=AMBIGUE, intestazione=RIGA)
+	b.prova("senza voci da mostrare l'intestazione non c'e'", ["z", ESC], None, non_contiene=[RIGA], d=TRE, intestazione=RIGA, show=False)
+	b.prova("senza intestazione l'elenco e' quello di prima", [], None, contiene=["(3 / 3)\n"], non_contiene=[RIGA], d=TRE, show_only=True)
 	print(f"Prove {b.totale}, passate {b.passate}.")
 	return 0 if b.passate == b.totale else 1
 

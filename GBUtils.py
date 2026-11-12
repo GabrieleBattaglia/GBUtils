@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V258 di giovedì 12 novembre 2026
+	V259 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.6.5 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
@@ -27,7 +27,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
-	menu V5.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode)
+	menu V5.2.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "258"
+VERSION = "259"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6067,12 +6067,20 @@ def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
 			if tasto == '\x1b': return False
 	return True
 
-def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None):
-    """V5.1.0 - venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Fable 5.1, UltraCode)
+def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None, intestazione=""):
+    """V5.2.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
     p: prompt personalizzato; usato in modalità non-keyslist o in modalità numerata.
+      Con le chiavi, che e' il predefinito, p non si vede: al suo posto il
+      prompt elenca le lettere che si possono digitare. Chi vuole dare
+      un'istruzione la stampa prima di chiamare menu (issue 52, scelta di
+      Gabriele del 12 novembre 2026).
+    intestazione: una riga stampata prima di ogni elenco, per esempio i nomi
+      delle colonne. Il predefinito e' la stringa vuota, cioe' nessuna riga.
+      Come ntf, la scrive il chiamante, nella sua lingua. Dalla V5.2.0, per
+      la issue 62.
     ntf: messaggio stampato quando cio' che si e' digitato non corrisponde a
       nessuna voce. Il predefinito e' la stringa vuota, cioe' nessuna parola:
       menu non conosce la lingua del programma che la chiama, quindi il testo
@@ -6089,6 +6097,11 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     Restituisce:
     La chiave scelta dal dizionario 'd', oppure None se l'utente annulla con Esc;
     Invio senza aver digitato niente restituisce empty_enter, che per predefinito e' None.
+    Un dizionario di una voce sola la restituisce subito, senza mostrarla e
+    senza leggere un tasto: e' comodo con gli elenchi che cambiano, un solo
+    dispositivo, un solo file, ma chi chiama menu dentro un ciclo che esce
+    soltanto con None deve saperlo, perche' con una voce sola il ciclo non
+    finisce mai, ed Esc non puo' fermarlo.
     None e' anche cio' che si riceve quando 'd' e' vuoto: dalla V5.0.0 il caso
     non viene piu' annunciato con una stampa, perche' chi ha passato il
     dizionario sa gia' che era vuoto e in una interfaccia grafica quella frase
@@ -6113,6 +6126,17 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     fra la chiave e la descrizione: le regole di accessibilita' vietano i
     separatori grafici, e menu, essendo chiamata da tutto il parco software,
     era il posto in cui se ne stampavano di piu'.
+    Dalla V5.2.0 il completamento si lascia ricopiare: quando le voci rimaste
+    hanno un inizio comune menu lo completa da solo, e chi scrive comunque la
+    parola intera, che e' la cosa piu' naturale con lo screen reader, ricopia
+    lettere gia' messe. Una lettera uguale a quella che il completamento ha
+    gia' messo in quella posizione, maiuscola o minuscola che sia, fa andare
+    avanti senza aggiungersi; una diversa si aggiunge in coda come prima.
+    Fino alla V5.1.0 si aggiungeva sempre: in Chitabry b e l diventavano gia'
+    blues, e scrivendo b l u e s si arrivava a bluesues, che non esiste.
+    E con Invio, fra le chiavi uguali a meno delle maiuscole, come M9 e m9,
+    vince quella identica a cio' che si e' digitato; fino alla V5.1.0 vinceva
+    sempre la prima in ordine (issue 52).
     """
     import os
     if d is None: d = {}
@@ -6137,6 +6161,8 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         if total == 0:
             print(ntf if ntf else conteggio(0))
             return True
+        if intestazione:
+            print(intestazione)
         for count, item in enumerate(items_to_show, 1):
             if is_numbered:
                 print(f"{item}. {d[num_map[item]]}")
@@ -6169,6 +6195,9 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     if ordered:
         orig_keys.sort()
     user_input = ""
+    # Quante delle lettere di user_input le ha digitate l'utente: le altre le
+    # ha messe il completamento. Serve a riconoscere chi le ricopia.
+    digitate = 0
     last_displayed = None
     num_map = {}
     if numbered:
@@ -6192,8 +6221,12 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         if keyslist and not numbered and not disable_autocomplete_once and len(filtered) > 1:
             common_prefix = lcp(filtered)
             if len(common_prefix) > len(user_input):
-                user_input = common_prefix
-                display_input = common_prefix
+                # Le lettere gia' digitate restano come le si e' scritte, e il
+                # completamento aggiunge soltanto le seguenti: fino alla V5.1.0
+                # prendeva tutto dalla prima voce, maiuscole comprese, e con M11
+                # e m11 chi scriveva m si ritrovava M (issue 52).
+                user_input = user_input + common_prefix[len(user_input):]
+                display_input = user_input
         disable_autocomplete_once = False
         final_filtered = [k for k in orig_keys if valid_match(k, display_input)]
         if len(final_filtered) == 1 and len(display_input) > 0:
@@ -6219,6 +6252,11 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             print()
             a_capo_pendente = False
             exact_matches = [k for k in final_filtered if k.lower() == display_input.lower()]
+            # Fra le chiavi uguali a meno delle maiuscole vince quella
+            # identica a cio' che si e' digitato, se c'e'.
+            identiche = [k for k in exact_matches if k == display_input]
+            if identiche:
+                return num_map.get(identiche[0], identiche[0])
             if exact_matches:
                 return num_map.get(exact_matches[0], exact_matches[0])
             elif len(final_filtered) == 1:
@@ -6239,6 +6277,7 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         elif user_char in ('\x08', 'ctrl-backspace'):
             if user_input:
                 user_input = user_input[:-1]
+                digitate = min(digitate, len(user_input))
                 print('\b \b'*len(display_input), end='', flush=True)
                 last_displayed = None
                 disable_autocomplete_once = True
@@ -6248,9 +6287,17 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             pass
         elif numbered and not user_char.isdigit():
             pass
+        elif digitate < len(user_input) and user_input[digitate].lower() == user_char.lower():
+            # Ricopia una lettera che il completamento aveva gia' messo: si va
+            # avanti senza aggiungerla, e senza stamparla, perche' e' gia' li'.
+            # Prende pero' la maiuscola o la minuscola che si e' digitata, che
+            # con Invio sceglie fra le chiavi uguali a meno delle maiuscole.
+            user_input = user_input[:digitate] + user_char + user_input[digitate + 1:]
+            digitate += 1
         else:
             print(user_char, end='', flush=True)
             user_input += user_char
+            digitate = len(user_input)
             last_displayed = None
             disable_autocomplete_once = False
 
