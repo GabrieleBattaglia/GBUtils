@@ -10,13 +10,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import (
     Acusticator,
     dgt,
+    frequenza_nota,
     menu,
     panorama_spostato,
     parse_pan_parts,
+    parse_pan_values,
     parse_vol_values,
+    scomponi_nota,
 )
 
-VERSION = "1.10.0" # I volumi come le app: scivolata a lista e ascolto attraverso Acusticator.prepara
+VERSION = "1.11.0" # Acu_Maker segue il motore: note, pan a lista, ascolto, collezioni, rinomina
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "12 novembre 2026"
@@ -33,10 +36,9 @@ BANDA_DEFAULT = "200-3000"
 # lo stesso in ogni punto dello spettro. 2 elevato a un dodicesimo e' il
 # rapporto di un semitono, circa il sei per cento.
 PASSO_BANDA = 2 ** (1 / 12)
-# I nomi delle dodici note e i loro semitoni, usati sia per trasportare
-# sia per tradurre una frequenza nel nome di nota piu' vicino.
+# I nomi delle dodici note, con cui si riscrive una nota spostata o nata da
+# una frequenza. Leggerle invece e' compito di scomponi_nota di GBUtils.
 NOMI_NOTE = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b']
-SEMITONI_NOTE = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
 # Quanto e' larga la banda che nasce da una nota quando si passa a un
 # rumore: mezza ottava sotto e mezza ottava sopra, cioe' una banda larga
 # un'ottava che si sente intonata su quella nota.
@@ -52,6 +54,21 @@ def scivola(val):
 	1.10.0 la lista di due valori, che e' la forma con cui Acu_Maker scrive le
 	scivolate di volume (issue 47 di GBUtils)."""
 	return is_portamento(val) or (isinstance(val, (list, tuple)) and len(val) == 2)
+
+
+def scorre(param, val):
+	"""Vero se il campo param della quartina scorre, come lo legge il motore.
+
+	Per il pan e il volume decide la lettura del motore e non il punto: dalla
+	1.11.0 un pan scritto '0.1' e' fermo a 0,1, com'e' per le app, e non piu'
+	una scivolata da 0 a 100 come lo mostrava l'editor (issue 59)."""
+	if param == 2:
+		return isinstance(parse_pan_values(val), tuple)
+	if param == 3:
+		if isinstance(val, str):
+			return isinstance(parse_vol_values(val), tuple)
+		return scivola(val)
+	return is_portamento(val)
 
 
 def is_rumore(kind):
@@ -222,38 +239,47 @@ def scala_taglio(taglio, direzione, passo=PASSO_BANDA):
 def nota_in_hz(val):
     """La frequenza di una nota singola, o None se non e' leggibile.
 
-    Accetta il nome della nota, per esempio c4 o d#4, e anche il numero,
-    che nel campo della nota e' gia' una frequenza in Hertz.
+    Accetta il nome della nota, per esempio c4, d#4, e-4 o c~4, e anche il
+    numero, che nel campo della nota e' gia' una frequenza in Hertz. Dalla
+    1.11.0 il nome lo legge frequenza_nota di GBUtils, l'unico punto del
+    parco software che legge i nomi di nota: fino alla 1.10.0 qui ce n'era
+    una seconda copia, che non sapeva di microtoni, ottave a piu' cifre e
+    trattino (issue 59).
     """
+    if isinstance(val, bool):
+        return None
     if isinstance(val, (int, float)):
         return float(val) if val > 0 else None
     grezzo = str(val).strip().lower()
     if grezzo.isdigit():
         return float(grezzo) if float(grezzo) > 0 else None
-    incontro = re.match(r"^([a-g])([#b]?)(\d)$", grezzo)
-    if not incontro:
-        return None
-    lettera, alterazione, ottava = incontro.groups()
-    semitono = SEMITONI_NOTE[lettera]
-    if alterazione == '#':
-        semitono += 1
-    elif alterazione == 'b':
-        semitono -= 1
-    midi = 12 + semitono + 12 * int(ottava)
-    return 440.0 * (2.0 ** ((midi - 69) / 12.0))
+    frequenza = frequenza_nota(grezzo)
+    return frequenza if frequenza > 0 else None
+
+
+# Fin dove arrivano c e v sulle note: dal do dell'ottava zero, 16 Hz, al re
+# diesis dell'ottava dieci, poco sotto i 20000 Hz, dove l'orecchio smette.
+MIDI_MINIMO = 12
+MIDI_MASSIMO = 135
+# I simboli dei microtoni, come li legge scomponi_nota.
+SIMBOLI_MICRO = {0.5: "~", 1.5: "~~", -0.5: "`", -1.5: "``"}
+
+
+def nome_nota(midi, micro=0.0):
+    """Il nome di una nota dal suo numero MIDI, con il microtono se c'e'."""
+    return f"{NOMI_NOTE[midi % 12]}{SIMBOLI_MICRO.get(micro, '')}{midi // 12 - 1}"
 
 
 def hz_in_nota(freq):
     """Il nome della nota piu' vicina a una frequenza.
 
-    Resta fra c0 e g9, che sono le note scritte con una cifra sola di
-    ottava, le uniche che l'editor e il motore sanno poi rileggere.
+    Resta fra c0 e d#10, cioe' dentro l'udibile: dalla 1.11.0 il motore legge
+    anche le ottave a piu' cifre, e la nota non si ferma piu' a g9.
     """
     if not freq or freq <= 0:
         return 'c4'
     midi = round(69 + 12 * math.log2(freq / 440.0))
-    midi = max(12, min(127, midi))
-    return f"{NOMI_NOTE[midi % 12]}{midi // 12 - 1}"
+    return nome_nota(max(MIDI_MINIMO, min(MIDI_MASSIMO, midi)))
 
 
 def banda_da_hz(freq):
@@ -364,6 +390,11 @@ def get_keypress():
             return ch
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+# Quanto puo' essere lunga una descrizione scritta nell'editor: la piu' lunga
+# della collezione, il 23 ottobre 2026, passava i mille caratteri.
+LUNGHEZZA_DESCRIZIONE = 5000
+
 
 # La collezione d'esempio, scritta quando il file non c'e'.
 ESEMPIO = {
@@ -572,6 +603,104 @@ def fondi(base, mio, disco, scelta=None):
 	return fuso, conflitti
 
 
+def rinomina(coll, nome):
+	"""Cambia il nome di un preset, al suo posto nella collezione.
+
+	Dalla 1.11.0: fino alla 1.10.0 la rinomina non c'era, e Salva come con un
+	nome nuovo lasciava anche il vecchio, che all'uscita i doppioni potevano
+	togliere proprio quando era quello che le app chiamavano (issue 59)."""
+	app = app_che_usano(coll.dati, nome)
+	if app:
+		print(f"Attenzione: lo usano {', '.join(app)}, che lo chiamano per nome. Dopo la rinomina vanno cambiate anche loro.")
+		if input("Lo rinomino lo stesso? (s/n): ").strip().lower() != "s":
+			return False
+	nuovo = dgt(f"Nome nuovo per {nome}: ", kind="s", smax=50,
+				avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
+	nuovo = nuovo.strip().replace(" ", "")
+	if not nuovo or nuovo == nome:
+		print("Nome non cambiato.")
+		return False
+	esito = []
+	def cambia(dati):
+		if nome not in dati:
+			esito.append("tolto")
+			return False
+		if nuovo in dati:
+			esito.append("preso")
+			return False
+		voci = list(dati.items())
+		dati.clear()
+		dati.update((nuovo if n == nome else n, v) for n, v in voci)
+		esito.append("fatto")
+		return True
+	if not coll.scrivi(cambia):
+		return False
+	if esito == ["preso"]:
+		print(f"Il nome {nuovo} c'e' gia': non rinomino.")
+	elif esito == ["tolto"]:
+		print(f"Il preset {nome} non c'e' piu': l'ha tolto un altro programma.")
+	else:
+		print(f"Rinominato da {nome} a {nuovo}.")
+	return esito == ["fatto"]
+
+
+def cambia_descrizione(coll, nome):
+	"""Cambia soltanto la descrizione di un preset, senza entrare nell'editor.
+	Fino alla 1.10.0 la si cambiava soltanto dentro Salva come, dopo una
+	modifica (issue 59)."""
+	vecchia = str(coll.dati[nome].get("descrizione", ""))
+	print(f"Descrizione di adesso: {vecchia}")
+	nuova = dgt("\rDescrizione nuova, Invio la lascia\r", kind="s", smax=LUNGHEZZA_DESCRIZIONE, default=vecchia,
+				avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."}).strip()
+	if not nuova or nuova == vecchia:
+		print("Descrizione non cambiata.")
+		return False
+	def cambia(dati):
+		if nome not in dati:
+			return False
+		dati[nome]["descrizione"] = nuova
+		return True
+	if coll.scrivi(cambia) and coll.dati.get(nome, {}).get("descrizione") == nuova:
+		print("Descrizione cambiata.")
+		return True
+	print("Descrizione non cambiata.")
+	return False
+
+
+def scegli_scheda():
+	"""Sceglie il dispositivo su cui Acu_Maker suona. Fino alla 1.10.0 non si
+	poteva scegliere (issue 59)."""
+	from GBUtils import elenco_dispositivi_audio
+	dispositivi = elenco_dispositivi_audio(prova="nessuno")
+	if not dispositivi:
+		print("Nessun dispositivo di uscita trovato.")
+		return
+	voci = {str(d["indice"]): f"{d['dispositivo']}, {d['breve']}" for d in dispositivi}
+	scelta = menu(voci, p="Scheda> ", show=True, ordered=False)
+	if scelta is None:
+		return
+	try:
+		Acusticator.setup(device=int(scelta))
+	except (ValueError, OSError) as errore:
+		print(f"Non riesco a usare quel dispositivo: {errore}")
+		return
+	print(f"Suono su {voci[scelta]}.")
+	Acusticator(["c5", 0.12, 0, 0.4])
+
+
+def apri_collezione(coll):
+	"""Apre un'altra collezione, per esempio quella di un progetto. Fino alla
+	1.10.0 Acu_Maker apriva soltanto quella condivisa (issue 59)."""
+	scritto = input("\rPercorso della collezione, Invio per quella condivisa\r").strip().strip('"')
+	percorso = os.path.abspath(scritto) if scritto else DB_FILE
+	if not os.path.exists(percorso) and input(f"{percorso} non esiste. La creo? (s/n): ").strip().lower() != "s":
+		return
+	coll.percorso = percorso
+	coll.dati, coll.impronta = {}, None
+	if coll.apri():
+		print(f"Collezione {percorso}, {len(coll.dati)} preset.")
+
+
 def differenze(prima, dopo):
 	"""I preset nuovi, cambiati e tolti fra due letture della collezione."""
 	nuovi = [n for n in dopo if n not in prima]
@@ -608,6 +737,13 @@ def togli_doppioni(db):
     Stampa una riga per ogni preset tolto e restituisce le coppie
     (tolto, tenuto). La collezione serve tutto il parco software: i suoni
     diversi restano tutti, anche quelli che oggi nessuno usa.
+    Dalla 1.11.0 un preset che un'app usa non sparisce mai da solo: le app lo
+    chiamano per nome, e resterebbero mute. Fino alla 1.10.0 restava la
+    descrizione piu' lunga senza guardare altro, e un gemello di apertura,
+    firmato da sette app, con una frase in piu', l'avrebbe fatta sparire
+    (issue 59). Se nel gruppo un solo preset e' usato, resta lui; se lo sono
+    due o piu', il gruppo resta com'e', e lo si dice: per unirli bisogna
+    prima cambiare le app.
     """
     gruppi = {}
     for nome, preset in db.items():
@@ -616,7 +752,14 @@ def togli_doppioni(db):
     for nomi in gruppi.values():
         if len(nomi) < 2:
             continue
-        tenuto = max(nomi, key=lambda n: (len(str(db[n].get("descrizione", ""))), -nomi.index(n)))
+        usati = [n for n in nomi if app_che_usano(db, n)]
+        if len(usati) >= 2:
+            print(f"Suonano identici ma li usano le app, quindi restano tutti: {', '.join(usati)}.")
+            continue
+        if usati:
+            tenuto = usati[0]
+        else:
+            tenuto = max(nomi, key=lambda n: (len(str(db[n].get("descrizione", ""))), -nomi.index(n)))
         for nome in nomi:
             if nome != tenuto:
                 tolti.append((nome, tenuto))
@@ -624,6 +767,26 @@ def togli_doppioni(db):
         del db[nome]
         print(f"Doppione tolto: '{nome}' suonava identico a '{tenuto}', che resta.")
     return tolti
+
+
+# La firma delle app in fondo alla descrizione: "Usato da: meteora, mess."
+FIRMA = re.compile(r"\s*Usato da: ([^.]*)\.\s*$")
+
+
+def app_che_usano(db, nome):
+	"""Le app che usano un preset: quelle della sua firma, e quella del suo
+	prefisso, quando il prefisso e' il nome di un'app che firma altrove."""
+	firme = set()
+	for preset in db.values():
+		trovata = FIRMA.search(str(preset.get("descrizione", "")))
+		if trovata:
+			firme.update(a.strip().lower() for a in trovata.group(1).split(",") if a.strip())
+	trovata = FIRMA.search(str(db[nome].get("descrizione", "")))
+	sue = {a.strip().lower() for a in trovata.group(1).split(",") if a.strip()} if trovata else set()
+	prefisso = nome.split("_", 1)[0].lower() if "_" in nome else ""
+	if prefisso in firme:
+		sue.add(prefisso)
+	return sorted(sue)
 
 
 def trova_gemello(db, preset, escludi=None):
@@ -638,23 +801,24 @@ def trova_gemello(db, preset, escludi=None):
 
 
 def transpose_note(note_str, semitones):
-    if note_str.lower() == 'p': return note_str
-    match = re.match(r"^([a-g])([#b]?)(\d)$", note_str.lower())
-    if not match: return note_str
-    note_letter, accidental, octave_str = match.groups()
-    octave = int(octave_str)
-    semitone = SEMITONI_NOTE[note_letter]
-    if accidental == '#': semitone += 1
-    elif accidental == 'b': semitone -= 1
-    
-    midi_num = 12 + semitone + 12 * octave
-    new_midi = midi_num + semitones
-    
-    new_midi = max(0, min(127, new_midi))
-    
-    new_octave = (new_midi // 12) - 1
-    new_note = NOMI_NOTE[new_midi % 12]
-    return f"{new_note}{new_octave}"
+    """La nota spostata di tanti semitoni, microtono compreso.
+
+    Restituisce la pausa com'e', il nome nuovo, oppure None quando la nota
+    uscirebbe da c0 o da d#10, o quando il nome non si legge: allora c e v
+    restano fermi e lo dicono. Fino alla 1.10.0 un passo in giu' da c0
+    scriveva b-1, che il motore legge come si bemolle 1, e oltre g#9 la nota
+    tornava indietro; i microtoni, le ottave da 10 in su e il trattino
+    restavano fermi senza avviso (issue 59)."""
+    if str(note_str).strip().lower() == 'p':
+        return note_str
+    scomposta = scomponi_nota(note_str)
+    if scomposta is None:
+        return None
+    midi, micro = scomposta
+    nuovo = midi + semitones
+    if not MIDI_MINIMO <= nuovo <= MIDI_MASSIMO:
+        return None
+    return nome_nota(nuovo, micro)
 
 class EditorState:
     def __init__(self, preset_data):
@@ -662,6 +826,25 @@ class EditorState:
         # Il preset com'era all'apertura: Sovrascrivi lo confronta con il
         # proprio e con quello del disco, per fondere senza perdere niente.
         self.originale = json.loads(json.dumps(preset_data))
+        # Dalla 1.11.0 i campi che il motore lascia facoltativi, onda e
+        # inviluppo, si riempiono con i suoi predefiniti, e un kind scritto
+        # come testo o come decimale diventa il numero: fino alla 1.10.0 un
+        # preset senza di loro faceva cadere l'editor (issue 59).
+        try:
+            kind = float(self.preset.get('kind', 1))
+            self.preset['kind'] = int(kind) if kind.is_integer() and int(kind) in ONDE else 1
+        except (TypeError, ValueError):
+            self.preset['kind'] = 1
+        if not isinstance(self.preset.get('adsr'), list) or len(self.preset['adsr']) != 4:
+            self.preset['adsr'] = [0.002, 0.0, 100.0, 0.002]
+        # Cio' che la conversione fra note e rumori ha cambiato, per
+        # rimetterlo com'era al ritorno: vedi cambia_onda.
+        self.memoria_onde = {}
+        # Il volume d'ascolto, cioe' la base su cui si sente il preset, come
+        # la sceglie un programma: None e' la base 0,5 del file.
+        self.base_ascolto = None
+        # La maniglia del preset che suona in ciclo, se ce n'e' uno.
+        self.ciclo = None
         self.focus_type = 'score'
         self.focus_idx = 0
         self.focus_param = 0
@@ -688,25 +871,28 @@ class EditorState:
         self.posizione = None
 
 def pan_to_user(val):
-    if isinstance(val, (list, tuple)) and len(val) == 2:
-        return f"{round(float(val[0]) * 100)}.{round(float(val[1]) * 100)}"
-    if is_portamento(val):
-        parts = parse_pan_parts(val)
-        p1 = round(float(parts[0]) * 100)
-        p2 = round(float(parts[1]) * 100)
-        return f"{p1}.{p2}"
-    else:
-        return str(round(float(val) * 100))
+    """Il panorama nella scala dell'editor, da -100 a 100, letto come lo legge
+    il motore: dalla 1.11.0 parse_pan_values, la stessa lettura delle app.
+    Fino alla 1.10.0 l'editor spezzava sul punto, e un '0.1' fermo a 0,1
+    nelle app appariva come una scivolata da 0 a 100 (issue 59)."""
+    letto = parse_pan_values(val)
+    if isinstance(letto, tuple):
+        return f"{round(letto[0] * 100)}.{round(letto[1] * 100)}"
+    return str(round(letto * 100))
 
 def user_to_pan(val_str):
+    """Dalla scala dell'editor al file: un numero quando il panorama sta
+    fermo, e per la scivolata scritta con il punto, come -100.100, la lista
+    dei due valori. Fino alla 1.10.0 la scivolata si scriveva come testo con i
+    capi senza decimali, e il motore la leggeva come un valore solo quando il
+    testo era un decimale valido: da 0 a 100 diventava '0.1', fermo a 0,1
+    (issue 59)."""
     val_str = str(val_str).strip()
     if is_portamento(val_str):
         parts = parse_pan_parts(val_str)
         p1 = max(-1.0, min(1.0, float(parts[0]) / 100.0))
         p2 = max(-1.0, min(1.0, float(parts[1]) / 100.0))
-        s1 = str(int(p1)) if p1.is_integer() else str(round(p1, 2))
-        s2 = str(int(p2)) if p2.is_integer() else str(round(p2, 2))
-        return f"{s1}.{s2}"
+        return [round(p1, 2), round(p2, 2)]
     else:
         fval = float(val_str) / 100.0
         return max(-1.0, min(1.0, round(fval, 2)))
@@ -743,12 +929,11 @@ def posizione_breve(valore):
 
 def pan_in_file(valore):
     """Il panorama nella forma con cui il file lo scrive: un numero quando sta
-    fermo, due numeri uniti dal punto quando scorre."""
-    def breve(x):
-        x = round(float(x), 2)
-        return str(int(x)) if float(x).is_integer() else str(x)
+    fermo, e dalla 1.11.0 la lista dei due valori quando scorre. Fino alla
+    1.10.0 erano due numeri uniti dal punto, e -1.0 con 0.1 diventava '-1.0'
+    e '0.1', fermi (issue 59)."""
     if isinstance(valore, (tuple, list)):
-        return f"{breve(valore[0])}.{breve(valore[1])}"
+        return [round(float(valore[0]), 2), round(float(valore[1]), 2)]
     return round(float(valore), 2)
 
 def vol_to_user(val):
@@ -840,7 +1025,45 @@ def get_status_string(state):
         adsr = list(state.preset['adsr'])
         adsr[state.focus_param] = f"<{adsr[state.focus_param]}>"
         s = f"ADSR: {adsr[0]} {adsr[1]} {adsr[2]} {adsr[3]}"
-    return s + posizione_breve(state.posizione)
+    return s + posizione_breve(state.posizione) + ascolto_breve(state)
+
+def cambia_onda(state, nuova):
+	"""Passa il preset all'onda nuova, e dice com'e' andata.
+
+	Passando fra note e rumore il primo campo cambia significato: si converte
+	quello che c'e', scivolata compresa. La conversione pero' perde qualcosa,
+	dissolvenze, bande, microtoni, scivolate in Hz, e fino alla 1.10.0 andata
+	e ritorno guastavano il primo campo: 82 preset su 652, e il fischio di
+	MESS da 2847 Hz finiva a 784 (issue 59). Dalla 1.11.0 l'editor ricorda il
+	valore di prima di ogni quartina convertita, e se al ritorno la quartina
+	non e' stata toccata lo rimette com'era."""
+	prima_rumore = is_rumore(state.preset.get('kind', 1))
+	state.preset['kind'] = nuova
+	state.modified = True
+	adesso_rumore = is_rumore(nuova)
+	if prima_rumore != adesso_rumore:
+		ricordati = 0
+		for quartina in state.preset['score']:
+			if str(quartina[0]).strip().lower() == 'p':
+				continue
+			memoria = state.memoria_onde.get(id(quartina))
+			if memoria is not None and memoria[0] is quartina and memoria[2] == quartina[0]:
+				# Torna com'era, perche' da allora nessuno l'ha toccata.
+				quartina[0] = memoria[1]
+				del state.memoria_onde[id(quartina)]
+				ricordati += 1
+				continue
+			convertito = nota_in_banda(quartina[0]) if adesso_rumore else banda_in_nota(quartina[0])
+			state.memoria_onde[id(quartina)] = (quartina, quartina[0], convertito)
+			quartina[0] = convertito
+		state.port_focus = 3
+		testo = f"Onda: {ONDE[nuova]}, il primo campo ora e' {'la banda' if adesso_rumore else 'la nota'}"
+		if ricordati:
+			testo += ", tornato com'era"
+	else:
+		testo = f"Onda: {ONDE[nuova]}"
+	print(f"\r{' ' * 60}\r{testo}", end="", flush=True)
+
 
 def handle_print(state, force_newline=False):
     s = get_status_string(state)
@@ -857,25 +1080,117 @@ def play_preset(state):
     Acusticator.prepara, la stessa lettura di Acusticator.preset, invece che
     da una conversione sua, cosi' editor e app non possono piu' divergere
     (issue 47 di GBUtils)."""
-    score, kind, adsr = Acusticator.prepara(state.preset, pan=state.posizione)
+    score, kind, adsr = Acusticator.prepara(state.preset, volume=state.base_ascolto, pan=state.posizione)
     Acusticator(score, kind=kind, adsr=adsr, sync=False)
 
 def play_quad(state):
     """Suona la sola quartina corrente, con la stessa lettura delle app."""
     quartina = {"score": [state.preset['score'][state.focus_idx]],
                 "kind": state.preset.get('kind', 1), "adsr": state.preset.get('adsr')}
-    score, kind, adsr = Acusticator.prepara(quartina, pan=state.posizione)
+    score, kind, adsr = Acusticator.prepara(quartina, volume=state.base_ascolto, pan=state.posizione)
     Acusticator(score, kind=kind, adsr=adsr, sync=False)
 
+
+def zittisci(state):
+	"""Ferma tutto quello che l'editor sta suonando, ciclo compreso. Dalla
+	1.11.0 lo Spazio zittisce prima di suonare: ripetuto, sovrapponeva fino a
+	trentadue voci (issue 59)."""
+	if state.ciclo is not None:
+		state.ciclo.stop()
+		state.ciclo = None
+	Acusticator.stop()
+
+
+def alterna_ciclo(state):
+	"""Accende o spegne l'ascolto in ciclo del preset. Restituisce cosa dire."""
+	if state.ciclo is not None and state.ciclo.attivo:
+		zittisci(state)
+		return "Ciclo fermato"
+	zittisci(state)
+	score, kind, adsr = Acusticator.prepara(state.preset, volume=state.base_ascolto, pan=state.posizione)
+	# Senza dissolvenza: si sente il preset come suona, giro dopo giro.
+	state.ciclo = Acusticator.ciclo(score, kind=kind, adsr=adsr, dissolvenza=0)
+	return "In ciclo, t lo ferma" if state.ciclo is not None else "Il ciclo non parte"
+
+
+def ascolto_breve(state):
+	"""Il volume d'ascolto come codice corto per la riga di stato."""
+	return "" if state.base_ascolto is None else f" o{round(state.base_ascolto * 100)}"
+
+AVVISO_NOTA = ("Nota non valida: un nome come c4, f#3, e-4 o c~4, una frequenza in Hz, "
+			   "oppure p per la pausa.")
+AVVISO_CAPO = ("Capo non valido: un nome come c4 o f#3, una frequenza in Hz senza decimali, "
+			   "perche' il punto separa i due capi, oppure p.")
+
+
+def capo_valido(testo):
+	"""Vero se testo puo' stare in un capo di una scivolata di note."""
+	return testo == 'p' or (testo.isdigit() and int(testo) > 0) or scomponi_nota(testo) is not None
+
+
+def nota_scritta(testo):
+	"""Cio' che si scrive per una nota digitata con Invio, o None se non va.
+
+	Un numero e' una frequenza in Hz, anche con i decimali; un nome lo deve
+	saper leggere scomponi_nota; due capi uniti dal punto sono una scivolata,
+	e ognuno deve andar bene da se'."""
+	if testo == 'p':
+		return 'p'
+	try:
+		numero = float(testo)
+	except ValueError:
+		numero = None
+	if numero is not None:
+		return numero if math.isfinite(numero) and numero > 0 else None
+	if '.' in testo:
+		parti = testo.split('.')
+		return testo if len(parti) == 2 and all(capo_valido(p) for p in parti) else None
+	return testo if scomponi_nota(testo) is not None else None
+
+
+def valori_mostrati(state):
+	"""Le parti del valore selezionato come le mostra la riga di stato: una,
+	o le due della scivolata quando il fuoco e' su tutte e due."""
+	if state.focus_type == 'adsr':
+		return [str(state.preset['adsr'][state.focus_param])]
+	param = state.focus_param
+	quad = state.preset['score'][state.focus_idx]
+	if param == 0 and is_rumore(state.preset.get('kind', 1)):
+		return []
+	if param == 1:
+		return [str(quad[1])]
+	if param == 0:
+		testo = str(quad[0]).lower()
+	elif param == 2:
+		testo = pan_to_user(quad[2])
+	else:
+		testo = vol_to_user(quad[3])
+	if not scorre(param, quad[param]):
+		return [testo]
+	parti = testo.split('.')
+	return [parti[i] for i in {1: (0,), 2: (1,)}.get(state.port_focus, (0, 1))]
+
+
+def riconferma(state, scritto):
+	"""Vero se cio' che si e' scritto con Invio e' proprio il valore mostrato."""
+	parti = valori_mostrati(state)
+	return bool(parti) and all(parte == scritto for parte in parti)
+
+
 def transpose_single(val_str, direction, step):
+    """Un capo della scivolata spostato di un passo: i nomi di un semitono,
+    gli Hertz di step. None se non si puo' muovere, vedi transpose_note."""
     if val_str.lower() == 'p': return 'p'
     try:
         fval = float(val_str)
-        if fval.is_integer():
-            return str(int(fval + direction * step))
-        return str(round(fval + direction * step, 2))
     except ValueError:
         return transpose_note(val_str, direction)
+    nuovo = fval + direction * step
+    if nuovo < 1:
+        return None
+    if fval.is_integer() and float(step).is_integer():
+        return str(int(nuovo))
+    return str(round(nuovo, 2))
 
 def inc_dec_value(state, direction):
     """Muove il valore corrente di un passo.
@@ -907,18 +1222,30 @@ def inc_dec_value(state, direction):
             quad[0] = banda_componi(*nuovi)
         elif param == 0:
             val = quad[0]
+            fermo = "La nota uscirebbe dalla scala, o non si legge: fermo qui"
             if is_portamento(val):
                 parts = val.split('.')
                 if state.port_focus in (1, 3):
                     parts[0] = transpose_single(parts[0], direction, state.steps['note'])
                 if state.port_focus in (2, 3):
                     parts[1] = transpose_single(parts[1], direction, state.steps['note'])
+                if None in parts:
+                    state.modified = era_modificato
+                    return fermo
                 quad[0] = f"{parts[0]}.{parts[1]}"
             else:
                 if isinstance(val, str) and val.lower() != 'p':
-                    quad[0] = transpose_note(val, direction)
-                elif isinstance(val, (int, float)):
-                    quad[0] = round(val + direction * state.steps['note'], 2)
+                    nuova = transpose_single(val, direction, state.steps['note'])
+                    if nuova is None:
+                        state.modified = era_modificato
+                        return fermo
+                    quad[0] = nuova
+                elif isinstance(val, (int, float)) and not isinstance(val, bool):
+                    nuova = round(val + direction * state.steps['note'], 2)
+                    if nuova < 1:
+                        state.modified = era_modificato
+                        return fermo
+                    quad[0] = nuova
         elif param == 1:
             quad[1] = max(0.0, round(quad[1] + direction * state.steps['dur'], 3))
         elif param == 2:
@@ -972,14 +1299,55 @@ def edit_mode(coll, preset_name, nuovo=None):
     """L'editor di un preset. nuovo e' il preset appena nato dal tasto piu':
     non sta nella collezione, e ci entra soltanto se lo si salva."""
     state = EditorState(nuovo if nuovo is not None else coll.dati[preset_name])
-    print(f"\n--- Edit Preset: {preset_name} ---")
+    print(f"\nEditor del preset {preset_name}.")
     handle_print(state, force_newline=True)
-    
+    while True:
+        modifica(state)
+        print()
+        if state.ciclo is not None:
+            zittisci(state)
+        # Esc nel menu di salvataggio torna all'editor: fino alla 1.10.0
+        # scartava il lavoro senza chiedere, e Esc e' il tasto con cui si
+        # era appena usciti dal preset (issue 59).
+        if salva_preset(coll, preset_name, state, nuovo is not None) != "torna":
+            return
+        state.running = True
+        print("Torno all'editor.")
+        handle_print(state, force_newline=True)
+
+
+def modifica(state):
+    """Il giro dei tasti dell'editor, finche' non si esce con Esc."""
     while state.running:
         key = get_keypress()
 
         if key == 'space':
+            zittisci(state)
             play_preset(state)
+        elif key == 'k':
+            zittisci(state)
+            print(f"\r{' ' * 60}\rSilenzio", end="", flush=True)
+            continue
+        elif key == 't':
+            print(f"\r{' ' * 60}\r{alterna_ciclo(state)}", end="", flush=True)
+            continue
+        elif key == 'o':
+            # Il volume d'ascolto: la base su cui si sente il preset, come la
+            # sceglie un programma con preset(volume=...). Fino alla 1.10.0
+            # l'editor suonava sempre alla base 0,5 (issue 59).
+            print("\nVolume d'ascolto, da 0 a 100: la base su cui si sente il preset, come la sceglie un programma.")
+            print("Il preset non cambia. Invio senza scrivere niente torna a 50, la base del file.")
+            scritto = input("\rVolume d'ascolto\r").strip()
+            if not scritto:
+                state.base_ascolto = None
+            else:
+                try:
+                    state.base_ascolto = max(0.0, min(1.0, float(scritto) / 100.0))
+                except ValueError:
+                    print("Valore non valido.")
+            play_preset(state)
+            handle_print(state, force_newline=True)
+            continue
         elif key == 'enter':
             param_name = ["Nota", "Durata", "Pan (-100..100)", "Volume (0..100)"][state.focus_param] if state.focus_type == 'score' else ["A", "D", "S", "R"][state.focus_param]
             if state.focus_type == 'score':
@@ -998,19 +1366,25 @@ def edit_mode(coll, preset_name, nuovo=None):
                         else: param_name = "Nota (entrambe)"
                 elif state.focus_param == 2:
                     current_val = state.preset['score'][state.focus_idx][2]
-                    if scivola(current_val):
+                    if scorre(2, current_val):
                         if state.port_focus == 1: param_name = "Pan partenza (-100..100)"
                         elif state.port_focus == 2: param_name = "Pan arrivo (-100..100)"
                         else: param_name = "Pan entrambi (-100..100)"
                 elif state.focus_param == 3:
                     current_val = state.preset['score'][state.focus_idx][3]
-                    if scivola(current_val):
+                    if scorre(3, current_val):
                         if state.port_focus == 1: param_name = "Volume partenza (0..100)"
                         elif state.port_focus == 2: param_name = "Volume arrivo (0..100)"
                         else: param_name = "Volume entrambi (0..100)"
                     
             val = input(f"\nInserisci nuovo valore per {param_name}: ")
-            if val.strip():
+            if val.strip() and riconferma(state, val.strip().lower()):
+                # Riconfermare il valore mostrato non cambia niente: fino alla
+                # 1.10.0 lo riscriveva arrotondato o riportato dentro la scala
+                # dell'editor, e lo scarto 0,7 di un volume diventava 0,5
+                # (issue 59).
+                print("Valore invariato.")
+            elif val.strip():
                 try:
                     if state.focus_type == 'score':
                         if state.focus_param == 0 and is_rumore(state.preset.get('kind', 1)):
@@ -1038,28 +1412,31 @@ def edit_mode(coll, preset_name, nuovo=None):
                                 state.preset['score'][state.focus_idx][0] = pulita
                                 state.modified = True
                         elif state.focus_param == 0:
+                            # Dalla 1.11.0 una nota si controlla prima di entrare
+                            # nel preset: un nome che non esiste, come h4, o un
+                            # decimale dentro una scivolata, dove il punto separa
+                            # i due capi, restavano nel file (issue 59).
                             current_val = state.preset['score'][state.focus_idx][0]
+                            scritto = val.strip().lower()
                             if is_portamento(current_val):
-                                val_to_insert = val
-                                if val.lower() == 'p':
-                                    val_to_insert = 'p'
-                                elif val.replace('-', '').replace('.', '', 1).isdigit():
-                                    fval = float(val)
-                                    val_to_insert = str(int(fval)) if fval.is_integer() else str(fval)
-                                parts = current_val.split('.')
-                                if state.port_focus in (1, 3): parts[0] = val_to_insert
-                                if state.port_focus in (2, 3): parts[1] = val_to_insert
-                                state.preset['score'][state.focus_idx][0] = f"{parts[0]}.{parts[1]}"
-                                state.modified = True
-                            else:
-                                if val.lower() == 'p': state.preset['score'][state.focus_idx][0] = 'p'
+                                if not capo_valido(scritto):
+                                    print(AVVISO_CAPO)
                                 else:
-                                    try: state.preset['score'][state.focus_idx][0] = float(val)
-                                    except ValueError: state.preset['score'][state.focus_idx][0] = val
-                                state.modified = True
+                                    parts = current_val.split('.')
+                                    if state.port_focus in (1, 3): parts[0] = scritto
+                                    if state.port_focus in (2, 3): parts[1] = scritto
+                                    state.preset['score'][state.focus_idx][0] = f"{parts[0]}.{parts[1]}"
+                                    state.modified = True
+                            else:
+                                nota = nota_scritta(scritto)
+                                if nota is None:
+                                    print(AVVISO_NOTA)
+                                else:
+                                    state.preset['score'][state.focus_idx][0] = nota
+                                    state.modified = True
                         elif state.focus_param == 2:
                             current_val = state.preset['score'][state.focus_idx][2]
-                            if scivola(current_val):
+                            if scorre(2, current_val):
                                 parts_user = pan_to_user(current_val).split('.')
                                 if state.port_focus in (1, 3): parts_user[0] = val
                                 if state.port_focus in (2, 3): parts_user[1] = val
@@ -1069,7 +1446,7 @@ def edit_mode(coll, preset_name, nuovo=None):
                             state.modified = True
                         elif state.focus_param == 3:
                             current_val = state.preset['score'][state.focus_idx][3]
-                            if scivola(current_val):
+                            if scorre(3, current_val):
                                 parts_user = vol_to_user(current_val).split('.')
                                 if state.port_focus in (1, 3): parts_user[0] = val
                                 if state.port_focus in (2, 3): parts_user[1] = val
@@ -1078,8 +1455,14 @@ def edit_mode(coll, preset_name, nuovo=None):
                                 state.preset['score'][state.focus_idx][3] = user_to_vol(val)
                             state.modified = True
                         else:
-                            state.preset['score'][state.focus_idx][state.focus_param] = float(val)
-                            state.modified = True
+                            durata = float(val)
+                            if not durata > 0 or not math.isfinite(durata):
+                                # Una durata negativa o nulla il motore la salta:
+                                # la quartina sparirebbe senza che nessuno lo dica.
+                                print("La durata e' in secondi, e serve piu' di zero.")
+                            else:
+                                state.preset['score'][state.focus_idx][1] = durata
+                                state.modified = True
                     elif state.focus_type == 'adsr':
                         param = state.focus_param
                         new_val = float(val)
@@ -1109,7 +1492,7 @@ def edit_mode(coll, preset_name, nuovo=None):
                         state.preset['score'][state.focus_idx][0] = nuova
                         state.port_focus = 3
                         state.modified = True
-                elif scivola(val):
+                elif scorre(param_idx, val):
                     if param_idx == 0:
                         parts = val.split('.')
                         new_val = parts[0] if state.port_focus in (1, 3) else parts[1]
@@ -1153,13 +1536,13 @@ def edit_mode(coll, preset_name, nuovo=None):
             continue
         elif key in ('1', '2', '3'):
             if (state.focus_type == 'score' and state.focus_param in (0, 2, 3)
-                    and scivola(state.preset['score'][state.focus_idx][state.focus_param])):
+                    and scorre(state.focus_param, state.preset['score'][state.focus_idx][state.focus_param])):
                 state.port_focus = int(key)
         elif key == '4':
             if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
                 param_idx = state.focus_param
                 val = state.preset['score'][state.focus_idx][param_idx]
-                if scivola(val):
+                if scorre(param_idx, val):
                     if param_idx == 0:
                         parts = val.split('.')
                         state.preset['score'][state.focus_idx][0] = f"{parts[1]}.{parts[0]}"
@@ -1182,7 +1565,7 @@ def edit_mode(coll, preset_name, nuovo=None):
                         state.preset['score'][state.focus_idx][0] = banda_componi(
                             b_fi, a_fi, b_in, a_in)
                         state.modified = True
-                elif scivola(val):
+                elif scorre(param_idx, val):
                     if param_idx == 0:
                         parti = val.split('.')
                         state.preset['score'][state.focus_idx][0] = f"{parti[1]}.{parti[0]}"
@@ -1255,28 +1638,20 @@ def edit_mode(coll, preset_name, nuovo=None):
             handle_print(state, force_newline=True)
             continue
             
-        elif key == 'w':
-            prima_rumore = is_rumore(state.preset['kind'])
-            state.preset['kind'] = (state.preset['kind'] % len(ONDE)) + 1
-            state.modified = True
-            # Passando fra note e rumore il primo campo cambia significato:
-            # si converte quello che c'e', scivolata compresa, altrimenti
-            # resterebbe illeggibile e il portamento andrebbe perso.
-            adesso_rumore = is_rumore(state.preset['kind'])
-            if prima_rumore != adesso_rumore:
-                for quartina in state.preset['score']:
-                    if str(quartina[0]).strip().lower() == 'p':
-                        continue
-                    quartina[0] = (nota_in_banda(quartina[0]) if adesso_rumore
-                                   else banda_in_nota(quartina[0]))
-                state.port_focus = 3
-                print(f"\r{' ' * 60}\rOnda: {ONDE[state.preset['kind']]}, "
-                      f"il primo campo ora e' "
-                      f"{'la banda' if adesso_rumore else 'la nota'}",
-                      end="", flush=True)
+        elif key in ('w', 'W'):
+            if key == 'w':
+                nuova = (state.preset.get('kind', 1) % len(ONDE)) + 1
             else:
-                print(f"\r{' ' * 60}\rOnda: {ONDE[state.preset['kind']]}",
-                      end="", flush=True)
+                # Dalla 1.11.0 l'onda si sceglie anche diretta, senza fare il
+                # giro: per passare dalla triangolare alla sinusoide il giro
+                # attraversava due volte il confine fra note e rumori (issue 59).
+                print()
+                scelta = menu({str(k): v for k, v in ONDE.items()}, p="Onda> ", show=True, ordered=False)
+                nuova = int(scelta) if scelta else None
+            if nuova is not None and nuova != state.preset.get('kind', 1):
+                cambia_onda(state, nuova)
+            if key == 'W':
+                handle_print(state, force_newline=True)
             continue
         elif key in ('a', 'd', 's', 'r'):
             state.focus_type = 'adsr'
@@ -1302,7 +1677,10 @@ def edit_mode(coll, preset_name, nuovo=None):
             play_quad(state)
         elif key == 'j':
             state.focus_type = 'score'
-            new_quad = ['c4', 0.5, 0.0, 0.0]
+            # Su un rumore la quartina nuova porta una banda, come con f:
+            # fino alla 1.10.0 j vi metteva c4, che il rumore non sa leggere.
+            primo = BANDA_DEFAULT if is_rumore(state.preset.get('kind', 1)) else 'c4'
+            new_quad = [primo, 0.5, 0.0, 0.0]
             state.preset['score'].insert(state.focus_idx + 1, new_quad)
             state.focus_idx += 1
             state.modified = True
@@ -1353,17 +1731,22 @@ def edit_mode(coll, preset_name, nuovo=None):
             print(f"\r{' ' * 60}\rPosizione unita alle quartine", end="", flush=True)
             continue
         elif key == 'l':
-            print("\n--- Lista Score ---")
+            # Dalla 1.11.0 senza righe di trattini e senza la freccia, che NVDA
+            # legge segno per segno: le regole di accessibilita' di Gabriele
+            # vietano i separatori grafici (issue 59).
+            print("\nLe quartine:")
             for i, q in enumerate(state.preset['score']):
-                indicator = "->" if i == state.focus_idx else "  "
-                print(f"{indicator} [{i+1}] Nota: {q[0]}, Dur: {q[1]}, Pan: {pan_to_user(q[2])}, Vol: {vol_to_user(q[3])}")
-            print("-------------------")
+                qui = ", qui" if i == state.focus_idx else ""
+                print(f"{i+1}{qui}. Nota: {q[0]}, Dur: {q[1]}, Pan: {pan_to_user(q[2])}, Vol: {vol_to_user(q[3])}")
             handle_print(state, force_newline=True)
             continue
         elif key == '?':
-            print("\n--- Lista Tasti Rapidi ---")
-            print("Spazio: Riproduce l'intero preset")
-            print("Invio: Modifica il valore selezionato")
+            print("\nI tasti dell'editor:")
+            print("Spazio: Riproduce l'intero preset, zittendo prima quello che suona")
+            print("t: Suona il preset in ciclo, e lo ferma")
+            print("k: Zittisce tutto")
+            print("o: Volume d'ascolto, la base su cui si sente il preset, da 0 a 100")
+            print("Invio: Modifica il valore selezionato. Riconfermare il valore mostrato non cambia niente")
             print(".: Attiva o disattiva il portamento del valore corrente")
             print("1, 2, 3: Fuoco sul portamento (1: part, 2: arr, 3: entrambi)")
             print("i: Inverte il portamento, partenza e arrivo si scambiano")
@@ -1391,8 +1774,11 @@ def edit_mode(coll, preset_name, nuovo=None):
             print("   quello alto: c e v si fermano prima e lo dicono.")
             print("   Cambiando forma il primo campo si converte da solo: la nota")
             print("   diventa la banda larga un'ottava che le sta intorno e la banda")
-            print("   diventa la nota piu' vicina al suo centro. La scivolata non si")
-            print("   perde, resta scivolata su tutte e otto le forme d'onda.")
+            print("   diventa la nota piu' vicina al suo centro. La conversione perde")
+            print("   qualcosa, dissolvenze, microtoni, scivolate in Hz, ma l'editor")
+            print("   ricorda com'era: tornando indietro senza averla toccata, la")
+            print("   quartina torna esattamente com'era.")
+            print("W: Sceglie la forma d'onda diretta, senza fare il giro")
             print("a, d, s, r: Passa alla modifica dell'inviluppo ADSR")
             print("q: Passa alla modifica della quartina (Nota)")
             print("f / j: Inserisce nuova quartina prima / dopo quella corrente")
@@ -1410,7 +1796,6 @@ def edit_mode(coll, preset_name, nuovo=None):
             print("l: Mostra la lista completa delle quartine")
             print("?: Mostra questa lista di tasti rapidi")
             print("Esc: Esce dall'editor")
-            print("--------------------------")
             handle_print(state, force_newline=True)
             continue
         elif key == 'esc':
@@ -1418,9 +1803,6 @@ def edit_mode(coll, preset_name, nuovo=None):
 
         if state.running:
             handle_print(state, force_newline=False)
-
-    print()
-    salva_preset(coll, preset_name, state, nuovo is not None)
 
 
 def chiedi_conflitto(conflitti):
@@ -1454,12 +1836,16 @@ def salva_preset(coll, preset_name, state, nuovo):
 		print(f"Questo suono esiste gia' come '{gemello}'.")
 		print("Sarebbe un doppione, quindi non lo salvo.")
 		return
-	print("\nModifiche rilevate. Scegli un'opzione:")
+	print("\nModifiche rilevate. Scegli un'opzione, Esc torna all'editor:")
 	if nuovo:
 		scelte = {"1": "Salva il preset nuovo", "3": "Esci senza salvare"}
 	else:
 		scelte = {"1": "Sovrascrivi preset corrente", "2": "Salva come nuovo preset", "3": "Esci senza salvare"}
 	scelta = menu(scelte, p="Salva> ", show=True)
+	if scelta is None:
+		# Esc, o Invio a vuoto: si torna a lavorare, niente e' perso. Si
+		# scarta soltanto scegliendolo.
+		return "torna"
 	if scelta == "1" and not nuovo:
 		if coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto):
 			print(f"Preset '{preset_name}' aggiornato.")
@@ -1467,11 +1853,15 @@ def salva_preset(coll, preset_name, state, nuovo):
 			print("Preset non sovrascritto.")
 	elif scelta in ("1", "2"):
 		# Il nome che il preset ha gia' e' li' pronto: invio lo accetta.
-		new_name = dgt(f"Nome breve [{preset_name}]: ", kind="s", smax=50,
-					   default=preset_name)
+		new_name = dgt(f"Nome breve [{preset_name}]: ", kind="s", smax=50, default=preset_name,
+					   avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
 		new_name = new_name.strip().replace(" ", "")[:50] or preset_name
 		desc = state.preset.get('descrizione', '')
-		new_desc = dgt(f"Descrizione [{desc}]: ", kind="s", default=desc)
+		# Con smax alto: dgt taglia a smax il predefinito, e fino alla 1.10.0
+		# riconfermare con Invio una descrizione lunga la mozzava a 256
+		# caratteri, firme Usato da comprese (issue 59).
+		new_desc = dgt(f"Descrizione [{desc}]: ", kind="s", smax=LUNGHEZZA_DESCRIZIONE, default=desc,
+					   avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
 		state.preset['descrizione'] = new_desc
 		if not nuovo and new_name == preset_name:
 			# Lo stesso nome di un preset che c'e': e' una sovrascrittura.
@@ -1549,7 +1939,7 @@ def statistiche(db):
                 mia_durata += float(dur)
             except (TypeError, ValueError):
                 pass
-            if scivola(pan):
+            if scorre(2, pan):
                 scivola_pan += 1
                 muove = True
             else:
@@ -1615,10 +2005,15 @@ def statistiche(db):
 
 
 def main():
-    print(f"--- {APP_NAME} v{VERSION} ---")
-    print(f"Autori: {APP_AUTHOR} - {RELEASE_DATE}\n")
+    print(f"{APP_NAME} {VERSION}")
+    print(f"Autori: {APP_AUTHOR} - {RELEASE_DATE}")
 
-    coll = Collezione(DB_FILE)
+    # Dalla 1.11.0 si puo' aprire la collezione di un progetto, passandone il
+    # percorso: Acu_Maker.py ..\Terminal_Beast\sounds.json (issue 59).
+    percorso = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else DB_FILE
+    coll = Collezione(percorso)
+    if percorso != DB_FILE:
+        print(f"Collezione {percorso}.")
     if not coll.apri():
         return
     print(f"La libreria contiene {len(coll.dati)} preset.")
@@ -1647,11 +2042,21 @@ def sessione(coll):
         menu_dict = {k: v.get("descrizione", "") for k, v in sorted(db.items())}
         menu_dict["+"] = "Nuovo preset vuoto (Default)"
         menu_dict["/"] = "Cerca preset per parola chiave"
+        menu_dict["!"] = "Apri un'altra collezione"
+        menu_dict["*"] = "Scegli la scheda audio"
         print("\nScegli un preset (digita '?' per la lista, Esc/Invio vuoto per uscire):")
         scelta = menu(d=menu_dict, p="Preset> ", show=False, ordered=True)
 
         if not scelta:
             break
+
+        if scelta == "!":
+            apri_collezione(coll)
+            continue
+
+        if scelta == "*":
+            scegli_scheda()
+            continue
 
         if scelta == "+":
             # Il preset nuovo resta nell'editor: entra nella collezione
@@ -1690,11 +2095,11 @@ def sessione(coll):
                     continue
 
         print(f"\nHai selezionato: '{scelta}'")
-        action_dict = {"c": "Carica (Edit Mode)", "e": "Elimina"}
+        action_dict = {"c": "Carica (Edit Mode)", "e": "Elimina", "r": "Rinomina", "d": "Cambia la descrizione"}
         azione = menu(d=action_dict, p="Azione> ", show=True)
         # Prima di entrare nel preset, la collezione di adesso.
         coll.ricarica()
-        if azione in ("c", "e") and scelta not in coll.dati:
+        if azione is not None and scelta not in coll.dati:
             print(f"Il preset '{scelta}' non c'e' piu': l'ha tolto un altro programma.")
             continue
 
@@ -1707,6 +2112,10 @@ def sessione(coll):
                     print("Preset non eliminato.")
         elif azione == "c":
             edit_mode(coll, scelta)
+        elif azione == "r":
+            rinomina(coll, scelta)
+        elif azione == "d":
+            cambia_descrizione(coll, scelta)
 
 if __name__ == "__main__":
     main()

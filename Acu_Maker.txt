@@ -1,10 +1,13 @@
-Manuale Utente: Acu_Maker (v1.10.0)
+Manuale Utente: Acu_Maker (v1.11.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
 - Selezionare un preset esistente (digitando il suo nome breve).
 - Creare un nuovo preset vuoto (opzione '+').
 - Cercare preset per parola chiave (opzione '/'). Le parole cercate (anche parziali e non in sequenza) verranno confrontate con i nomi e le descrizioni dei preset. Se c'è un solo risultato, viene selezionato in automatico; altrimenti verrà mostrato un menù filtrato.
+- Aprire un'altra collezione (opzione '!'), per esempio quella di un progetto come Terminal_Beast/sounds.json; Invio senza scrivere niente torna a quella condivisa. La si può aprire anche da subito, passandone il percorso: Acu_Maker.py ..\Terminal_Beast\sounds.json.
+- Scegliere la scheda audio su cui suonare (opzione '*').
+Scelto un preset, il menu delle azioni offre, oltre a caricarlo nell'editor e a eliminarlo, di rinominarlo, al suo posto nella collezione, e di cambiarne soltanto la descrizione senza entrare nell'editor. Rinominando un preset che un programma usa, l'app avverte e chiede conferma: i programmi lo chiamano per nome, e vanno cambiati anche loro.
 
 I preset stanno nel file "Acu_Collection.json". Dalla versione 1.9.0 ogni cambiamento si scrive subito, da solo, quando lo si conferma: un preset salvato, uno eliminato, i doppioni tolti all'avvio e all'uscita. Acu_Maker non riscrive mai la collezione intera, e prima di scrivere rilegge il file com'è in quel momento: ciò che un altro programma, un'altra sessione di lavoro o un git pull vi hanno scritto nel frattempo resta. Prima di ogni giro del menu, e prima di entrare in un preset, guarda se il file è cambiato, e se sì lo rilegge e dice quanti preset sono nuovi, cambiati e tolti. Uscire con Ctrl+C non perde niente di ciò che si è salvato.
 
@@ -21,13 +24,13 @@ Ogni preset è identificato da un NOME BREVE (univoco, max 50 caratteri, senza s
 # Dettaglio della quartina dello Score
 
 Ogni riga di uno Score è formata da 4 parametri:
-1. Nota: Espressa in notazione anglosassone (es: c4, d#4), in Hz (es: 440), o "p" per indicare una pausa.
+1. Nota: Espressa in notazione anglosassone (es: c4, d#4), in Hz (es: 440), o "p" per indicare una pausa. Valgono anche il trattino come bemolle (e-4), le ottave a più cifre (c10) e i microtoni: la tilde alza di un quarto di tono (c~4) e l'accento grave lo abbassa (c`4), doppi per tre quarti. Dalla 1.11.0 le note le legge il motore, con le stesse regole per l'editor e per i programmi.
    Può anche essere un "portamento" (scivolata) unendo due valori con un punto (es. c4.e4 oppure 440.880).
    Con un KIND di rumore, da 5 a 8, questo campo non contiene la nota ma la banda del filtro: vedi il capitolo dedicato.
 2. Durata: Espressa in secondi (es: 0.5 per mezzo secondo).
 3. Panning: Espresso su una scala da -100 (100% sinistra) a +100 (100% destra), con 0 al centro.
    Può anche essere un "portamento panning" unendo due valori interi con un punto (es. -100.100 o -50.50).
-   Nota: Nei file salvati (JSON) il panning viene automaticamente convertito nella scala normalizzata da -1.0 a +1.0.
+   Nota: Nei file salvati (JSON) il panning viene automaticamente convertito nella scala normalizzata da -1.0 a +1.0. Dalla versione 1.11.0 il portamento panning si scrive come la lista dei due valori, per esempio [-1.0, 1.0], e l'editor mostra il panning come lo legge il motore. Fino alla 1.10.0 si scriveva come testo con il punto, e il motore leggeva come un valore solo ogni testo che fosse un decimale valido: una scivolata da 0 a 100 diventava "0.1", ferma a 10.
 4. Volume: Espresso su una scala percentuale da 0 (silenzio) a 100 (volume massimo 100%), con 50 come volume base di default.
    Può anche essere un "portamento di volume" (es. 20.80 per una sfumatura/crescendo da 20% a 80%).
    Nota: Nei file salvati (JSON) il volume viene convertito in delta volume relativo al valore base 0.5 (es. Volume 50 = Delta 0.0, Volume 80 = Delta +0.3). Dalla versione 1.10.0 il portamento di volume si scrive come la lista dei due delta, per esempio [0.0, 0.3] per un crescendo da 50 a 80, e l'editor lo suona passando dal motore, esattamente come lo suonano i programmi. Fino alla 1.9.0 si scriveva come testo, "0.0.3", che i programmi leggevano come volume assoluto, da 0 a 30: le scivolate create nell'editor suonavano nei programmi molto più piano. Un volume trovato scritto come testo, la forma dei file di prima, l'editor lo mostra come volume assoluto, cioè come lo suonano i programmi, e toccandolo lo riscrive come lista.
@@ -59,15 +62,15 @@ I tagli si spostano per rapporto e non per Hertz, di un semitono per volta salvo
 
 Il taglio basso non scavalca mai quello alto. I tasti [c] e [v] si fermano un passo prima e l'editor lo dice, e una banda rovesciata scritta a mano viene rifiutata. Due tagli uguali invece si accettano: danno una campana stretta intorno a quella frequenza. Una banda rovesciata non sarebbe un effetto ma un incidente: il motore spegne tutto quello che sta sotto il taglio basso e tutto quello che sta sopra il taglio alto, e di acceso resterebbe solo la sfumatura di un bordo, una fettina di spettro che non ha più niente a che vedere con i due valori scritti.
 
-# Il cambio di forma d'onda conserva la scivolata
+# Il cambio di forma d'onda
 
-Con [w] si gira fra le otto forme d'onda. Quando si attraversa il confine fra le quattro onde intonate e i quattro rumori, il primo campo cambia significato e viene convertito da solo, senza perdere niente:
+Con [w] si gira fra le otto forme d'onda; con [W], la w maiuscola, si sceglie l'onda diretta da un menu, senza fare il giro. Quando si attraversa il confine fra le quattro onde intonate e i quattro rumori, il primo campo cambia significato e viene convertito da solo, e la scivolata resta scivolata:
 - Una nota diventa la banda larga un'ottava che le sta intorno, cioè da mezza ottava sotto a mezza ottava sopra: c4 diventa 185-370.
 - Una banda diventa la nota più vicina al suo centro, calcolato come media geometrica dei due tagli, perché in musica conta il rapporto e non la differenza in Hertz: 200-3000 diventa g5.
 - La scivolata resta scivolata nei due versi: c4.g5 diventa 185-370.554-1109, e 100-1000.800-1800 diventa d#4.d6.
 - Le pause restano pause, e la banda "n", che non ha frequenza, diventa la nota di default c4.
 
-Andando dalla nota alla banda e tornando indietro si ritrova la nota di partenza. Nell'altro verso la larghezza della banda non si può conservare, perché una nota non ha larghezza: tornando al rumore si ottiene una banda larga un'ottava centrata dov'era centrata quella di prima.
+La conversione però non conserva tutto: una dissolvenza come p.2847, un microtono, una scivolata in Hertz, una nota sotto i 20 Hz o la larghezza di una banda non hanno un corrispondente esatto nell'altro campo. Fino alla versione 1.10.0 andata e ritorno li guastavano, e per passare per esempio dalla triangolare alla sinusoide con il solo [w] bisognava attraversare il confine due volte: 82 preset su 652 ne sarebbero usciti cambiati. Dalla versione 1.11.0 l'editor ricorda com'era ogni quartina prima della conversione: tornando indietro, se nel frattempo non l'hai toccata, torna esattamente com'era, e la riga di stato lo dice. E per cambiare onda dentro la stessa famiglia c'è [W], che non attraversa niente.
 
 # La posizione d'ascolto
 
@@ -95,7 +98,11 @@ Quando carichi un preset, entri in "Edit Mode".
 Usa questi tasti per interagire con i parametri:
 
 ## Riproduzione
-- [Spazio]   : Riproduce l'intero preset in background.
+Dalla versione 1.10.0 l'editor suona passando dal motore, Acusticator.prepara, esattamente come suonano i programmi.
+- [Spazio]   : Riproduce l'intero preset in background. Dalla 1.11.0 zittisce prima quello che stava suonando, così premuto più volte non sovrappone i suoni.
+- [t]        : Suona il preset in ciclo, giro dopo giro, finché non si ripreme [t].
+- [k]        : Zittisce tutto, ciclo compreso.
+- [o]        : Il volume d'ascolto, da 0 a 100: la base su cui si sente il preset, come la sceglie un programma che lo suona più forte o più piano. Il preset non cambia; Invio senza scrivere niente torna a 50, la base del file. Compare in coda alla riga di stato come una o seguita dal valore.
 - [p]        : Imposta la posizione d'ascolto, cioè lo spostamento generale del panorama. Vedi il capitolo dedicato.
 - [u]        : Unisce la posizione d'ascolto alle quartine, rendendola parte del preset.
 
@@ -110,8 +117,9 @@ Usa questi tasti per interagire con i parametri:
 ## Modifica Valori e Portamento
 - [c]            : Incrementa il valore del parametro selezionato.
 - [v]            : Decrementa il valore del parametro selezionato.
-- [Invio]        : Inserimento manuale del valore (da tastiera).
-- [w]            : Cicla il tipo di onda, da 1 a 8, rumori compresi. Passando fra le onde intonate e i rumori il primo campo si converte da solo e la scivolata non si perde: vedi il capitolo dedicato.
+- [Invio]        : Inserimento manuale del valore (da tastiera). Dalla 1.11.0 il valore si controlla prima di entrare nel preset: una nota deve essere un nome che il motore sa leggere, una frequenza in Hertz o p; dentro una scivolata le frequenze si scrivono senza decimali, perché il punto separa i due capi; una durata deve essere più di zero. Riscrivere il valore mostrato non cambia niente, nemmeno quando il file ne ha uno fuori dalla scala dell'editor.
+- [w]            : Cicla il tipo di onda, da 1 a 8, rumori compresi. Passando fra le onde intonate e i rumori il primo campo si converte da solo: vedi il capitolo dedicato.
+- [W]            : Sceglie il tipo di onda diretto, da un menu.
 - [.]            : Aggiunge o toglie il Portamento alla nota o al panning selezionato. Su una banda la sdoppia in partenza e arrivo, o la richiude.
 - [1]            : Nel Portamento (nota o pan), focalizza e modifica solo il 1° valore.
 - [2]            : Nel Portamento (nota o pan), focalizza e modifica solo il 2° valore.
@@ -122,13 +130,13 @@ Usa questi tasti per interagire con i parametri:
 
 ## Impostazioni di Step e Default
 - [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato.
-        Nota: Se la nota è in notazione musicale, [c]/[v] spostano sempre di 1 semitono, se è "p" ignorano.
-- [n] : Riporta il parametro attualmente selezionato al suo valore di default e reimposta il suo step a 0.1.
+        Nota: Se la nota è in notazione musicale, [c]/[v] spostano sempre di 1 semitono, se è "p" ignorano. Dalla 1.11.0 spostano anche i microtoni, le ottave da 10 in su e le note scritte col trattino, e si fermano a c0 e a d#10, dicendolo, invece di scrivere una nota che il motore leggerebbe in un altro modo.
+- [n] : Riporta il parametro attualmente selezionato al suo valore di default e reimposta il suo step a quello di partenza: per le quartine 10 Hz o un semitono per la nota, 0,02 secondi per la durata, 10 per pan e volume; per l'inviluppo 0,1.
 - [m] : Svuota completamente il preset attuale (previa conferma), riportandolo ai valori di default e a una singola nota c4.
 
 ## Struttura dello Score
 - [f] : Inserisce una nuova quartina PRIMA di quella focalizzata.
-- [j] : Inserisce una nuova quartina DOPO di quella focalizzata.
+- [j] : Inserisce una nuova quartina DOPO di quella focalizzata. Su un rumore, come [f], la quartina nuova porta una banda e non una nota.
 - [y] : Duplica (clona) la quartina focalizzata, creandone una identica subito dopo.
 - [e] : Elimina la quartina selezionata.
 - [l] : Stampa la lista completa dello Score del preset corrente.
@@ -141,9 +149,10 @@ Usa questi tasti per interagire con i parametri:
           1. Sovrascrivere il preset attuale.
           2. Salvare con nome come nuovo preset.
           3. Uscire ignorando i cambiamenti.
+        Dalla 1.11.0 [Esc] in questo menu torna all'editor, con tutte le modifiche: si scartano soltanto scegliendo la terza voce.
 
 Prima di chiedere, l'app guarda se in collezione esiste già un preset che suona esattamente uguale, cioè con lo stesso score, la stessa forma d'onda e lo stesso inviluppo. Se c'è, lo dice e non salva niente: sarebbe un doppione, e un nome diverso non basta a rendere diverso un suono identico.
-Dalla versione 1.8.0 la collezione si ripulisce anche da sola, all'avvio e all'uscita: se due o più preset suonano identici, cioè hanno lo stesso score, la stessa forma d'onda e lo stesso inviluppo, ne resta uno solo, quello con la descrizione più lunga, e a parità di descrizione il primo della collezione. Per ogni preset tolto una riga dice quale era e quale resta al suo posto. Così non si accumulano nemmeno i preset vuoti lasciati dal tasto più. I suoni diversi invece restano tutti, anche quelli che oggi nessun programma usa: la collezione serve tutto il parco software, e più è ricca e ben descritta, più è facile trovarci ciò che serve.
+Dalla versione 1.8.0 la collezione si ripulisce anche da sola, all'avvio e all'uscita: se due o più preset suonano identici, cioè hanno lo stesso score, la stessa forma d'onda e lo stesso inviluppo, ne resta uno solo, quello con la descrizione più lunga, e a parità di descrizione il primo della collezione. Per ogni preset tolto una riga dice quale era e quale resta al suo posto. Dalla 1.11.0 però un preset che un programma usa non sparisce mai da solo, perché i programmi lo chiamano per nome e resterebbero muti: se fra i suoni identici uno solo è usato, resta lui; se lo sono due o più, restano tutti, e una riga lo dice. I suoni diversi invece restano tutti, anche quelli che oggi nessun programma usa: la collezione serve tutto il parco software, e più è ricca e ben descritta, più è facile trovarci ciò che serve.
 
 Scegliendo di salvare con nome, il nome che il preset ha già viene proposto fra parentesi quadre: Invio lo accetta, altrimenti se ne scrive un altro. Accettando quello proposto il preset viene sovrascritto al suo posto. Se il nome scritto è già preso sul disco, il preset nuovo prende quel nome seguito da un numero, e l'app dice quale. Allo stesso modo viene proposta la descrizione attuale.
 Un preset nato dal tasto [+] non entra nella collezione finché non lo si salva: uscendo dall'editor senza averlo cambiato, o scegliendo di non salvarlo, non lascia niente dietro di sé.

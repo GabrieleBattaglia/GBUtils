@@ -32888,24 +32888,6 @@
             30.0
         ]
     },
-    "nuovo_preset": {
-        "descrizione": "Nuovo preset vuoto",
-        "score": [
-            [
-                "c4",
-                0.5,
-                0.0,
-                0.0
-            ]
-        ],
-        "kind": 1,
-        "adsr": [
-            0.002,
-            0.0,
-            100.0,
-            0.002
-        ]
-    },
     "meteora_segnalibro_messo": {
         "descrizione": "MeTeOra, Ctrl e Maiuscolo con H mettono il segnalibro: onda triangolare, il nastro che scivola fra le pagine, un portamento dal sol 5 al re 6 a sinistra, e il segno che resta, un la 6 a destra; 180 ms. E' lo specchio di meteora_segnalibro_tolto. Va bene per mettere un segnalibro, segnare un punto da ritrovare, appuntare.",
         "score": [
