@@ -1,3 +1,5 @@
 *.pyc
 __pycache__/
 auto_updater_error.log
+Acu_Collection.json.lock
+Acu_Collection.json.*.tmp

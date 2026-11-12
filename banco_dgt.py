@@ -47,7 +47,7 @@ def chiedi(risposte, **argomenti):
 	try:
 		with contextlib.redirect_stdout(uscita):
 			valore = dgt(**argomenti)
-	except (ValueError, EOFError) as errore:
+	except (ValueError, TypeError, EOFError) as errore:
 		valore = type(errore).__name__
 	finally:
 		del GBUtils.input
@@ -110,7 +110,7 @@ valore, righe, _ = chiedi(["9", "2"], kind="i", imin=1, imax=5, avvisi={"troppo_
 prova("dove manca la frase restano le cifre", righe == ["1 - 5"], righe)
 prova("una chiave sconosciuta e' un errore di chi programma", chiedi(["1"], kind="i", avvisi={"basso": "x"})[0] == "ValueError")
 prova("e cosi' un segno fra graffe sconosciuto", chiedi(["1"], kind="i", avvisi={"troppo_alto": "{limite}"})[0] == "ValueError")
-prova("e una frase che non e' una stringa", chiedi(["1"], kind="i", avvisi={"troppo_alto": 3})[0] == "ValueError")
+prova("e una frase che non e' una stringa, con TypeError", chiedi(["1"], kind="i", avvisi={"troppo_alto": 3})[0] == "TypeError")
 
 # 6. Il predefinito si comporta come prima.
 prova("Invio con il predefinito lo restituisce", chiedi([""], kind="i", imin=1, imax=9, default=4)[0] == 4)

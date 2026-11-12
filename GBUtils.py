@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V260 di giovedì 12 novembre 2026
+	V261 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.6.5 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.7.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "260"
+VERSION = "261"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5083,7 +5083,7 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	return full_signal_float
 
 class _Acusticator:
-    """V8.6.5 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.7.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5162,7 +5162,16 @@ class _Acusticator:
         Acusticator.list("vittoria")            cerca fra nomi e descrizioni
         Acusticator.preset("conferma")          restituisce (score, kind, adsr)
         Acusticator.info()                      due conti sulla collezione
-        Acusticator.save(...)                   aggiunge un preset nuovo
+        Acusticator.save(...)                   aggiunge o sostituisce un preset
+        Acusticator.aggiorna(cambia)            cambia la collezione sul disco, al sicuro
+
+    La collezione si scrive soltanto con save e aggiorna, che rileggono il
+    file sotto lucchetto, cambiano cio' che serve e lo sostituiscono in un
+    colpo: cosi' un programma non cancella cio' che un altro vi ha scritto
+    nel frattempo, e nessuno trova il file a meta'. Chi scrive la collezione
+    da uno script passa da aggiorna:
+
+        Acusticator.aggiorna(lambda dati: dati["conferma"].update(descrizione="..."))
 
     Nella collezione il volume di ogni quartina e' scritto come scarto
     rispetto a una base di 0.5, mentre il motore vuole il valore assoluto:
@@ -5547,22 +5556,159 @@ class _Acusticator:
         return len(dati)
 
     def _carica(self, percorso):
-        """Legge una collezione, tenendola in memoria. None se non c'e'."""
-        import json
+        """Legge una collezione, tenendola in memoria. None se non c'e', o
+        se non si lascia leggere.
+
+        Dalla V8.7.0 legge con _leggi_dal_disco, che riprova: una lettura che
+        cade mentre un altro programma sostituisce il file non lo da' per
+        illeggibile."""
         import os
         if percorso in self._cache:
             return self._cache[percorso]
         if not os.path.isfile(percorso):
             return None
+        dati = self._leggi_dal_disco(percorso)
+        if dati is None:
+            self._avvisa(f"collezione illeggibile, o con la radice che non e' un dizionario: {percorso}")
+            return None
+        self._cache[percorso] = dati
+        return dati
+
+    # --- La scrittura della collezione ------------------------------------
+    # Dalla V8.7.0, per la issue 58. La collezione la scrivono Acu_Maker, gli
+    # script delle sessioni di lavoro e git: fino alla V8.6.5 chi salvava
+    # riscriveva il file intero con la copia letta prima, e cancellava quello
+    # che altri vi avevano aggiunto nel frattempo; un file illeggibile, a
+    # meta' di una scrittura altrui, vuoto o con un conflitto di git, veniva
+    # riscritto con il solo preset nuovo; e la scrittura svuotava il file e lo
+    # riempiva in quindici millesimi, durante i quali chi lo leggeva lo
+    # trovava vuoto. Adesso c'e' un solo modo di scrivere, aggiorna: sotto
+    # lucchetto si rilegge il disco, si cambia soltanto cio' che serve e si
+    # sostituisce il file in un colpo.
+
+    # Chi tiene davvero il lucchetto lo tiene qualche decimo di secondo: oltre
+    # LUCCHETTO_VECCHIO e' di un processo morto, e chi aspetta lo toglie prima
+    # che scada la sua LUCCHETTO_ATTESA.
+    LUCCHETTO_ATTESA = 15.0
+    LUCCHETTO_VECCHIO = 10.0
+
+    def _lucchetto(self, percorso):
+        """Crea percorso.lock in esclusiva. Il nome, o None se l'attesa scade."""
+        import os
+        import time
+        nome = percorso + ".lock"
+        scadenza = time.monotonic() + self.LUCCHETTO_ATTESA
+        while True:
+            try:
+                fd = os.open(nome, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            except FileExistsError:
+                try:
+                    if time.time() - os.path.getmtime(nome) > self.LUCCHETTO_VECCHIO:
+                        os.remove(nome)
+                        continue
+                except OSError:
+                    continue
+            except PermissionError:
+                pass  # su Windows, un lucchetto in via di cancellazione
+            else:
+                os.write(fd, str(os.getpid()).encode("ascii"))
+                os.close(fd)
+                return nome
+            if time.monotonic() > scadenza:
+                return None
+            time.sleep(0.02)
+
+    def _leggi_dal_disco(self, percorso):
+        """La collezione com'e' adesso: {} se manca, None se non si lascia
+        leggere, cioe' a meta', vuota, con un conflitto di git o con la radice
+        che non e' un dizionario. Riprova cinque volte, per chi la trova nel
+        momento in cui un altro la sta sostituendo."""
+        import json
+        import os
+        import time
+        if not os.path.exists(percorso):
+            return {}
+        for _ in range(5):
+            try:
+                with open(percorso, encoding="utf-8") as f:
+                    dati = json.load(f)
+                return dati if isinstance(dati, dict) else None
+            except (OSError, ValueError):
+                time.sleep(0.05)
+        return None
+
+    def _scrivi_atomico(self, percorso, dati):
+        """Scrive accanto e sostituisce in un colpo: nessuno vede il file a meta'.
+
+        Il formato e' quello di sempre: rientro di quattro, accenti in chiaro,
+        un a capo in fondo, e gli a capo del sistema. Su Windows la
+        sostituzione fallisce finche' qualcuno tiene il file aperto in
+        lettura: si riprova per due secondi."""
+        import json
+        import os
+        import time
+        provvisorio = f"{percorso}.{os.getpid()}.tmp"
         try:
-            with open(percorso, encoding="utf-8") as f:
-                dati = json.load(f)
-        except (OSError, ValueError) as e:
-            self._avvisa(f"collezione illeggibile, {percorso}: {e}")
+            with open(provvisorio, "w", encoding="utf-8") as f:
+                json.dump(dati, f, indent=4, ensure_ascii=False)
+                f.write("\n")
+                f.flush()
+                os.fsync(f.fileno())
+            for _ in range(40):
+                try:
+                    os.replace(provvisorio, percorso)
+                    return
+                except PermissionError:
+                    time.sleep(0.05)
+            os.replace(provvisorio, percorso)
+        finally:
+            if os.path.exists(provvisorio):
+                os.remove(provvisorio)
+
+    def aggiorna(self, cambia, percorso=None):
+        """Cambia la collezione sul disco senza perdere cio' che altri vi hanno scritto.
+
+        Sotto lucchetto rilegge il file, chiama cambia(dati) con la
+        collezione com'e' adesso e riscrive in modo atomico; se cambia
+        restituisce False non scrive. Il lucchetto e' il file percorso.lock,
+        che si tiene soltanto il tempo di rileggere e riscrivere: cambia non
+        deve aspettare l'utente.
+        percorso e' la collezione da cambiare: di serie la prima collezione del
+        progetto, se ce n'e' una, altrimenti quella condivisa.
+        Restituisce la collezione com'e' ora, oppure None se il file e'
+        illeggibile o occupato, o se si gira da eseguibile: in quei casi non
+        scrive, perche' riscriverlo cancellerebbe il resto, e lo dice su
+        stderr. Un file che manca nasce vuoto e si riempie con cambia.
+        Un'eccezione dentro cambia arriva a chi chiama, e il file resta com'era.
+        Il lucchetto protegge soltanto da chi passa da qui: uno script che
+        scrive il JSON da se' lo scavalca. Fra macchine diverse protegge git.
+        """
+        import os
+        import sys
+        if getattr(sys, "frozen", False):
+            self._avvisa("da eseguibile la collezione non si scrive, usa Acu_Maker da sorgente")
             return None
-        if not isinstance(dati, dict):
-            self._avvisa(f"collezione malformata, {percorso}: la radice non e' un dizionario")
+        if percorso is None:
+            percorso = self._locali[0] if self._locali else self._percorso_hub()
+        lucchetto = self._lucchetto(percorso)
+        if lucchetto is None:
+            self._avvisa(f"{os.path.basename(percorso)} occupata da un altro programma: non scrivo")
             return None
+        try:
+            dati = self._leggi_dal_disco(percorso)
+            if dati is None:
+                self._avvisa(f"{os.path.basename(percorso)} illeggibile: non la riscrivo")
+                return None
+            if cambia(dati) is not False:
+                self._scrivi_atomico(percorso, dati)
+        except OSError as e:
+            self._avvisa(f"non riesco a scrivere {os.path.basename(percorso)}: {e}")
+            return None
+        finally:
+            try:
+                os.remove(lucchetto)
+            except OSError:
+                pass
         self._cache[percorso] = dati
         return dati
 
@@ -5707,10 +5853,15 @@ class _Acusticator:
         Dalla V8.5.2 il file finisce con l'a capo, come lo scrive Acu_Maker:
         fino alla V8.5.1 json.dump lo toglieva, e ogni salvataggio cambiava
         anche l'ultima riga del file.
-        Restituisce True se ha scritto.
+        Dalla V8.7.0 scrive con aggiorna: rilegge il disco sotto lucchetto,
+        cambia soltanto questo preset e sostituisce il file in un colpo. Un
+        preset che c'e' gia' resta al suo posto e tiene i campi che save non
+        conosce; uno nuovo va in coda. Fino alla V8.6.5 riscriveva il file con
+        la copia in memoria, e cancellava cio' che altri avevano aggiunto; e un
+        file illeggibile diventava una collezione di un preset solo, issue 58.
+        Restituisce True se ha scritto, False se non ha potuto, per esempio
+        con il file illeggibile o occupato, e lo dice su stderr.
         """
-        import json
-        import os
         import sys
         if getattr(sys, "frozen", False):
             self._avvisa("da eseguibile la collezione non si scrive, usa Acu_Maker da sorgente")
@@ -5718,11 +5869,6 @@ class _Acusticator:
         if not str(descrizione).strip():
             self._avvisa(f"preset {nome} senza descrizione: non lo salvo")
             return False
-        if percorso is None:
-            percorso = self._locali[0] if self._locali else self._percorso_hub()
-        dati = self._carica(percorso)
-        if dati is None:
-            dati = {}
         quartine = []
         for i in range(0, len(score), 4):
             try:
@@ -5738,21 +5884,22 @@ class _Acusticator:
         if not quartine:
             self._avvisa(f"preset {nome}: score vuoto, non lo salvo")
             return False
-        dati[nome] = {
+        campi = {
             "descrizione": str(descrizione),
             "score": quartine,
             "kind": kind,
             "adsr": adsr if adsr is not None else [0.002, 0.0, 100.0, 0.002],
         }
-        try:
-            with open(percorso, "w", encoding="utf-8") as f:
-                json.dump(dati, f, indent=4, ensure_ascii=False)
-                f.write("\n")
-        except OSError as e:
-            self._avvisa(f"non riesco a scrivere {os.path.basename(percorso)}: {e}")
-            return False
-        self._cache[percorso] = dati
-        return True
+
+        def metti(dati):
+            vecchio = dati.get(nome)
+            if isinstance(vecchio, dict):
+                # Al suo posto, con i campi che save non conosce.
+                vecchio.update(campi)
+            else:
+                dati[nome] = campi
+
+        return self.aggiorna(metti, percorso) is not None
 
 
 Acusticator = _Acusticator()
@@ -5840,7 +5987,8 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 	Solleva ValueError quando kind non e' valido, quando i limiti sono
 	incoerenti fra loro, quando il predefinito non e' convertibile al tipo
 	chiesto e quando avvisi ha una chiave sconosciuta o una frase con un segno
-	fra graffe che non e' minimo, massimo o lunghezza; solleva EOFError quando
+	fra graffe che non e' minimo, massimo o lunghezza; TypeError quando una
+	frase di avvisi non e' una stringa; solleva EOFError quando
 	non c'e' un terminale da cui leggere. Sono errori di chi programma, e la
 	funzione li riferisce a chi l'ha chiamata invece di stamparli su una
 	console che, in una applicazione con interfaccia grafica, potrebbe non
@@ -5854,7 +6002,7 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 		raise ValueError(f"dgt: avvisi ha chiavi sconosciute {sconosciute}; valgono {', '.join(_DGT_AVVISI)}.")
 	for chiave, frase in avvisi.items():
 		if not isinstance(frase, str):
-			raise ValueError(f"dgt: l'avviso {chiave} deve essere una stringa, ricevuto {frase!r}.")
+			raise TypeError(f"dgt: l'avviso {chiave} deve essere una stringa, ricevuto {frase!r}.")
 		try:
 			frase.format(minimo=0, massimo=0, lunghezza=0)
 		except (KeyError, IndexError, ValueError) as errore:

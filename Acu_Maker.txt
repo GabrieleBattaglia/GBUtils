@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.8.1)
+Manuale Utente: Acu_Maker (v1.9.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -6,7 +6,7 @@ Dal menù principale è possibile:
 - Creare un nuovo preset vuoto (opzione '+').
 - Cercare preset per parola chiave (opzione '/'). Le parole cercate (anche parziali e non in sequenza) verranno confrontate con i nomi e le descrizioni dei preset. Se c'è un solo risultato, viene selezionato in automatico; altrimenti verrà mostrato un menù filtrato.
 
-I preset vengono salvati automaticamente nel file "Acu_Collection.json".
+I preset stanno nel file "Acu_Collection.json". Dalla versione 1.9.0 ogni cambiamento si scrive subito, da solo, quando lo si conferma: un preset salvato, uno eliminato, i doppioni tolti all'avvio e all'uscita. Acu_Maker non riscrive mai la collezione intera, e prima di scrivere rilegge il file com'è in quel momento: ciò che un altro programma, un'altra sessione di lavoro o un git pull vi hanno scritto nel frattempo resta. Prima di ogni giro del menu, e prima di entrare in un preset, guarda se il file è cambiato, e se sì lo rilegge e dice quanti preset sono nuovi, cambiati e tolti. Uscire con Ctrl+C non perde niente di ciò che si è salvato.
 
 # Struttura dei Preset
 
@@ -87,7 +87,7 @@ Un avvertimento sull'uso: un preset destinato a essere spostato dai programmi co
 
 # Le statistiche di chiusura
 
-Uscendo da Acu_Maker, subito dopo il salvataggio della libreria, compaiono nove righe di numeri sulla collezione: quanti preset e quante quartine contiene e quanto suono fanno in tutto; la media di quartine e di durata per preset; come si dividono in percentuale le quattro onde intonate; quanti preset usano i rumori e di che colore; qual è il più lungo, quale il più corto e quale ha più quartine; quante quartine hanno una scivolata, divise fra nota, banda e panoramica; quanti preset muovono lo stereo e quanti lo tengono fermo ma fuori centro; da quale nota a quale nota arriva la collezione, con quante ottave di escursione, e qual è la famiglia di preset più numerosa.
+Uscendo da Acu_Maker compaiono nove righe di numeri sulla collezione: quanti preset e quante quartine contiene e quanto suono fanno in tutto; la media di quartine e di durata per preset; come si dividono in percentuale le quattro onde intonate; quanti preset usano i rumori e di che colore; qual è il più lungo, quale il più corto e quale ha più quartine; quante quartine hanno una scivolata, divise fra nota, banda e panoramica; quanti preset muovono lo stereo e quanti lo tengono fermo ma fuori centro; da quale nota a quale nota arriva la collezione, con quante ottave di escursione, e qual è la famiglia di preset più numerosa.
 
 # Modalità Edit (Modifica Preset)
 
@@ -145,4 +145,6 @@ Usa questi tasti per interagire con i parametri:
 Prima di chiedere, l'app guarda se in collezione esiste già un preset che suona esattamente uguale, cioè con lo stesso score, la stessa forma d'onda e lo stesso inviluppo. Se c'è, lo dice e non salva niente: sarebbe un doppione, e un nome diverso non basta a rendere diverso un suono identico.
 Dalla versione 1.8.0 la collezione si ripulisce anche da sola, all'avvio e all'uscita: se due o più preset suonano identici, cioè hanno lo stesso score, la stessa forma d'onda e lo stesso inviluppo, ne resta uno solo, quello con la descrizione più lunga, e a parità di descrizione il primo della collezione. Per ogni preset tolto una riga dice quale era e quale resta al suo posto. Così non si accumulano nemmeno i preset vuoti lasciati dal tasto più. I suoni diversi invece restano tutti, anche quelli che oggi nessun programma usa: la collezione serve tutto il parco software, e più è ricca e ben descritta, più è facile trovarci ciò che serve.
 
-Scegliendo di salvare con nome, il nome che il preset ha già viene proposto fra parentesi quadre: Invio lo accetta, altrimenti se ne scrive un altro. Accettando quello proposto il preset viene salvato al suo posto, così uno nato dal tasto [+] non lascia più dietro di sé il suo segnaposto vuoto. Allo stesso modo viene proposta la descrizione attuale.
+Scegliendo di salvare con nome, il nome che il preset ha già viene proposto fra parentesi quadre: Invio lo accetta, altrimenti se ne scrive un altro. Accettando quello proposto il preset viene sovrascritto al suo posto. Se il nome scritto è già preso sul disco, il preset nuovo prende quel nome seguito da un numero, e l'app dice quale. Allo stesso modo viene proposta la descrizione attuale.
+Un preset nato dal tasto [+] non entra nella collezione finché non lo si salva: uscendo dall'editor senza averlo cambiato, o scegliendo di non salvarlo, non lascia niente dietro di sé.
+Sovrascrivendo, Acu_Maker confronta tre versioni del preset: com'era quando l'hai aperto, come l'hai lasciato tu e com'è adesso sul disco. Ogni campo, cioè descrizione, quartine, forma d'onda e inviluppo, prende la versione che è cambiata: la tua se l'hai cambiato tu, quella del disco se l'ha cambiato un altro. Così il caso più comune, il suono rifatto nell'editor mentre un'altra sessione aggiungeva una firma alla descrizione, si risolve da solo. Se lo stesso campo è cambiato da tutte e due le parti, l'app lo dice e chiede se tenere il tuo, tenere quello del disco o annullare. Se nel frattempo un altro programma ha tolto il preset, chiede se rimetterlo con le tue modifiche o lasciarlo tolto.

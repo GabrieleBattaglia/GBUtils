@@ -9,10 +9,10 @@ import textwrap
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from GBUtils import Acusticator, dgt, menu, panorama_spostato, parse_pan_parts
 
-VERSION = "1.8.1" # La collezione si salva con l'a capo finale, come la scrive Acusticator.save
+VERSION = "1.9.0" # Ogni cambiamento si scrive subito, fuso con il disco, attraverso Acusticator.aggiorna
 APP_NAME = "Acu_Maker"
-APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)"
-RELEASE_DATE = "30 settembre 2026"
+APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
+RELEASE_DATE = "12 novembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -351,32 +351,219 @@ def get_keypress():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
-def load_db():
-    if not os.path.exists(DB_FILE):
-        default_db = {
-            "do_re_mi": {
-                "descrizione": "Tre note C D E ascendenti",
-                "score": [
-                    ["c4", 0.5, -1.0, 0.0],
-                    ["d4", 0.5, 0.0, 0.0],
-                    ["e4", 0.5, 1.0, 0.0]
-                ],
-                "kind": 1,
-                "adsr": [0.002, 0.0, 100.0, 0.002]
-            }
-        }
-        save_db(default_db)
-        return default_db
-        
-    with open(DB_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+# La collezione d'esempio, scritta quando il file non c'e'.
+ESEMPIO = {
+	"do_re_mi": {
+		"descrizione": "Tre note C D E ascendenti",
+		"score": [["c4", 0.5, -1.0, 0.0], ["d4", 0.5, 0.0, 0.0], ["e4", 0.5, 1.0, 0.0]],
+		"kind": 1,
+		"adsr": [0.002, 0.0, 100.0, 0.002],
+	}
+}
 
-def save_db(db):
-    # Dalla 1.8.1 con l'a capo finale: json.dump non lo mette, e senza di
-    # lui ogni salvataggio cambiava anche l'ultima riga del file.
-    with open(DB_FILE, "w", encoding="utf-8") as f:
-        json.dump(db, f, indent=4, ensure_ascii=False)
-        f.write("\n")
+
+def copia(dati):
+	"""Una copia profonda di dati del JSON, che si puo' cambiare senza toccare l'originale."""
+	return json.loads(json.dumps(dati))
+
+
+class Collezione:
+	"""La collezione sul disco, letta e scritta soltanto attraverso Acusticator.aggiorna.
+
+	Dalla 1.9.0, per la issue 58 di GBUtils: fino alla 1.8.1 Acu_Maker teneva
+	in memoria la copia letta all'avvio e la riscriveva intera a ogni Elimina e
+	all'uscita, cancellando cio' che altri programmi, altre sessioni o un git
+	pull vi avevano scritto nel frattempo; e le modifiche di una sessione
+	restavano in memoria fino all'uscita, cosi' che un Ctrl+C le perdeva tutte.
+	Adesso ogni cambiamento si scrive subito, da solo, fuso con il disco di
+	quel momento: sotto lucchetto si rilegge il file, si cambia soltanto il
+	preset toccato, e il file si sostituisce in un colpo.
+	dati e' la collezione com'era all'ultima lettura o scrittura: serve a
+	mostrare e a cercare, mai a riscrivere.
+	"""
+
+	def __init__(self, percorso):
+		self.percorso = percorso
+		self.dati = {}
+		self.impronta = None
+
+	def _impronta_file(self):
+		"""Data e misura del file: quando cambiano, qualcuno l'ha scritto."""
+		try:
+			stato = os.stat(self.percorso)
+		except OSError:
+			return None
+		return (stato.st_mtime_ns, stato.st_size)
+
+	def leggi(self):
+		"""Rilegge il disco. Falso se il file non si lascia leggere: allora
+		resta la copia di prima, e niente si scrive."""
+		dati = Acusticator.aggiorna(lambda _dati: False, self.percorso)
+		if dati is None:
+			print("La collezione non si lascia leggere adesso: forse e' a meta' di un salvataggio, o ha un conflitto di git.")
+			return False
+		self.dati = copia(dati)
+		self.impronta = self._impronta_file()
+		return True
+
+	def cambiata(self):
+		"""Vero se dall'ultima lettura qualcun altro ha scritto il file."""
+		return self._impronta_file() != self.impronta
+
+	def ricarica(self):
+		"""Se il file e' cambiato lo rilegge, e dice quanti preset sono nuovi,
+		cambiati e tolti. Restituisce le tre liste, o None se non c'era niente."""
+		if not self.cambiata():
+			return None
+		prima = self.dati
+		if not self.leggi():
+			return None
+		nuovi, cambiati, tolti = differenze(prima, self.dati)
+		if nuovi or cambiati or tolti:
+			print(f"La collezione e' cambiata sul disco: {len(nuovi)} preset nuovi, "
+				  f"{len(cambiati)} cambiati, {len(tolti)} tolti.")
+		return nuovi, cambiati, tolti
+
+	def scrivi(self, cambia):
+		"""Cambia il disco con cambia(dati), attraverso Acusticator.aggiorna.
+
+		Vero se ha scritto, o se cambia ha detto che non c'era niente da
+		scrivere; falso se il file era illeggibile o occupato."""
+		dati = Acusticator.aggiorna(cambia, self.percorso)
+		if dati is None:
+			print("Non ho potuto scrivere la collezione: il file e' illeggibile o occupato da un altro programma. Non ho cambiato niente.")
+			return False
+		self.dati = copia(dati)
+		self.impronta = self._impronta_file()
+		return True
+
+	def apri(self):
+		"""La prima lettura: se il file non c'e' nasce con l'esempio, e i
+		doppioni si cercano sul disco di adesso. Falso se non si legge."""
+		if not os.path.exists(self.percorso):
+			self.scrivi(lambda dati: dati.update(copia(ESEMPIO)) if not dati else False)
+		if not self.leggi():
+			return False
+		self.togli_doppioni()
+		return True
+
+	def togli_doppioni(self):
+		"""Toglie i doppioni dal disco di adesso, e scrive solo se ne ha tolti."""
+		self.scrivi(lambda dati: bool(togli_doppioni(dati)))
+
+	def elimina(self, nome):
+		"""Toglie dal disco soltanto quel preset. Vero se c'era."""
+		trovato = []
+		def togli(dati):
+			if nome not in dati:
+				return False
+			del dati[nome]
+			trovato.append(nome)
+			return True
+		return self.scrivi(togli) and bool(trovato)
+
+	def salva_nuovo(self, voluto, preset):
+		"""Scrive il preset sotto un nome libero sul disco di adesso, voluto se
+		c'e' posto, altrimenti voluto seguito da un numero. Restituisce il
+		nome usato, o None se non ha scritto."""
+		usato = []
+		def metti(dati):
+			nome = get_unique_name(dati, voluto)
+			dati[nome] = copia(preset)
+			usato.append(nome)
+		if self.scrivi(metti) and usato:
+			return usato[0]
+		return None
+
+	def sovrascrivi(self, nome, base, mio, chiedi):
+		"""Scrive il preset nome fondendo cio' che si e' cambiato con cio' che
+		nel frattempo e' cambiato sul disco.
+
+		base e' il preset com'era all'apertura, mio com'e' adesso nell'editor.
+		La fusione e' campo per campo, vedi fondi: senza conflitti scrive
+		subito. Un campo cambiato da tutte e due le parti, o il preset tolto da
+		un altro programma, si chiede con chiedi(conflitti), che risponde mio,
+		disco oppure None per annullare; il lucchetto non si tiene mai mentre
+		si aspetta la risposta. Restituisce vero se ha scritto."""
+		scelta = None
+		for _ in range(5):
+			esito = {}
+			def fondi_qui(dati, scelta=scelta, esito=esito):
+				disco = dati.get(nome)
+				if disco is None:
+					if scelta == "disco":
+						# Tolto da un altro, e si accetta che resti tolto.
+						esito["accettato"] = True
+						return False
+					if scelta != "mio":
+						esito["conflitti"] = ["tolto"]
+						return False
+					dati[nome] = copia(mio)
+					return True
+				fuso, conflitti = fondi(base, mio, disco, scelta)
+				if conflitti:
+					esito["conflitti"] = conflitti
+					return False
+				if fuso == disco:
+					return False
+				dati[nome] = fuso
+				return True
+			if not self.scrivi(fondi_qui):
+				return False
+			if "accettato" in esito:
+				return False
+			if "conflitti" not in esito:
+				return True
+			scelta = chiedi(esito["conflitti"])
+			if scelta is None:
+				return False
+		return False
+
+
+# Il segnaposto di un campo che in un preset non c'e'.
+_ASSENTE = object()
+# I campi di un preset come li dice Acu_Maker, per i conflitti.
+NOMI_CAMPI = {"descrizione": "la descrizione", "score": "le quartine", "kind": "la forma d'onda",
+			  "adsr": "l'inviluppo", "usato_da": "le firme", "tolto": "il preset, tolto da un altro programma"}
+
+
+def fondi(base, mio, disco, scelta=None):
+	"""La fusione a tre di un preset, campo per campo.
+
+	Un campo che ho cambiato solo io prende il mio valore; uno cambiato solo
+	sul disco prende quello del disco; uno cambiato da tutte e due le parti in
+	modo diverso e' un conflitto, che scelta risolve: mio, disco, oppure None
+	per lasciarlo da risolvere. Restituisce il preset fuso e la lista dei
+	campi in conflitto rimasti. Il caso tipico, il suono rifatto nell'editor
+	e la firma aggiunta da un'altra sessione, si fonde da solo.
+	"""
+	campi = list(disco) + [c for c in mio if c not in disco] + [c for c in base if c not in disco and c not in mio]
+	fuso = {}
+	conflitti = []
+	for campo in campi:
+		b, m, d = base.get(campo, _ASSENTE), mio.get(campo, _ASSENTE), disco.get(campo, _ASSENTE)
+		if m == d or d == b:
+			valore = m
+		elif m == b:
+			valore = d
+		elif scelta == "mio":
+			valore = m
+		elif scelta == "disco":
+			valore = d
+		else:
+			conflitti.append(campo)
+			valore = d
+		if valore is not _ASSENTE:
+			fuso[campo] = copia(valore)
+	return fuso, conflitti
+
+
+def differenze(prima, dopo):
+	"""I preset nuovi, cambiati e tolti fra due letture della collezione."""
+	nuovi = [n for n in dopo if n not in prima]
+	tolti = [n for n in prima if n not in dopo]
+	cambiati = [n for n in dopo if n in prima and dopo[n] != prima[n]]
+	return nuovi, cambiati, tolti
 
 def get_unique_name(db, base_name):
     if base_name not in db:
@@ -458,6 +645,9 @@ def transpose_note(note_str, semitones):
 class EditorState:
     def __init__(self, preset_data):
         self.preset = json.loads(json.dumps(preset_data))
+        # Il preset com'era all'apertura: Sovrascrivi lo confronta con il
+        # proprio e con quello del disco, per fondere senza perdere niente.
+        self.originale = json.loads(json.dumps(preset_data))
         self.focus_type = 'score'
         self.focus_idx = 0
         self.focus_param = 0
@@ -765,8 +955,10 @@ def inc_dec_value(state, direction):
             
         state.preset['adsr'][param] = new_val
 
-def edit_mode(db, preset_name):
-    state = EditorState(db[preset_name])
+def edit_mode(coll, preset_name, nuovo=None):
+    """L'editor di un preset. nuovo e' il preset appena nato dal tasto piu':
+    non sta nella collezione, e ci entra soltanto se lo si salva."""
+    state = EditorState(nuovo if nuovo is not None else coll.dati[preset_name])
     print(f"\n--- Edit Preset: {preset_name} ---")
     handle_print(state, force_newline=True)
     
@@ -1215,37 +1407,73 @@ def edit_mode(db, preset_name):
             handle_print(state, force_newline=False)
 
     print()
-    if state.modified:
-        # Un suono che c'e' gia' non si salva, nemmeno con un altro nome:
-        # la collezione e' condivisa e un doppione la ingrossa e basta.
-        gemello = trova_gemello(db, state.preset, escludi=preset_name)
-        if gemello:
-            print(f"Questo suono esiste gia' come '{gemello}'.")
-            print("Sarebbe un doppione, quindi non lo salvo.")
-            return
-        print("\nModifiche rilevate. Scegli un'opzione:")
-        scelta = menu({"1": "Sovrascrivi preset corrente", "2": "Salva come nuovo preset", "3": "Esci senza salvare"}, p="Salva> ", show=True)
-        if scelta == "1":
-            db[preset_name] = state.preset
-            print(f"Preset '{preset_name}' aggiornato.")
-        elif scelta == "2":
-            # Il nome che il preset ha gia' e' li' pronto: invio lo accetta,
-            # e cosi' un preset nato dal tasto piu' non lascia dietro di se'
-            # il suo segnaposto vuoto.
-            new_name = dgt(f"Nome breve [{preset_name}]: ", kind="s", smax=50,
-                           default=preset_name)
-            new_name = new_name.strip().replace(" ", "")[:50]
-            if not new_name:
-                new_name = preset_name
-            if new_name != preset_name:
-                new_name = get_unique_name(db, new_name)
-            desc = state.preset.get('descrizione', '')
-            new_desc = dgt(f"Descrizione [{desc}]: ", kind="s", default=desc)
-            state.preset['descrizione'] = new_desc
-            db[new_name] = state.preset
-            print(f"Salvato come preset: '{new_name}'.")
-        else:
-            print("Modifiche ignorate.")
+    salva_preset(coll, preset_name, state, nuovo is not None)
+
+
+def chiedi_conflitto(conflitti):
+	"""Chiede che fare quando un campo e' cambiato anche sul disco: mio,
+	disco, oppure None per annullare."""
+	if conflitti == ["tolto"]:
+		print("Mentre lavoravi, un altro programma ha tolto questo preset dalla collezione.")
+		scelta = menu({"m": "Rimettilo con le tue modifiche", "d": "Lascialo tolto", "a": "Annulla"}, p="Tolto> ", show=True)
+	else:
+		quali = ", ".join(NOMI_CAMPI.get(c, c) for c in conflitti)
+		print(f"Mentre lavoravi, un altro programma ha cambiato anche {quali} di questo preset.")
+		scelta = menu({"m": "Tieni il tuo", "d": "Tieni quello del disco", "a": "Annulla"}, p="Conflitto> ", show=True)
+	return {"m": "mio", "d": "disco"}.get(scelta)
+
+
+def salva_preset(coll, preset_name, state, nuovo):
+	"""Il salvataggio all'uscita dall'editor, scritto subito sul disco.
+
+	Dalla 1.9.0 ogni scelta scrive il disco di adesso attraverso la
+	collezione, vedi Collezione: Sovrascrivi fonde le proprie modifiche con
+	quelle arrivate nel frattempo, Salva come sceglie il nome libero sul disco,
+	e il preset nuovo del tasto piu' arriva sul disco soltanto qui."""
+	if not state.modified:
+		# Un preset nuovo lasciato com'era non entra nella collezione.
+		return
+	coll.ricarica()
+	# Un suono che c'e' gia' non si salva, nemmeno con un altro nome:
+	# la collezione e' condivisa e un doppione la ingrossa e basta.
+	gemello = trova_gemello(coll.dati, state.preset, escludi=None if nuovo else preset_name)
+	if gemello:
+		print(f"Questo suono esiste gia' come '{gemello}'.")
+		print("Sarebbe un doppione, quindi non lo salvo.")
+		return
+	print("\nModifiche rilevate. Scegli un'opzione:")
+	if nuovo:
+		scelte = {"1": "Salva il preset nuovo", "3": "Esci senza salvare"}
+	else:
+		scelte = {"1": "Sovrascrivi preset corrente", "2": "Salva come nuovo preset", "3": "Esci senza salvare"}
+	scelta = menu(scelte, p="Salva> ", show=True)
+	if scelta == "1" and not nuovo:
+		if coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto):
+			print(f"Preset '{preset_name}' aggiornato.")
+		else:
+			print("Preset non sovrascritto.")
+	elif scelta in ("1", "2"):
+		# Il nome che il preset ha gia' e' li' pronto: invio lo accetta.
+		new_name = dgt(f"Nome breve [{preset_name}]: ", kind="s", smax=50,
+					   default=preset_name)
+		new_name = new_name.strip().replace(" ", "")[:50] or preset_name
+		desc = state.preset.get('descrizione', '')
+		new_desc = dgt(f"Descrizione [{desc}]: ", kind="s", default=desc)
+		state.preset['descrizione'] = new_desc
+		if not nuovo and new_name == preset_name:
+			# Lo stesso nome di un preset che c'e': e' una sovrascrittura.
+			if coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto):
+				print(f"Preset '{preset_name}' aggiornato.")
+			else:
+				print("Preset non sovrascritto.")
+			return
+		usato = coll.salva_nuovo(new_name, state.preset)
+		if usato:
+			print(f"Salvato come preset: '{usato}'.")
+		else:
+			print("Preset non salvato.")
+	else:
+		print("Modifiche ignorate.")
 
 def _num(valore, decimali=1):
     """Un numero scritto all'italiana, con la virgola al posto del punto."""
@@ -1377,39 +1605,59 @@ def main():
     print(f"--- {APP_NAME} v{VERSION} ---")
     print(f"Autori: {APP_AUTHOR} - {RELEASE_DATE}\n")
 
-    db = load_db()
-    if togli_doppioni(db):
-        save_db(db)
-    print(f"La libreria contiene {len(db)} preset.")
+    coll = Collezione(DB_FILE)
+    if not coll.apri():
+        return
+    print(f"La libreria contiene {len(coll.dati)} preset.")
+    try:
+        sessione(coll)
+    except KeyboardInterrupt:
+        # Dalla 1.9.0 ogni salvataggio e' gia' sul disco: interrompere non
+        # perde niente.
+        print("\nInterrotto. Cio' che hai salvato e' gia' nella collezione.")
+        return
+    # Come all'avvio, soltanto i doppioni: la collezione non si riscrive.
+    coll.ricarica()
+    coll.togli_doppioni()
+    statistiche(coll.dati)
+    print("Arrivederci!")
 
+
+def sessione(coll):
+    """Il menu dei preset, finche' non se ne esce."""
     while True:
+        # Prima di ogni giro si guarda se qualcun altro ha scritto la
+        # collezione, e la si rilegge.
+        coll.ricarica()
+        db = coll.dati
         # Ordiniamo esplicitamente il dizionario alfabeticamente per nome del preset
         menu_dict = {k: v.get("descrizione", "") for k, v in sorted(db.items())}
         menu_dict["+"] = "Nuovo preset vuoto (Default)"
         menu_dict["/"] = "Cerca preset per parola chiave"
         print("\nScegli un preset (digita '?' per la lista, Esc/Invio vuoto per uscire):")
         scelta = menu(d=menu_dict, p="Preset> ", show=False, ordered=True)
-        
+
         if not scelta:
             break
-            
+
         if scelta == "+":
+            # Il preset nuovo resta nell'editor: entra nella collezione
+            # soltanto se lo si salva.
             new_name = get_unique_name(db, "nuovo_preset")
-            db[new_name] = {
+            edit_mode(coll, new_name, nuovo={
                 "descrizione": "Nuovo preset vuoto",
                 "score": [["c4", 0.5, 0.0, 0.0]],
                 "kind": 1,
                 "adsr": [0.002, 0.0, 100.0, 0.002]
-            }
-            edit_mode(db, new_name)
+            })
             continue
-            
+
         if scelta == "/":
             query = input("\nInserisci parole chiave da cercare (spazio per separare): ").strip().lower()
             if not query:
                 continue
             words = query.split()
-            
+
             risultati = {}
             for k, v in sorted(db.items()):
                 test_str = (k + " " + v.get("descrizione", "")).lower()
@@ -1431,22 +1679,21 @@ def main():
         print(f"\nHai selezionato: '{scelta}'")
         action_dict = {"c": "Carica (Edit Mode)", "e": "Elimina"}
         azione = menu(d=action_dict, p="Azione> ", show=True)
-        
+        # Prima di entrare nel preset, la collezione di adesso.
+        coll.ricarica()
+        if azione in ("c", "e") and scelta not in coll.dati:
+            print(f"Il preset '{scelta}' non c'e' piu': l'ha tolto un altro programma.")
+            continue
+
         if azione == "e":
             if input(f"Sei sicuro di voler eliminare '{scelta}'? (s/n): ").lower() == 's':
-                del db[scelta]
-                save_db(db)
-                print("Preset eliminato.")
+                # Dal disco si toglie soltanto lui.
+                if coll.elimina(scelta):
+                    print("Preset eliminato.")
+                else:
+                    print("Preset non eliminato.")
         elif azione == "c":
-            edit_mode(db, scelta)
-            
-    print("\nSalvataggio libreria in corso...")
-    # Un preset nato dal tasto piu' e lasciato com'era, o un suono rifatto
-    # uguale a un altro, non entra nella collezione.
-    togli_doppioni(db)
-    save_db(db)
-    statistiche(db)
-    print("Arrivederci!")
+            edit_mode(coll, scelta)
 
 if __name__ == "__main__":
     main()
