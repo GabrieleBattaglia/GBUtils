@@ -106,7 +106,27 @@ with tempfile.TemporaryDirectory() as cartella:
 		prova(f"chiudendo con {tasti[-1]!r} restituisce {atteso}",
 			  esiti.esito("t", None, "") == atteso)
 
-	# 6. I registri dei collaudi veri non sono stati toccati.
+	# 6. Nessuna riga vuota dopo le risposte, issue 55. Resta soltanto quella
+	#    che chiude il prompt di key, che nel banco e' vuota perche' la finta
+	#    non stampa il prompt: subito dopo una risposta deve venire la domanda
+	#    del giro seguente, o niente.
+	import contextlib
+	import io
+	risposte = ("Questa prova non si puo' riascoltare da qui.", "Annotato.", "Segnato come superato.", "Chiuso.")
+	for tasti, testi in ((["r", "c", "\r"], ["visto"]), (["c", "\x1b"], ["visto"])):
+		percorso = os.path.join(cartella, "righe.txt")
+		esiti = Esiti(percorso, "")
+		copione(tasti, testi)
+		uscita = io.StringIO()
+		with contextlib.redirect_stdout(uscita):
+			esiti.esito("righe", None, "la domanda")
+		scritto = uscita.getvalue()
+		righe = scritto[:-1].split("\n")
+		vuote_dopo = [r for i, r in enumerate(righe[:-1]) if r in risposte and righe[i + 1] == ""]
+		prova(f"con {tasti} nessuna riga vuota dopo le risposte",
+			  not vuote_dopo and scritto.endswith("\n") and not scritto.endswith("\n\n"), righe)
+
+	# 7. I registri dei collaudi veri non sono stati toccati.
 	#    Si confrontano le date prese prima di cominciare, non quella del
 	#    banco: un collaudo fatto ieri ha comunque una data piu' recente del
 	#    banco, e il controllo gridava al lupo per quello.

@@ -74,11 +74,14 @@ class Esiti:
 			if domanda:
 				print(domanda)
 			scelta = key("\rr ripeti, c commenta, Invio ok\r")
+			# Questo a capo serve: key lascia il cursore sul prompt, fra i due
+			# ritorni carrello. Dopo le risposte invece non se ne va piu' a
+			# capo un'altra volta: ognuna finisce gia' la sua riga, e quella
+			# vuota che ne nasceva NVDA la leggeva per intero (issue 55).
 			print()
 			if scelta in ("r", "R"):
 				if riproduci is None:
 					print("Questa prova non si puo' riascoltare da qui.")
-					print()
 				else:
 					riproduci()
 			elif scelta in ("c", "C"):
@@ -86,16 +89,13 @@ class Esiti:
 				self.registra(titolo, commento, misura)
 				annotato = True
 				print("Annotato.")
-				print()
 			elif scelta == "\r":
 				if not annotato:
 					self.registra(titolo, "test superato, nessun commento", misura)
 				print("Segnato come superato.")
-				print()
 				return "commentato" if annotato else "superato"
 			elif scelta == "\x1b":
 				if not annotato:
 					self.registra(titolo, "chiuso senza giudizio", misura)
 				print("Chiuso.")
-				print()
 				return "chiuso"
