@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.9.0)
+Manuale Utente: Acu_Maker (v1.10.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -30,7 +30,7 @@ Ogni riga di uno Score è formata da 4 parametri:
    Nota: Nei file salvati (JSON) il panning viene automaticamente convertito nella scala normalizzata da -1.0 a +1.0.
 4. Volume: Espresso su una scala percentuale da 0 (silenzio) a 100 (volume massimo 100%), con 50 come volume base di default.
    Può anche essere un "portamento di volume" (es. 20.80 per una sfumatura/crescendo da 20% a 80%).
-   Nota: Nei file salvati (JSON) il volume viene convertito in delta volume relativo al valore base 0.5 (es. Volume 50 = Delta 0.0, Volume 80 = Delta +0.3).
+   Nota: Nei file salvati (JSON) il volume viene convertito in delta volume relativo al valore base 0.5 (es. Volume 50 = Delta 0.0, Volume 80 = Delta +0.3). Dalla versione 1.10.0 il portamento di volume si scrive come la lista dei due delta, per esempio [0.0, 0.3] per un crescendo da 50 a 80, e l'editor lo suona passando dal motore, esattamente come lo suonano i programmi. Fino alla 1.9.0 si scriveva come testo, "0.0.3", che i programmi leggevano come volume assoluto, da 0 a 30: le scivolate create nell'editor suonavano nei programmi molto più piano. Un volume trovato scritto come testo, la forma dei file di prima, l'editor lo mostra come volume assoluto, cioè come lo suonano i programmi, e toccandolo lo riscrive come lista.
 
 # Il rumore e la sua banda
 

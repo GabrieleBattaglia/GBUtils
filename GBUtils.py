@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V261 di giovedì 12 novembre 2026
+	V262 di giovedì 12 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.7.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.8.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "261"
+VERSION = "262"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5082,8 +5082,33 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 	full_signal_float = np.clip(full_signal_float, -1.0, 1.0)
 	return full_signal_float
 
+def _volume_assoluto(scarto, base):
+	"""Il volume di una quartina del file per il motore, o None se non si legge.
+
+	Uno scarto numero si somma alla base; una lista o una coppia di due numeri
+	e' una scivolata, e da' la coppia dei due volumi; il testo, la forma dei
+	file di prima, e' gia' un volume assoluto e passa com'e'. Tutto resta fra
+	0 e 1. Un valore logico, un numero che non e' finito o una lista che non
+	ha due numeri non si leggono. Vedi _Acusticator.prepara e la issue 47.
+	"""
+	import math
+	if isinstance(scarto, str):
+		return scarto
+	if isinstance(scarto, (list, tuple)):
+		if len(scarto) != 2:
+			return None
+		primo, secondo = (_volume_assoluto(s, base) for s in scarto)
+		if not isinstance(primo, float) or not isinstance(secondo, float):
+			return None
+		return (primo, secondo)
+	if isinstance(scarto, bool) or not isinstance(scarto, (int, float)):
+		return None
+	if not math.isfinite(scarto):
+		return None
+	return max(0.0, min(1.0, base + float(scarto)))
+
 class _Acusticator:
-    """V8.7.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.8.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5176,8 +5201,13 @@ class _Acusticator:
     Nella collezione il volume di ogni quartina e' scritto come scarto
     rispetto a una base di 0.5, mentre il motore vuole il valore assoluto:
     la conversione, insieme all'appiattimento delle quartine, la fanno
-    play e preset, ed e' il motivo per cui non va mai passato ad
-    Acusticator uno score preso pari pari dal file.
+    play, preset e prepara, ed e' il motivo per cui non va mai passato ad
+    Acusticator uno score preso pari pari dal file. Lo scarto e' un numero,
+    oppure, per una scivolata di volume, una lista di due numeri, come
+    [0.0, 0.3], che va da 0,5 a 0,8. Un volume scritto come testo, la forma
+    dei file di prima, si legge come assoluto, e non va piu' scritto.
+
+        Acusticator.prepara(dati)               come preset, da un preset gia' in mano
 
     Un progetto puo' avere una collezione propria, che viene cercata prima
     di quella condivisa, cosi' i suoi suoni non devono per forza entrare
@@ -5740,8 +5770,30 @@ class _Acusticator:
         if dati is None:
             self._avvisa(f"preset sconosciuto: {nome}")
             return None, None, None
+        return self.prepara(dati, volume=volume, pan=pan, nome=nome)
+
+    def prepara(self, dati, volume=None, pan=None, nome=""):
+        """Come preset, ma da un preset gia' in mano invece che dal nome:
+        dati e' il dizionario di un preset, nella forma del file.
+
+        E' la sola lettura del formato del file: la usano preset e play, e
+        Acu_Maker per suonare cio' che si sta componendo, cosi' l'editor e le
+        app non possono suonare in due modi diversi. Fino alla V8.7.0 Acu_Maker
+        aveva una conversione sua, e leggeva il volume scritto come testo come
+        scarti dalla base, mentre le app lo leggevano assoluto: undici preset
+        di PokerMachine suonavano piu' forti nell'editor, e ogni scivolata di
+        volume creata nell'editor nelle app suonava 0,5 piu' in basso (issue
+        47).
+        Il volume di una quartina e' uno scarto dalla base: un numero, o dalla
+        V8.8.0 una lista di due numeri per la scivolata, [0.0, 0.3], che da'
+        una coppia di volumi assoluti. Il testo resta letto come volume
+        assoluto, com'era per le app, per i file scritti prima. Un volume che
+        non si legge vale la base, con un avviso.
+        nome serve soltanto agli avvisi. Restituisce (score, kind, adsr).
+        """
         base = self._base_volume(volume)
         piatto = []
+        chi = f"preset {nome}" if nome else "preset"
         for quartina in dati.get("score", []):
             try:
                 # Il panorama della quartina si chiama panorama e non pan:
@@ -5750,12 +5802,12 @@ class _Acusticator:
                 # al suo posto si usava il panorama dell'ultima quartina.
                 nota, dur, panorama, scarto = quartina
             except (TypeError, ValueError):
-                self._avvisa(f"preset {nome}: quartina malformata, la salto")
+                self._avvisa(f"{chi}: quartina malformata, la salto")
                 continue
-            if isinstance(scarto, str):
-                assoluto = scarto
-            else:
-                assoluto = max(0.0, min(1.0, base + float(scarto)))
+            assoluto = _volume_assoluto(scarto, base)
+            if assoluto is None:
+                self._avvisa(f"{chi}: volume {scarto!r} non valido, uso la base")
+                assoluto = max(0.0, min(1.0, base))
             piatto.extend([nota, dur, panorama, assoluto])
         if pan is not None:
             piatto = self._sposta(piatto, pan)
@@ -5876,10 +5928,18 @@ class _Acusticator:
             except ValueError:
                 self._avvisa(f"preset {nome}: lo score non e' fatto di quartine")
                 return False
-            if isinstance(vol, str):
-                scarto = vol
-            else:
-                scarto = round(float(vol) - self.BASE_VOL, 4)
+            try:
+                if isinstance(vol, str):
+                    scarto = vol
+                elif isinstance(vol, (list, tuple)) and len(vol) == 2:
+                    # La scivolata del motore, una coppia di volumi assoluti,
+                    # diventa la lista dei due scarti, come la scrive Acu_Maker.
+                    scarto = [round(float(v) - self.BASE_VOL, 4) for v in vol]
+                else:
+                    scarto = round(float(vol) - self.BASE_VOL, 4)
+            except (TypeError, ValueError):
+                self._avvisa(f"preset {nome}: volume {vol!r} non valido, non lo salvo")
+                return False
             quartine.append([nota, dur, pan, scarto])
         if not quartine:
             self._avvisa(f"preset {nome}: score vuoto, non lo salvo")

@@ -7,9 +7,16 @@ import textwrap
 
 # Aggiungo la cartella corrente al path per importare GBUtils
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from GBUtils import Acusticator, dgt, menu, panorama_spostato, parse_pan_parts
+from GBUtils import (
+    Acusticator,
+    dgt,
+    menu,
+    panorama_spostato,
+    parse_pan_parts,
+    parse_vol_values,
+)
 
-VERSION = "1.9.0" # Ogni cambiamento si scrive subito, fuso con il disco, attraverso Acusticator.aggiorna
+VERSION = "1.10.0" # I volumi come le app: scivolata a lista e ascolto attraverso Acusticator.prepara
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "12 novembre 2026"
@@ -38,6 +45,13 @@ MEZZA_OTTAVA = 2 ** 0.5
 
 def is_portamento(val):
     return isinstance(val, str) and '.' in val
+
+
+def scivola(val):
+	"""Vero se un valore della quartina scorre: il testo con il punto, o dalla
+	1.10.0 la lista di due valori, che e' la forma con cui Acu_Maker scrive le
+	scivolate di volume (issue 47 di GBUtils)."""
+	return is_portamento(val) or (isinstance(val, (list, tuple)) and len(val) == 2)
 
 
 def is_rumore(kind):
@@ -674,6 +688,8 @@ class EditorState:
         self.posizione = None
 
 def pan_to_user(val):
+    if isinstance(val, (list, tuple)) and len(val) == 2:
+        return f"{round(float(val[0]) * 100)}.{round(float(val[1]) * 100)}"
     if is_portamento(val):
         parts = parse_pan_parts(val)
         p1 = round(float(parts[0]) * 100)
@@ -736,26 +752,36 @@ def pan_in_file(valore):
     return round(float(valore), 2)
 
 def vol_to_user(val):
-    if is_portamento(val):
-        parts = parse_pan_parts(val)
-        v1 = round((DEFAULT_VOL + float(parts[0])) * 100)
-        v2 = round((DEFAULT_VOL + float(parts[1])) * 100)
+    """Il volume di una quartina nella scala dell'editor, da 0 a 100.
+
+    Uno scarto dalla base, numero o lista di due per la scivolata, si somma
+    alla base 0,5. Il testo, la forma dei file di prima, e' un volume
+    assoluto: dalla 1.10.0 si legge cosi', come lo leggono le app, mentre
+    fino alla 1.9.0 l'editor lo prendeva per scarti (issue 47 di GBUtils)."""
+    if isinstance(val, (list, tuple)) and len(val) == 2:
+        v1 = max(0, min(100, round((DEFAULT_VOL + float(val[0])) * 100)))
+        v2 = max(0, min(100, round((DEFAULT_VOL + float(val[1])) * 100)))
         return f"{v1}.{v2}"
-    else:
-        v = round((DEFAULT_VOL + float(val)) * 100)
-        return str(max(0, min(100, v)))
+    if isinstance(val, str):
+        assoluto = parse_vol_values(val)
+        if isinstance(assoluto, tuple):
+            return f"{round(assoluto[0] * 100)}.{round(assoluto[1] * 100)}"
+        return str(round(assoluto * 100))
+    v = round((DEFAULT_VOL + float(val)) * 100)
+    return str(max(0, min(100, v)))
 
 def user_to_vol(val_str):
+    """Dalla scala dell'editor al file: uno scarto dalla base 0,5, oppure,
+    per la scivolata scritta con il punto, come 20.80, la lista dei due
+    scarti. Fino alla 1.9.0 la scivolata si scriveva come testo, '0.0.3', che
+    le app leggevano come volume assoluto, da 0 a 0,3 invece che da 0,5 a 0,8
+    (issue 47 di GBUtils)."""
     val_str = str(val_str).strip()
     if is_portamento(val_str):
         parts = parse_pan_parts(val_str)
-        d1 = (float(parts[0]) / 100.0) - DEFAULT_VOL
-        d2 = (float(parts[1]) / 100.0) - DEFAULT_VOL
-        d1 = max(-0.5, min(0.5, d1))
-        d2 = max(-0.5, min(0.5, d2))
-        s1 = str(int(d1)) if d1.is_integer() else str(round(d1, 2))
-        s2 = str(int(d2)) if d2.is_integer() else str(round(d2, 2))
-        return f"{s1}.{s2}"
+        d1 = max(-0.5, min(0.5, (float(parts[0]) / 100.0) - DEFAULT_VOL))
+        d2 = max(-0.5, min(0.5, (float(parts[1]) / 100.0) - DEFAULT_VOL))
+        return [round(d1, 2), round(d2, 2)]
     else:
         v = float(val_str) / 100.0
         d = v - DEFAULT_VOL
@@ -827,32 +853,19 @@ def handle_print(state, force_newline=False):
     print(f"\r{clear_line}\r{s}", end="", flush=True)
 
 def play_preset(state):
-    score_flat = []
-    for q in state.preset['score']:
-        note, dur, pan, vol_delta = q
-        if is_portamento(vol_delta):
-            parts = parse_pan_parts(vol_delta)
-            v1 = max(0.0, min(1.0, DEFAULT_VOL + float(parts[0])))
-            v2 = max(0.0, min(1.0, DEFAULT_VOL + float(parts[1])))
-            vol_param = (v1, v2)
-        else:
-            vol_param = max(0.0, min(1.0, DEFAULT_VOL + float(vol_delta)))
-        score_flat.extend([note, dur, pan, vol_param])
-    Acusticator(score_flat, kind=state.preset['kind'], adsr=state.preset['adsr'],
-                sync=False, pan=state.posizione)
+    """Suona il preset come lo suonano le app: dalla 1.10.0 passa da
+    Acusticator.prepara, la stessa lettura di Acusticator.preset, invece che
+    da una conversione sua, cosi' editor e app non possono piu' divergere
+    (issue 47 di GBUtils)."""
+    score, kind, adsr = Acusticator.prepara(state.preset, pan=state.posizione)
+    Acusticator(score, kind=kind, adsr=adsr, sync=False)
 
 def play_quad(state):
-    q = state.preset['score'][state.focus_idx]
-    note, dur, pan, vol_delta = q
-    if is_portamento(vol_delta):
-        parts = parse_pan_parts(vol_delta)
-        v1 = max(0.0, min(1.0, DEFAULT_VOL + float(parts[0])))
-        v2 = max(0.0, min(1.0, DEFAULT_VOL + float(parts[1])))
-        vol_param = (v1, v2)
-    else:
-        vol_param = max(0.0, min(1.0, DEFAULT_VOL + float(vol_delta)))
-    Acusticator([note, dur, pan, vol_param], kind=state.preset['kind'],
-                adsr=state.preset['adsr'], sync=False, pan=state.posizione)
+    """Suona la sola quartina corrente, con la stessa lettura delle app."""
+    quartina = {"score": [state.preset['score'][state.focus_idx]],
+                "kind": state.preset.get('kind', 1), "adsr": state.preset.get('adsr')}
+    score, kind, adsr = Acusticator.prepara(quartina, pan=state.posizione)
+    Acusticator(score, kind=kind, adsr=adsr, sync=False)
 
 def transpose_single(val_str, direction, step):
     if val_str.lower() == 'p': return 'p'
@@ -985,13 +998,13 @@ def edit_mode(coll, preset_name, nuovo=None):
                         else: param_name = "Nota (entrambe)"
                 elif state.focus_param == 2:
                     current_val = state.preset['score'][state.focus_idx][2]
-                    if is_portamento(current_val):
+                    if scivola(current_val):
                         if state.port_focus == 1: param_name = "Pan partenza (-100..100)"
                         elif state.port_focus == 2: param_name = "Pan arrivo (-100..100)"
                         else: param_name = "Pan entrambi (-100..100)"
                 elif state.focus_param == 3:
                     current_val = state.preset['score'][state.focus_idx][3]
-                    if is_portamento(current_val):
+                    if scivola(current_val):
                         if state.port_focus == 1: param_name = "Volume partenza (0..100)"
                         elif state.port_focus == 2: param_name = "Volume arrivo (0..100)"
                         else: param_name = "Volume entrambi (0..100)"
@@ -1046,7 +1059,7 @@ def edit_mode(coll, preset_name, nuovo=None):
                                 state.modified = True
                         elif state.focus_param == 2:
                             current_val = state.preset['score'][state.focus_idx][2]
-                            if is_portamento(current_val):
+                            if scivola(current_val):
                                 parts_user = pan_to_user(current_val).split('.')
                                 if state.port_focus in (1, 3): parts_user[0] = val
                                 if state.port_focus in (2, 3): parts_user[1] = val
@@ -1056,7 +1069,7 @@ def edit_mode(coll, preset_name, nuovo=None):
                             state.modified = True
                         elif state.focus_param == 3:
                             current_val = state.preset['score'][state.focus_idx][3]
-                            if is_portamento(current_val):
+                            if scivola(current_val):
                                 parts_user = vol_to_user(current_val).split('.')
                                 if state.port_focus in (1, 3): parts_user[0] = val
                                 if state.port_focus in (2, 3): parts_user[1] = val
@@ -1096,7 +1109,7 @@ def edit_mode(coll, preset_name, nuovo=None):
                         state.preset['score'][state.focus_idx][0] = nuova
                         state.port_focus = 3
                         state.modified = True
-                elif is_portamento(val):
+                elif scivola(val):
                     if param_idx == 0:
                         parts = val.split('.')
                         new_val = parts[0] if state.port_focus in (1, 3) else parts[1]
@@ -1140,13 +1153,13 @@ def edit_mode(coll, preset_name, nuovo=None):
             continue
         elif key in ('1', '2', '3'):
             if (state.focus_type == 'score' and state.focus_param in (0, 2, 3)
-                    and is_portamento(state.preset['score'][state.focus_idx][state.focus_param])):
+                    and scivola(state.preset['score'][state.focus_idx][state.focus_param])):
                 state.port_focus = int(key)
         elif key == '4':
             if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
                 param_idx = state.focus_param
                 val = state.preset['score'][state.focus_idx][param_idx]
-                if is_portamento(val):
+                if scivola(val):
                     if param_idx == 0:
                         parts = val.split('.')
                         state.preset['score'][state.focus_idx][0] = f"{parts[1]}.{parts[0]}"
@@ -1169,7 +1182,7 @@ def edit_mode(coll, preset_name, nuovo=None):
                         state.preset['score'][state.focus_idx][0] = banda_componi(
                             b_fi, a_fi, b_in, a_in)
                         state.modified = True
-                elif is_portamento(val):
+                elif scivola(val):
                     if param_idx == 0:
                         parti = val.split('.')
                         state.preset['score'][state.focus_idx][0] = f"{parti[1]}.{parti[0]}"
@@ -1536,7 +1549,7 @@ def statistiche(db):
                 mia_durata += float(dur)
             except (TypeError, ValueError):
                 pass
-            if is_portamento(pan):
+            if scivola(pan):
                 scivola_pan += 1
                 muove = True
             else:
