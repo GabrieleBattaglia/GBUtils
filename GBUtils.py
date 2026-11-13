@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V279 di venerdì 13 novembre 2026
+	V280 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.9.16 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.18 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "279"
+VERSION = "280"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5316,7 +5316,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.9.16 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.18 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5843,18 +5843,26 @@ class _Acusticator:
     LUCCHETTO_VECCHIO = 10.0
 
     def _lucchetto(self, percorso):
-        """Crea percorso.lock in esclusiva. Il nome, o None se l'attesa scade.
+        """Crea percorso.lock in esclusiva. Il nome, o None se l'attesa scade
+        con il lucchetto di un altro programma.
         Solleva OSError quando il lucchetto non si puo' creare, per esempio
-        perche' la cartella non c'e', e quando alla scadenza c'e' ancora un
-        lucchetto vecchio che non si lascia togliere: l'errore nomina il file
-        e dice perche' Windows non lo toglie."""
+        perche' la cartella non c'e'. Un accesso negato si aspetta, perche' su
+        Windows lo da' anche un lucchetto in via di cancellazione; ma se alla
+        scadenza l'ultimo tentativo e' stato negato, per esempio in una
+        cartella in sola lettura, solleva OSError. Lo stesso quando alla
+        scadenza c'e' ancora un lucchetto vecchio che non si lascia togliere.
+        L'errore nomina il file e dice perche' Windows non lo crea o non lo
+        toglie. Fino alla V8.9.16 l'accesso negato rispondeva None, e chi
+        leggeva l'avviso credeva la collezione occupata da un altro programma."""
         import os
         import time
         nome = percorso + ".lock"
         scadenza = time.monotonic() + self.LUCCHETTO_ATTESA
         # L'errore dell'ultimo tentativo di togliere un lucchetto vecchio, se
         # e' fallito: None quando il lucchetto non e' vecchio o se n'e' andato.
+        # E l'accesso negato dell'ultimo tentativo di crearlo.
         intoccabile = None
+        negato = None
         while True:
             try:
                 fd = os.open(nome, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
@@ -5866,6 +5874,7 @@ class _Acusticator:
                 except OSError:
                     vecchio = False
                 intoccabile = None
+                negato = None
                 if vecchio:
                     try:
                         os.remove(nome)
@@ -5881,16 +5890,20 @@ class _Acusticator:
                         # alla scadenza, l'avviso diceva la collezione occupata da
                         # un altro programma, e non nominava il lucchetto.
                         intoccabile = errore
-            except PermissionError:
-                pass  # su Windows, un lucchetto in via di cancellazione
+            except PermissionError as errore:
+                negato = errore  # su Windows, anche un lucchetto in via di cancellazione
             else:
                 os.write(fd, str(os.getpid()).encode("ascii"))
                 os.close(fd)
                 return nome
             if time.monotonic() > scadenza:
+                # Il motivo e' strerror, per esempio Accesso negato: il testo
+                # intero dell'errore ripete il percorso, con le barre doppie.
                 if intoccabile is not None:
                     raise OSError(f"{nome} e' un lucchetto vecchio che non si lascia togliere, "
-                                  f"se nessun programma lo usa va cancellato: {intoccabile}")
+                                  f"se nessun programma lo usa va cancellato: {intoccabile.strerror or intoccabile}")
+                if negato is not None:
+                    raise OSError(f"{nome}: {negato.strerror or negato}")
                 return None
             time.sleep(0.02)
 

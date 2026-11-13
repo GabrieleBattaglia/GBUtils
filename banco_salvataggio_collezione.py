@@ -376,13 +376,88 @@ with tempfile.TemporaryDirectory() as cartella:
 	detto = esito[0][1] if esito else ""
 	prova("e l'avviso nomina il lucchetto vecchio, non un altro programma",
 		  "lucchetto vecchio" in detto and os.path.basename(lucchetto) in detto and "altro programma" not in detto, detto)
-	# Un lucchetto vecchio che si toglie, invece, si toglie e la scrittura va.
+	# Dalla terza revisione: il percorso una volta sola, e il motivo in
+	# chiaro. Fino alla V8.9.16 lo ripeteva con le barre doppie.
+	prova("e lo nomina una volta sola, senza barre doppie",
+		  detto.count(os.path.basename(lucchetto)) == 1 and "\\\\" not in detto, detto)
+	# Un lucchetto vecchio che si toglie, invece, si toglie e la firma si
+	# scrive. Fino alla V278 la prova firmava un preset che non c'e'.
+	firmato = next(iter(originale))
 	with open(lucchetto, "w") as f:
 		f.write("99999")
 	os.utime(lucchetto, (vecchio, vecchio))
-	esito, detto = zitto(paziente.firma, "x", "banco", copia)
+	esito, detto = zitto(paziente.firma, firmato, "banco", copia)
 	prova("un lucchetto vecchio che si lascia togliere si toglie, e la firma si scrive",
-		  esito is not None and not os.path.exists(lucchetto), (esito, detto))
+		  esito == 1 and "banco" in GBUtils._firme_di(leggi(copia)[firmato]) and not os.path.exists(lucchetto), (esito, detto))
+
+	# 17. Dalla terza revisione: il lucchetto che cambia durante l'attesa.
+	attento = GBUtils._Acusticator()
+	attento.LUCCHETTO_ATTESA = 1.0
+	def vecchio_in_sola_lettura():
+		with open(lucchetto, "w") as f:
+			f.write("99999")
+		os.utime(lucchetto, (vecchio, vecchio))
+		os.chmod(lucchetto, stat.S_IREAD)
+	def fra(secondi, azione):
+		def corpo():
+			time.sleep(secondi)
+			azione()
+		filo = threading.Thread(target=corpo, daemon=True)
+		filo.start()
+		return filo
+	vecchio_in_sola_lettura()
+	filo = fra(0.2, lambda: os.chmod(lucchetto, stat.S_IWRITE))
+	riuscito, detto = zitto(attento.save, "banco_dopo_la_sola_lettura", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
+	filo.join(5.0)
+	prova("un lucchetto vecchio che torna scrivibile durante l'attesa si toglie, e save scrive",
+		  riuscito and "banco_dopo_la_sola_lettura" in leggi(copia) and not os.path.exists(lucchetto), detto)
+	vecchio_in_sola_lettura()
+	fresco = lucchetto + ".fresco"
+	def sostituisci():
+		# Prima diventa fresco, poi si sostituisce in un colpo: chi aspetta
+		# non trova mai un buco in cui prendersi il lucchetto.
+		os.utime(lucchetto, None)
+		os.chmod(lucchetto, stat.S_IWRITE)
+		with open(fresco, "w") as f:
+			f.write("12345")
+		os.replace(fresco, lucchetto)
+	filo = fra(0.2, sostituisci)
+	prima_del_fresco = impronta(copia)
+	riuscito, detto = zitto(attento.save, "banco_col_fresco", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
+	filo.join(5.0)
+	if os.path.exists(lucchetto):
+		os.chmod(lucchetto, stat.S_IWRITE)
+		os.remove(lucchetto)
+	prova("un lucchetto vecchio sostituito da uno fresco durante l'attesa si rispetta, e l'avviso dice occupata",
+		  riuscito is False and "occupata" in detto and "lucchetto vecchio" not in detto and impronta(copia) == prima_del_fresco, detto)
+
+	# 18. Dalla terza revisione: l'accesso negato. Una cartella al posto del
+	#     lucchetto lo da' sempre, come una cartella in sola lettura. Fino alla
+	#     V8.9.16 save aspettava e diceva la collezione occupata da un altro
+	#     programma.
+	negata = os.path.join(cartella, "negata.json")
+	os.mkdir(negata + ".lock")
+	frettoloso.LUCCHETTO_ATTESA = 0.3
+	riuscito, detto = zitto(frettoloso.save, "banco_negato", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=negata)
+	os.rmdir(negata + ".lock")
+	prova("con l'accesso negato save risponde di no e dice che il lucchetto non si crea, non un altro programma",
+		  riuscito is False and "non riesco a creare il lucchetto" in detto and "occupata" not in detto
+		  and detto.count("negata.json.lock") == 1 and "\\\\" not in detto and not os.path.exists(negata), detto)
+	# Un accesso negato di passaggio, come quello di un lucchetto in via di
+	# cancellazione, si aspetta, e poi si scrive.
+	vero_open, negati = os.open, [0]
+	def open_negato(percorso, *argomenti, **chiavi):
+		if str(percorso).endswith(".lock") and negati[0] < 5:
+			negati[0] += 1
+			raise PermissionError(13, "Accesso negato", percorso)
+		return vero_open(percorso, *argomenti, **chiavi)
+	os.open = open_negato
+	try:
+		riuscito, detto = zitto(frettoloso.save, "banco_dopo_i_negati", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
+	finally:
+		os.open = vero_open
+	prova("cinque accessi negati di passaggio si aspettano, e poi save scrive senza avvisi",
+		  riuscito and negati[0] == 5 and "banco_dopo_i_negati" in leggi(copia) and not detto, (negati[0], detto))
 
 prova("la collezione vera non e' stata toccata", impronta(VERA) == PRIMA)
 print(f"Prove {totale}, passate {passate}.")
