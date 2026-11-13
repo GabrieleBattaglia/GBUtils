@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V276 di venerdì 13 novembre 2026
+	V277 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.13 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
@@ -27,7 +27,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
-	menu V5.2.2 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+	menu V5.2.3 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "276"
+VERSION = "277"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6702,7 +6702,7 @@ def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
 	return True
 
 def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None, intestazione=""):
-    """V5.2.2 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V5.2.3 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -6773,11 +6773,14 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     sempre la prima in ordine (issue 52).
     Dalla V5.2.2 una lettera che vale sia come ricopiata sia come seguito del
     completamento, quello che il prompt suggerisce, apre due letture, e le
-    separa il tasto dopo: resta quella che porta ancora a qualche voce, a
-    parita' la ricopiatura. Con Invio vince la prima delle due che sceglie una
-    voce, cominciando dalla ricopiatura. Cosi' con mamma e mammut, m e il
-    completamento danno mamm, e a con Invio sceglie mamma; e chi scrive per
-    intero 10, fra 10, 100 e 1000, con Invio riceve 10. E Invio senza aver
+    separa il primo tasto che una sola accetta: restano quelle che portano
+    ancora a qualche voce, fino a quattro, e a parita' decide la ricopiatura.
+    Dalla V5.2.3 restano aperte anche quando coincidono per piu' di un tasto:
+    nella V5.2.2 la seconda si perdeva al tasto dopo. Con Invio vince la
+    prima che sceglie una voce, cominciando dalla ricopiatura. Cosi' con
+    mamma e mammut, m e il completamento danno mamm, e a con Invio sceglie
+    mamma; e chi scrive per intero 10, fra 10, 100 e 1000, con Invio riceve
+    10. E Invio senza aver
     digitato niente restituisce sempre empty_enter: fino alla V5.2.0, quando
     tutte le voci avevano un inizio comune, il completamento lo scriveva
     prima del primo tasto, e Invio sceglieva una voce, o non faceva niente.
@@ -6868,8 +6871,9 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     # (testo, digitate), dove digitate dice quante lettere del testo le ha
     # digitate l'utente; le altre le ha messe il completamento, e servono a
     # riconoscere chi le ricopia. Di solito la lettura e' una sola; dalla
-    # V5.2.2 sono due quando un tasto vale sia come lettera ricopiata sia come
-    # seguito del completamento, e le separa il tasto dopo.
+    # V5.2.2 se ne apre un'altra quando un tasto vale sia come lettera
+    # ricopiata sia come seguito del completamento, e restano aperte, fino a
+    # quattro, finche' le separa il primo tasto che una sola accetta.
     letture = [("", 0)]
     last_displayed = None
     num_map = {}
@@ -6895,8 +6899,8 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         user_input, digitate = letture[0]
         display_input = user_input
         final_filtered = filtra(display_input)
-        # Con due letture aperte la preferita, la ricopiatura, ha ancora le
-        # voci di prima, quindi non si sceglie niente prima del tasto dopo.
+        # Decide la lettura preferita: quando porta a una voce sola si sceglie
+        # quella, a parita' la ricopiatura, anche con altre letture aperte.
         if len(final_filtered) == 1 and len(display_input) > 0:
             final_choice = final_filtered[0]
             print()
@@ -6964,18 +6968,29 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             # V5.2.0 vinceva sempre la ricopiatura, e chi proseguiva dopo il
             # completamento perdeva la lettera; in Acu_Maker las, poi
             # estra_sinistra, dava laser_dstra_sinistra. Ora restano aperte
-            # tutte e due le letture, se l'aggiunta porta a qualche voce, e il
-            # tasto dopo tiene quella che porta ancora a qualche voce, a
-            # parita' la ricopiatura (scelta di Gabriele del 13 novembre 2026).
+            # tutte e due le letture, se l'aggiunta porta a qualche voce, e le
+            # separa il primo tasto che una sola accetta; a parita' vince la
+            # ricopiatura (scelta di Gabriele del 13 novembre 2026).
             gruppi = []
             for testo, quante in letture:
                 seguiti = [(testo + user_char, len(testo) + 1, True)]
                 if quante < len(testo) and testo[quante].lower() == user_char.lower():
                     seguiti.insert(0, (testo[:quante] + user_char + testo[quante + 1:], quante + 1, False))
                 gruppi.append((seguiti, [s for s in seguiti if filtra(s[0])]))
-            # La prima lettura che porta ancora a qualche voce; se nessuna ci
-            # porta, la preferita, come prima, e il filtro restera' vuoto.
-            nuove = next((vivi for _, vivi in gruppi if vivi), gruppi[0][0][:1])
+            # Tutte le letture che portano ancora a qualche voce, dalla
+            # preferita, senza doppioni e al piu' quattro; se nessuna ci porta,
+            # la preferita, come prima, e il filtro restera' vuoto. Fino alla
+            # V5.2.2 restavano soltanto i seguiti della prima lettura viva: se
+            # le due letture coincidevano per piu' di un tasto, quella giusta
+            # si perdeva, e in Acu_Maker casdi, poi spuntata, lasciava il filtro
+            # vuoto invece di arrivare a casella_disponibili_oggi_spuntata.
+            nuove, visti = [], set()
+            for _, vivi in gruppi:
+                for seguito in vivi:
+                    if seguito[0] not in visti:
+                        visti.add(seguito[0])
+                        nuove.append(seguito)
+            nuove = nuove[:4] or gruppi[0][0][:1]
             letture = [(testo, quante) for testo, quante, _ in nuove]
             if nuove[0][2]:
                 print(user_char, end='', flush=True)

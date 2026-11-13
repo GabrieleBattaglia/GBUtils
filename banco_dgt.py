@@ -47,7 +47,7 @@ def chiedi(risposte, **argomenti):
 	try:
 		with contextlib.redirect_stdout(uscita):
 			valore = dgt(**argomenti)
-	except (ValueError, TypeError, EOFError) as errore:
+	except (ValueError, TypeError, AttributeError, EOFError) as errore:
 		valore = type(errore).__name__
 	finally:
 		del GBUtils.input
@@ -114,9 +114,12 @@ prova("e una frase che non e' una stringa, con TypeError", chiedi(["1"], kind="i
 # 5 bis. minimo e massimo arrivano in cifre, come testo: un formato da numero
 #        e' un errore di chi programma, alla chiamata. Fino alla V3.0.0 passava
 #        il controllo e faceva cadere il programma al primo rifiuto.
-for frase in ("Al massimo {massimo:.1f}", "Al massimo {massimo:,}", "Al massimo {massimo:d}", "{massimo.real}"):
-	esito = chiedi(["9", "1"], kind="f", fmin=0.5, fmax=2.5, avvisi={"troppo_alto": frase})[0]
-	prova(f"la frase {frase} e' un ValueError alla chiamata, non mentre si digita", esito == "ValueError", esito)
+#        Le domande fatte prima dell'errore dicono il momento: zero vuol dire
+#        alla chiamata. {lunghezza[0]} passa da TypeError, {massimo.real} da
+#        AttributeError: tutti e due diventano il ValueError promesso.
+for frase in ("Al massimo {massimo:.1f}", "Al massimo {massimo:,}", "Al massimo {massimo:d}", "{massimo.real}", "{lunghezza[0]}"):
+	esito, _, volte = chiedi(["9", "1"], kind="f", fmin=0.5, fmax=2.5, avvisi={"troppo_alto": frase})
+	prova(f"la frase {frase} e' un ValueError alla chiamata, non mentre si digita", esito == "ValueError" and volte == 0, (esito, volte))
 valore, righe, _ = chiedi(["9", "1"], kind="f", fmin=0.5, fmax=2.5, avvisi={"troppo_alto": "Al massimo {massimo:>5}."})
 prova("un formato da testo resta valido", valore == 1.0 and righe == ["Al massimo   2.5."], righe)
 
