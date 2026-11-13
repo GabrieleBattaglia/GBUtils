@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V269 di venerdì 13 novembre 2026
+	V270 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.9 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
@@ -12,7 +12,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	CWzator V11.7.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
-	dgt V3.0.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	dgt V3.0.2 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	elenco_dispositivi_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	elenco_interfacce_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "269"
+VERSION = "270"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6295,7 +6295,7 @@ def _dgt_cifre(valore):
 	return str(valore)
 
 def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9, fmax=999999999.9, smin=0, smax=256, pwd=False, default=None, avvisi=None):
-	'''V3.0.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	'''V3.0.2 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	Potenzia input con i controlli che input non ha, e ripete la domanda
 	finche' non riceve un valore accettabile.
 	Riceve il prompt, il tipo e i limiti:
@@ -6314,14 +6314,18 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 	tradotta. Le chiavi sono non_intero, non_decimale, troppo_basso,
 	troppo_alto, troppo_corta e troppo_lunga; nelle frasi {minimo} e {massimo}
 	sono i limiti, per le stringhe le lunghezze, e {lunghezza} e' quanto e'
-	lunga la stringa digitata. Per esempio
+	lunga la stringa digitata. minimo e massimo arrivano gia' in cifre, come
+	testo, senza il .0 di un decimale intero: fra le graffe non valgono i
+	formati dei numeri, come {massimo:.1f}. Per esempio
 	  dgt("Quante carte? ", kind="i", imin=1, imax=5, avvisi={
 	      "non_intero": "Serve un numero.",
 	      "troppo_basso": "Almeno {minimo}.", "troppo_alto": "Al massimo {massimo}."})
 	Una frase vuota fa tacere quella situazione. Dove chi chiama non ha
 	passato una frase, dgt stampa soltanto i limiti in cifre, uguali in ogni
 	lingua, come il conteggio di menu: 1 - 10 per un numero fuori da quei
-	limiti, >= 1 o <= 10 quando ne e' dichiarato uno solo, e per un testo la
+	limiti, >= 1 o <= 10 quando ne e' dichiarato uno solo e il numero sfora
+	proprio quello, i due limiti quando sfora quello di serie dell'altra
+	parte, come 1 - 999999999 con imin=1, e per un testo la
 	sua lunghezza e quella ammessa, 3 / 1 per tre caratteri dove ne e' ammesso
 	uno. Un numero che non si legge, quando non e' dichiarato nessun limite,
 	fa ripetere la domanda e basta.
@@ -6356,9 +6360,13 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 	for chiave, frase in avvisi.items():
 		if not isinstance(frase, str):
 			raise TypeError(f"dgt: l'avviso {chiave} deve essere una stringa, ricevuto {frase!r}.")
+		# Si compone con gli stessi tipi del rifiuto, minimo e massimo in
+		# cifre come testo: fino alla V3.0.0 si provava con dei numeri, e una
+		# frase come {massimo:.1f} passava qui e faceva cadere il programma al
+		# primo valore rifiutato, mentre l'utente digitava.
 		try:
-			frase.format(minimo=0, massimo=0, lunghezza=0)
-		except (KeyError, IndexError, ValueError) as errore:
+			frase.format(minimo="0", massimo="0", lunghezza=0)
+		except (KeyError, IndexError, ValueError, TypeError, AttributeError) as errore:
 			raise ValueError(f"dgt: l'avviso {chiave} non si compone: {errore}. Fra graffe valgono minimo, massimo e lunghezza.") from None
 	if not isinstance(kind, str) or not kind:
 		raise ValueError(f"dgt: kind deve essere una stringa non vuota, ricevuto {kind!r}.")
@@ -6438,14 +6446,16 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 				rifiuta("troppo_lunga", f"{len(valore)} / {_dgt_cifre(massimo)}", len(valore))
 				continue
 			return valore
-		# Fuori dai limiti senza averne dichiarato nessuno vuol dire oltre
-		# quelli di serie: le cifre li nominano tutti e due.
-		cifre = intervallo or f"{_dgt_cifre(minimo)} - {_dgt_cifre(massimo)}"
+		# Le cifre nominano il limite superato. Quando e' uno di serie, che
+		# chi chiama non ha dichiarato, le cifre li nominano tutti e due: fino
+		# alla V3.0.0, con imin=1, 5000000000 si rifiutava con >= 1, che il
+		# numero rispetta.
+		tutti = f"{_dgt_cifre(minimo)} - {_dgt_cifre(massimo)}"
 		if valore < minimo:
-			rifiuta("troppo_basso", cifre)
+			rifiuta("troppo_basso", intervallo if basso else tutti)
 			continue
 		if valore > massimo:
-			rifiuta("troppo_alto", cifre)
+			rifiuta("troppo_alto", intervallo if alto else tutti)
 			continue
 		return valore
 # Le tre formattazioni della issue 9: una dimensione, una durata e un testo

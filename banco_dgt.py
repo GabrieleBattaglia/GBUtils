@@ -111,6 +111,25 @@ prova("dove manca la frase restano le cifre", righe == ["1 - 5"], righe)
 prova("una chiave sconosciuta e' un errore di chi programma", chiedi(["1"], kind="i", avvisi={"basso": "x"})[0] == "ValueError")
 prova("e cosi' un segno fra graffe sconosciuto", chiedi(["1"], kind="i", avvisi={"troppo_alto": "{limite}"})[0] == "ValueError")
 prova("e una frase che non e' una stringa, con TypeError", chiedi(["1"], kind="i", avvisi={"troppo_alto": 3})[0] == "TypeError")
+# 5 bis. minimo e massimo arrivano in cifre, come testo: un formato da numero
+#        e' un errore di chi programma, alla chiamata. Fino alla V3.0.0 passava
+#        il controllo e faceva cadere il programma al primo rifiuto.
+for frase in ("Al massimo {massimo:.1f}", "Al massimo {massimo:,}", "Al massimo {massimo:d}", "{massimo.real}"):
+	esito = chiedi(["9", "1"], kind="f", fmin=0.5, fmax=2.5, avvisi={"troppo_alto": frase})[0]
+	prova(f"la frase {frase} e' un ValueError alla chiamata, non mentre si digita", esito == "ValueError", esito)
+valore, righe, _ = chiedi(["9", "1"], kind="f", fmin=0.5, fmax=2.5, avvisi={"troppo_alto": "Al massimo {massimo:>5}."})
+prova("un formato da testo resta valido", valore == 1.0 and righe == ["Al massimo   2.5."], righe)
+
+# 5 ter. Con un limite solo, un numero oltre il limite di serie dell'altra
+#        parte riceve tutti e due i limiti, non quello che rispetta.
+valore, righe, _ = chiedi(["5000000000", "4"], kind="i", imin=1)
+prova("col solo minimo, un numero enorme riceve 1 - 999999999", valore == 4 and righe == ["1 - 999999999"], righe)
+valore, righe, _ = chiedi(["-2000000000", "4"], kind="i", imax=10)
+prova("col solo massimo, un numero molto negativo riceve -999999999 - 10", valore == 4 and righe == ["-999999999 - 10"], righe)
+valore, righe, _ = chiedi(["1e10", "4"], kind="f", fmin=0)
+prova("col solo fmin, 1e10 riceve 0 - 999999999.9", valore == 4.0 and righe == ["0 - 999999999.9"], righe)
+valore, righe, _ = chiedi(["0", "11", "4"], kind="i", imin=1, imax=10)
+prova("con tutti e due i limiti dichiarati non cambia niente", righe == ["1 - 10", "1 - 10"], righe)
 
 # 6. Il predefinito si comporta come prima.
 prova("Invio con il predefinito lo restituisce", chiedi([""], kind="i", imin=1, imax=9, default=4)[0] == 4)
