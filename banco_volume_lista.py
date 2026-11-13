@@ -75,6 +75,19 @@ with tempfile.TemporaryDirectory() as cartella:
 	prova("save scrive la coppia come lista di scarti", scritto and nel_file == [0.0, 0.3], nel_file)
 	ripreso = Acusticator.prepara({"score": [["c4", 0.1, 0, nel_file]]})[0][3]
 	prova("e rilegge gli stessi volumi", vicini(ripreso, (0.5, 0.8)), ripreso)
+	# Dalla revisione del 13 novembre 2026: anche il testo del motore diventa
+	# scarti, e un testo che non si legge si rifiuta.
+	for testo, atteso in (("0.5.0.8", [0.0, 0.3]), ("0.7", 0.2), ("1.0.0.0", [0.5, -0.5])):
+		with contextlib.redirect_stderr(io.StringIO()):
+			scritto = Acusticator.save("banco_testo", ["c4", 0.1, 0, testo], descrizione="prova", percorso=percorso)
+		with open(percorso, encoding="utf-8") as f:
+			nel_file = json.load(f)["banco_testo"]["score"][0][3]
+		uguale = (nel_file == atteso) if isinstance(atteso, list) else (isinstance(nel_file, float) and abs(nel_file - atteso) < 1e-9)
+		prova(f"save scrive il testo {testo!r} come scarti, {atteso}", scritto and uguale, nel_file)
+	errori = io.StringIO()
+	with contextlib.redirect_stderr(errori):
+		scritto = Acusticator.save("banco_forte", ["c4", 0.1, 0, "forte"], descrizione="prova", percorso=percorso)
+	prova("un volume testo che non si legge si rifiuta, con l'avviso", scritto is False and "non valido" in errori.getvalue())
 
 # 3. Acu_Maker mostra e scrive i volumi come le app.
 prova("Acu_Maker mostra la lista nella sua scala", am.vol_to_user([0.0, 0.3]) == "50.80", am.vol_to_user([0.0, 0.3]))

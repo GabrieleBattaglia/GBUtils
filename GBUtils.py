@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V265 di giovedì 12 novembre 2026
+	V266 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.9.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "265"
+VERSION = "266"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5109,6 +5109,26 @@ def _metti_firme(preset, firme):
 		preset["usato_da"] = list(firme)
 		preset.update(voci)
 
+def _volume_del_testo(testo):
+	"""Il volume scritto come testo, letto come lo legge parse_vol_values: un
+	numero, o la coppia di una scivolata; None se non si legge, dove
+	parse_vol_values darebbe in silenzio 0.5. Serve a save, issue 47."""
+	import math
+	testo = testo.strip()
+	try:
+		valore = float(testo)
+		if 0.0 <= valore <= 1.0 and testo.count('.') <= 1:
+			return valore
+	except ValueError:
+		pass
+	try:
+		primo, secondo = (float(p) for p in parse_pan_parts(testo))
+	except (TypeError, ValueError):
+		return None
+	if not (math.isfinite(primo) and math.isfinite(secondo)):
+		return None
+	return (max(0.0, min(1.0, primo)), max(0.0, min(1.0, secondo)))
+
 def _volume_assoluto(scarto, base):
 	"""Il volume di una quartina del file per il motore, o None se non si legge.
 
@@ -5135,7 +5155,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.9.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5672,11 +5692,24 @@ class _Acusticator:
                 fd = os.open(nome, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
             except FileExistsError:
                 try:
-                    if time.time() - os.path.getmtime(nome) > self.LUCCHETTO_VECCHIO:
+                    vecchio = time.time() - os.path.getmtime(nome) > self.LUCCHETTO_VECCHIO
+                except FileNotFoundError:
+                    continue  # appena tolto da chi lo teneva: si riprova subito
+                except OSError:
+                    vecchio = False
+                if vecchio:
+                    try:
                         os.remove(nome)
                         continue
-                except OSError:
-                    continue
+                    except FileNotFoundError:
+                        continue
+                    except OSError:
+                        # Un lucchetto vecchio che non si lascia togliere, per
+                        # esempio in sola lettura, si aspetta come uno vivo, fino
+                        # alla scadenza. Fino alla V8.9.0 qui si ripartiva senza
+                        # pausa e senza guardare la scadenza, e il ciclo girava a
+                        # vuoto per sempre su un core pieno.
+                        pass
             except PermissionError:
                 pass  # su Windows, un lucchetto in via di cancellazione
             else:
@@ -5759,7 +5792,13 @@ class _Acusticator:
             return None
         if percorso is None:
             percorso = self._locali[0] if self._locali else self._percorso_hub()
-        lucchetto = self._lucchetto(percorso)
+        try:
+            lucchetto = self._lucchetto(percorso)
+        except OSError as e:
+            # Per esempio la cartella che non esiste: fino alla V8.9.0
+            # l'errore arrivava a chi chiamava, invece di questo None.
+            self._avvisa(f"non riesco a creare il lucchetto di {os.path.basename(percorso)}: {e}")
+            return None
         if lucchetto is None:
             self._avvisa(f"{os.path.basename(percorso)} occupata da un altro programma: non scrivo")
             return None
@@ -5959,14 +5998,19 @@ class _Acusticator:
         """Applica cambia(firme) alla lista delle firme di ciascun preset, in
         una scrittura sola. Restituisce quanti preset sono cambiati, o None
         se non ha potuto scrivere. Un preset che non c'e' si salta, con un
-        avviso."""
-        if isinstance(nomi, str):
-            nomi = [nomi]
-        nomi = list(nomi)
+        avviso. nomi None vuol dire tutti i preset; un elenco vuoto, anche un
+        generatore o un filtro che non trova niente, vuol dire nessuno, e non
+        si scrive. Fino alla V8.9.0 un elenco vuoto valeva tutti, e un filtro
+        senza risultati firmava l'intera collezione."""
+        tutti = nomi is None
+        if not tutti:
+            nomi = [nomi] if isinstance(nomi, str) else list(nomi)
+            if not nomi:
+                return 0
         cambiati = []
 
         def tocca(dati):
-            for nome in (nomi if nomi else list(dati)):
+            for nome in (list(dati) if tutti else nomi):
                 preset = dati.get(nome)
                 if not isinstance(preset, dict):
                     self._avvisa(f"preset sconosciuto: {nome}, non lo firmo")
@@ -5985,23 +6029,26 @@ class _Acusticator:
     def firma(self, nomi, app, percorso=None):
         """Aggiunge l'app alle firme di uno o piu' preset: nomi e' un nome o
         un elenco. Restituisce quanti preset ha cambiato, zero se l'app c'era
-        gia' dappertutto, None se non ha potuto scrivere."""
+        gia' dappertutto, None se non ha potuto scrivere. Un elenco vuoto, o
+        None, non firma niente."""
         app = self._app(app)
-        return self._cambia_firme(nomi, lambda firme: [*firme, app], percorso) if nomi else 0
+        return self._cambia_firme([] if nomi is None else nomi, lambda firme: [*firme, app], percorso)
 
     def togli_firma(self, nomi, app, percorso=None):
         """Toglie l'app dalle firme di uno o piu' preset. Restituisce quanti
-        ne ha cambiati, o None se non ha potuto scrivere."""
+        ne ha cambiati, o None se non ha potuto scrivere. Un elenco vuoto, o
+        None, non tocca niente."""
         app = self._app(app)
-        return self._cambia_firme(nomi, lambda firme: [a for a in firme if a != app], percorso) if nomi else 0
+        return self._cambia_firme([] if nomi is None else nomi, lambda firme: [a for a in firme if a != app], percorso)
 
     def cambia_firma(self, vecchia, nuova, nomi=None, percorso=None):
         """Sostituisce un'app con un'altra nelle firme, per esempio quando
-        un'app cambia nome: in tutti i preset, o soltanto in quelli di nomi.
+        un'app cambia nome: in tutti i preset con nomi None, il predefinito,
+        o soltanto in quelli di nomi; un elenco vuoto non tocca niente.
         Restituisce quanti preset ha cambiato, o None se non ha potuto
         scrivere."""
         vecchia, nuova = self._app(vecchia), self._app(nuova)
-        return self._cambia_firme(nomi or [], lambda firme: [nuova if a == vecchia else a for a in firme], percorso)
+        return self._cambia_firme(nomi, lambda firme: [nuova if a == vecchia else a for a in firme], percorso)
 
     def info(self):
         """Due conti sulle collezioni consultabili, come dizionario."""
@@ -6070,7 +6117,17 @@ class _Acusticator:
                 return False
             try:
                 if isinstance(vol, str):
-                    scarto = vol
+                    # Il testo del motore, assoluto, diventa scarti come i
+                    # numeri: fino alla V8.9.0 si scriveva com'era, e il preset
+                    # salvato ignorava poi la base scelta dall'utente. Un testo
+                    # che il motore non saprebbe leggere si rifiuta.
+                    assoluto = _volume_del_testo(vol)
+                    if assoluto is None:
+                        raise ValueError
+                    if isinstance(assoluto, tuple):
+                        scarto = [round(v - self.BASE_VOL, 4) for v in assoluto]
+                    else:
+                        scarto = round(assoluto - self.BASE_VOL, 4)
                 elif isinstance(vol, (list, tuple)) and len(vol) == 2:
                     # La scivolata del motore, una coppia di volumi assoluti,
                     # diventa la lista dei due scarti, come la scrive Acu_Maker.

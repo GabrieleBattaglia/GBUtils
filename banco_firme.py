@@ -167,6 +167,24 @@ with tempfile.TemporaryDirectory() as cartella:
 	prova("quattro processi per venticinque firme ciascuno: ci sono tutte", mancanti == [] and riusciti == [25] * 4, (riusciti, mancanti[:3]))
 	prova("e le firme di prima pure", all(set(collezione[n].get("usato_da", [])) <= set(dati[n].get("usato_da", [])) for n in collezione))
 
+	# 5 bis. Dalla revisione del 13 novembre 2026: una selezione vuota non
+	#        tocca niente. Fino alla V8.9.0 valeva tutta la collezione.
+	shutil.copyfile(VERA, copia)
+	prima_del_vuoto = impronta(copia)
+	scritture.clear()
+	vuoti = [
+		zitto(Acusticator.firma, (n for n in collezione if n.startswith("nessuno_comincia_cosi")), "banco", percorso=copia)[0],
+		zitto(Acusticator.firma, filter(lambda n: False, collezione), "banco", percorso=copia)[0],
+		zitto(Acusticator.togli_firma, iter([]), "mess", percorso=copia)[0],
+		zitto(Acusticator.cambia_firma, "mess", "banco", [], percorso=copia)[0],
+		zitto(Acusticator.firma, None, "banco", percorso=copia)[0],
+	]
+	prova("un generatore, un filtro, un iteratore o un elenco vuoti, e None, non firmano niente",
+		  vuoti == [0, 0, 0, 0, 0] and scritture == [] and impronta(copia) == prima_del_vuoto, vuoti)
+	esito, _ = zitto(Acusticator.cambia_firma, "batnav", "batnav_banco", percorso=copia)
+	prova("cambia_firma senza nomi cambia l'app in tutta la collezione", esito == firme.get("batnav") and
+		  all("batnav" not in v.get("usato_da", []) for v in leggi(copia).values()), esito)
+
 	# 6. Acu_Maker.
 	shutil.copyfile(VERA, copia)
 	coll = am.Collezione(copia)

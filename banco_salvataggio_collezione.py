@@ -325,6 +325,53 @@ with tempfile.TemporaryDirectory() as cartella:
 	_, testo = zitto(am.main)
 	prova("con Ctrl+C esce dicendo che il salvato e' gia' sul disco", "Interrotto" in testo and impronta(copia) == prima_dell_uscita, testo[-200:])
 
+	# 15. Dalla revisione del 13 novembre 2026: una cartella che non c'e'.
+	#     Fino alla V8.9.0 aggiorna, save e firma sollevavano FileNotFoundError.
+	assente = os.path.join(cartella, "cartella_che_non_c_e", "suoni.json")
+	esiti = []
+	for funzione, argomenti in ((Acusticator.aggiorna, (lambda dati: None, assente)),
+								(Acusticator.save, ("x", ["c4", 0.1, 0, 0.5], 1, None, "x", assente)),
+								(Acusticator.firma, ("x", "banco", assente))):
+		try:
+			esito, testo = zitto(funzione, *argomenti)
+			esiti.append((esito, "lucchetto" in testo))
+		except OSError as errore:
+			esiti.append(("solleva", type(errore).__name__))
+	prova("con la cartella che non c'e' aggiorna, save e firma rispondono senza cadere, e lo dicono",
+		  esiti == [(None, True), (False, True), (None, True)], esiti)
+
+	# 16. Un lucchetto vecchio che non si lascia togliere: si aspetta fino alla
+	#     scadenza, con le pause. Fino alla V8.9.0 il ciclo girava a vuoto per
+	#     sempre, su un core pieno.
+	import stat
+	import threading
+	lucchetto = copia + ".lock"
+	with open(lucchetto, "w") as f:
+		f.write("99999")
+	vecchio = time.time() - 120
+	os.utime(lucchetto, (vecchio, vecchio))
+	os.chmod(lucchetto, stat.S_IREAD)
+	paziente = GBUtils._Acusticator()
+	paziente.LUCCHETTO_ATTESA = 0.5
+	contati, esito = [0], []
+	vero_getmtime = os.path.getmtime
+	def conta_getmtime(percorso):
+		contati[0] += 1
+		return vero_getmtime(percorso)
+	os.path.getmtime = conta_getmtime
+	filo = threading.Thread(target=lambda: esito.append(zitto(paziente.save, "x", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)[0]),
+							daemon=True)
+	filo.start()
+	filo.join(5.0)
+	appeso = filo.is_alive()
+	os.chmod(lucchetto, stat.S_IWRITE)
+	filo.join(5.0)
+	os.path.getmtime = vero_getmtime
+	if os.path.exists(lucchetto):
+		os.remove(lucchetto)
+	prova("con un lucchetto vecchio in sola lettura save aspetta la scadenza e risponde di no, senza girare a vuoto",
+		  not appeso and esito == [False] and contati[0] < 100, (appeso, esito, contati[0]))
+
 prova("la collezione vera non e' stata toccata", impronta(VERA) == PRIMA)
 print(f"Prove {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)
