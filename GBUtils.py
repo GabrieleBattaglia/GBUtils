@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V278 di venerdì 13 novembre 2026
+	V279 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.9.13 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.16 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "278"
+VERSION = "279"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1547,13 +1547,24 @@ class _ContaBuchi:
 	9 millesimi dopo otto blocchi, fino a 4,5 dopo sedici. Cosi' si contano i
 	buchi da 12 millesimi in su. Conta anche il segnale di write, che su MME
 	dice quando la scheda e' rimasta a secco, e su WASAPI non scatta mai.
-	Un altro salto durante l'attesa la allunga: il riferimento resta il fondo
-	di prima del primo salto, e l'attesa ricomincia. Ma al piu' per TETTO
-	scritture, circa un secondo e mezzo: oltre, l'attesa si chiude e se ne
-	apre un'altra, cosi' una pompa lenta a lungo si conta mentre succede.
-	Quando la pompa si ferma un'attesa aperta si chiude con cio' che si sa:
-	un salto di meno di MINIMO_ALLA_FINE scritture prima non si e' potuto
-	misurare, perche' la coda non ha avuto il tempo di riempirsi, e non conta.
+	Un salto si dice misurato quando dopo di lui ci sono state tante scritture
+	quanti blocchi tiene la coda della scheda, piu' una: dopo una sosta che la
+	svuota, tante ne servono perche' si riempia di nuovo. La coda la dice chi
+	crea il conto, dalla latenza della scheda: su WASAPI due blocchi, sulle
+	schede lente in MME fino a sei. Un altro salto durante l'attesa la allunga
+	soltanto se il precedente non e' ancora misurato, e il riferimento resta
+	il fondo di prima del primo salto; altrimenti l'attesa si chiude con il
+	fondo misurato, e il salto nuovo ne apre un'altra. Cosi' due scritture
+	tardive di fila non fanno un buco, buchi vicini si contano uno per uno, e
+	su WASAPI, dove una scrittura su dieci torna tardi, un buco si conta entro
+	mezzo secondo. Un'attesa che si allunga dura al piu' TETTO scritture, circa
+	un secondo e mezzo: oltre si chiude e se ne apre un'altra, cosi' una pompa
+	lenta a lungo si conta mentre succede.
+	Quando la pompa si ferma un'attesa aperta si chiude con cio' che si sa. Se
+	l'ultimo salto non e' misurato, dal suo ritardo si toglie quanto la coda
+	poteva coprire, tutti i suoi blocchi meno uno: una scrittura tardiva subito
+	prima della fermata non conta, e una pompa lenta fino alla fermata conta
+	quasi tutto il suo silenzio.
 	Nasce con la V8.9.7, dalla revisione del 13 novembre 2026: fino alla
 	V8.9.4 il blocco appena consegnato si contava come suonato, quindi i buchi
 	sotto i 35 millesimi non si vedevano e ognuno perdeva un blocco, e il
@@ -1561,29 +1572,38 @@ class _ContaBuchi:
 	un salto durante l'attesa chiudeva la prima, misurata su una coda non
 	ancora riempita, e due scritture tardive di fila davano un buco anche se
 	la coda non si era mai vuotata; e la pompa che si fermava subito dopo un
-	sobbalzo lo contava come un buco.
+	sobbalzo lo contava come un buco. Nella V8.9.13 ogni salto allungava
+	l'attesa: su WASAPI restava aperta quasi sempre, un buco si contava fino a
+	due secondi dopo e buchi vicini diventavano uno solo; e un salto si diceva
+	misurato dopo quattro scritture, poche per una coda di sei blocchi.
 	"""
 
 	DERIVA = 2e-4
 	ASSESTAMENTO = 16
 	TETTO = 64
-	MINIMO_ALLA_FINE = 4
 
-	def __init__(self, fs, blocco):
+	def __init__(self, fs, blocco, coda=3):
 		self.fs = float(fs)
+		self.blocco = blocco
 		self.soglia = blocco / 2
+		# Quanti blocchi tiene la coda della scheda, e dopo quante scritture
+		# un salto e' misurato.
+		self.coda = max(1, int(coda))
+		self.misurato_dopo = self.coda + 1
 		self.partenza = None
 		self.prima = 0
 		self.fondo = 0.0
 		# Il fondo di prima del salto, quando si aspetta di sapere se e' un
-		# buco; None quando non si aspetta niente.
+		# buco; None quando non si aspetta niente. E quante scritture sono
+		# passate da quando l'attesa si e' aperta.
 		self.fondo_prima = None
-		# Il fondo di prima dell'ultimo salto dell'attesa, e quante scritture
-		# sono passate da quando si e' aperta.
-		self.fondo_ultimo = None
 		self.scritte_in_attesa = 0
 		self.da_assestare = 0
 		self.secco_visto = False
+
+	def _recente(self):
+		"""Vero quando l'ultimo salto dell'attesa non e' ancora misurato."""
+		return self.ASSESTAMENTO - self.da_assestare < self.misurato_dopo
 
 	def dopo_scrittura(self, ora, campioni, secco=False):
 		"""Da chiamare dopo ogni write, con perf_counter, i campioni scritti e
@@ -1597,14 +1617,17 @@ class _ContaBuchi:
 		if self.fondo_prima is not None:
 			self.scritte_in_attesa += 1
 			if ritardo - self.fondo > self.soglia:
-				if self.scritte_in_attesa < self.TETTO:
-					# Un altro salto mentre si aspettava: l'attesa si allunga,
-					# e il riferimento resta il fondo di prima del primo.
-					self.fondo_ultimo = self.fondo
+				if self._recente() and self.scritte_in_attesa < self.TETTO:
+					# Un altro salto prima che il precedente fosse misurato:
+					# l'attesa si allunga, e il riferimento resta il fondo di
+					# prima del primo.
 					self.fondo = ritardo
 					self.da_assestare = self.ASSESTAMENTO
 					self.secco_visto = self.secco_visto or bool(secco)
 				else:
+					# Il salto di prima e' misurato, o l'attesa e' al TETTO:
+					# si chiude con cio' che sa, e il salto nuovo ne apre
+					# un'altra.
 					buchi, silenzio = self.chiudi()
 					self._apri(ritardo, secco)
 			else:
@@ -1622,7 +1645,7 @@ class _ContaBuchi:
 		return buchi, silenzio
 
 	def _apri(self, ritardo, secco):
-		self.fondo_prima = self.fondo_ultimo = self.fondo
+		self.fondo_prima = self.fondo
 		self.fondo = ritardo
 		self.da_assestare = self.ASSESTAMENTO
 		self.scritte_in_attesa = 0
@@ -1631,14 +1654,14 @@ class _ContaBuchi:
 	def chiudi(self, alla_fine=False):
 		"""Chiude l'attesa in corso, se c'e': un buco se il fondo e' salito
 		davvero, o se write l'ha segnalato, e il silenzio di cui e' salito.
-		alla_fine vale vero quando la pompa si ferma: allora un salto troppo
-		recente per essere misurato non conta. Restituisce i buchi e i secondi
-		da aggiungere."""
+		alla_fine vale vero quando la pompa si ferma: allora da un salto non
+		ancora misurato si toglie quanto la coda poteva coprire. Restituisce i
+		buchi e i secondi da aggiungere."""
 		if self.fondo_prima is None:
 			return 0, 0.0
 		fondo = self.fondo
-		if alla_fine and self.da_assestare > self.ASSESTAMENTO - self.MINIMO_ALLA_FINE:
-			fondo = self.fondo_ultimo
+		if alla_fine and self._recente():
+			fondo = max(self.fondo_prima, self.fondo - (self.coda - 1) * self.blocco)
 		salto = fondo - self.fondo_prima
 		visto = self.secco_visto
 		self.fondo_prima, self.secco_visto = None, False
@@ -2055,7 +2078,8 @@ class _MixerCondiviso:
 		in silenzio_inserito. Dalla V8.9.7 il conto sta in _ContaBuchi, che
 		non conta come suonato il blocco appena consegnato, segue piano
 		l'orologio della scheda, e conta un buco solo quando il ritardo resta
-		in alto, non per una scrittura tornata tardi."""
+		in alto, non per una scrittura tornata tardi. Dalla V8.9.16 gli dice
+		anche quanti blocchi tiene la coda della scheda."""
 		import time
 
 		import numpy as np
@@ -2064,7 +2088,14 @@ class _MixerCondiviso:
 		silenzio = np.zeros((self._blocco, self._canali), dtype=np.float32)
 		ultimo_suono = self._orologio()
 		periodo = _alza_timer()
-		conta = _ContaBuchi(self._fs, self._blocco)
+		# La coda della scheda, in blocchi, si ricava dalla sua latenza: serve
+		# al conto per sapere quando un salto del ritardo e' misurato.
+		coda = 3
+		try:
+			coda = round(float(stream.latency) * self._fs / self._blocco)
+		except (AttributeError, TypeError, ValueError, OverflowError):
+			pass
+		conta = _ContaBuchi(self._fs, self._blocco, coda)
 		try:
 			while not self._ferma.is_set():
 				blocco = self._prepara_blocco()
@@ -5285,7 +5316,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.9.13 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.16 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
