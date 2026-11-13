@@ -1,11 +1,11 @@
-Manuale Utente: Acu_Maker (v1.13.0)
+Manuale Utente: Acu_Maker (v1.13.10)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
 - Selezionare un preset esistente (digitando il suo nome breve).
 - Creare un nuovo preset vuoto (opzione '+').
 - Cercare preset per parola chiave (opzione '/'). Le parole cercate (anche parziali e non in sequenza) verranno confrontate con i nomi e le descrizioni dei preset. Se c'è un solo risultato, viene selezionato in automatico; altrimenti verrà mostrato un menù filtrato.
-- Aprire un'altra collezione (opzione '!'), per esempio quella di un progetto come Terminal_Beast/sounds.json; Invio senza scrivere niente torna a quella condivisa. La si può aprire anche da subito, passandone il percorso: Acu_Maker.py ..\Terminal_Beast\sounds.json.
+- Aprire un'altra collezione (opzione '!'), per esempio quella di un progetto come Terminal_Beast/sounds.json; Invio senza scrivere niente torna a quella condivisa. La si può aprire anche da subito, passandone il percorso: Acu_Maker.py ..\Terminal_Beast\sounds.json. Una collezione che non esiste si crea, con la sua cartella; un file che non è una collezione di preset si rifiuta, e si resta su quella di prima.
 - Scegliere la scheda audio su cui suonare (opzione '*').
 - Ascoltare i preset uno dopo l'altro nel player (opzione '\'): vedi il capitolo dedicato.
 Scelto un preset, il menu delle azioni offre, oltre a caricarlo nell'editor e a eliminarlo, di rinominarlo, al suo posto nella collezione, e di cambiarne soltanto la descrizione senza entrare nell'editor. Rinominando un preset che un programma usa, l'app avverte e chiede conferma: i programmi lo chiamano per nome, e vanno cambiati anche loro.
@@ -26,7 +26,7 @@ Ogni preset è identificato da un NOME BREVE (univoco, max 50 caratteri, senza s
 
 Ogni riga di uno Score è formata da 4 parametri:
 1. Nota: Espressa in notazione anglosassone (es: c4, d#4), in Hz (es: 440), o "p" per indicare una pausa. Valgono anche il trattino come bemolle (e-4), le ottave a più cifre (c10) e i microtoni: la tilde alza di un quarto di tono (c~4) e l'accento grave lo abbassa (c`4), doppi per tre quarti. Dalla 1.11.0 le note le legge il motore, con le stesse regole per l'editor e per i programmi.
-   Può anche essere un "portamento" (scivolata) unendo due valori con un punto (es. c4.e4 oppure 440.880).
+   Può anche essere un "portamento" (scivolata) unendo due valori con un punto (es. c4.e4 oppure 440.880, che va da 440 a 880 Hz). Nel campo della nota, come in quello della banda, il punto separa sempre i due capi: le frequenze si scrivono in Hertz senza decimali.
    Con un KIND di rumore, da 5 a 8, questo campo non contiene la nota ma la banda del filtro: vedi il capitolo dedicato.
 2. Durata: Espressa in secondi (es: 0.5 per mezzo secondo).
 3. Panning: Espresso su una scala da -100 (100% sinistra) a +100 (100% destra), con 0 al centro.
@@ -107,7 +107,7 @@ Dalla versione 1.12.0 l'opzione '\' del menu principale apre un player semplific
 Dalla versione 1.13.0 le firme non stanno più in fondo alla descrizione, come "Usato da: meteora, mess.", ma in un campo loro del preset, usato_da: la lista delle app che lo usano, in minuscolo e in ordine, subito dopo la descrizione. La descrizione resta testo puro, e toccarla non può più rovinare le firme. Quando nessuna app usa un preset il campo non c'è. Il prefisso del nome, come mess_ o meteora_, non dice più niente: conta chi usa il preset, non chi l'ha creato. Con la migrazione del 12 novembre 2026 le firme sono passate dalle descrizioni al campo, e l'app del prefisso è entrata nell'usato_da dei suoi preset.
 Per Gabriele la lettura non cambia: il menu principale e la ricerca mostrano la descrizione con le firme ricomposte in coda, come prima.
 - Nella ricerca, una parola che comincia con la chiocciola, come @mess, vuole quell'app esatta fra le firme: non trova più messo cercando mess. Le altre parole si cercano nel nome, nella descrizione e fra le firme.
-- Scelto un preset, Acu_Maker dice quante e quali app lo usano, e il menu delle azioni ha la voce [f], le firme: si può aggiungere un'app, toglierne una, o cambiarne il nome soltanto lì. Le scritture sono sicure come i salvataggi.
+- Scelto un preset, Acu_Maker dice quante e quali app lo usano, e il menu delle azioni ha la voce [f], le firme: si può aggiungere un'app, toglierne una, o cambiarne il nome soltanto lì. Le scritture sono sicure come i salvataggi. Il punto, o Esc, o Invio senza scrivere il nome dell'app, tornano indietro.
 - Salvando con nome un preset nuovo le firme non si copiano: un preset appena nato non lo usa ancora nessuna app.
 - Sovrascrivendo o eliminando un preset usato, l'app dice quali app lo usano e chiede conferma: lo sentiranno cambiato, o resterebbero mute.
 - I programmi e gli script che firmano i preset lo fanno con i metodi di Acusticator: firma, togli_firma e cambia_firma, che scrivono sotto il lucchetto, e usato_da, usati_da e firme per leggere.
@@ -141,21 +141,21 @@ Dalla versione 1.10.0 l'editor suona passando dal motore, Acusticator.prepara, e
 ## Modifica Valori e Portamento
 - [c]            : Incrementa il valore del parametro selezionato.
 - [v]            : Decrementa il valore del parametro selezionato.
-- [Invio]        : Inserimento manuale del valore (da tastiera). Dalla 1.11.0 il valore si controlla prima di entrare nel preset: una nota deve essere un nome che il motore sa leggere, una frequenza in Hertz o p; dentro una scivolata le frequenze si scrivono senza decimali, perché il punto separa i due capi; una durata deve essere più di zero. Riscrivere il valore mostrato non cambia niente, nemmeno quando il file ne ha uno fuori dalla scala dell'editor.
+- [Invio]        : Inserimento manuale del valore (da tastiera). Dalla 1.11.0 il valore si controlla prima di entrare nel preset: una nota deve essere un nome che il motore sa leggere, una frequenza in Hertz senza decimali, due di questi uniti dal punto per una scivolata, o p; dalla 1.13.10 anche fuori da una scivolata il punto separa i due capi, e 440.880 non è più una nota ferma a 440,88 Hz; una durata deve essere più di zero. Riscrivere il valore mostrato non cambia niente, nemmeno quando il file ne ha uno fuori dalla scala dell'editor.
 - [w]            : Cicla il tipo di onda, da 1 a 8, rumori compresi. Passando fra le onde intonate e i rumori il primo campo si converte da solo: vedi il capitolo dedicato.
 - [W]            : Sceglie il tipo di onda diretto, da un menu.
 - [.]            : Aggiunge o toglie il Portamento alla nota o al panning selezionato. Su una banda la sdoppia in partenza e arrivo, o la richiude.
 - [1]            : Nel Portamento (nota o pan), focalizza e modifica solo il 1° valore.
 - [2]            : Nel Portamento (nota o pan), focalizza e modifica solo il 2° valore.
 - [3]            : Nel Portamento (nota o pan), focalizza e modifica entrambi i valori contemporaneamente.
-- [4], [5], [6], [7] : Solo sulla banda del rumore, scelgono gli altri valori. Vedi il capitolo sul rumore.
+- [4], [5], [6], [7] : Solo sulla banda del rumore, scelgono gli altri valori. Vedi il capitolo sul rumore. Lasciata la banda, il fuoco torna su tutti e due i capi.
 - [i]            : Inverte la direzione del Portamento corrente, banda compresa.
 - [4]            : Sulle note fa la stessa cosa di [i], e resta per abitudine.
 
 ## Impostazioni di Step e Default
-- [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato.
+- [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato. Dalla 1.13.10 rifiuta i passi che non si possono usare: sulla banda il passo è un rapporto e serve più di 1, altrove un numero più grande di zero. Dentro una scivolata di note in Hertz i capi restano interi, almeno un Hertz per passo.
         Nota: Se la nota è in notazione musicale, [c]/[v] spostano sempre di 1 semitono, se è "p" ignorano. Dalla 1.11.0 spostano anche i microtoni, le ottave da 10 in su e le note scritte col trattino, e si fermano a c0 e a d#10, dicendolo, invece di scrivere una nota che il motore leggerebbe in un altro modo.
-- [n] : Riporta il parametro attualmente selezionato al suo valore di default e reimposta il suo step a quello di partenza: per le quartine 10 Hz o un semitono per la nota, 0,02 secondi per la durata, 10 per pan e volume; per l'inviluppo 0,1.
+- [n] : Riporta il parametro attualmente selezionato al suo valore di default e reimposta il suo step a quello di partenza: per le quartine 10 Hz o un semitono per la nota, 0,02 secondi per la durata, 10 per pan e volume; per l'inviluppo 0,001 per attacco, decadimento e rilascio e 1 per il sustain.
 - [m] : Svuota completamente il preset attuale (previa conferma), riportandolo ai valori di default e a una singola nota c4.
 
 ## Struttura dello Score
@@ -173,7 +173,7 @@ Dalla versione 1.10.0 l'editor suona passando dal motore, Acusticator.prepara, e
           1. Sovrascrivere il preset attuale.
           2. Salvare con nome come nuovo preset.
           3. Uscire ignorando i cambiamenti.
-        Dalla 1.11.0 [Esc] in questo menu torna all'editor, con tutte le modifiche: si scartano soltanto scegliendo la terza voce.
+        Dalla 1.11.0 [Esc] in questo menu torna all'editor, con tutte le modifiche: si scartano soltanto scegliendo la terza voce. Dalla 1.13.10 si torna all'editor anche quando il salvataggio non avviene: un no alla conferma per un preset usato dalle app, un conflitto annullato, una collezione occupata. Fino alla 1.13.0 in quei casi l'editor si chiudeva e le modifiche si perdevano.
 
 Prima di chiedere, l'app guarda se in collezione esiste già un preset che suona esattamente uguale, cioè con lo stesso score, la stessa forma d'onda e lo stesso inviluppo. Se c'è, lo dice e non salva niente: sarebbe un doppione, e un nome diverso non basta a rendere diverso un suono identico.
 Dalla versione 1.8.0 la collezione si ripulisce anche da sola, all'avvio e all'uscita: se due o più preset suonano identici, cioè hanno lo stesso score, la stessa forma d'onda e lo stesso inviluppo, ne resta uno solo, quello con la descrizione più lunga, e a parità di descrizione il primo della collezione. Per ogni preset tolto una riga dice quale era e quale resta al suo posto. Dalla 1.11.0 però un preset che un programma usa non sparisce mai da solo, perché i programmi lo chiamano per nome e resterebbero muti: se fra i suoni identici uno solo è usato, resta lui; se lo sono due o più, restano tutti, e una riga lo dice. I suoni diversi invece restano tutti, anche quelli che oggi nessun programma usa: la collezione serve tutto il parco software, e più è ricca e ben descritta, più è facile trovarci ciò che serve.

@@ -88,6 +88,16 @@ def editor(preset, sequenza, scritti=()):
 	return stato
 
 PRIMA = impronta(VERA)
+# Nessuna scrittura sul percorso vero: dalla revisione del 13 novembre 2026,
+# come in banco_firme e banco_salvataggio_collezione. Prima il ritorno alla
+# collezione condivisa poteva riscriverla, togliendo un doppione.
+scrivi_vero = GBUtils._Acusticator._scrivi_atomico
+def scrivi_sorvegliato(self, percorso, dati):
+	if os.path.normcase(os.path.abspath(percorso)) == os.path.normcase(VERA):
+		raise RuntimeError("il banco ha tentato di scrivere la collezione vera")
+	return scrivi_vero(self, percorso, dati)
+GBUtils._Acusticator._scrivi_atomico = scrivi_sorvegliato
+DB_VERO = am.DB_FILE
 motore = MotoreFinto()
 am.Acusticator = motore
 print("Banco di Acu_Maker che segue il motore. Nessun suono, la collezione vera non si tocca.")
@@ -144,6 +154,8 @@ prova("conta usato_da: resta il preset firmato, anche senza il prefisso", list(d
 with tempfile.TemporaryDirectory() as cartella:
 	copia = os.path.join(cartella, "Acu_Collection.json")
 	shutil.copyfile(VERA, copia)
+	# La collezione condivisa, per Acu_Maker, e' la copia.
+	am.DB_FILE = copia
 	coll = am.Collezione(copia)
 	zitto(coll.apri)
 	lungo = max(coll.dati, key=lambda n: len(str(coll.dati[n].get("descrizione", ""))))
@@ -197,6 +209,70 @@ with tempfile.TemporaryDirectory() as cartella:
 	zitto(am.apri_collezione, coll)
 	prova("e con Invio si torna a quella condivisa", coll.percorso == am.DB_FILE)
 
+	# Dalla revisione del 13 novembre 2026, Acu_Maker 1.13.10.
+	# 1. Il salvataggio che non avviene torna all'editor.
+	usato = next(n for n in coll.dati if am.app_che_usano(coll.dati, n))
+	stato = am.EditorState(coll.dati[usato])
+	stato.preset["score"][0][1] = round(float(stato.preset["score"][0][1]) + 0.017, 3)
+	stato.modified = True
+	am.menu = lambda *argomenti, **chiavi: "1"
+	am.input = lambda prompt="": "n"
+	prima_del_no = impronta(copia)
+	esito, testo = zitto(am.salva_preset, coll, usato, stato, False)
+	prova("un no alla sovrascrittura di un preset usato torna all'editor, senza scrivere",
+		  esito == "torna" and impronta(copia) == prima_del_no and "Le modifiche restano" in testo, (esito, testo[-120:]))
+	def cambia_fuori(dati):
+		dati[usato]["descrizione"] = "cambiata da un'altra sessione"
+	zitto(Acusticator.aggiorna, cambia_fuori, copia)
+	zitto(coll.ricarica)
+	stato.preset["descrizione"] = "cambiata nell'editor"
+	am.input = lambda prompt="": "s"
+	am.chiedi_conflitto_vero = am.chiedi_conflitto
+	am.chiedi_conflitto = lambda conflitti: None
+	esito, _ = zitto(am.salva_preset, coll, usato, stato, False)
+	prova("anche un conflitto annullato torna all'editor", esito == "torna" and leggi(copia)[usato]["descrizione"] == "cambiata da un'altra sessione")
+	zitto(coll.elimina, usato)
+	am.chiedi_conflitto = lambda conflitti: "disco"
+	esito, testo = zitto(am.salva_preset, coll, usato, stato, False)
+	prova("lasciare tolto un preset tolto da un altro esce, senza tornare all'editor", esito is None and "resta tolto" in testo and usato not in leggi(copia),
+		  (esito, testo[-120:]))
+	am.chiedi_conflitto = am.chiedi_conflitto_vero
+	giri = []
+	stato_vero = am.modifica
+	am.modifica = lambda st: giri.append(1)
+	risposte = iter(["1", "3"])
+	am.menu = lambda *argomenti, **chiavi: next(risposte)
+	am.input = lambda prompt="": "n"
+	altro = next(n for n in coll.dati if am.app_che_usano(coll.dati, n))
+	vero_editor_state = am.EditorState
+	def stato_cambiato(preset):
+		nuovo = vero_editor_state(preset)
+		nuovo.preset["score"][0][1] = round(float(nuovo.preset["score"][0][1]) + 0.019, 3)
+		nuovo.modified = True
+		return nuovo
+	am.EditorState = stato_cambiato
+	zitto(am.edit_mode, coll, altro)
+	am.EditorState = vero_editor_state
+	am.modifica = stato_vero
+	prova("e l'editor riparte davvero, finche' non si sceglie Esci senza salvare", len(giri) == 2, len(giri))
+	am.menu = GBUtils_menu
+
+	# 3 e 4. Una collezione nuova in una cartella che non c'e', e un JSON che
+	#        non e' una collezione.
+	nuova = os.path.join(cartella, "progetto_nuovo", "suoni.json")
+	risposte = iter([nuova, "s"])
+	am.input = lambda prompt="": next(risposte)
+	zitto(am.apri_collezione, coll)
+	prova("una collezione nuova si crea, con la sua cartella", coll.percorso == nuova and os.path.exists(nuova), coll.percorso)
+	impostazioni = os.path.join(cartella, "impostazioni.json")
+	with open(impostazioni, "w", encoding="utf-8") as f:
+		json.dump({"lingua": "it", "volume": 5}, f)
+	am.input = lambda prompt="": impostazioni
+	esito, testo = zitto(am.apri_collezione, coll)
+	prova("un JSON che non e' una collezione si rifiuta, e si resta su quella di prima",
+		  coll.percorso == nuova and "non e' una collezione" in testo, (coll.percorso, testo[-120:]))
+	am.DB_FILE = DB_VERO
+
 # Perdita 9 e le note del motore.
 prova("c0 in giu' si ferma invece di scrivere b-1", am.transpose_note("c0", -1) is None)
 prova("g#9 in su va avanti invece di tornare a g9", am.transpose_note("g#9", 1) == "a9", am.transpose_note("g#9", 1))
@@ -233,8 +309,27 @@ prova("t lo spegne, e k zittisce", motore.fermati >= fermati + 4)
 # Le scomodita': Invio controllato, il valore riconfermato non cambia, j sui
 # rumori, i separatori grafici.
 prova("h4 non e' una nota", am.nota_scritta("h4") is None and am.nota_scritta("c4") == "c4")
-prova("un numero e' una frequenza, anche con i decimali", am.nota_scritta("440.5") == 440.5)
+# Dalla 1.13.10, scelta di Gabriele del 13 novembre 2026: nel campo della nota
+# il punto separa sempre i capi, e gli Hertz non hanno decimali.
+prova("440.880 e' una scivolata da 440 a 880, come per il motore", am.nota_scritta("440.880") == "440.880")
+prova("e 440 una frequenza intera", am.nota_scritta("440") == 440 and am.nota_scritta("0") is None)
 prova("dentro una scivolata un decimale non e' un capo", not am.capo_valido("440.5") and am.capo_valido("440") and am.capo_valido("c#4"))
+stato = editor({"descrizione": "x", "score": [[261.63, 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, [".", "esc"])
+prova("il punto su una frequenza con i decimali la arrotonda all'Hertz", stato.preset["score"][0][0] == "262.262", stato.preset["score"][0][0])
+stato = editor({"descrizione": "x", "score": [["440.880", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["b", "c", "esc"], ["0.5"])
+prova("dentro una scivolata in Hertz i capi restano interi, anche con un passo decimale", stato.preset["score"][0][0] == "441.881",
+	  stato.preset["score"][0][0])
+# 5. Il passo che non si puo' usare si rifiuta.
+stato = editor({"descrizione": "x", "score": [["200-3000", 0.2, 0, 0.0]], "kind": 6, "adsr": [1, 0, 100, 1]}, ["b", "v", "esc"], ["0"])
+prova("un passo di banda a zero si rifiuta, e v funziona ancora", stato.steps["banda"] == am.PASSO_BANDA and stato.preset["score"][0][0] != "200-3000",
+	  stato.preset["score"][0][0])
+# 6. Il fuoco da 4 a 7 torna a 3 lasciata la banda.
+stato = editor({"descrizione": "x", "score": [["200-3000.400-2000", 0.2, [-1.0, 1.0], 0.0]], "kind": 6, "adsr": [1, 0, 100, 1]},
+			   ["5", "x", "x", "c", "esc"])
+prova("dopo il 5 sulla banda, c sul pan che scorre muove tutti e due i capi", stato.preset["score"][0][2] == [-0.9, 1.0], stato.preset["score"][0][2])
+# 7. n riporta i passi di partenza.
+stato = editor({"descrizione": "x", "score": [["c4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["a", "b", "n", "esc"], ["5"])
+prova("n sull'attacco riporta il passo a 0,001, quello di partenza", stato.steps["a"] == 0.001, stato.steps["a"])
 stato = editor({"descrizione": "x", "score": [["c4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["enter", "esc"], ["h4"])
 prova("Invio rifiuta h4", stato.preset["score"][0][0] == "c4" and not stato.modified)
 stato = editor({"descrizione": "x", "score": [["c4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["x", "enter", "esc"], ["-1"])
@@ -246,6 +341,11 @@ prova("j su un rumore inserisce una banda", stato.preset["score"][1][0] == am.BA
 with open(os.path.join(QUI, "Acu_Maker.py"), encoding="utf-8") as f:
 	sorgente = f.read()
 prova("nei testi di Acu_Maker non ci sono piu' righe di trattini", '"---' not in sorgente and "--- " not in sorgente and '"->"' not in sorgente)
+# 8. I prompt nuovi stanno fra due ritorni carrello.
+prompt = ['"\\rLo sovrascrivo? (s/n)\\r"', '"\\rLo rinomino lo stesso? (s/n)\\r"', 'f"\\rNome nuovo per {nome}\\r"',
+		  'non esiste. La creo? (s/n)\\r"', 'f"\\rNome breve [{preset_name}]\\r"', 'f"\\rDescrizione [{desc}]\\r"']
+mancano = [p for p in prompt if p not in sorgente]
+prova("i prompt nuovi di Acu_Maker stanno fra due ritorni carrello", mancano == [], mancano)
 
 am.Acusticator = Acusticator
 prova("la collezione vera non e' stata toccata", impronta(VERA) == PRIMA)

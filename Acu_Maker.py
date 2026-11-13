@@ -21,10 +21,10 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.13.0" # Le firme nel campo usato_da, issue 60
+VERSION = "1.13.10" # Dieci correzioni dalla revisione del 13 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
-RELEASE_DATE = "12 novembre 2026"
+RELEASE_DATE = "13 novembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -393,6 +393,10 @@ def get_keypress():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
+# I passi con cui l'editor parte, e a cui il tasto n li riporta.
+PASSI_DI_PARTENZA = {'banda': PASSO_BANDA, 'note': 10.0, 'dur': 0.02, 'pan': 10, 'vol': 10,
+					 'a': 0.001, 'd': 0.001, 's': 1.0, 'r': 0.001}
+
 # Quanto puo' essere lunga una descrizione scritta nell'editor: la piu' lunga
 # della collezione, il 23 ottobre 2026, passava i mille caratteri.
 LUNGHEZZA_DESCRIZIONE = 5000
@@ -448,6 +452,13 @@ class Collezione:
 		dati = Acusticator.aggiorna(lambda _dati: False, self.percorso)
 		if dati is None:
 			print("La collezione non si lascia leggere adesso: forse e' a meta' di un salvataggio, o ha un conflitto di git.")
+			return False
+		# Un JSON che non e' una collezione, per esempio un file di
+		# impostazioni aperto per sbaglio, si rifiuta: fino alla 1.13.0 i
+		# doppioni lo leggevano come preset, e Acu_Maker cadeva.
+		storti = [n for n, v in dati.items() if not isinstance(v, dict)]
+		if storti:
+			print(f"Questo file non e' una collezione di preset: {storti[0]} non e' un preset.")
 			return False
 		self.dati = copia(dati)
 		self.impronta = self._impronta_file()
@@ -531,7 +542,10 @@ class Collezione:
 		subito. Un campo cambiato da tutte e due le parti, o il preset tolto da
 		un altro programma, si chiede con chiedi(conflitti), che risponde mio,
 		disco oppure None per annullare; il lucchetto non si tiene mai mentre
-		si aspetta la risposta. Restituisce vero se ha scritto."""
+		si aspetta la risposta. Restituisce True se ha scritto, o se non c'era
+		niente da scrivere; "lasciato" se il preset era stato tolto e si e'
+		scelto di lasciarlo tolto; False se non ha scritto, per un annullamento
+		o una collezione occupata o illeggibile."""
 		scelta = None
 		for _ in range(5):
 			esito = {}
@@ -558,7 +572,7 @@ class Collezione:
 			if not self.scrivi(fondi_qui):
 				return False
 			if "accettato" in esito:
-				return False
+				return "lasciato"
 			if "conflitti" not in esito:
 				return True
 			scelta = chiedi(esito["conflitti"])
@@ -614,9 +628,9 @@ def rinomina(coll, nome):
 	app = app_che_usano(coll.dati, nome)
 	if app:
 		print(f"Attenzione: lo usano {', '.join(app)}, che lo chiamano per nome. Dopo la rinomina vanno cambiate anche loro.")
-		if input("Lo rinomino lo stesso? (s/n): ").strip().lower() != "s":
+		if input("\rLo rinomino lo stesso? (s/n)\r").strip().lower() != "s":
 			return False
-	nuovo = dgt(f"Nome nuovo per {nome}: ", kind="s", smax=50,
+	nuovo = dgt(f"\rNome nuovo per {nome}\r", kind="s", smax=50,
 				avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
 	nuovo = nuovo.strip().replace(" ", "")
 	if not nuovo or nuovo == nome:
@@ -695,12 +709,25 @@ def apri_collezione(coll):
 	1.10.0 Acu_Maker apriva soltanto quella condivisa (issue 59)."""
 	scritto = input("\rPercorso della collezione, Invio per quella condivisa\r").strip().strip('"')
 	percorso = os.path.abspath(scritto) if scritto else DB_FILE
-	if not os.path.exists(percorso) and input(f"{percorso} non esiste. La creo? (s/n): ").strip().lower() != "s":
-		return
+	if not os.path.exists(percorso):
+		if input(f"\r{percorso} non esiste. La creo? (s/n)\r").strip().lower() != "s":
+			return
+		# Chi ha chiesto di crearla vuole anche la sua cartella: fino alla
+		# 1.13.0 una cartella che mancava faceva cadere Acu_Maker.
+		try:
+			os.makedirs(os.path.dirname(percorso), exist_ok=True)
+		except OSError as errore:
+			print(f"Non riesco a creare la cartella: {errore}")
+			return
+	# Se la collezione nuova non si apre si resta su quella di prima.
+	prima = (coll.percorso, coll.dati, coll.impronta)
 	coll.percorso = percorso
 	coll.dati, coll.impronta = {}, None
 	if coll.apri():
 		print(f"Collezione {percorso}, {len(coll.dati)} preset.")
+		return
+	coll.percorso, coll.dati, coll.impronta = prima
+	print(f"Resto sulla collezione {coll.percorso}.")
 
 
 def gestisci_firme(coll, nome):
@@ -710,16 +737,21 @@ def gestisci_firme(coll, nome):
 	while True:
 		firme = app_che_usano(coll.dati, nome)
 		print(f"Lo usano: {', '.join(firme)}." if firme else "Nessuna app lo usa.")
-		voci = {"a": "Aggiungi un'app"}
+		# Il punto torna indietro, e c'e' sempre: con una voce sola menu la
+		# restituirebbe subito, senza leggere un tasto, e fino alla 1.13.0 su
+		# un preset senza firme si chiedeva l'app all'infinito.
+		voci = {"a": "Aggiungi un'app", ".": "Torna"}
 		if firme:
 			voci.update({"t": "Togli un'app", "c": "Cambia il nome di un'app, soltanto qui"})
 		scelta = menu(voci, p="Firme> ", show=True)
-		if scelta is None:
+		if scelta in (None, "."):
 			return
 		try:
 			if scelta == "a":
-				app = input("\rApp che lo usa\r").strip().lower()
-				esito = Acusticator.firma(nome, app, percorso=coll.percorso) if app else 0
+				app = input("\rApp che lo usa, Invio per tornare\r").strip().lower()
+				if not app:
+					return
+				esito = Acusticator.firma(nome, app, percorso=coll.percorso)
 			elif scelta == "t":
 				app = menu({a: "" for a in firme}, p="Togli> ", show=True) if len(firme) > 1 else firme[0]
 				esito = Acusticator.togli_firma(nome, app, percorso=coll.percorso) if app else 0
@@ -1039,17 +1071,7 @@ class EditorState:
         self.focus_param = 0
         self.port_focus = 3
         
-        self.steps = {
-            'banda': PASSO_BANDA,
-            'note': 10.0,
-            'dur': 0.02,
-            'pan': 10,
-            'vol': 10,
-            'a': 0.001,
-            'd': 0.001,
-            's': 1.0,
-            'r': 0.001
-        }
+        self.steps = dict(PASSI_DI_PARTENZA)
         self.modified = False
         self.running = True
         # La posizione d'ascolto: lo spostamento generale di panorama con cui
@@ -1306,8 +1328,8 @@ def ascolto_breve(state):
 	"""Il volume d'ascolto come codice corto per la riga di stato."""
 	return "" if state.base_ascolto is None else f" o{round(state.base_ascolto * 100)}"
 
-AVVISO_NOTA = ("Nota non valida: un nome come c4, f#3, e-4 o c~4, una frequenza in Hz, "
-			   "oppure p per la pausa.")
+AVVISO_NOTA = ("Nota non valida: un nome come c4, f#3, e-4 o c~4, una frequenza in Hz senza decimali, "
+			   "due di questi uniti dal punto per una scivolata, oppure p per la pausa.")
 AVVISO_CAPO = ("Capo non valido: un nome come c4 o f#3, una frequenza in Hz senza decimali, "
 			   "perche' il punto separa i due capi, oppure p.")
 
@@ -1320,20 +1342,20 @@ def capo_valido(testo):
 def nota_scritta(testo):
 	"""Cio' che si scrive per una nota digitata con Invio, o None se non va.
 
-	Un numero e' una frequenza in Hz, anche con i decimali; un nome lo deve
-	saper leggere scomponi_nota; due capi uniti dal punto sono una scivolata,
-	e ognuno deve andar bene da se'."""
+	Come per il motore, e come nel campo della banda, il punto separa sempre i
+	due capi di una scivolata, e ognuno deve andar bene da se': 440.880 va da
+	440 a 880 Hz. Una frequenza si scrive quindi in Hz senza decimali. Un nome
+	lo deve saper leggere scomponi_nota. Fino alla 1.13.0 un numero con il
+	punto era un decimale, e 440.880, l'esempio di scivolata del manuale,
+	diventava una nota ferma a 440,88 Hz (scelta di Gabriele del 13 novembre
+	2026)."""
 	if testo == 'p':
 		return 'p'
-	try:
-		numero = float(testo)
-	except ValueError:
-		numero = None
-	if numero is not None:
-		return numero if math.isfinite(numero) and numero > 0 else None
 	if '.' in testo:
 		parti = testo.split('.')
 		return testo if len(parti) == 2 and all(capo_valido(p) for p in parti) else None
+	if testo.isdigit():
+		return int(testo) if int(testo) > 0 else None
 	return testo if scomponi_nota(testo) is not None else None
 
 
@@ -1368,18 +1390,19 @@ def riconferma(state, scritto):
 
 def transpose_single(val_str, direction, step):
     """Un capo della scivolata spostato di un passo: i nomi di un semitono,
-    gli Hertz di step. None se non si puo' muovere, vedi transpose_note."""
+    gli Hertz di step. None se non si puo' muovere, vedi transpose_note.
+    Gli Hertz restano interi, almeno un Hertz per passo: dentro una scivolata
+    il punto separa i capi, e un decimale come 440.5 ne farebbe tre. Fino alla
+    1.13.0 un passo decimale scriveva 440.5.880, che il motore salta."""
     if val_str.lower() == 'p': return 'p'
     try:
         fval = float(val_str)
     except ValueError:
         return transpose_note(val_str, direction)
-    nuovo = fval + direction * step
+    nuovo = round(fval) + direction * max(1, round(abs(step)))
     if nuovo < 1:
         return None
-    if fval.is_integer() and float(step).is_integer():
-        return str(int(nuovo))
-    return str(round(nuovo, 2))
+    return str(nuovo)
 
 def inc_dec_value(state, direction):
     """Muove il valore corrente di un passo.
@@ -1508,6 +1531,13 @@ def edit_mode(coll, preset_name, nuovo=None):
 def modifica(state):
     """Il giro dei tasti dell'editor, finche' non si esce con Esc."""
     while state.running:
+        # Le scelte da 4 a 7 valgono soltanto sulla banda di un rumore: lasciata
+        # la banda, il fuoco torna su tutti e due i capi. Fino alla 1.13.0
+        # restava a 4-7, e su pan e volume c, v e Invio non facevano niente.
+        sulla_banda = (state.focus_type == 'score' and state.focus_param == 0
+                       and is_rumore(state.preset.get('kind', 1)))
+        if state.port_focus > 3 and not sulla_banda:
+            state.port_focus = 3
         key = get_keypress()
 
         if key == 'space':
@@ -1699,7 +1729,10 @@ def modifica(state):
                         state.preset['score'][state.focus_idx][3] = user_to_vol(new_val_str)
                 else:
                     if param_idx == 0:
-                        if isinstance(val, float) and val.is_integer(): val = int(val)
+                        # Una frequenza con i decimali si arrotonda all'Hertz:
+                        # sdoppiata cosi' com'era, 261.63.261.63, il motore la
+                        # saltava (dalla 1.13.10).
+                        if isinstance(val, float): val = round(val)
                         state.preset['score'][state.focus_idx][0] = f"{val}.{val}"
                     elif param_idx == 2:
                         u_val = pan_to_user(val)
@@ -1793,7 +1826,17 @@ def modifica(state):
             val = input(f"\nInserisci nuovo step per {param_name} (attuale: {state.steps[param_key]}): ")
             if val.strip():
                 try:
-                    state.steps[param_key] = float(val)
+                    passo = float(val)
+                    # Dalla 1.13.10 un passo che non si puo' usare si rifiuta:
+                    # sulla banda e' un rapporto, e serve piu' di 1; altrove un
+                    # numero piu' grande di zero. Fino alla 1.13.0 un passo di
+                    # banda a zero faceva cadere l'editor al primo v.
+                    minimo = 1.0 if param_key == 'banda' else 0.0
+                    if not math.isfinite(passo) or passo <= minimo:
+                        print("Sulla banda il passo e' un rapporto, e serve piu' di 1." if param_key == 'banda'
+                              else "Il passo deve essere piu' grande di zero.")
+                    else:
+                        state.steps[param_key] = passo
                 except ValueError:
                     print("Valore non valido.")
             handle_print(state, force_newline=True)
@@ -1803,14 +1846,15 @@ def modifica(state):
                 param_key = ['banda' if rumore else 'note',
                              'dur', 'pan', 'vol'][state.focus_param]
                 defaults = [BANDA_DEFAULT if rumore else 'c4', 0.5, 0.0, 0.0]
-                default_steps = [PASSO_BANDA if rumore else 10.0, 0.02, 10, 10]
                 state.preset['score'][state.focus_idx][state.focus_param] = defaults[state.focus_param]
-                state.steps[param_key] = default_steps[state.focus_param]
             else:
                 param_key = ['a', 'd', 's', 'r'][state.focus_param]
                 defaults = [0.002, 0.0, 100.0, 0.002]
                 state.preset['adsr'][state.focus_param] = defaults[state.focus_param]
-                state.steps[param_key] = 0.1
+            # Il passo torna quello di partenza dell'editor, lo stesso per tutti:
+            # fino alla 1.13.0 sull'inviluppo diventava 0,1, cento volte quello
+            # di partenza dell'attacco.
+            state.steps[param_key] = PASSI_DI_PARTENZA[param_key]
             state.modified = True
             
         elif key == 'm':
@@ -2009,16 +2053,24 @@ def chiedi_conflitto(conflitti):
 
 def sovrascrivi_con_avviso(coll, preset_name, state):
 	"""Sovrascrive il preset, chiedendo conferma quando lo usano delle app:
-	lo sentiranno cambiato anche loro. Dalla 1.13.0, issue 60."""
+	lo sentiranno cambiato anche loro. Dalla 1.13.0, issue 60.
+	Restituisce True se ha scritto, "lasciato" se si e' scelto di lasciar tolto
+	un preset che un altro programma aveva tolto, False se non ha scritto per
+	un no, un annullamento o una collezione occupata: allora si torna
+	all'editor con le modifiche."""
 	app = app_che_usano(coll.dati, preset_name) if preset_name in coll.dati else []
 	if app:
 		print(f"Lo usano {len(app)} app, {', '.join(app)}: cambiandolo, cambia anche per loro.")
-		if input("Lo sovrascrivo? (s/n): ").strip().lower() != "s":
+		if input("\rLo sovrascrivo? (s/n)\r").strip().lower() != "s":
 			print("Preset non sovrascritto.")
 			return False
-	if coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto):
+	esito = coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto)
+	if esito is True:
 		print(f"Preset '{preset_name}' aggiornato.")
 		return True
+	if esito == "lasciato":
+		print(f"Il preset '{preset_name}' resta tolto, e le modifiche non si salvano.")
+		return "lasciato"
 	print("Preset non sovrascritto.")
 	return False
 
@@ -2029,7 +2081,12 @@ def salva_preset(coll, preset_name, state, nuovo):
 	Dalla 1.9.0 ogni scelta scrive il disco di adesso attraverso la
 	collezione, vedi Collezione: Sovrascrivi fonde le proprie modifiche con
 	quelle arrivate nel frattempo, Salva come sceglie il nome libero sul disco,
-	e il preset nuovo del tasto piu' arriva sul disco soltanto qui."""
+	e il preset nuovo del tasto piu' arriva sul disco soltanto qui.
+	Restituisce "torna" quando si deve tornare all'editor con le modifiche:
+	con Esc, e dalla 1.13.10 anche quando la scrittura non avviene, per un no
+	alla conferma, un annullamento o una collezione occupata. Fino alla
+	1.13.0 in quei casi l'editor si chiudeva e le modifiche si perdevano.
+	Le modifiche si scartano soltanto con Esci senza salvare."""
 	if not state.modified:
 		# Un preset nuovo lasciato com'era non entra nella collezione.
 		return
@@ -2052,23 +2109,22 @@ def salva_preset(coll, preset_name, state, nuovo):
 		# scarta soltanto scegliendolo.
 		return "torna"
 	if scelta == "1" and not nuovo:
-		sovrascrivi_con_avviso(coll, preset_name, state)
+		return torna_se_non_scritto(sovrascrivi_con_avviso(coll, preset_name, state))
 	elif scelta in ("1", "2"):
 		# Il nome che il preset ha gia' e' li' pronto: invio lo accetta.
-		new_name = dgt(f"Nome breve [{preset_name}]: ", kind="s", smax=50, default=preset_name,
+		new_name = dgt(f"\rNome breve [{preset_name}]\r", kind="s", smax=50, default=preset_name,
 					   avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
 		new_name = new_name.strip().replace(" ", "")[:50] or preset_name
 		desc = state.preset.get('descrizione', '')
 		# Con smax alto: dgt taglia a smax il predefinito, e fino alla 1.10.0
 		# riconfermare con Invio una descrizione lunga la mozzava a 256
 		# caratteri, firme Usato da comprese (issue 59).
-		new_desc = dgt(f"Descrizione [{desc}]: ", kind="s", smax=LUNGHEZZA_DESCRIZIONE, default=desc,
+		new_desc = dgt(f"\rDescrizione [{desc}]\r", kind="s", smax=LUNGHEZZA_DESCRIZIONE, default=desc,
 					   avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
 		state.preset['descrizione'] = new_desc
 		if not nuovo and new_name == preset_name:
 			# Lo stesso nome di un preset che c'e': e' una sovrascrittura.
-			sovrascrivi_con_avviso(coll, preset_name, state)
-			return
+			return torna_se_non_scritto(sovrascrivi_con_avviso(coll, preset_name, state))
 		# Un preset nuovo non lo usa ancora nessuna app: le firme non si
 		# copiano. Fino alla 1.12.0 Salva come portava con se' la firma.
 		da_salvare = copia(state.preset)
@@ -2076,10 +2132,22 @@ def salva_preset(coll, preset_name, state, nuovo):
 		usato = coll.salva_nuovo(new_name, da_salvare)
 		if usato:
 			print(f"Salvato come preset: '{usato}'.")
-		else:
-			print("Preset non salvato.")
+			return None
+		print("Preset non salvato.")
+		return torna_se_non_scritto(False)
 	else:
 		print("Modifiche ignorate.")
+	return None
+
+
+def torna_se_non_scritto(esito):
+	"""Dall'esito di una scrittura, cio' che salva_preset restituisce: niente
+	se ha scritto o se si e' scelto di lasciar tolto il preset, "torna" se non
+	ha scritto, e lo dice."""
+	if esito is True or esito == "lasciato":
+		return None
+	print("Le modifiche restano: si scartano soltanto con Esci senza salvare.")
+	return "torna"
 
 def _num(valore, decimali=1):
     """Un numero scritto all'italiana, con la virgola al posto del punto."""

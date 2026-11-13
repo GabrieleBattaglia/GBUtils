@@ -227,6 +227,26 @@ with tempfile.TemporaryDirectory() as cartella:
 	scelte = ["t", None]
 	zitto(am.gestisci_firme, coll, senza)
 	prova("e la si toglie", "usato_da" not in leggi(copia)[senza])
+	# Dalla revisione del 13 novembre 2026: il menu delle firme si chiude anche
+	# su un preset senza firme. Il menu finto qui sotto si comporta come quello
+	# vero con una voce sola, che la restituisce senza leggere tasti; fino alla
+	# 1.13.0 la voce era una sola, e Invio a vuoto ricominciava all'infinito.
+	voci_viste, chiamate = [], [0]
+	def menu_come_il_vero(voci, *argomenti, **chiavi):
+		chiamate[0] += 1
+		voci_viste.append(sorted(voci))
+		if chiamate[0] > 3:
+			raise RuntimeError("il menu delle firme non si chiude")
+		return next(iter(voci)) if len(voci) == 1 else "a"
+	am.menu = menu_come_il_vero
+	am.input = lambda prompt="": ""
+	try:
+		zitto(am.gestisci_firme, coll, senza)
+		chiuso = True
+	except RuntimeError:
+		chiuso = False
+	prova("su un preset senza firme il menu ha sempre almeno due voci, e Invio a vuoto torna indietro",
+		  chiuso and chiamate[0] == 1 and "." in voci_viste[0], (chiuso, chiamate[0], voci_viste))
 	am.menu = GBUtils.menu
 	_, testo = zitto(am.statistiche, coll.dati)
 	prova("le statistiche contano anche le app", "Usati dalle app:" in testo and app_piu in testo, testo[-200:])
