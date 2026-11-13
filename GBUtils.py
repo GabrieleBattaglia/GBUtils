@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V280 di venerdì 13 novembre 2026
+	V281 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.18 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
@@ -27,7 +27,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
-	menu V5.2.3 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+	menu V5.2.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "280"
+VERSION = "281"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6746,7 +6746,7 @@ def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
 	return True
 
 def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None, intestazione=""):
-    """V5.2.3 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V5.2.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -6824,7 +6824,10 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     prima che sceglie una voce, cominciando dalla ricopiatura. Cosi' con
     mamma e mammut, m e il completamento danno mamm, e a con Invio sceglie
     mamma; e chi scrive per intero 10, fra 10, 100 e 1000, con Invio riceve
-    10. E Invio senza aver
+    10. Dalla V5.2.4, con Invio, una lettura nata tasti prima, che lo schermo
+    non mostra, sceglie soltanto se e' una chiave intera, e non piu' con il
+    suo prefisso: cosi' Invio su un prefisso ambiguo sceglie quello che
+    sceglieva nella V5.2.2. E Invio senza aver
     digitato niente restituisce sempre empty_enter: fino alla V5.2.0, quando
     tutte le voci avevano un inizio comune, il completamento lo scriveva
     prima del primo tasto, e Invio sceglieva una voce, o non faceva niente.
@@ -6931,6 +6934,9 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         Mostra(orig_keys, pager, numbered, num_map)
         last_displayed = orig_keys[:]
     disable_autocomplete_once = False
+    # Per ogni lettura, quella da cui e' nata all'ultimo tasto: le sorelle
+    # della preferita hanno la sua stessa madre.
+    madri = [0]
     # Vero quando l'ultima cosa stampata e' rimasta a meta' riga, cioe' il
     # prompt o il carattere appena digitato. Serve per andare a capo solo
     # quando c'e' davvero una riga da chiudere: prima si andava a capo sempre,
@@ -6973,8 +6979,14 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             if digitate == 0:
                 return empty_enter
             # Con due letture aperte vince la prima che sceglie una voce,
-            # cominciando dalla ricopiatura.
-            for testo, _ in letture:
+            # cominciando dalla ricopiatura. Una lettura che non e' sorella
+            # della preferita conta soltanto se e' una chiave intera: nella
+            # V5.2.3 il suo prefisso, che lo schermo non aveva mai mostrato,
+            # sceglieva la sua unica voce, e in Acu_Maker orologic_ e Invio
+            # davano orologic_carriera_azzerata.
+            for indice, (testo, _) in enumerate(letture):
+                if madri[indice] != madri[0] and not any(k.lower() == testo.lower() for k in orig_keys):
+                    continue
                 scelta = scegli(testo)
                 if scelta is not None:
                     return num_map.get(scelta, scelta)
@@ -6992,6 +7004,7 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             if user_input:
                 user_input = user_input[:-1]
                 letture = [(user_input, min(digitate, len(user_input)))]
+                madri = [0]
                 print('\b \b'*len(display_input), end='', flush=True)
                 last_displayed = None
                 disable_autocomplete_once = True
@@ -7028,13 +7041,16 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             # le due letture coincidevano per piu' di un tasto, quella giusta
             # si perdeva, e in Acu_Maker casdi, poi spuntata, lasciava il filtro
             # vuoto invece di arrivare a casella_disponibili_oggi_spuntata.
-            nuove, visti = [], set()
-            for _, vivi in gruppi:
+            nuove, visti, madri = [], set(), []
+            for madre, (_, vivi) in enumerate(gruppi):
                 for seguito in vivi:
                     if seguito[0] not in visti:
                         visti.add(seguito[0])
                         nuove.append(seguito)
-            nuove = nuove[:4] or gruppi[0][0][:1]
+                        madri.append(madre)
+            nuove, madri = nuove[:4], madri[:4]
+            if not nuove:
+                nuove, madri = gruppi[0][0][:1], [0]
             letture = [(testo, quante) for testo, quante, _ in nuove]
             if nuove[0][2]:
                 print(user_char, end='', flush=True)

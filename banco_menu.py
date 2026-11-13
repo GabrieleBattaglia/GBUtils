@@ -166,6 +166,12 @@ def main():
 	b.prova("c, i, s, p, u arrivano a cas_disponibili_spunta", ["c", "i", "s", "p", "u"], "cas_disponibili_spunta", d=CASELLE)
 	b.prova("e chi ricopia arriva lo stesso a cas_disponibili_tolta", ["c", "a", "s", "_", "d", "i", "s", "p", "o", "n", "i", "b", "i", "l", "i", "_", "t"],
 			"cas_disponibili_tolta", d=CASELLE)
+	# V5.2.4, dalla terza revisione: Invio su un prefisso ambiguo non sceglie
+	# da una lettura nata tasti prima, che lo schermo non mostra. Nella V5.2.3
+	# a, b, _ e Invio davano ab_b_c. Una lettura sorella, nata all'ultimo
+	# tasto, sceglie ancora la sua unica voce.
+	b.prova("a, b, _ e Invio non scelgono da una lettura nascosta", ["a", "b", "_", INVIO, ESC], None, d={"ab_b": "", "ab_b_c": "", "ab_d": ""})
+	b.prova("l, a, s, e e Invio scelgono ancora Laser_destra_sinistra", ["l", "a", "s", "e", INVIO], "Laser_destra_sinistra", d=PRESET)
 	# V5.2.2, dalla revisione: Invio a vuoto restituisce empty_enter anche
 	# quando il completamento ha gia' scritto l'inizio comune delle voci.
 	b.prova("Invio a vuoto con un inizio comune restituisce empty_enter", [INVIO], "vuoto", d={"mess_albo_che_scorre": "", "mess_albo_d_oro": ""}, empty_enter="vuoto")
