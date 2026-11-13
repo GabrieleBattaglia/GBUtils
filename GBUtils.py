@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V275 di venerdì 13 novembre 2026
+	V276 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.9.11 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.13 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "275"
+VERSION = "276"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1547,14 +1547,27 @@ class _ContaBuchi:
 	9 millesimi dopo otto blocchi, fino a 4,5 dopo sedici. Cosi' si contano i
 	buchi da 12 millesimi in su. Conta anche il segnale di write, che su MME
 	dice quando la scheda e' rimasta a secco, e su WASAPI non scatta mai.
+	Un altro salto durante l'attesa la allunga: il riferimento resta il fondo
+	di prima del primo salto, e l'attesa ricomincia. Ma al piu' per TETTO
+	scritture, circa un secondo e mezzo: oltre, l'attesa si chiude e se ne
+	apre un'altra, cosi' una pompa lenta a lungo si conta mentre succede.
+	Quando la pompa si ferma un'attesa aperta si chiude con cio' che si sa:
+	un salto di meno di MINIMO_ALLA_FINE scritture prima non si e' potuto
+	misurare, perche' la coda non ha avuto il tempo di riempirsi, e non conta.
 	Nasce con la V8.9.7, dalla revisione del 13 novembre 2026: fino alla
 	V8.9.4 il blocco appena consegnato si contava come suonato, quindi i buchi
 	sotto i 35 millesimi non si vedevano e ognuno perdeva un blocco, e il
-	riferimento fisso derivava con il quarzo della scheda.
+	riferimento fisso derivava con il quarzo della scheda. Fino alla V8.9.11
+	un salto durante l'attesa chiudeva la prima, misurata su una coda non
+	ancora riempita, e due scritture tardive di fila davano un buco anche se
+	la coda non si era mai vuotata; e la pompa che si fermava subito dopo un
+	sobbalzo lo contava come un buco.
 	"""
 
 	DERIVA = 2e-4
 	ASSESTAMENTO = 16
+	TETTO = 64
+	MINIMO_ALLA_FINE = 4
 
 	def __init__(self, fs, blocco):
 		self.fs = float(fs)
@@ -1565,6 +1578,10 @@ class _ContaBuchi:
 		# Il fondo di prima del salto, quando si aspetta di sapere se e' un
 		# buco; None quando non si aspetta niente.
 		self.fondo_prima = None
+		# Il fondo di prima dell'ultimo salto dell'attesa, e quante scritture
+		# sono passate da quando si e' aperta.
+		self.fondo_ultimo = None
+		self.scritte_in_attesa = 0
 		self.da_assestare = 0
 		self.secco_visto = False
 
@@ -1578,10 +1595,18 @@ class _ContaBuchi:
 		self.prima += campioni
 		buchi, silenzio = 0, 0.0
 		if self.fondo_prima is not None:
+			self.scritte_in_attesa += 1
 			if ritardo - self.fondo > self.soglia:
-				# Un altro salto mentre si aspettava: il primo si chiude qui.
-				buchi, silenzio = self.chiudi()
-				self._apri(ritardo, secco)
+				if self.scritte_in_attesa < self.TETTO:
+					# Un altro salto mentre si aspettava: l'attesa si allunga,
+					# e il riferimento resta il fondo di prima del primo.
+					self.fondo_ultimo = self.fondo
+					self.fondo = ritardo
+					self.da_assestare = self.ASSESTAMENTO
+					self.secco_visto = self.secco_visto or bool(secco)
+				else:
+					buchi, silenzio = self.chiudi()
+					self._apri(ritardo, secco)
 			else:
 				self.secco_visto = self.secco_visto or bool(secco)
 				self.fondo = min(ritardo, self.fondo)
@@ -1597,18 +1622,24 @@ class _ContaBuchi:
 		return buchi, silenzio
 
 	def _apri(self, ritardo, secco):
-		self.fondo_prima = self.fondo
+		self.fondo_prima = self.fondo_ultimo = self.fondo
 		self.fondo = ritardo
 		self.da_assestare = self.ASSESTAMENTO
+		self.scritte_in_attesa = 0
 		self.secco_visto = bool(secco)
 
-	def chiudi(self):
+	def chiudi(self, alla_fine=False):
 		"""Chiude l'attesa in corso, se c'e': un buco se il fondo e' salito
 		davvero, o se write l'ha segnalato, e il silenzio di cui e' salito.
-		Restituisce i buchi e i secondi da aggiungere."""
+		alla_fine vale vero quando la pompa si ferma: allora un salto troppo
+		recente per essere misurato non conta. Restituisce i buchi e i secondi
+		da aggiungere."""
 		if self.fondo_prima is None:
 			return 0, 0.0
-		salto = self.fondo - self.fondo_prima
+		fondo = self.fondo
+		if alla_fine and self.da_assestare > self.ASSESTAMENTO - self.MINIMO_ALLA_FINE:
+			fondo = self.fondo_ultimo
+		salto = fondo - self.fondo_prima
 		visto = self.secco_visto
 		self.fondo_prima, self.secco_visto = None, False
 		if salto > self.soglia or visto:
@@ -2056,7 +2087,7 @@ class _MixerCondiviso:
 		except Exception as errore:  # noqa: BLE001 - il filo del mixer non deve morire in silenzio
 			self.ultimo_errore = f"errore durante la riproduzione: {errore}"
 		finally:
-			buchi, silenzio_suonato = conta.chiudi()
+			buchi, silenzio_suonato = conta.chiudi(alla_fine=True)
 			self.buchi += buchi
 			self.silenzio_inserito += silenzio_suonato
 			_abbassa_timer(periodo)
@@ -5254,7 +5285,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.9.11 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.13 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 

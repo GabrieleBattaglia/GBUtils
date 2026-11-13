@@ -50,12 +50,15 @@ class SchedaFinta:
 	campioni al secondo; quando e' vuota la scheda suona silenzio. soste sono
 	coppie (quando, quanto): la pompa resta ferma quanto, in secondi."""
 
-	def __init__(self, mixer, capienza, soste, limite, ppm=0.0):
+	def __init__(self, mixer, capienza, soste, limite, ppm=0.0, guarda=None):
 		self.mixer, self.t, self.dentro = mixer, 0.0, 0.0
 		self.capienza, self.soste, self.limite = capienza, list(soste), limite
 		self.ritmo = FS * (1.0 + ppm * 1e-6)
 		self.secco_vero = 0.0
 		self.latency = capienza / FS
+		# Quando t passa guarda, cio' che il mixer ha contato fino a li', e il
+		# silenzio vero: serve a vedere il conto mentre succede.
+		self.guarda, self.guardato = guarda, None
 
 	def _avanza(self, secondi):
 		self.t += secondi
@@ -72,6 +75,8 @@ class SchedaFinta:
 			self._avanza((self.dentro + n - self.capienza) / self.ritmo)
 		self.dentro += n
 		self._avanza(0.00005)
+		if self.guarda is not None and self.guardato is None and self.t >= self.guarda:
+			self.guardato = (self.mixer.buchi, self.mixer.silenzio_inserito, self.secco_vero)
 		if self.t > self.limite:
 			self.mixer._ferma.set()
 		return False
@@ -82,11 +87,14 @@ class SchedaFinta:
 	def close(self):
 		pass
 
-def gira(soste, limite=60.0, ppm=0.0, capienza=3 * BLOCCO):
+ultima = None
+
+def gira(soste, limite=60.0, ppm=0.0, capienza=3 * BLOCCO, guarda=None):
+	global ultima
 	mixer = MixerDiCarta()
 	mixer._silenzio = 0.0
 	mixer.suona(np.full((3000, 2), 0.01, dtype=np.float32), fs=FS, ciclo=True)
-	scheda = SchedaFinta(mixer, capienza, soste, limite, ppm)
+	scheda = ultima = SchedaFinta(mixer, capienza, soste, limite, ppm, guarda)
 	mixer._stream = scheda
 	vero = time.perf_counter
 	time.perf_counter = lambda s=scheda: s.t
@@ -123,6 +131,41 @@ for sosta in (0.015, 0.030, CODA - 0.005):
 	vero, buchi, contato = gira([(5.0 + i, sosta) for i in range(10)], limite=20.0)
 	prova(f"dieci soste da {sosta * 1000:.0f} ms, coperte dalla coda, non danno buchi", vero == 0 and buchi == 0 and contato == 0,
 		  f"vero {vero * 1000:.1f} ms, buchi {buchi}, contato {contato * 1000:.1f} ms")
+
+# 1 quater. Dalla seconda revisione: due scritture tardive di fila, che la
+#           coda copre. Fino alla V8.9.11 la seconda chiudeva l'attesa della
+#           prima, misurata su una coda non ancora riempita, e dava un buco.
+#           Le soste con lo stesso momento scattano a scritture consecutive.
+for soste, capienza in (([(5.0, 0.040)] * 2, 3), ([(5.0, 0.036), (5.0, 0.030), (5.0, 0.030)], 3), ([(5.0, 0.050)] * 2, 6)):
+	vero, buchi, contato = gira(soste, limite=10.0, capienza=capienza * BLOCCO)
+	prova(f"soste di fila da {', '.join(f'{s * 1000:.0f}' for _, s in soste)} ms, coperte da {capienza} blocchi, non danno buchi",
+		  vero == 0 and buchi == 0 and contato == 0, f"vero {vero * 1000:.1f} ms, buchi {buchi}, contato {contato * 1000:.1f} ms")
+vero, buchi, contato = gira([(5.0, CODA + 0.020), (5.0, 0.040)], limite=10.0)
+prova("un buco vero da 20 ms seguito subito da una sosta coperta si conta una volta, giusto",
+	  buchi == 1 and abs(contato - vero) < 0.003, f"vero {vero * 1000:.1f} ms, buchi {buchi}, contato {contato * 1000:.1f} ms")
+
+# 1 quinquies. Una pompa lenta a lungo, del trenta per cento per dodici
+#              secondi: il silenzio si conta mentre succede, non soltanto
+#              alla fine.
+LENTA = 1.3 * BLOCCO / FS
+vero, buchi, contato = gira([(5.0, LENTA)] * 400, limite=25.0, guarda=15.0)
+buchi_a_meta, contato_a_meta, vero_a_meta = ultima.guardato
+prova("con la pompa lenta, a meta' strada il silenzio contato e' gia' quasi tutto quello vero",
+	  vero_a_meta > 1.0 and contato_a_meta >= 0.75 * vero_a_meta, f"a meta' vero {vero_a_meta:.2f} s, contato {contato_a_meta:.2f} s, buchi {buchi_a_meta}")
+prova("e alla fine il silenzio contato e' quello vero", abs(contato - vero) < 0.1 * vero, f"vero {vero:.2f} s, contato {contato:.2f} s, buchi {buchi}")
+
+# 1 sexies. La pompa che si ferma subito dopo una scrittura tardiva, coperta
+#           dalla coda: non e' un buco. Fino alla V8.9.11 lo era.
+#           La sosta scatta alla prima scrittura dopo i 5 secondi, che puo'
+#           cominciare fino a un blocco dopo: il limite sta subito oltre, cosi'
+#           la pompa si ferma proprio dopo la scrittura tardiva.
+for sosta, capienza in ((0.040, 3), (CODA - 0.005, 3), (0.120, 6)):
+	vero, buchi, contato = gira([(5.0, sosta)], limite=5.0 + BLOCCO / FS + 0.001, capienza=capienza * BLOCCO)
+	prova(f"fermata subito dopo una sosta da {sosta * 1000:.0f} ms, coperta da {capienza} blocchi, nessun buco",
+		  vero == 0 and buchi == 0 and contato == 0, f"vero {vero * 1000:.1f} ms, buchi {buchi}, contato {contato * 1000:.1f} ms")
+vero, buchi, contato = gira([(5.0, LENTA)] * 40, limite=5.0 + 40 * LENTA - 0.001)
+prova("una pompa lenta fino alla fermata conta il suo silenzio, al piu' un quarto in piu' o in meno",
+	  vero > 0.1 and abs(contato - vero) < 0.25 * vero, f"vero {vero * 1000:.0f} ms, contato {contato * 1000:.0f} ms, buchi {buchi}")
 
 # 2. Venti buchi da 15 millesimi, come quelli della contesa del lucchetto.
 vero, buchi, contato = gira([(5.0 + i, CODA + 0.015) for i in range(20)], limite=30.0)

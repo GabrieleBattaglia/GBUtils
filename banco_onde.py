@@ -106,19 +106,18 @@ for kind in (1, 2, 3, 4):
 #    alla V8.9.7 i campioni stavano su dur / N, la fase che passava alla nota
 #    seguente su 1 / fs, e alla giunzione la fase saltava fino a mezzo
 #    campione: a 3000 Hz, con 0,015 secondi, 36,7 gradi invece di 24,5.
-for kind in (1, 3, 4):
+#    Come nella prova 2, due note contro una lunga il doppio, sulla lunghezza
+#    comune: le due spezzate e la lunga differiscono di un campione. Dalla
+#    seconda revisione: la prima stesura guardava il passo alla giunzione, e
+#    con 0,0123 secondi o col dente di sega passava anche sul motore di prima.
+for kind in (1, 2, 3, 4):
 	for durata in (0.015, 0.0123):
 		spezzata = onda([3000, durata, 0, 1.0, 3000, durata, 0, 1.0], kind)
-		giunzione = round(durata * FS)
-		passo = abs(spezzata[giunzione] - spezzata[giunzione - 1])
-		vicini = np.abs(np.diff(spezzata[giunzione - 40:giunzione - 1]))
-		prova(f"{NOMI[kind]}, due note da {durata} s a 3000 Hz senza salto alla giunzione", passo <= float(np.max(vicini)) * 1.01,
-			  f"passo {passo:.4f}, vicini fino a {float(np.max(vicini)):.4f}")
-sinusoide = onda([3000, 0.015, 0, 1.0, 3000, 0.015, 0, 1.0], 1)
-giunzione = round(0.015 * FS)
-naturale = math.sin(2 * math.pi * 3000 * giunzione / FS)
-prova("la seconda nota da 0,015 s comincia dove la prima sarebbe andata avanti", abs(sinusoide[giunzione] - naturale) < 1e-4,
-	  f"{sinusoide[giunzione]:.4f} invece di {naturale:.4f}")
+		unica = onda([3000, 2 * durata, 0, 1.0], kind)
+		comune = min(len(spezzata), len(unica))
+		scarto = float(np.max(np.abs(spezzata[:comune] - unica[:comune])))
+		prova(f"{NOMI[kind]}, due note da {durata} s a 3000 Hz come una lunga il doppio", scarto < (1e-5 if kind == 1 else 1e-4),
+			  f"scarto {scarto:.6f}")
 
 # 8. Dopo una nota a volume zero, o una scivolata di volume che finisce a
 #    zero, la nota seguente comincia da zero come dopo una pausa. Fino alla
