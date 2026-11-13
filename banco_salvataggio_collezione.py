@@ -359,7 +359,7 @@ with tempfile.TemporaryDirectory() as cartella:
 		contati[0] += 1
 		return vero_getmtime(percorso)
 	os.path.getmtime = conta_getmtime
-	filo = threading.Thread(target=lambda: esito.append(zitto(paziente.save, "x", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)[0]),
+	filo = threading.Thread(target=lambda: esito.append(zitto(paziente.save, "x", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)),
 							daemon=True)
 	filo.start()
 	filo.join(5.0)
@@ -370,7 +370,19 @@ with tempfile.TemporaryDirectory() as cartella:
 	if os.path.exists(lucchetto):
 		os.remove(lucchetto)
 	prova("con un lucchetto vecchio in sola lettura save aspetta la scadenza e risponde di no, senza girare a vuoto",
-		  not appeso and esito == [False] and contati[0] < 100, (appeso, esito, contati[0]))
+		  not appeso and [e for e, _ in esito] == [False] and contati[0] < 100, (appeso, esito, contati[0]))
+	# Dalla V8.9.11 l'avviso nomina il lucchetto vecchio, invece di dire la
+	# collezione occupata da un altro programma.
+	detto = esito[0][1] if esito else ""
+	prova("e l'avviso nomina il lucchetto vecchio, non un altro programma",
+		  "lucchetto vecchio" in detto and os.path.basename(lucchetto) in detto and "altro programma" not in detto, detto)
+	# Un lucchetto vecchio che si toglie, invece, si toglie e la scrittura va.
+	with open(lucchetto, "w") as f:
+		f.write("99999")
+	os.utime(lucchetto, (vecchio, vecchio))
+	esito, detto = zitto(paziente.firma, "x", "banco", copia)
+	prova("un lucchetto vecchio che si lascia togliere si toglie, e la firma si scrive",
+		  esito is not None and not os.path.exists(lucchetto), (esito, detto))
 
 prova("la collezione vera non e' stata toccata", impronta(VERA) == PRIMA)
 print(f"Prove {totale}, passate {passate}.")

@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V273 di venerdì 13 novembre 2026
+	V274 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.9.9 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.11 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "273"
+VERSION = "274"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5207,8 +5207,11 @@ def _metti_firme(preset, firme):
 
 def _volume_del_testo(testo):
 	"""Il volume scritto come testo, letto come lo legge parse_vol_values: un
-	numero, o la coppia di una scivolata; None se non si legge, dove
-	parse_vol_values darebbe in silenzio 0.5. Serve a save, issue 47."""
+	numero, o la coppia di una scivolata, fra 0 e 1. None se non si legge,
+	dove parse_vol_values darebbe in silenzio 0.5, e anche quando una parte
+	non e' un numero finito, come inf, nan o 1e400: il motore la porterebbe a
+	0 o a 1 per caso, e nel file non si vuole, come in _volume_assoluto.
+	Serve a save, issue 47."""
 	import math
 	testo = testo.strip()
 	try:
@@ -5251,7 +5254,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.9.9 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.11 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5778,11 +5781,18 @@ class _Acusticator:
     LUCCHETTO_VECCHIO = 10.0
 
     def _lucchetto(self, percorso):
-        """Crea percorso.lock in esclusiva. Il nome, o None se l'attesa scade."""
+        """Crea percorso.lock in esclusiva. Il nome, o None se l'attesa scade.
+        Solleva OSError quando il lucchetto non si puo' creare, per esempio
+        perche' la cartella non c'e', e quando alla scadenza c'e' ancora un
+        lucchetto vecchio che non si lascia togliere: l'errore nomina il file
+        e dice perche' Windows non lo toglie."""
         import os
         import time
         nome = percorso + ".lock"
         scadenza = time.monotonic() + self.LUCCHETTO_ATTESA
+        # L'errore dell'ultimo tentativo di togliere un lucchetto vecchio, se
+        # e' fallito: None quando il lucchetto non e' vecchio o se n'e' andato.
+        intoccabile = None
         while True:
             try:
                 fd = os.open(nome, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
@@ -5793,19 +5803,22 @@ class _Acusticator:
                     continue  # appena tolto da chi lo teneva: si riprova subito
                 except OSError:
                     vecchio = False
+                intoccabile = None
                 if vecchio:
                     try:
                         os.remove(nome)
                         continue
                     except FileNotFoundError:
                         continue
-                    except OSError:
+                    except OSError as errore:
                         # Un lucchetto vecchio che non si lascia togliere, per
                         # esempio in sola lettura, si aspetta come uno vivo, fino
                         # alla scadenza. Fino alla V8.9.0 qui si ripartiva senza
                         # pausa e senza guardare la scadenza, e il ciclo girava a
-                        # vuoto per sempre su un core pieno.
-                        pass
+                        # vuoto per sempre su un core pieno. Fino alla V8.9.9,
+                        # alla scadenza, l'avviso diceva la collezione occupata da
+                        # un altro programma, e non nominava il lucchetto.
+                        intoccabile = errore
             except PermissionError:
                 pass  # su Windows, un lucchetto in via di cancellazione
             else:
@@ -5813,6 +5826,9 @@ class _Acusticator:
                 os.close(fd)
                 return nome
             if time.monotonic() > scadenza:
+                if intoccabile is not None:
+                    raise OSError(f"{nome} e' un lucchetto vecchio che non si lascia togliere, "
+                                  f"se nessun programma lo usa va cancellato: {intoccabile}")
                 return None
             time.sleep(0.02)
 
@@ -6216,7 +6232,8 @@ class _Acusticator:
                     # Il testo del motore, assoluto, diventa scarti come i
                     # numeri: fino alla V8.9.0 si scriveva com'era, e il preset
                     # salvato ignorava poi la base scelta dall'utente. Un testo
-                    # che il motore non saprebbe leggere si rifiuta.
+                    # che il motore non saprebbe leggere, o con un numero che non
+                    # e' finito, si rifiuta.
                     assoluto = _volume_del_testo(vol)
                     if assoluto is None:
                         raise ValueError
