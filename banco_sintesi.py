@@ -102,5 +102,37 @@ with tempfile.TemporaryDirectory() as cartella:
 	prova("e nella cache gen_py non nasce nessun modulo", visto["contenuto"] == [], visto)
 	prova("e in console non scrive niente della cache", "Rebuilding cache" not in esito.stdout + esito.stderr, esito.stdout[-200:])
 
+# 3. Il caso della issue 61, dalla revisione del 13 novembre 2026: nella cache
+#    c'e' la cartella di una generazione rimasta a meta', e manca l'indice,
+#    dicts.dat. Importare win32com.client lo ricostruisce, e lo dice in
+#    console: lo si vede importandolo direttamente. GBsintesi dalla 1.0.3 lo
+#    importa con la console muta.
+MEZZA = "C866CA3A-32F7-11D2-9602-00C04F8EE628x0x5x4"
+DIRETTO = '''import sys
+cartella = sys.argv[1]
+import win32com
+win32com.__gen_path__ = cartella
+import win32com.gen_py
+win32com.gen_py.__path__ = [cartella]
+import win32com.client.dynamic
+print("importato")
+'''
+for chi, testo in (("diretto", DIRETTO), ("GBsintesi", PROVA)):
+	with tempfile.TemporaryDirectory() as cartella:
+		cache = os.path.join(cartella, "gen_py")
+		os.makedirs(os.path.join(cache, MEZZA))
+		script = os.path.join(cartella, "apri_la_voce.py")
+		with open(script, "w", encoding="utf-8") as f:
+			f.write(testo)
+		esito = subprocess.run([sys.executable, script, cache, QUI], capture_output=True, text=True, timeout=120,
+							   stdin=subprocess.DEVNULL, check=False)
+		detto = "Rebuilding cache" in esito.stdout + esito.stderr
+		if chi == "diretto":
+			prova("con una generazione a meta', win32com importato direttamente ricostruisce e lo dice", detto, esito.stdout[-200:])
+		else:
+			prova("da GBsintesi la voce si apre lo stesso", '"_VoceDiWindows"' in esito.stdout, (esito.stdout[-200:], esito.stderr[-300:]))
+			prova("e in console non scrive niente della ricostruzione", not detto, esito.stdout[-300:])
+			prova("e l'indice della cache e' stato ricostruito", os.path.isfile(os.path.join(cache, "dicts.dat")))
+
 print(f"Prove {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)

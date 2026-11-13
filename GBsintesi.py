@@ -1,5 +1,5 @@
 """GBsintesi, la voce degli screen reader e il display braille, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode).
-V1.0.1 di giovedì 12 novembre 2026.
+V1.0.3 di venerdì 13 novembre 2026.
 Nato da sintesi.py e braille.py di MeTeOra 1.113.5, dove leggevano i
 sottotitoli, perche' anche MESS 1.79.0 vuole la cronaca della partita dal vivo
 letta in automatico: due programmi, quindi una famiglia di GBUtils, decisione
@@ -57,6 +57,24 @@ CON_IL_BRAILLE = frozenset({"nvda", "jaws"})
 DURATA_MASSIMA = 15.0
 
 
+def _importa_in_silenzio(nome):
+    """Il modulo nome, importato la prima volta con la console muta.
+    Importare win32com.client, direttamente o attraverso accessible_output2,
+    legge l'indice della cache dei moduli generati, gen_py\\dicts.dat, e se
+    manca lo ricostruisce stampando in console che lo sta facendo: succede
+    una volta, dopo una generazione rimasta a meta', per un programma chiuso
+    mentre generava (issue 61 di GBUtils). Dalla 1.0.3 quelle righe non si
+    vedono. La console e' muta soltanto il tempo del primo import: un modulo
+    gia' importato torna com'e', senza toccarla."""
+    import io
+    import sys
+
+    if nome in sys.modules:
+        return sys.modules[nome]
+    with contextlib.redirect_stdout(io.StringIO()):
+        return importlib.import_module(nome)
+
+
 class _VoceDiWindows:
     """La voce di Windows, SAPI5, aperta qui senza leggere l'elenco delle voci
     installate: accessible_output2 lo legge all'apertura, e su certi Windows,
@@ -64,15 +82,17 @@ class _VoceDiWindows:
     lasciando chi non ha uno screen reader senza la voce di ripiego (MeTeOra
     1.83.3, sul PC di Gabriele).
     Dalla 1.0.1 si apre con il collegamento dinamico di win32com, che non
-    legge e non scrive la cache dei moduli generati, gen_py: una generazione
-    rimasta a meta', per un programma chiuso mentre generava, faceva stampare
-    in console a ogni apertura che la cache si stava ricostruendo (issue 61
-    di GBUtils, vista alla chiusura di MESS 1.94.0)."""
+    genera il modulo della voce nella cache gen_py: quindi GBsintesi non puo'
+    piu' lasciare una generazione a meta', che e' cio' che faceva stampare in
+    console la ricostruzione della cache (issue 61 di GBUtils, vista alla
+    chiusura di MESS 1.94.0). L'import di win32com.client pero' legge ancora
+    l'indice della cache, e se manca lo ricostruisce: fino alla 1.0.2 la
+    docstring diceva il contrario. Dalla 1.0.3 quell'import si fa con la
+    console muta, con _importa_in_silenzio."""
 
     def __init__(self):
-        import win32com.client.dynamic
-
-        self._voce = win32com.client.dynamic.Dispatch("SAPI.SpVoice")
+        dinamico = _importa_in_silenzio("win32com.client.dynamic")
+        self._voce = dinamico.Dispatch("SAPI.SpVoice")
 
     def speak(self, testo, interrupt=False):
         # SVSFlagsAsync, e con interrupt SVSFPurgeBeforeSpeak.
@@ -91,7 +111,9 @@ def _crea(chiave):
     La voce di Windows la apre sempre _VoceDiWindows, dalla 1.0.1: prima si
     provava accessible_output2, che passa dalla cache gen_py di win32com e la
     genera al primo uso, e sul PC di Gabriele falliva comunque leggendo
-    l'elenco delle voci (issue 61 di GBUtils)."""
+    l'elenco delle voci (issue 61 di GBUtils). Anche accessible_output2
+    importa win32com.client, quindi dalla 1.0.3 si importa con la console
+    muta."""
     if chiave == VOCE_DI_SISTEMA:
         try:
             return _VoceDiWindows()
@@ -99,7 +121,7 @@ def _crea(chiave):
             return None
     modulo, classe = USCITE[chiave]
     try:
-        return getattr(importlib.import_module(f"accessible_output2.outputs.{modulo}"), classe)()
+        return getattr(_importa_in_silenzio(f"accessible_output2.outputs.{modulo}"), classe)()
     except Exception:  # noqa: BLE001 - qualunque errore vuol dire che quell'uscita non c'e'
         return None
 
