@@ -1,5 +1,5 @@
 """GBsintesi, la voce degli screen reader e il display braille, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode).
-V1.0.5 di venerdì 13 novembre 2026.
+V1.0.6 di venerdì 13 novembre 2026.
 Nato da sintesi.py e braille.py di MeTeOra 1.113.5, dove leggevano i
 sottotitoli, perche' anche MESS 1.79.0 vuole la cronaca della partita dal vivo
 letta in automatico: due programmi, quindi una famiglia di GBUtils, decisione
@@ -32,6 +32,7 @@ Si importa cosi', dalla cartella di GBUtils che sta nel percorso:
 import collections
 import contextlib
 import importlib
+import threading
 import time
 
 AUTOMATICA = "automatica"
@@ -55,6 +56,40 @@ CON_IL_BRAILLE = frozenset({"nvda", "jaws"})
 # Il tempo di un testo, per dividerlo fra i blocchi del display, al piu' tanti
 # secondi: un testo che dura molto non deve fermare il display (MeTeOra 1.83.0).
 DURATA_MASSIMA = 15.0
+# La console muta e' una sola per tutto il processo: quanti fili la vogliono
+# adesso, e lo stdout da rimettere quando l'ultimo ha finito.
+_silenzio_lucchetto = threading.Lock()
+_silenzio_quanti = 0
+_silenzio_salvato = None
+
+
+@contextlib.contextmanager
+def _console_muta():
+    """Zittisce sys.stdout finche' dura, anche con piu' fili insieme.
+    Il primo filo che entra salva lo stdout e mette al suo posto un testo che
+    nessuno legge, l'ultimo che esce lo rimette: l'ordine delle uscite non
+    conta. Con redirect_stdout ogni filo rimetteva cio' che aveva trovato, e
+    due fili che si sovrapponevano, il secondo uscito per ultimo, lasciavano
+    la console muta per tutta la sessione: nella 1.0.5 bastava che tutti e
+    due passassero da _importa_in_silenzio. Il lucchetto copre soltanto il
+    conto, mai l'import, quindi i fili non si aspettano qui. Dalla 1.0.6."""
+    global _silenzio_quanti, _silenzio_salvato
+    import io
+    import sys
+
+    with _silenzio_lucchetto:
+        if _silenzio_quanti == 0:
+            _silenzio_salvato = sys.stdout
+            sys.stdout = io.StringIO()
+        _silenzio_quanti += 1
+    try:
+        yield
+    finally:
+        with _silenzio_lucchetto:
+            _silenzio_quanti -= 1
+            if _silenzio_quanti == 0:
+                sys.stdout = _silenzio_salvato
+                _silenzio_salvato = None
 
 
 def _importa_in_silenzio(nome):
@@ -69,14 +104,15 @@ def _importa_in_silenzio(nome):
     ancora importando, come fa StellaTerm per scaldare accessible_output2,
     passa invece da import_module, che aspetta la fine: fino alla 1.0.3
     tornava a meta', l'uscita non si apriva, e NVDA restava perso per tutta
-    la sessione."""
-    import io
+    la sessione. Il silenzio lo tiene _console_muta, che dalla 1.0.6 lo
+    conta fra i fili: alla fine la console torna com'era anche quando due
+    fili importano insieme."""
     import sys
 
     modulo = sys.modules.get(nome)
     if modulo is not None and not getattr(getattr(modulo, "__spec__", None), "_initializing", False):
         return modulo
-    with contextlib.redirect_stdout(io.StringIO()):
+    with _console_muta():
         return importlib.import_module(nome)
 
 

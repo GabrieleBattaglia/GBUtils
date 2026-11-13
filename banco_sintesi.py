@@ -12,6 +12,7 @@ Si lancia con
 e stampa in fondo quante prove sono passate.
 """
 import importlib
+import io
 import json
 import os
 import subprocess
@@ -159,6 +160,48 @@ with tempfile.TemporaryDirectory() as cartella:
 	finally:
 		sys.path.remove(cartella)
 		sys.modules.pop(LENTO, None)
+
+# 5. Dalla terza revisione, GBsintesi 1.0.6: due fili tutti e due dentro
+#    _importa_in_silenzio, sullo stesso modulo lento o sul figlio di un
+#    pacchetto lento, come accessible_output2.outputs. Alla fine la console
+#    deve essere quella di prima, e le stampe dell'import mute. Nella 1.0.5
+#    ogni filo rimetteva lo stdout che aveva trovato, e la console restava
+#    muta per tutta la sessione.
+LENTO2 = "modulo_lento_due_del_banco_sintesi"
+PACCHETTO = "pacchetto_lento_del_banco_sintesi"
+with tempfile.TemporaryDirectory() as cartella:
+	with open(os.path.join(cartella, f"{LENTO2}.py"), "w", encoding="utf-8") as f:
+		f.write("import time\nprint('rumore del banco')\ntime.sleep(1.0)\nPRONTO = True\n")
+	os.mkdir(os.path.join(cartella, PACCHETTO))
+	with open(os.path.join(cartella, PACCHETTO, "__init__.py"), "w", encoding="utf-8") as f:
+		f.write("import time\nprint('rumore del banco')\ntime.sleep(1.0)\nfrom . import figlio\n")
+	with open(os.path.join(cartella, PACCHETTO, "figlio.py"), "w", encoding="utf-8") as f:
+		f.write("PRONTO = True\n")
+	sys.path.insert(0, cartella)
+	try:
+		for nome, primo in ((LENTO2, LENTO2), (f"{PACCHETTO}.figlio", PACCHETTO)):
+			cattura, vero_stdout = io.StringIO(), sys.stdout
+			sys.stdout = cattura
+			try:
+				filo = threading.Thread(target=GBsintesi._importa_in_silenzio, args=(nome,), daemon=True)
+				filo.start()
+				inizio = time.monotonic()
+				while primo not in sys.modules and time.monotonic() - inizio < 5:
+					time.sleep(0.01)
+				modulo = GBsintesi._importa_in_silenzio(nome)
+				filo.join(5)
+				rimesso = sys.stdout is cattura
+				print("riga stampata dopo")
+			finally:
+				sys.stdout = vero_stdout
+			visto = cattura.getvalue()
+			prova(f"con due fili dentro _importa_in_silenzio, su {nome}, la console torna quella di prima",
+				  rimesso and "riga stampata dopo" in visto and "rumore" not in visto and getattr(modulo, "PRONTO", False) is True,
+				  (rimesso, visto))
+	finally:
+		sys.path.remove(cartella)
+		for nome in (LENTO2, PACCHETTO, f"{PACCHETTO}.figlio"):
+			sys.modules.pop(nome, None)
 
 print(f"Prove {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)
