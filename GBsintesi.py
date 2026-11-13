@@ -1,5 +1,5 @@
 """GBsintesi, la voce degli screen reader e il display braille, di Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode).
-V1.0.3 di venerdì 13 novembre 2026.
+V1.0.5 di venerdì 13 novembre 2026.
 Nato da sintesi.py e braille.py di MeTeOra 1.113.5, dove leggevano i
 sottotitoli, perche' anche MESS 1.79.0 vuole la cronaca della partita dal vivo
 letta in automatico: due programmi, quindi una famiglia di GBUtils, decisione
@@ -65,12 +65,17 @@ def _importa_in_silenzio(nome):
     una volta, dopo una generazione rimasta a meta', per un programma chiuso
     mentre generava (issue 61 di GBUtils). Dalla 1.0.3 quelle righe non si
     vedono. La console e' muta soltanto il tempo del primo import: un modulo
-    gia' importato torna com'e', senza toccarla."""
+    gia' importato torna com'e', senza toccarla. Uno che un altro filo sta
+    ancora importando, come fa StellaTerm per scaldare accessible_output2,
+    passa invece da import_module, che aspetta la fine: fino alla 1.0.3
+    tornava a meta', l'uscita non si apriva, e NVDA restava perso per tutta
+    la sessione."""
     import io
     import sys
 
-    if nome in sys.modules:
-        return sys.modules[nome]
+    modulo = sys.modules.get(nome)
+    if modulo is not None and not getattr(getattr(modulo, "__spec__", None), "_initializing", False):
+        return modulo
     with contextlib.redirect_stdout(io.StringIO()):
         return importlib.import_module(nome)
 
@@ -82,11 +87,15 @@ class _VoceDiWindows:
     lasciando chi non ha uno screen reader senza la voce di ripiego (MeTeOra
     1.83.3, sul PC di Gabriele).
     Dalla 1.0.1 si apre con il collegamento dinamico di win32com, che non
-    genera il modulo della voce nella cache gen_py: quindi GBsintesi non puo'
-    piu' lasciare una generazione a meta', che e' cio' che faceva stampare in
-    console la ricostruzione della cache (issue 61 di GBUtils, vista alla
-    chiusura di MESS 1.94.0). L'import di win32com.client pero' legge ancora
-    l'indice della cache, e se manca lo ricostruisce: fino alla 1.0.2 la
+    genera il modulo della voce nella cache gen_py: quindi la voce di Windows
+    non puo' piu' lasciare una generazione a meta', che e' cio' che faceva
+    stampare in console la ricostruzione della cache (issue 61 di GBUtils,
+    vista alla chiusura di MESS 1.94.0). L'uscita jaws di accessible_output2
+    invece apre JAWS con gencache.EnsureDispatch: dove JAWS e' installato
+    genera il suo modulo in gen_py, e un programma chiuso in quel momento
+    puo' ancora lasciarne uno a meta'; fino alla 1.0.3 qui si diceva che non
+    poteva succedere con nessuna uscita. L'import di win32com.client pero'
+    legge ancora l'indice della cache, e se manca lo ricostruisce: fino alla 1.0.2 la
     docstring diceva il contrario. Dalla 1.0.3 quell'import si fa con la
     console muta, con _importa_in_silenzio."""
 

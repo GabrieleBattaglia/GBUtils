@@ -11,11 +11,14 @@ Si lancia con
   python banco_sintesi.py
 e stampa in fondo quante prove sono passate.
 """
+import importlib
 import json
 import os
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 
 import GBsintesi
 import win32com.client.dynamic
@@ -133,6 +136,29 @@ for chi, testo in (("diretto", DIRETTO), ("GBsintesi", PROVA)):
 			prova("da GBsintesi la voce si apre lo stesso", '"_VoceDiWindows"' in esito.stdout, (esito.stdout[-200:], esito.stderr[-300:]))
 			prova("e in console non scrive niente della ricostruzione", not detto, esito.stdout[-300:])
 			prova("e l'indice della cache e' stato ricostruito", os.path.isfile(os.path.join(cache, "dicts.dat")))
+
+# 4. Dalla seconda revisione, GBsintesi 1.0.5: un modulo che un altro filo
+#    sta ancora importando, come fa StellaTerm per scaldare
+#    accessible_output2, deve tornare intero. Nella 1.0.3 tornava a meta', e
+#    l'uscita non si apriva per tutta la sessione.
+LENTO = "modulo_lento_del_banco_sintesi"
+with tempfile.TemporaryDirectory() as cartella:
+	with open(os.path.join(cartella, f"{LENTO}.py"), "w", encoding="utf-8") as f:
+		f.write("import time\ntime.sleep(1.0)\nPRONTO = True\n")
+	sys.path.insert(0, cartella)
+	try:
+		filo = threading.Thread(target=lambda: importlib.import_module(LENTO), daemon=True)
+		filo.start()
+		inizio = time.monotonic()
+		while LENTO not in sys.modules and time.monotonic() - inizio < 5:
+			time.sleep(0.01)
+		modulo = GBsintesi._importa_in_silenzio(LENTO)
+		prova("un modulo che un altro filo sta importando torna intero, dopo averne aspettato la fine",
+			  getattr(modulo, "PRONTO", False) is True, sorted(n for n in vars(modulo) if not n.startswith("__")))
+		filo.join(5)
+	finally:
+		sys.path.remove(cartella)
+		sys.modules.pop(LENTO, None)
 
 print(f"Prove {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)
