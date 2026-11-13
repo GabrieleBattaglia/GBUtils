@@ -144,6 +144,27 @@ def main():
 	b.prova("ricopiando, la minuscola digitata conta", ["x", "a", "b", INVIO], "xab", d={"xAB": "", "xab": ""})
 	b.prova("senza ricopiare vince il completamento", ["x", INVIO], "xAB", d={"xAB": "", "xab": ""})
 	b.prova("senza una chiave identica vince la prima come prima", ["A", "B", INVIO], "ab", d={"ab": "", "abc": ""})
+	# V5.2.2, dalla revisione: una lettera che vale sia come ricopiata sia come
+	# seguito del completamento apre due letture, e le separa il tasto dopo.
+	NUMERI = {"10": "", "100": "", "1000": "", "2": ""}
+	b.prova("chi scrive 10 per intero riceve 10", ["1", "0", INVIO], "10", d=NUMERI)
+	b.prova("chi scrive 100 per intero riceve 100", ["1", "0", "0", INVIO], "100", d=NUMERI)
+	b.prova("chi scrive 1000 per intero riceve 1000", ["1", "0", "0", "0"], "1000", d=NUMERI)
+	MAMME = {"mamma": "", "mammut": ""}
+	b.prova("m, a e Invio scelgono mamma", ["m", "a", INVIO], "mamma", d=MAMME)
+	b.prova("chi ricopia mammut ci arriva", ["m", "a", "m", "m", "u"], "mammut", d=MAMME)
+	PRESET = {"Laser_destra_sinistra": "", "laser_da_gioco_1": "", "lampo": ""}
+	b.prova("las e poi il seguito suggerito arriva a Laser_destra_sinistra", ["l", "a", "s", "e", "s"], "Laser_destra_sinistra", d=PRESET)
+	b.prova("chi ricopia laser_da arriva a laser_da_gioco_1", ["l", "a", "s", "e", "r", "_", "d", "a"], "laser_da_gioco_1", d=PRESET)
+	b.prova("chi ricopia laser_de arriva a Laser_destra_sinistra", ["l", "a", "s", "e", "r", "_", "d", "e"], "Laser_destra_sinistra", d=PRESET)
+	b.prova("con aab e aaab, a, a, b danno aab", ["a", "a", "b"], "aab", d={"aab": "", "aaab": ""})
+	b.prova("e a, a, a danno aaab", ["a", "a", "a"], "aaab", d={"aab": "", "aaab": ""})
+	# V5.2.2, dalla revisione: Invio a vuoto restituisce empty_enter anche
+	# quando il completamento ha gia' scritto l'inizio comune delle voci.
+	b.prova("Invio a vuoto con un inizio comune restituisce empty_enter", [INVIO], "vuoto", d={"mess_albo_che_scorre": "", "mess_albo_d_oro": ""}, empty_enter="vuoto")
+	b.prova("e con 10, 100 e 1000 non sceglie 10", [INVIO], "vuoto", d={"10": "", "100": "", "1000": ""}, empty_enter="vuoto", show=False)
+	b.prova("senza empty_enter Invio a vuoto restituisce None", [INVIO], None, d={"fiches_100000": "", "fiches_1000000": ""})
+	b.prova("dopo backspace fino a vuoto, Invio restituisce empty_enter", ["x", BACKSPACE, INVIO], "vuoto", d={"xa": "", "xb": "", "ya": "", "yb": ""}, empty_enter="vuoto")
 	# V5.2.0, issue 62: l'intestazione prima di ogni elenco.
 	RIGA = "Nome, spiegazione, numero DL."
 	b.prova("l'intestazione sta prima dell'elenco", [], None, contiene=[f"{RIGA}\nalfa: Primo\n"], d=TRE, show_only=True, intestazione=RIGA)

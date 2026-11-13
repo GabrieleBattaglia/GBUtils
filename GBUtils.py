@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V270 di venerdì 13 novembre 2026
+	V271 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.9 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
@@ -27,7 +27,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
-	menu V5.2.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+	menu V5.2.2 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "270"
+VERSION = "271"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6654,7 +6654,7 @@ def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
 	return True
 
 def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None, intestazione=""):
-    """V5.2.0 di giovedì 12 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V5.2.2 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -6723,6 +6723,16 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     E con Invio, fra le chiavi uguali a meno delle maiuscole, come M9 e m9,
     vince quella identica a cio' che si e' digitato; fino alla V5.1.0 vinceva
     sempre la prima in ordine (issue 52).
+    Dalla V5.2.2 una lettera che vale sia come ricopiata sia come seguito del
+    completamento, quello che il prompt suggerisce, apre due letture, e le
+    separa il tasto dopo: resta quella che porta ancora a qualche voce, a
+    parita' la ricopiatura. Con Invio vince la prima delle due che sceglie una
+    voce, cominciando dalla ricopiatura. Cosi' con mamma e mammut, m e il
+    completamento danno mamm, e a con Invio sceglie mamma; e chi scrive per
+    intero 10, fra 10, 100 e 1000, con Invio riceve 10. E Invio senza aver
+    digitato niente restituisce sempre empty_enter: fino alla V5.2.0, quando
+    tutte le voci avevano un inizio comune, il completamento lo scriveva
+    prima del primo tasto, e Invio sceglieva una voce, o non faceva niente.
     """
     import os
     if d is None: d = {}
@@ -6777,13 +6787,42 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     def valid_match(key_item, sub):
         """Controlla se 'key_item' inizia con 'sub' (case-insensitive)."""
         return key_item.lower().startswith(sub.lower())
+    def filtra(testo):
+        """Le chiavi che cominciano con testo."""
+        return [k for k in orig_keys if valid_match(k, testo)]
+    def completa(testo):
+        """Il testo con l'inizio comune delle voci che gli corrispondono. Le
+        lettere gia' digitate restano come le si e' scritte, e il
+        completamento aggiunge soltanto le seguenti: fino alla V5.1.0 prendeva
+        tutto dalla prima voce, maiuscole comprese, e con M11 e m11 chi
+        scriveva m si ritrovava M (issue 52)."""
+        filtrate = filtra(testo)
+        if len(filtrate) > 1:
+            comune = lcp(filtrate)
+            if len(comune) > len(testo):
+                return testo + comune[len(testo):]
+        return testo
+    def scegli(testo):
+        """La voce che Invio sceglie per testo, o None se e' ambiguo. Fra le
+        chiavi uguali a meno delle maiuscole vince quella identica a cio' che
+        si e' digitato, se c'e'."""
+        candidate = filtra(testo)
+        esatte = [k for k in candidate if k.lower() == testo.lower()]
+        identiche = [k for k in esatte if k == testo]
+        if identiche: return identiche[0]
+        if esatte: return esatte[0]
+        if len(candidate) == 1: return candidate[0]
+        return None
     orig_keys = list(d.keys())
     if ordered:
         orig_keys.sort()
-    user_input = ""
-    # Quante delle lettere di user_input le ha digitate l'utente: le altre le
-    # ha messe il completamento. Serve a riconoscere chi le ricopia.
-    digitate = 0
+    # Le letture aperte di cio' che si e' digitato, dalla preferita: coppie
+    # (testo, digitate), dove digitate dice quante lettere del testo le ha
+    # digitate l'utente; le altre le ha messe il completamento, e servono a
+    # riconoscere chi le ricopia. Di solito la lettura e' una sola; dalla
+    # V5.2.2 sono due quando un tasto vale sia come lettera ricopiata sia come
+    # seguito del completamento, e le separa il tasto dopo.
+    letture = [("", 0)]
     last_displayed = None
     num_map = {}
     if numbered:
@@ -6802,19 +6841,14 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     # e dopo un elenco ne nasceva una riga vuota che NVDA legge per intero.
     a_capo_pendente = False
     while True:
-        filtered = [k for k in orig_keys if valid_match(k, user_input)]
-        display_input = user_input
-        if keyslist and not numbered and not disable_autocomplete_once and len(filtered) > 1:
-            common_prefix = lcp(filtered)
-            if len(common_prefix) > len(user_input):
-                # Le lettere gia' digitate restano come le si e' scritte, e il
-                # completamento aggiunge soltanto le seguenti: fino alla V5.1.0
-                # prendeva tutto dalla prima voce, maiuscole comprese, e con M11
-                # e m11 chi scriveva m si ritrovava M (issue 52).
-                user_input = user_input + common_prefix[len(user_input):]
-                display_input = user_input
+        if keyslist and not numbered and not disable_autocomplete_once:
+            letture = [(completa(testo), quante) for testo, quante in letture]
         disable_autocomplete_once = False
-        final_filtered = [k for k in orig_keys if valid_match(k, display_input)]
+        user_input, digitate = letture[0]
+        display_input = user_input
+        final_filtered = filtra(display_input)
+        # Con due letture aperte la preferita, la ricopiatura, ha ancora le
+        # voci di prima, quindi non si sceglie niente prima del tasto dopo.
         if len(final_filtered) == 1 and len(display_input) > 0:
             final_choice = final_filtered[0]
             print()
@@ -6837,23 +6871,21 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         if user_char == '\r':
             print()
             a_capo_pendente = False
-            exact_matches = [k for k in final_filtered if k.lower() == display_input.lower()]
-            # Fra le chiavi uguali a meno delle maiuscole vince quella
-            # identica a cio' che si e' digitato, se c'e'.
-            identiche = [k for k in exact_matches if k == display_input]
-            if identiche:
-                return num_map.get(identiche[0], identiche[0])
-            if exact_matches:
-                return num_map.get(exact_matches[0], exact_matches[0])
-            elif len(final_filtered) == 1:
-                return num_map.get(final_filtered[0], final_filtered[0])
-            elif user_input == "":
+            # Invio senza aver digitato niente restituisce empty_enter, anche
+            # quando il completamento ha gia' scritto l'inizio comune delle
+            # voci: fino alla V5.2.0, con 10, 100 e 1000, sceglieva 10.
+            if digitate == 0:
                 return empty_enter
-            else:
-                # Prefisso ambiguo: nessuna parola, perche' menu non sa in che
-                # lingua dirla. Azzerare l'ultimo elenco fa ripresentare i
-                # candidati al giro dopo, quando show_on_filter e' vero.
-                last_displayed = None
+            # Con due letture aperte vince la prima che sceglie una voce,
+            # cominciando dalla ricopiatura.
+            for testo, _ in letture:
+                scelta = scegli(testo)
+                if scelta is not None:
+                    return num_map.get(scelta, scelta)
+            # Prefisso ambiguo: nessuna parola, perche' menu non sa in che
+            # lingua dirla. Azzerare l'ultimo elenco fa ripresentare i
+            # candidati al giro dopo, quando show_on_filter e' vero.
+            last_displayed = None
         elif user_char == '\x1b': print(); return None
         elif user_char == '?':
             print()
@@ -6863,7 +6895,7 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         elif user_char in ('\x08', 'ctrl-backspace'):
             if user_input:
                 user_input = user_input[:-1]
-                digitate = min(digitate, len(user_input))
+                letture = [(user_input, min(digitate, len(user_input)))]
                 print('\b \b'*len(display_input), end='', flush=True)
                 last_displayed = None
                 disable_autocomplete_once = True
@@ -6873,19 +6905,33 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             pass
         elif numbered and not user_char.isdigit():
             pass
-        elif digitate < len(user_input) and user_input[digitate].lower() == user_char.lower():
-            # Ricopia una lettera che il completamento aveva gia' messo: si va
-            # avanti senza aggiungerla, e senza stamparla, perche' e' gia' li'.
-            # Prende pero' la maiuscola o la minuscola che si e' digitata, che
-            # con Invio sceglie fra le chiavi uguali a meno delle maiuscole.
-            user_input = user_input[:digitate] + user_char + user_input[digitate + 1:]
-            digitate += 1
         else:
-            print(user_char, end='', flush=True)
-            user_input += user_char
-            digitate = len(user_input)
-            last_displayed = None
-            disable_autocomplete_once = False
+            # Ogni lettura legge il tasto in uno o due modi. Una lettera uguale
+            # a quella che il completamento aveva messo dove l'utente e'
+            # arrivato, maiuscola o minuscola che sia, e' ricopiata: si va
+            # avanti senza aggiungerla, prendendo pero' la maiuscola o la
+            # minuscola digitata, che con Invio sceglie fra le chiavi uguali a
+            # meno delle maiuscole. La stessa lettera, aggiunta in coda, puo'
+            # pero' essere anche il seguito che il prompt suggeriva: fino alla
+            # V5.2.0 vinceva sempre la ricopiatura, e chi proseguiva dopo il
+            # completamento perdeva la lettera; in Acu_Maker las, poi
+            # estra_sinistra, dava laser_dstra_sinistra. Ora restano aperte
+            # tutte e due le letture, se l'aggiunta porta a qualche voce, e il
+            # tasto dopo tiene quella che porta ancora a qualche voce, a
+            # parita' la ricopiatura (scelta di Gabriele del 13 novembre 2026).
+            gruppi = []
+            for testo, quante in letture:
+                seguiti = [(testo + user_char, len(testo) + 1, True)]
+                if quante < len(testo) and testo[quante].lower() == user_char.lower():
+                    seguiti.insert(0, (testo[:quante] + user_char + testo[quante + 1:], quante + 1, False))
+                gruppi.append((seguiti, [s for s in seguiti if filtra(s[0])]))
+            # La prima lettura che porta ancora a qualche voce; se nessuna ci
+            # porta, la preferita, come prima, e il filtro restera' vuoto.
+            nuove = next((vivi for _, vivi in gruppi if vivi), gruppi[0][0][:1])
+            letture = [(testo, quante) for testo, quante, _ in nuove]
+            if nuove[0][2]:
+                print(user_char, end='', flush=True)
+                last_displayed = None
 
 # L'indirizzo a cui arrivano i caffe': sta qui una volta sola, e le dieci
 # traduzioni lo compongono nel messaggio.
