@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.13.14)
+Manuale Utente: Acu_Maker (v1.13.16)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -153,7 +153,7 @@ Dalla versione 1.10.0 l'editor suona passando dal motore, Acusticator.prepara, e
 - [4]            : Sulle note fa la stessa cosa di [i], e resta per abitudine.
 
 ## Impostazioni di Step e Default
-- [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato. Dalla 1.13.10 rifiuta i passi che non si possono usare: sulla banda il passo è un rapporto e serve più di 1, altrove un numero più grande di zero. Le note in Hertz restano intere, almeno un Hertz per passo: dentro una scivolata dalla 1.13.10, e ferme dalla 1.13.14, che prima con [c] e [v] diventavano decimali, come 450.0, scritte come una scivolata.
+- [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato. Dalla 1.13.10 rifiuta i passi che non si possono usare: sulla banda il passo è un rapporto e serve più di 1, altrove un numero più grande di zero. Le note in Hertz restano intere, almeno un Hertz per passo: dentro una scivolata dalla 1.13.10, e ferme dalla 1.13.14, che prima con [c] e [v] diventavano decimali, come 450.0, scritte come una scivolata. Una nota che non è un numero finito, come NaN o Infinity scritti a mano nel file, dalla 1.13.16 resta ferma con [c] e [v], che prima facevano cadere l'editor.
         Nota: Se la nota è in notazione musicale, [c]/[v] spostano sempre di 1 semitono, se è "p" ignorano. Dalla 1.11.0 spostano anche i microtoni, le ottave da 10 in su e le note scritte col trattino, e si fermano a c0 e a d#10, dicendolo, invece di scrivere una nota che il motore leggerebbe in un altro modo.
 - [n] : Riporta il parametro attualmente selezionato al suo valore di default e reimposta il suo step a quello di partenza: per le quartine 10 Hz o un semitono per la nota, 0,02 secondi per la durata, 10 per pan e volume; per l'inviluppo 0,001 per attacco, decadimento e rilascio e 1 per il sustain.
 - [m] : Svuota completamente il preset attuale (previa conferma), riportandolo ai valori di default e a una singola nota c4.
@@ -173,7 +173,7 @@ Dalla versione 1.10.0 l'editor suona passando dal motore, Acusticator.prepara, e
           1. Sovrascrivere il preset attuale.
           2. Salvare con nome come nuovo preset.
           3. Uscire ignorando i cambiamenti.
-        Dalla 1.11.0 [Esc] in questo menu torna all'editor, con tutte le modifiche: si scartano soltanto scegliendo la terza voce. Dalla 1.13.10 si torna all'editor anche quando il salvataggio non avviene: un no alla conferma per un preset usato dalle app, un conflitto annullato, una collezione occupata. Fino alla 1.13.0 in quei casi l'editor si chiudeva e le modifiche si perdevano.
+        Dalla 1.11.0 [Esc] in questo menu torna all'editor, con tutte le modifiche: si scartano scegliendo la terza voce, o, sovrascrivendo un preset che un altro programma ha tolto, scegliendo di lasciarlo tolto, come si dice più sotto. Dalla 1.13.10 si torna all'editor anche quando il salvataggio non avviene: un no alla conferma per un preset usato dalle app, un conflitto annullato, una collezione occupata. Fino alla 1.13.0 in quei casi l'editor si chiudeva e le modifiche si perdevano.
 
 Prima di chiedere, l'app guarda se in collezione esiste già un preset che suona esattamente uguale, cioè con lo stesso score, la stessa forma d'onda e lo stesso inviluppo. Se c'è, lo dice e non salva niente: sarebbe un doppione, e un nome diverso non basta a rendere diverso un suono identico.
 Dalla versione 1.8.0 la collezione si ripulisce anche da sola, all'avvio e all'uscita: se due o più preset suonano identici, cioè hanno lo stesso score, la stessa forma d'onda e lo stesso inviluppo, ne resta uno solo, quello con la descrizione più lunga, e a parità di descrizione il primo della collezione. Per ogni preset tolto una riga dice quale era e quale resta al suo posto. Dalla 1.11.0 però un preset che un programma usa non sparisce mai da solo, perché i programmi lo chiamano per nome e resterebbero muti: se fra i suoni identici uno solo è usato, resta lui; se lo sono due o più, restano tutti, e una riga lo dice. I suoni diversi invece restano tutti, anche quelli che oggi nessun programma usa: la collezione serve tutto il parco software, e più è ricca e ben descritta, più è facile trovarci ciò che serve.

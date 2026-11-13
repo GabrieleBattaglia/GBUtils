@@ -360,6 +360,17 @@ stato = editor({"descrizione": "x", "score": [[440, 0.2, 0, 0.0]], "kind": 1, "a
 prova("con un passo di mezzo Hertz c da' 441, almeno un Hertz per passo", stato.preset["score"][0][0] == 441, repr(stato.preset["score"][0][0]))
 stato = editor({"descrizione": "x", "score": [[1, 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["v", "esc"])
 prova("v su 1 Hertz si ferma", stato.preset["score"][0][0] == 1 and not stato.modified, repr(stato.preset["score"][0][0]))
+# Dalla 1.13.16, dalla terza revisione: una nota che non e' un numero finito,
+# scritta a mano nel file, ferma c invece di far cadere l'editor. Nella
+# 1.13.14 i numeri davano ValueError o OverflowError, e dalla 1.13.10 i testi.
+for nota in (float("nan"), float("inf"), float("-inf"), "nan", "inf", "nan.880"):
+	try:
+		stato = editor({"descrizione": "x", "score": [[nota, 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["c", "esc"])
+		visto = (repr(stato.preset["score"][0][0]), stato.modified)
+		fermo = visto == (repr(nota), False)
+	except (ValueError, OverflowError) as errore:
+		visto, fermo = type(errore).__name__, False
+	prova(f"c su una nota {nota!r} si ferma, senza cadere", fermo, visto)
 # 7. n riporta i passi di partenza.
 stato = editor({"descrizione": "x", "score": [["c4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["a", "b", "n", "esc"], ["5"])
 prova("n sull'attacco riporta il passo a 0,001, quello di partenza", stato.steps["a"] == 0.001, stato.steps["a"])

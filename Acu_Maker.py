@@ -21,7 +21,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.13.14" # Quattro correzioni dalla seconda revisione del 13 novembre 2026
+VERSION = "1.13.16" # Due correzioni dalla terza revisione del 13 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "13 novembre 2026"
@@ -1419,12 +1419,16 @@ def transpose_single(val_str, direction, step):
     gli Hertz di step. None se non si puo' muovere, vedi transpose_note.
     Gli Hertz restano interi, almeno un Hertz per passo: dentro una scivolata
     il punto separa i capi, e un decimale come 440.5 ne farebbe tre. Fino alla
-    1.13.0 un passo decimale scriveva 440.5.880, che il motore salta."""
+    1.13.0 un passo decimale scriveva 440.5.880, che il motore salta.
+    Un numero che non e' finito, come nan o inf scritti a mano nel file, non
+    si muove: fino alla 1.13.14 round lo rifiutava e l'editor cadeva."""
     if val_str.lower() == 'p': return 'p'
     try:
         fval = float(val_str)
     except ValueError:
         return transpose_note(val_str, direction)
+    if not math.isfinite(fval):
+        return None
     nuovo = round(fval) + direction * max(1, round(abs(step)))
     if nuovo < 1:
         return None
@@ -1483,6 +1487,12 @@ def inc_dec_value(state, direction):
                     # transpose_single: nel campo della nota il punto separa
                     # i due capi di una scivolata, e fino alla 1.13.10 c dava
                     # 450.0, che la riga di stato mostrava come una scivolata.
+                    # NaN e Infinity, che json legge da un file scritto a
+                    # mano, non si muovono: nella 1.13.14 facevano cadere
+                    # l'editor, e le modifiche non salvate si perdevano.
+                    if not math.isfinite(val):
+                        state.modified = era_modificato
+                        return fermo
                     nuova = round(val) + direction * max(1, round(abs(state.steps['note'])))
                     if nuova < 1:
                         state.modified = era_modificato
@@ -2114,8 +2124,9 @@ def salva_preset(coll, preset_name, state, nuovo):
 	Le modifiche si scartano con Esci senza salvare, e quando il suono che ne
 	esce e' identico a un preset che c'e' gia': allora non si salva, e
 	l'editor si chiude, perche' quel suono e' gia' nella collezione con
-	l'altro nome. Fino alla 1.13.10 qui c'era scritto soltanto con Esci senza
-	salvare."""
+	l'altro nome. Si scartano anche quando Sovrascrivi trova il preset tolto
+	da un altro programma e si sceglie di lasciarlo tolto. Fino alla 1.13.10
+	qui c'era scritto soltanto con Esci senza salvare."""
 	if not state.modified:
 		# Un preset nuovo lasciato com'era non entra nella collezione.
 		return
