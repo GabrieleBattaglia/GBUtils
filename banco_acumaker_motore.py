@@ -271,7 +271,24 @@ with tempfile.TemporaryDirectory() as cartella:
 	esito, testo = zitto(am.apri_collezione, coll)
 	prova("un JSON che non e' una collezione si rifiuta, e si resta su quella di prima",
 		  coll.percorso == nuova and "non e' una collezione" in testo, (coll.percorso, testo[-120:]))
+	# Dalla 1.13.14, dalla seconda revisione: un file di impostazioni a
+	# sezioni, come projects.json, passava il controllo, e i doppioni lo
+	# riscrivevano lasciandone una sezione sola.
+	sezioni = os.path.join(cartella, "impostazioni_a_sezioni.json")
+	with open(sezioni, "w", encoding="utf-8") as f:
+		json.dump({"finestra": {"larghezza": 800}, "audio": {"volume": 5}, "lingua": {"codice": "it"}}, f)
+	prima_delle_sezioni = impronta(sezioni)
+	am.input = lambda prompt="": sezioni
+	esito, testo = zitto(am.apri_collezione, coll)
+	prova("un file a sezioni si rifiuta, resta identico, e si resta sulla collezione di prima",
+		  coll.percorso == nuova and "non e' una collezione" in testo and impronta(sezioni) == prima_delle_sezioni, (coll.percorso, testo[-160:]))
+	esito, testo = zitto(am.Collezione(sezioni).apri)
+	prova("anche passato da riga di comando si rifiuta, senza riscriverlo", esito is False and impronta(sezioni) == prima_delle_sezioni, testo[-160:])
 	am.DB_FILE = DB_VERO
+
+db = {"finestra": {"larghezza": 800}, "audio": {"volume": 5}, "uno": {"descrizione": "x", "score": [["c4", 0.1, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}}
+zitto(am.togli_doppioni, db)
+prova("i doppioni non toccano le voci che non sono preset", list(db) == ["finestra", "audio", "uno"], list(db))
 
 # Perdita 9 e le note del motore.
 prova("c0 in giu' si ferma invece di scrivere b-1", am.transpose_note("c0", -1) is None)
@@ -324,9 +341,25 @@ stato = editor({"descrizione": "x", "score": [["200-3000", 0.2, 0, 0.0]], "kind"
 prova("un passo di banda a zero si rifiuta, e v funziona ancora", stato.steps["banda"] == am.PASSO_BANDA and stato.preset["score"][0][0] != "200-3000",
 	  stato.preset["score"][0][0])
 # 6. Il fuoco da 4 a 7 torna a 3 lasciata la banda.
-stato = editor({"descrizione": "x", "score": [["200-3000.400-2000", 0.2, [-1.0, 1.0], 0.0]], "kind": 6, "adsr": [1, 0, 100, 1]},
+# Il pan va da -0,5 a 0,5, lontano dai bordi: col fuoco su un capo solo c
+# darebbe [-0.4, 0.5] o [-0.5, 0.6], e cosi' la prova li distingue.
+stato = editor({"descrizione": "x", "score": [["200-3000.400-2000", 0.2, [-0.5, 0.5], 0.0]], "kind": 6, "adsr": [1, 0, 100, 1]},
 			   ["5", "x", "x", "c", "esc"])
-prova("dopo il 5 sulla banda, c sul pan che scorre muove tutti e due i capi", stato.preset["score"][0][2] == [-0.9, 1.0], stato.preset["score"][0][2])
+prova("dopo il 5 sulla banda, c sul pan che scorre muove tutti e due i capi",
+	  stato.preset["score"][0][2] == [-0.4, 0.6] and stato.port_focus == 3, (stato.preset["score"][0][2], stato.port_focus))
+# Dalla 1.13.14: anche la riga di stato mostra il fuoco riportato a 3.
+stato = am.EditorState({"descrizione": "x", "score": [["200-3000", 0.2, 0, [-0.3, 0.3]]], "kind": 6, "adsr": [1, 0, 100, 1]})
+stato.focus_type, stato.focus_param, stato.port_focus = "score", 3, 5
+_, riga = zitto(am.handle_print, stato)
+prova("lasciata la banda, la prima riga di stato segna gia' tutti e due i capi", "<" in riga and stato.port_focus == 3, (riga.strip(), stato.port_focus))
+# Dalla 1.13.14: c e v su una nota in Hertz la tengono intera.
+stato = editor({"descrizione": "x", "score": [[440, 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["c", "esc"])
+prova("c su 440 Hertz da' 450, intero", stato.preset["score"][0][0] == 450 and isinstance(stato.preset["score"][0][0], int),
+	  repr(stato.preset["score"][0][0]))
+stato = editor({"descrizione": "x", "score": [[440, 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["b", "c", "esc"], ["0.5"])
+prova("con un passo di mezzo Hertz c da' 441, almeno un Hertz per passo", stato.preset["score"][0][0] == 441, repr(stato.preset["score"][0][0]))
+stato = editor({"descrizione": "x", "score": [[1, 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["v", "esc"])
+prova("v su 1 Hertz si ferma", stato.preset["score"][0][0] == 1 and not stato.modified, repr(stato.preset["score"][0][0]))
 # 7. n riporta i passi di partenza.
 stato = editor({"descrizione": "x", "score": [["c4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["a", "b", "n", "esc"], ["5"])
 prova("n sull'attacco riporta il passo a 0,001, quello di partenza", stato.steps["a"] == 0.001, stato.steps["a"])

@@ -1,11 +1,11 @@
-Manuale Utente: Acu_Maker (v1.13.10)
+Manuale Utente: Acu_Maker (v1.13.14)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
 - Selezionare un preset esistente (digitando il suo nome breve).
 - Creare un nuovo preset vuoto (opzione '+').
 - Cercare preset per parola chiave (opzione '/'). Le parole cercate (anche parziali e non in sequenza) verranno confrontate con i nomi e le descrizioni dei preset. Se c'è un solo risultato, viene selezionato in automatico; altrimenti verrà mostrato un menù filtrato.
-- Aprire un'altra collezione (opzione '!'), per esempio quella di un progetto come Terminal_Beast/sounds.json; Invio senza scrivere niente torna a quella condivisa. La si può aprire anche da subito, passandone il percorso: Acu_Maker.py ..\Terminal_Beast\sounds.json. Una collezione che non esiste si crea, con la sua cartella; un file che non è una collezione di preset si rifiuta, e si resta su quella di prima.
+- Aprire un'altra collezione (opzione '!'), per esempio quella di un progetto come Terminal_Beast/sounds.json; Invio senza scrivere niente torna a quella condivisa. La si può aprire anche da subito, passandone il percorso: Acu_Maker.py ..\Terminal_Beast\sounds.json. Una collezione che non esiste si crea, con la sua cartella; un file che non è una collezione di preset si rifiuta, e si resta su quella di prima. Un preset è una voce con uno score: dalla 1.13.14 si rifiuta anche un file di impostazioni a sezioni, come projects.json, che prima passava e che la pulizia dei doppioni riscriveva lasciandone una sezione sola.
 - Scegliere la scheda audio su cui suonare (opzione '*').
 - Ascoltare i preset uno dopo l'altro nel player (opzione '\'): vedi il capitolo dedicato.
 Scelto un preset, il menu delle azioni offre, oltre a caricarlo nell'editor e a eliminarlo, di rinominarlo, al suo posto nella collezione, e di cambiarne soltanto la descrizione senza entrare nell'editor. Rinominando un preset che un programma usa, l'app avverte e chiede conferma: i programmi lo chiamano per nome, e vanno cambiati anche loro.
@@ -153,7 +153,7 @@ Dalla versione 1.10.0 l'editor suona passando dal motore, Acusticator.prepara, e
 - [4]            : Sulle note fa la stessa cosa di [i], e resta per abitudine.
 
 ## Impostazioni di Step e Default
-- [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato. Dalla 1.13.10 rifiuta i passi che non si possono usare: sulla banda il passo è un rapporto e serve più di 1, altrove un numero più grande di zero. Dentro una scivolata di note in Hertz i capi restano interi, almeno un Hertz per passo.
+- [b] : Imposta lo step di incremento/decremento specifico per il parametro attualmente selezionato. Dalla 1.13.10 rifiuta i passi che non si possono usare: sulla banda il passo è un rapporto e serve più di 1, altrove un numero più grande di zero. Le note in Hertz restano intere, almeno un Hertz per passo: dentro una scivolata dalla 1.13.10, e ferme dalla 1.13.14, che prima con [c] e [v] diventavano decimali, come 450.0, scritte come una scivolata.
         Nota: Se la nota è in notazione musicale, [c]/[v] spostano sempre di 1 semitono, se è "p" ignorano. Dalla 1.11.0 spostano anche i microtoni, le ottave da 10 in su e le note scritte col trattino, e si fermano a c0 e a d#10, dicendolo, invece di scrivere una nota che il motore leggerebbe in un altro modo.
 - [n] : Riporta il parametro attualmente selezionato al suo valore di default e reimposta il suo step a quello di partenza: per le quartine 10 Hz o un semitono per la nota, 0,02 secondi per la durata, 10 per pan e volume; per l'inviluppo 0,001 per attacco, decadimento e rilascio e 1 per il sustain.
 - [m] : Svuota completamente il preset attuale (previa conferma), riportandolo ai valori di default e a una singola nota c4.

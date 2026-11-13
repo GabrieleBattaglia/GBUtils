@@ -21,7 +21,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.13.10" # Dieci correzioni dalla revisione del 13 novembre 2026
+VERSION = "1.13.14" # Quattro correzioni dalla seconda revisione del 13 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "13 novembre 2026"
@@ -455,10 +455,14 @@ class Collezione:
 			return False
 		# Un JSON che non e' una collezione, per esempio un file di
 		# impostazioni aperto per sbaglio, si rifiuta: fino alla 1.13.0 i
-		# doppioni lo leggevano come preset, e Acu_Maker cadeva.
-		storti = [n for n, v in dati.items() if not isinstance(v, dict)]
+		# doppioni lo leggevano come preset, e Acu_Maker cadeva. Un preset e'
+		# un dizionario con uno score fatto a lista: fino alla 1.13.10 bastava
+		# il dizionario, e un file di impostazioni a sezioni, come
+		# projects.json, passava; le sezioni, senza score, suonavano tutte
+		# uguali, e i doppioni le toglievano tutte meno una, riscrivendo il file.
+		storti = [n for n, v in dati.items() if not e_un_preset(v)]
 		if storti:
-			print(f"Questo file non e' una collezione di preset: {storti[0]} non e' un preset.")
+			print(f"Questo file non e' una collezione di preset: {storti[0]} non e' un preset, non ha uno score.")
 			return False
 		self.dati = copia(dati)
 		self.impronta = self._impronta_file()
@@ -906,6 +910,11 @@ def get_unique_name(db, base_name):
         i += 1
     return f"{base_name}{i}"
 
+def e_un_preset(voce):
+    """Vero se voce ha la forma di un preset: un dizionario con uno score
+    fatto a lista. Dalla 1.13.14."""
+    return isinstance(voce, dict) and isinstance(voce.get("score"), list)
+
 def impronta_suono(preset):
     """Cio' che rende due preset lo stesso suono: score, kind e adsr.
 
@@ -937,6 +946,10 @@ def togli_doppioni(db):
     """
     gruppi = {}
     for nome, preset in db.items():
+        # Cio' che non e' un preset non ha un suono, e non e' il doppione di
+        # niente: senza score tutte le voci avrebbero la stessa impronta.
+        if not e_un_preset(preset):
+            continue
         gruppi.setdefault(impronta_suono(preset), []).append(nome)
     tolti = []
     for nomi in gruppi.values():
@@ -1276,7 +1289,20 @@ def cambia_onda(state, nuova):
 	print(f"\r{' ' * 60}\r{testo}", end="", flush=True)
 
 
+def riporta_fuoco(state):
+    """Le scelte da 4 a 7 valgono soltanto sulla banda di un rumore: lasciata
+    la banda, il fuoco torna su tutti e due i capi. Fino alla 1.13.0 restava
+    a 4-7, e su pan e volume c, v e Invio non facevano niente."""
+    sulla_banda = (state.focus_type == 'score' and state.focus_param == 0
+                   and is_rumore(state.preset.get('kind', 1)))
+    if state.port_focus > 3 and not sulla_banda:
+        state.port_focus = 3
+
+
 def handle_print(state, force_newline=False):
+    # La riga di stato mostra il fuoco che il tasto dopo usera': fino alla
+    # 1.13.10, dopo z dalla banda, la prima riga mostrava ancora quello vecchio.
+    riporta_fuoco(state)
     s = get_status_string(state)
     if force_newline:
         print()
@@ -1453,7 +1479,11 @@ def inc_dec_value(state, direction):
                         return fermo
                     quad[0] = nuova
                 elif isinstance(val, (int, float)) and not isinstance(val, bool):
-                    nuova = round(val + direction * state.steps['note'], 2)
+                    # Gli Hertz restano interi, almeno uno per passo, come in
+                    # transpose_single: nel campo della nota il punto separa
+                    # i due capi di una scivolata, e fino alla 1.13.10 c dava
+                    # 450.0, che la riga di stato mostrava come una scivolata.
+                    nuova = round(val) + direction * max(1, round(abs(state.steps['note'])))
                     if nuova < 1:
                         state.modified = era_modificato
                         return fermo
@@ -1531,13 +1561,8 @@ def edit_mode(coll, preset_name, nuovo=None):
 def modifica(state):
     """Il giro dei tasti dell'editor, finche' non si esce con Esc."""
     while state.running:
-        # Le scelte da 4 a 7 valgono soltanto sulla banda di un rumore: lasciata
-        # la banda, il fuoco torna su tutti e due i capi. Fino alla 1.13.0
-        # restava a 4-7, e su pan e volume c, v e Invio non facevano niente.
-        sulla_banda = (state.focus_type == 'score' and state.focus_param == 0
-                       and is_rumore(state.preset.get('kind', 1)))
-        if state.port_focus > 3 and not sulla_banda:
-            state.port_focus = 3
+        # Anche qui, per i tasti che non stampano la riga di stato.
+        riporta_fuoco(state)
         key = get_keypress()
 
         if key == 'space':
@@ -2086,7 +2111,11 @@ def salva_preset(coll, preset_name, state, nuovo):
 	con Esc, e dalla 1.13.10 anche quando la scrittura non avviene, per un no
 	alla conferma, un annullamento o una collezione occupata. Fino alla
 	1.13.0 in quei casi l'editor si chiudeva e le modifiche si perdevano.
-	Le modifiche si scartano soltanto con Esci senza salvare."""
+	Le modifiche si scartano con Esci senza salvare, e quando il suono che ne
+	esce e' identico a un preset che c'e' gia': allora non si salva, e
+	l'editor si chiude, perche' quel suono e' gia' nella collezione con
+	l'altro nome. Fino alla 1.13.10 qui c'era scritto soltanto con Esci senza
+	salvare."""
 	if not state.modified:
 		# Un preset nuovo lasciato com'era non entra nella collezione.
 		return
@@ -2146,7 +2175,7 @@ def torna_se_non_scritto(esito):
 	ha scritto, e lo dice."""
 	if esito is True or esito == "lasciato":
 		return None
-	print("Le modifiche restano: si scartano soltanto con Esci senza salvare.")
+	print("Le modifiche restano: si scartano con Esci senza salvare.")
 	return "torna"
 
 def _num(valore, decimali=1):
