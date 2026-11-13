@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V267 di venerdì 13 novembre 2026
+	V268 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.9.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.7 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "267"
+VERSION = "268"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1523,11 +1523,104 @@ def _abbassa_timer(periodo):
 		pass
 
 
+class _ContaBuchi:
+	"""Il conto a tempo dei buchi della scheda audio, per la pompa del mixer.
+
+	Dopo ogni scrittura, ritardo e' quanti campioni il tempo vero ha fatto
+	passare, da quando e' tornata la prima, meno quanti la pompa ne aveva
+	consegnati prima di quel blocco, che la scheda non puo' aver gia' suonato.
+	A regime sta su un fondo, che dipende da quanto e' piena la coda della
+	scheda; un buco, cioe' silenzio suonato dalla scheda perche' la pompa era
+	in ritardo, lo sposta in alto per sempre di quanto silenzio e' stato. Un
+	sobbalzo invece, una scrittura che torna in ritardo senza che la coda si
+	vuoti, lo fa salire e poi lo lascia tornare dov'era.
+	Il fondo e' il minimo recente del ritardo, e puo' risalire piano, di
+	DERIVA per campione scritto: cosi' segue lo scarto fra il quarzo della
+	scheda e l'orologio del processore, decine di parti per milione, che
+	altrimenti, in una sessione lunga, si sommerebbe fino a sembrare un buco o
+	a coprirne uno. Un salto di piu' di mezzo blocco sopra il fondo apre
+	un'attesa di ASSESTAMENTO blocchi, il tempo che la coda si riempia e che
+	il minimo si ritrovi; poi il buco si conta se anche il fondo e' salito di
+	piu' di mezzo blocco, e il silenzio e' di quanto e' salito. L'attesa e'
+	lunga perche' su WASAPI write torna al ritmo del periodo della scheda, e
+	il fondo misurato oscilla: sulla scheda di Gabriele, sotto carico, fino a
+	9 millesimi dopo otto blocchi, fino a 4,5 dopo sedici. Cosi' si contano i
+	buchi da 12 millesimi in su. Conta anche il segnale di write, che su MME
+	dice quando la scheda e' rimasta a secco, e su WASAPI non scatta mai.
+	Nasce con la V8.9.7, dalla revisione del 13 novembre 2026: fino alla
+	V8.9.4 il blocco appena consegnato si contava come suonato, quindi i buchi
+	sotto i 35 millesimi non si vedevano e ognuno perdeva un blocco, e il
+	riferimento fisso derivava con il quarzo della scheda.
+	"""
+
+	DERIVA = 2e-4
+	ASSESTAMENTO = 16
+
+	def __init__(self, fs, blocco):
+		self.fs = float(fs)
+		self.soglia = blocco / 2
+		self.partenza = None
+		self.prima = 0
+		self.fondo = 0.0
+		# Il fondo di prima del salto, quando si aspetta di sapere se e' un
+		# buco; None quando non si aspetta niente.
+		self.fondo_prima = None
+		self.da_assestare = 0
+		self.secco_visto = False
+
+	def dopo_scrittura(self, ora, campioni, secco=False):
+		"""Da chiamare dopo ogni write, con perf_counter, i campioni scritti e
+		cio' che write ha risposto. Restituisce i buchi e i secondi di silenzio
+		da aggiungere adesso."""
+		if self.partenza is None:
+			self.partenza = ora
+		ritardo = (ora - self.partenza) * self.fs - self.prima
+		self.prima += campioni
+		buchi, silenzio = 0, 0.0
+		if self.fondo_prima is not None:
+			if ritardo - self.fondo > self.soglia:
+				# Un altro salto mentre si aspettava: il primo si chiude qui.
+				buchi, silenzio = self.chiudi()
+				self._apri(ritardo, secco)
+			else:
+				self.secco_visto = self.secco_visto or bool(secco)
+				self.fondo = min(ritardo, self.fondo)
+				self.da_assestare -= 1
+				if self.da_assestare <= 0:
+					buchi, silenzio = self.chiudi()
+		elif ritardo - self.fondo > self.soglia:
+			self._apri(ritardo, secco)
+		else:
+			if secco:
+				buchi = 1
+			self.fondo = min(ritardo, self.fondo + self.DERIVA * campioni)
+		return buchi, silenzio
+
+	def _apri(self, ritardo, secco):
+		self.fondo_prima = self.fondo
+		self.fondo = ritardo
+		self.da_assestare = self.ASSESTAMENTO
+		self.secco_visto = bool(secco)
+
+	def chiudi(self):
+		"""Chiude l'attesa in corso, se c'e': un buco se il fondo e' salito
+		davvero, o se write l'ha segnalato, e il silenzio di cui e' salito.
+		Restituisce i buchi e i secondi da aggiungere."""
+		if self.fondo_prima is None:
+			return 0, 0.0
+		salto = self.fondo - self.fondo_prima
+		visto = self.secco_visto
+		self.fondo_prima, self.secco_visto = None, False
+		if salto > self.soglia or visto:
+			return 1, max(0.0, salto) / self.fs
+		return 0, 0.0
+
+
 class _Voce:
 	"""Un suono in riproduzione: il buffer, dove siamo arrivati, la panoramica
 	e l'evento con cui chi l'ha mandato puo' aspettarne la fine."""
 
-	__slots__ = ("a_fine", "buffer", "ciclo", "destra", "fermata", "fine", "nata", "pos", "sinistra")
+	__slots__ = ("a_fine", "buffer", "ciclo", "destra", "fermata", "fine", "nata", "pos", "sinistra", "suonata")
 
 	def __init__(self, buffer, pan, orologio, a_fine=None, ciclo=False):
 		import math
@@ -1551,6 +1644,9 @@ class _Voce:
 		# dall'inizio, e la ferma soltanto chi l'ha accesa. Serve ai fondi
 		# continui, come il rumore sotto un contest.
 		self.ciclo = bool(ciclo)
+		# Vero dal primo blocco a cui la voce ha dato campioni: una voce
+		# fermata prima non ha niente da spegnere.
+		self.suonata = False
 
 
 def _incrocia_ciclo(buffer, campioni):
@@ -1925,7 +2021,10 @@ class _MixerCondiviso:
 		trascorso, oltre che col segnale di write, che su WASAPI non scatta
 		mai: quando la pompa resta indietro rispetto al tempo vero di piu' di
 		mezzo blocco, la scheda ha suonato silenzio, e quel silenzio si somma
-		in silenzio_inserito."""
+		in silenzio_inserito. Dalla V8.9.7 il conto sta in _ContaBuchi, che
+		non conta come suonato il blocco appena consegnato, segue piano
+		l'orologio della scheda, e conta un buco solo quando il ritardo resta
+		in alto, non per una scrittura tornata tardi."""
 		import time
 
 		import numpy as np
@@ -1934,15 +2033,7 @@ class _MixerCondiviso:
 		silenzio = np.zeros((self._blocco, self._canali), dtype=np.float32)
 		ultimo_suono = self._orologio()
 		periodo = _alza_timer()
-		# Il conto dei buchi a tempo: da quando e' tornata la prima scrittura,
-		# la scheda consuma fs campioni al secondo, e la pompa deve averne
-		# scritti almeno tanti, contando anche quel primo blocco. Se ne ha
-		# scritti meno, e di piu' di mezzo blocco, la differenza e' stata
-		# silenzio di sicuro: finche' resta meno, la scheda potrebbe stare
-		# ancora finendo il primo blocco, e non lo si conta.
-		partenza = None
-		scritti = 0
-		soglia = self._blocco / 2
+		conta = _ContaBuchi(self._fs, self._blocco)
 		try:
 			while not self._ferma.is_set():
 				blocco = self._prepara_blocco()
@@ -1957,26 +2048,17 @@ class _MixerCondiviso:
 				# segnale che il codice di prima non guardava mai, ed e' per
 				# questo che un difetto del genere si scopriva solo a orecchio.
 				secco = stream.write(blocco)
-				ora = time.perf_counter()
-				if partenza is None:
-					partenza, scritti = ora, len(blocco)
-				else:
-					scritti += len(blocco)
-				ritardo = (ora - partenza) * self._fs - scritti
-				if ritardo > soglia:
-					# La scheda e' andata avanti senza di noi: si conta il buco,
-					# si somma il silenzio e si riparte da qui, con il blocco
-					# appena scritto, cosi' lo stesso buco non si conta due volte.
-					self.buchi += 1
-					self.silenzio_inserito += ritardo / self._fs
-					partenza, scritti = ora, len(blocco)
-				elif secco:
-					self.buchi += 1
+				buchi, silenzio_suonato = conta.dopo_scrittura(time.perf_counter(), len(blocco), secco)
+				self.buchi += buchi
+				self.silenzio_inserito += silenzio_suonato
 		except sd.PortAudioError as errore:
 			self.ultimo_errore = f"PortAudioError durante la riproduzione: {errore}"
 		except Exception as errore:  # noqa: BLE001 - il filo del mixer non deve morire in silenzio
 			self.ultimo_errore = f"errore durante la riproduzione: {errore}"
 		finally:
+			buchi, silenzio_suonato = conta.chiudi()
+			self.buchi += buchi
+			self.silenzio_inserito += silenzio_suonato
 			_abbassa_timer(periodo)
 			self._smonta(stream)
 
@@ -2000,9 +2082,11 @@ class _MixerCondiviso:
 				# che puo' valere quanto un gradino udibile: si spegne in pochi
 				# millesimi e poi esce. Fino alla V8.6.3 si toglieva di colpo
 				# (issue 54). Se non aveva ancora suonato niente, non c'e'
-				# niente da spegnere.
+				# niente da spegnere: lo dice suonata, e non la posizione, che
+				# in un ciclo torna a zero a ogni giro. Fino alla V8.9.4 un
+				# ciclo fermato nel punto in cui ricominciava si troncava.
 				finite.append(voce)
-				if voce.pos == 0:
+				if not voce.suonata:
 					continue
 				quanti_sfuma = max(1, min(self._blocco, round(self.SFUMATURA_STOP * self._fs)))
 			lunghezza = quanti_sfuma or self._blocco
@@ -2019,6 +2103,7 @@ class _MixerCondiviso:
 				pezzo = pezzo * rampa[:, None]
 			quanti = len(pezzo)
 			if quanti:
+				voce.suonata = True
 				if pezzo.shape[1] == 1:
 					mono = pezzo[:, 0]
 					if self._canali == 2:
@@ -5155,7 +5240,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.9.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.7 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
