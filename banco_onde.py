@@ -102,5 +102,39 @@ for kind in (1, 2, 3, 4):
 	buffer = onda(["c3.c7", 0.5, 0, 1.0], kind)
 	prova(f"{NOMI[kind]}, scivolata da c3 a c7 dentro il fondo scala", float(np.max(np.abs(buffer))) <= 1.0 / math.cos(math.pi / 4) + 1e-6)
 
+# 7. Note ferme con una durata che non fa un numero intero di campioni. Fino
+#    alla V8.9.7 i campioni stavano su dur / N, la fase che passava alla nota
+#    seguente su 1 / fs, e alla giunzione la fase saltava fino a mezzo
+#    campione: a 3000 Hz, con 0,015 secondi, 36,7 gradi invece di 24,5.
+for kind in (1, 3, 4):
+	for durata in (0.015, 0.0123):
+		spezzata = onda([3000, durata, 0, 1.0, 3000, durata, 0, 1.0], kind)
+		giunzione = round(durata * FS)
+		passo = abs(spezzata[giunzione] - spezzata[giunzione - 1])
+		vicini = np.abs(np.diff(spezzata[giunzione - 40:giunzione - 1]))
+		prova(f"{NOMI[kind]}, due note da {durata} s a 3000 Hz senza salto alla giunzione", passo <= float(np.max(vicini)) * 1.01,
+			  f"passo {passo:.4f}, vicini fino a {float(np.max(vicini)):.4f}")
+sinusoide = onda([3000, 0.015, 0, 1.0, 3000, 0.015, 0, 1.0], 1)
+giunzione = round(0.015 * FS)
+naturale = math.sin(2 * math.pi * 3000 * giunzione / FS)
+prova("la seconda nota da 0,015 s comincia dove la prima sarebbe andata avanti", abs(sinusoide[giunzione] - naturale) < 1e-4,
+	  f"{sinusoide[giunzione]:.4f} invece di {naturale:.4f}")
+
+# 8. Dopo una nota a volume zero, o una scivolata di volume che finisce a
+#    zero, la nota seguente comincia da zero come dopo una pausa. Fino alla
+#    V8.9.7 la fase si portava avanti, e cominciava a meta' onda.
+for kind in (1, 3, 4):
+	muta = onda([900, 0.2013, 0, 0.5, 900, 0.2013, 0, 0.0, 900, 0.2013, 0, 0.5], kind)
+	inizio = 2 * round(0.2013 * FS)
+	prova(f"{NOMI[kind]}, dopo una nota a volume zero si comincia da zero", abs(muta[inizio]) < 0.03, f"primo campione {muta[inizio]:.4f}")
+	sfumata = onda([900, 0.2013, 0, (0.5, 0.0), 900, 0.2013, 0, 0.5], kind)
+	inizio = round(0.2013 * FS)
+	prova(f"{NOMI[kind]}, dopo una scivolata di volume a zero si comincia da zero", abs(sfumata[inizio]) < 0.03,
+		  f"primo campione {sfumata[inizio]:.4f}")
+	accesa = onda([900, 0.2013, 0, 0.5, 900, 0.2013, 0, 0.5], kind)
+	sola = onda([900, 2 * 0.2013, 0, 0.5], kind)
+	scarto = float(np.max(np.abs(accesa[:len(sola)] - sola[:len(accesa)])))
+	prova(f"{NOMI[kind]}, fra due note accese la fase continua ancora", scarto < (1e-5 if kind == 1 else 1e-4), f"scarto {scarto:.6f}")
+
 print(f"Prove {totale}, passate {passate}.")
 sys.exit(0 if passate == totale else 1)

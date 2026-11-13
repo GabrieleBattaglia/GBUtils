@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V268 di venerdì 13 novembre 2026
+	V269 di venerdì 13 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.9.7 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.9 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 '''
-VERSION = "268"
+VERSION = "269"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5014,7 +5014,12 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 					phase = fase_portata + np.cumsum(passi) - passi
 					fase_dopo = phase[-1] + passi[-1]
 				else:
-					t = np.linspace(0, dur, total_note_samples, endpoint=False)
+					# Una sola base dei tempi, in campioni, dentro la nota e per la
+					# fase che passa alla seguente. Fino alla V8.9.7 i campioni
+					# stavano su dur / N, e quando dur per fs non era intero la
+					# fase saltava alla giunzione fino a mezzo campione: 12 gradi a
+					# 3000 Hz.
+					t = np.arange(total_note_samples, dtype=np.float64) / fs
 					phase = fase_portata + 2.0 * np.pi * freq * t
 					fase_dopo = fase_portata + 2.0 * np.pi * freq * total_note_samples / fs
 				wave = np.sin(phase).astype(np.float32)
@@ -5058,7 +5063,8 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 					fase_dopo = phase_ovs[ultimo_vero] + passi_ovs[ultimo_vero]
 				else:
 					dt_ovs = np.full(quanti_ovs, freq / fs_ovs, dtype=np.float64)
-					t_ovs = indici_ovs * (dur / total_ovs_samples if total_ovs_samples else 0.0)
+					# La stessa base dei tempi della sinusoide, in campioni.
+					t_ovs = indici_ovs / fs_ovs
 					phase_ovs = fase_portata + 2.0 * np.pi * freq * t_ovs
 					fase_dopo = fase_portata + 2.0 * np.pi * freq * total_ovs_samples / fs_ovs
 				
@@ -5139,8 +5145,10 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 				v_start, v_end = vol
 				vol_array = np.linspace(v_start, v_end, total_note_samples, endpoint=False, dtype=np.float32)
 				wave *= envelope * vol_array
+				volume_finale = abs(float(v_end))
 			else:
 				wave *= envelope * vol
+				volume_finale = abs(float(vol))
 
 			stereo_segment = np.zeros((total_note_samples, 2), dtype=np.float32)
 			if isinstance(pan, tuple):
@@ -5158,9 +5166,12 @@ def _sintetizza(score, kind=1, adsr=None, fs=44100):
 			stereo_segment[:, 0] = wave * left_gain
 			stereo_segment[:, 1] = wave * right_gain
 			# Si porta avanti solo se qui il suono e' ancora acceso: se
-			# l'inviluppo l'ha spento, la nota seguente deve ripartire da zero
-			# come ha sempre fatto.
-			fase_portata = float(fase_dopo % (2.0 * np.pi)) if not rumore and float(envelope[-1]) > 1e-4 else 0.0
+			# l'inviluppo o il volume l'hanno spento, la nota seguente deve
+			# ripartire da zero come ha sempre fatto. Fino alla V8.9.7 il volume
+			# non contava, e dopo una nota a volume zero, o una scivolata che
+			# finisce a zero, la nota seguente cominciava a meta' onda.
+			acceso = float(envelope[-1]) * volume_finale > 1e-4
+			fase_portata = float(fase_dopo % (2.0 * np.pi)) if not rumore and acceso else 0.0
 		segments.append(stereo_segment)
 	if not segments: return None
 	full_signal_float = np.concatenate(segments, axis=0)
@@ -5240,7 +5251,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.9.7 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.9 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 
     Motore audio e libreria dei suoni del parco software.
 
