@@ -15,6 +15,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -80,11 +81,14 @@ def tasti(sequenza, scritti=()):
 	am.input = lambda prompt="": righe.pop(0) if righe else ""
 	GBUtils.input = am.input
 
+ULTIMA_USCITA = [""]
+
 def editor(preset, sequenza, scritti=()):
-	"""Fa girare il giro dei tasti su un preset, e restituisce lo stato."""
+	"""Fa girare il giro dei tasti su un preset, e restituisce lo stato. Cio'
+	che ha stampato resta in ULTIMA_USCITA."""
 	stato = am.EditorState(preset)
 	tasti(sequenza, scritti)
-	zitto(am.modifica, stato)
+	_, ULTIMA_USCITA[0] = zitto(am.modifica, stato)
 	return stato
 
 PRIMA = impronta(VERA)
@@ -385,11 +389,24 @@ prova("j su un rumore inserisce una banda", stato.preset["score"][1][0] == am.BA
 with open(os.path.join(QUI, "Acu_Maker.py"), encoding="utf-8") as f:
 	sorgente = f.read()
 prova("nei testi di Acu_Maker non ci sono piu' righe di trattini", '"---' not in sorgente and "--- " not in sorgente and '"->"' not in sorgente)
-# 8. I prompt nuovi stanno fra due ritorni carrello.
-prompt = ['"\\rLo sovrascrivo? (s/n)\\r"', '"\\rLo rinomino lo stesso? (s/n)\\r"', 'f"\\rNome nuovo per {nome}\\r"',
-		  'non esiste. La creo? (s/n)\\r"', 'f"\\rNome breve [{preset_name}]\\r"', 'f"\\rDescrizione [{desc}]\\r"']
+# 8. Le richieste di una riga finiscono con i due punti, come nel resto del
+# parco: il cursore resta dopo la domanda, e cio' che si scrive non la
+# copre. Fino alla 1.13.17 finivano con un ritorno carrello, come i prompt
+# che aspettano un tasto solo, e il cursore tornava a inizio riga (collaudo
+# di Gabriele del 14 novembre 2026, prova 4).
+con_ritorno = re.findall(r'(?:input|dgt)\(f?"[^"\n]*\\r"', sorgente)
+prova("nessuna richiesta di una riga finisce con un ritorno carrello", con_ritorno == [], con_ritorno)
+prompt = ['"Lo sovrascrivo? (s/n): "', '"Lo rinomino lo stesso? (s/n): "', 'f"Nome nuovo per {nome}: "',
+		  'non esiste. La creo? (s/n): "', 'f"Nome breve [{preset_name}]: "', 'f"Descrizione [{desc}]: "',
+		  '"Volume d\'ascolto: "', '"Posizione: "', '"Nome o parte del nome: "', 'f"Numero, da 1 a {len(nomi)}: "',
+		  '"App che lo usa, Invio per tornare: "', '"Nome nuovo dell\'app: "', '"Descrizione nuova, Invio la lascia: "',
+		  '"Percorso della collezione, Invio per quella condivisa: "']
 mancano = [p for p in prompt if p not in sorgente]
-prova("i prompt nuovi di Acu_Maker stanno fra due ritorni carrello", mancano == [], mancano)
+prova("le richieste di Acu_Maker finiscono con i due punti", mancano == [], mancano)
+# Dopo una richiesta il cursore e' gia' a capo: andarci ancora lasciava una
+# riga vuota prima della riga di stato, con o, p e W.
+stato = editor({"descrizione": "x", "score": [["c4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["o", "esc"], ["80"])
+prova("o non lascia una riga vuota dopo la richiesta", "\n\n" not in ULTIMA_USCITA[0], ULTIMA_USCITA[0][-200:])
 
 am.Acusticator = Acusticator
 prova("la collezione vera non e' stata toccata", impronta(VERA) == PRIMA)

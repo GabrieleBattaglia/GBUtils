@@ -21,7 +21,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.13.17" # Le correzioni dal collaudo di Gabriele del 14 novembre 2026
+VERSION = "1.13.18" # Le correzioni dal collaudo di Gabriele del 14 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "14 novembre 2026"
@@ -632,9 +632,9 @@ def rinomina(coll, nome):
 	app = app_che_usano(coll.dati, nome)
 	if app:
 		print(f"Attenzione: lo usano {', '.join(app)}, che lo chiamano per nome. Dopo la rinomina vanno cambiate anche loro.")
-		if input("\rLo rinomino lo stesso? (s/n)\r").strip().lower() != "s":
+		if input("Lo rinomino lo stesso? (s/n): ").strip().lower() != "s":
 			return False
-	nuovo = dgt(f"\rNome nuovo per {nome}\r", kind="s", smax=50,
+	nuovo = dgt(f"Nome nuovo per {nome}: ", kind="s", smax=50,
 				avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
 	nuovo = nuovo.strip().replace(" ", "")
 	if not nuovo or nuovo == nome:
@@ -670,7 +670,7 @@ def cambia_descrizione(coll, nome):
 	modifica (issue 59)."""
 	vecchia = str(coll.dati[nome].get("descrizione", ""))
 	print(f"Descrizione di adesso: {vecchia}")
-	nuova = dgt("\rDescrizione nuova, Invio la lascia\r", kind="s", smax=LUNGHEZZA_DESCRIZIONE, default=vecchia,
+	nuova = dgt("Descrizione nuova, Invio la lascia: ", kind="s", smax=LUNGHEZZA_DESCRIZIONE, default=vecchia,
 				avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."}).strip()
 	if not nuova or nuova == vecchia:
 		print("Descrizione non cambiata.")
@@ -711,10 +711,10 @@ def scegli_scheda():
 def apri_collezione(coll):
 	"""Apre un'altra collezione, per esempio quella di un progetto. Fino alla
 	1.10.0 Acu_Maker apriva soltanto quella condivisa (issue 59)."""
-	scritto = input("\rPercorso della collezione, Invio per quella condivisa\r").strip().strip('"')
+	scritto = input("Percorso della collezione, Invio per quella condivisa: ").strip().strip('"')
 	percorso = os.path.abspath(scritto) if scritto else DB_FILE
 	if not os.path.exists(percorso):
-		if input(f"\r{percorso} non esiste. La creo? (s/n)\r").strip().lower() != "s":
+		if input(f"{percorso} non esiste. La creo? (s/n): ").strip().lower() != "s":
 			return
 		# Chi ha chiesto di crearla vuole anche la sua cartella: fino alla
 		# 1.13.0 una cartella che mancava faceva cadere Acu_Maker.
@@ -752,7 +752,7 @@ def gestisci_firme(coll, nome):
 			return
 		try:
 			if scelta == "a":
-				app = input("\rApp che lo usa, Invio per tornare\r").strip().lower()
+				app = input("App che lo usa, Invio per tornare: ").strip().lower()
 				if not app:
 					return
 				esito = Acusticator.firma(nome, app, percorso=coll.percorso)
@@ -761,7 +761,7 @@ def gestisci_firme(coll, nome):
 				esito = Acusticator.togli_firma(nome, app, percorso=coll.percorso) if app else 0
 			else:
 				vecchia = menu({a: "" for a in firme}, p="Quale> ", show=True) if len(firme) > 1 else firme[0]
-				nuova = input("\rNome nuovo dell'app\r").strip().lower() if vecchia else ""
+				nuova = input("Nome nuovo dell'app: ").strip().lower() if vecchia else ""
 				esito = Acusticator.cambia_firma(vecchia, nuova, [nome], percorso=coll.percorso) if nuova else 0
 		except ValueError:
 			print("Il nome di un'app non puo' essere vuoto, ne' avere virgole o punti.")
@@ -856,13 +856,13 @@ def player(coll):
 			continue
 		elif tasto == "n":
 			print()
-			numero = dgt(f"\rNumero, da 1 a {len(nomi)}\r", kind="i", imin=1, imax=len(nomi), default=indice + 1,
+			numero = dgt(f"Numero, da 1 a {len(nomi)}: ", kind="i", imin=1, imax=len(nomi), default=indice + 1,
 						 avvisi={"non_intero": "Serve un numero.", "troppo_basso": "Da {minimo} a {massimo}.",
 								 "troppo_alto": "Da {minimo} a {massimo}."})
 			nuovo = numero - 1
 		elif tasto == "/":
 			print()
-			trovato = cerca_nome(nomi, input("\rNome o parte del nome\r"))
+			trovato = cerca_nome(nomi, input("Nome o parte del nome: "))
 			if trovato is None:
 				print("Nessun preset con quel nome.")
 				continue
@@ -1600,7 +1600,7 @@ def modifica(state):
             # l'editor suonava sempre alla base 0,5 (issue 59).
             print("\nVolume d'ascolto, da 0 a 100: la base su cui si sente il preset, come la sceglie un programma.")
             print("Il preset non cambia. Invio senza scrivere niente torna a 50, la base del file.")
-            scritto = input("\rVolume d'ascolto\r").strip()
+            scritto = input("Volume d'ascolto: ").strip()
             if not scritto:
                 state.base_ascolto = None
             else:
@@ -1609,7 +1609,7 @@ def modifica(state):
                 except ValueError:
                     print("Valore non valido.")
             play_preset(state)
-            handle_print(state, force_newline=True)
+            handle_print(state)
             continue
         elif key == 'enter':
             param_name = ["Nota", "Durata", "Pan (-100..100)", "Volume (0..100)"][state.focus_param] if state.focus_type == 'score' else ["A", "D", "S", "R"][state.focus_param]
@@ -1928,7 +1928,7 @@ def modifica(state):
             if nuova is not None and nuova != state.preset.get('kind', 1):
                 cambia_onda(state, nuova)
             if key == 'W':
-                handle_print(state, force_newline=True)
+                handle_print(state)
             continue
         elif key in ('a', 'd', 's', 'r'):
             state.focus_type = 'adsr'
@@ -1978,7 +1978,7 @@ def modifica(state):
             print("Il panorama scritto nelle quartine non viene cancellato ma spostato, e si stringe soltanto quanto serve a non")
             print("uscire dai bordi: un suono che vola continua a volare, in uno spazio piu' stretto.")
             print("Il preset non cambia: e' solo il modo in cui lo stai ascoltando. Invio senza scrivere niente la toglie.")
-            valore, errore = leggi_posizione(input("\rPosizione\r"))
+            valore, errore = leggi_posizione(input("Posizione: "))
             if errore:
                 print(errore)
             else:
@@ -1988,7 +1988,7 @@ def modifica(state):
                 else:
                     print(f"Posizione {pan_to_user(valore)}. Il preset non e' cambiato: con u la rendi sua.")
                 play_preset(state)
-            handle_print(state, force_newline=True)
+            handle_print(state)
             continue
         elif key == 'u':
             if state.posizione is None:
@@ -2105,7 +2105,7 @@ def sovrascrivi_con_avviso(coll, preset_name, state):
 	app = app_che_usano(coll.dati, preset_name) if preset_name in coll.dati else []
 	if app:
 		print(f"Lo usano {len(app)} app, {', '.join(app)}: cambiandolo, cambia anche per loro.")
-		if input("\rLo sovrascrivo? (s/n)\r").strip().lower() != "s":
+		if input("Lo sovrascrivo? (s/n): ").strip().lower() != "s":
 			print("Preset non sovrascritto.")
 			return False
 	esito = coll.sovrascrivi(preset_name, state.originale, state.preset, chiedi_conflitto)
@@ -2161,14 +2161,14 @@ def salva_preset(coll, preset_name, state, nuovo):
 		return torna_se_non_scritto(sovrascrivi_con_avviso(coll, preset_name, state))
 	elif scelta in ("1", "2"):
 		# Il nome che il preset ha gia' e' li' pronto: invio lo accetta.
-		new_name = dgt(f"\rNome breve [{preset_name}]\r", kind="s", smax=50, default=preset_name,
+		new_name = dgt(f"Nome breve [{preset_name}]: ", kind="s", smax=50, default=preset_name,
 					   avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
 		new_name = new_name.strip().replace(" ", "")[:50] or preset_name
 		desc = state.preset.get('descrizione', '')
 		# Con smax alto: dgt taglia a smax il predefinito, e fino alla 1.10.0
 		# riconfermare con Invio una descrizione lunga la mozzava a 256
 		# caratteri, firme Usato da comprese (issue 59).
-		new_desc = dgt(f"\rDescrizione [{desc}]\r", kind="s", smax=LUNGHEZZA_DESCRIZIONE, default=desc,
+		new_desc = dgt(f"Descrizione [{desc}]: ", kind="s", smax=LUNGHEZZA_DESCRIZIONE, default=desc,
 					   avvisi={"troppo_lunga": "Al massimo {massimo} caratteri, ne hai scritti {lunghezza}."})
 		state.preset['descrizione'] = new_desc
 		if not nuovo and new_name == preset_name:

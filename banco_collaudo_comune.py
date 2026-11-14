@@ -29,11 +29,14 @@ def prova(titolo, condizione, visto=""):
 	else:
 		print(f"{titolo}: FALLITA {visto}")
 
+CHIESTI = []
+
 def copione(tasti, testi=()):
-	"""Sostituisce key e dgt con due finte che rispondono da un elenco."""
+	"""Sostituisce key e dgt con due finte che rispondono da un elenco. I
+	prompt di dgt finiscono in CHIESTI."""
 	tasti, testi = list(tasti), list(testi)
 	comune.key = lambda prompt="": tasti.pop(0)
-	comune.dgt = lambda prompt="", **kw: testi.pop(0)
+	comune.dgt = lambda prompt="", **kw: (CHIESTI.append(prompt), testi.pop(0))[1]
 
 def leggi(percorso):
 	if not os.path.exists(percorso):
@@ -69,6 +72,13 @@ with tempfile.TemporaryDirectory() as cartella:
 		trovati = [r.split(": ", 1)[1] for r in scritto.splitlines() if r.startswith("Commento di Gabriele: ")]
 		prova(nota, len(riascolti) == ripetizioni and trovati == attesi,
 			  f"ripetizioni {len(riascolti)}, registro {trovati}")
+
+	# 1 bis. La domanda del commento finisce con i due punti, come le
+	# richieste di una riga del parco: fino al 14 novembre 2026 finiva con un
+	# ritorno carrello, il cursore tornava a inizio riga e cio' che si
+	# scriveva copriva la domanda (collaudo di Gabriele, prova 4).
+	prova("la domanda del commento finisce con i due punti",
+		  CHIESTI != [] and all(p == "Impressioni: " for p in CHIESTI), CHIESTI)
 
 	# 2. Il registro: intestazione una volta sola, esiti in coda.
 	percorso = os.path.join(cartella, "coda.txt")
