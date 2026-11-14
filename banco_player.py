@@ -112,6 +112,21 @@ with tempfile.TemporaryDirectory() as cartella:
 	prova("? ripete i tasti", testo.count("Destra e Sinistra") == 2)
 	prova("Esc torna al menu", len(prompt) == 3)
 
+	# 6. L'ordine non distingue le maiuscole, come quello di menu: fino alla
+	# 1.13.16 i preset con l'iniziale maiuscola venivano tutti prima della a
+	# (collaudo di Gabriele del 14 novembre 2026).
+	percorso_misto = os.path.join(cartella, "misto.json")
+	misti = {nome: {"descrizione": nome, "score": [[nota, 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}
+			 for nota, nome in (("c4", "beta"), ("d4", "Delta"), ("e4", "alfa"), ("f4", "Gamma"))}
+	with open(percorso_misto, "w", encoding="utf-8") as f:
+		json.dump(misti, f)
+	coll_mista = am.Collezione(percorso_misto)
+	with contextlib.redirect_stdout(io.StringIO()):
+		coll_mista.apri()
+	suonati, prompt, testo = gioca(coll_mista, ["right", "right", "right", "\x1b"])
+	prova("l'ordine non distingue le maiuscole",
+		  [p for p, _ in prompt[:4]] == ["\r1 alfa\r", "\r2 beta\r", "\r3 Delta\r", "\r4 Gamma\r"], prompt[:4])
+
 # 5. La ricerca e la durata, da sole.
 prova("cerca_nome trova per inizio di nome", am.cerca_nome(["alfa", "beta", "betulla"], "BET") == 1)
 prova("e per parte del nome", am.cerca_nome(["alfa", "beta", "delta"], "lta") == 2)

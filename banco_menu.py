@@ -196,6 +196,17 @@ def main():
 			d=AMBIGUE, intestazione=RIGA)
 	b.prova("senza voci da mostrare l'intestazione non c'e'", ["z", ESC], None, non_contiene=[RIGA], d=TRE, intestazione=RIGA, show=False)
 	b.prova("senza intestazione l'elenco e' quello di prima", [], None, contiene=["(3 / 3)\n"], non_contiene=[RIGA], d=TRE, show_only=True)
+	# V5.2.6, dal collaudo di Gabriele del 14 novembre 2026: ordered non
+	# distingue le maiuscole. Fino alla V5.2.5 Alfa e Delta venivano prima
+	# di beta.
+	MISTE = {"beta": "", "Delta": "", "alfa": "", "Gamma": "", "+": "nuovo"}
+	b.prova("l'ordine non distingue le maiuscole", [], None, contiene=["+: nuovo\nalfa\nbeta\nDelta\nGamma\n(5 / 5)\n"], d=MISTE, show_only=True)
+	b.prova("e le lettere suggerite lo seguono", [ESC], None, contiene=["(+, A, B, D, G)>"], d=MISTE)
+	b.prova("numerato, lo stesso ordine", ["2"], "beta", contiene=["1. a\n2. b\n3. d\n4. g\n"], d={"beta": "b", "Alfa": "a", "Gamma": "g", "delta": "d"}, numbered=True)
+	b.prova("a parita' la maiuscola prima", [], None, contiene=["M9: maggiore\nm9: minore\n"], d={"m9": "minore", "M9": "maggiore"}, show_only=True)
+	b.prova("chiavi che non sono testo, numerate, in ordine di numero", [], None, contiene=["1. due\n2. dieci\n3. cento\n"],
+			d={100: "cento", 2: "due", 10: "dieci"}, numbered=True, show_only=True)
+	b.prova("ordered falso lascia l'ordine del dizionario", [], None, contiene=["beta\nDelta\nalfa\n"], d={"beta": "", "Delta": "", "alfa": ""}, show_only=True, ordered=False)
 	print(f"Prove {b.totale}, passate {b.passate}.")
 	return 0 if b.passate == b.totale else 1
 

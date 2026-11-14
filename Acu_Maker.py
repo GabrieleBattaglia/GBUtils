@@ -21,10 +21,10 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.13.16" # Due correzioni dalla terza revisione del 13 novembre 2026
+VERSION = "1.13.17" # Le correzioni dal collaudo di Gabriele del 14 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
-RELEASE_DATE = "13 novembre 2026"
+RELEASE_DATE = "14 novembre 2026"
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Acu_Collection.json")
 DEFAULT_VOL = 0.5
 
@@ -806,6 +806,12 @@ def cerca_nome(nomi, testo):
 	return None
 
 
+def in_ordine(nomi):
+	"""I nomi nell'ordine dei menu di GBUtils: senza distinguere maiuscole e
+	minuscole, e a parita' la maiuscola prima."""
+	return sorted(nomi, key=lambda nome: (nome.lower(), nome))
+
+
 AIUTO_PLAYER = ("Destra e Sinistra scorrono i preset, Inizio e Fine vanno al primo e all'ultimo, Spazio riascolta, "
 				"n chiede il numero, / il nome, Invio li suona in sequenza finche' non premi un tasto, "
 				"k zittisce, ? ripete i tasti, Esc torna al menu.")
@@ -816,8 +822,11 @@ def player(coll):
 
 	Ogni passo suona subito il preset su cui si arriva, nell'ordine del menu.
 	Il prompt dice il numero e il nome, fra due ritorni carrello perche' il
-	display braille vi resti sopra. I tasti li legge key di GBUtils."""
-	nomi = sorted(coll.dati)
+	display braille vi resti sopra. I tasti li legge key di GBUtils.
+	Dalla 1.13.17 l'ordine non distingue le maiuscole, come quello di menu:
+	fino alla 1.13.16 Coccodrillino e Laser_destra_sinistra venivano prima
+	della a (collaudo di Gabriele del 14 novembre 2026)."""
+	nomi = in_ordine(coll.dati)
 	if not nomi:
 		print("La collezione e' vuota.")
 		return

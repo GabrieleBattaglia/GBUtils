@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V285 di sabato 14 novembre 2026
+	V286 di sabato 14 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.18 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
@@ -27,7 +27,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
-	menu V5.2.5 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
+	menu V5.2.6 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 '''
-VERSION = "285"
+VERSION = "286"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6774,7 +6774,7 @@ def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
 	return True
 
 def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None, intestazione=""):
-    """V5.2.5 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
+    """V5.2.6 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -6799,6 +6799,11 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     show_on_filter: se True, la lista delle opzioni si aggiorna visivamente a ogni tasto.
     numbered: se True, il menu diventa numerato, con selezione interattiva dei numeri.
     ordered: se True (default), le voci del menu vengono ordinate alfabeticamente per chiave.
+      Dalla V5.2.6 senza distinguere maiuscole e minuscole, come le legge
+      chi scorre l'elenco: fino alla V5.2.5 le chiavi con l'iniziale
+      maiuscola venivano tutte prima della a, e in Acu_Maker
+      Laser_destra_sinistra stava in cima ai preset (collaudo di Gabriele
+      del 14 novembre 2026).
     empty_enter: cio' che viene restituito quando si preme Invio senza aver digitato niente.
     Restituisce:
     La chiave scelta dal dizionario 'd', oppure None se l'utente annulla con Esc;
@@ -6952,7 +6957,14 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         return None
     orig_keys = list(d.keys())
     if ordered:
-        orig_keys.sort()
+        # Senza distinguere maiuscole e minuscole, e a parita' la maiuscola
+        # prima: fino alla V5.2.5 le chiavi con l'iniziale maiuscola venivano
+        # tutte prima della a. Le chiavi che non sono testo, possibili con
+        # numbered, restano nell'ordine di sempre.
+        if all(isinstance(k, str) for k in orig_keys):
+            orig_keys.sort(key=lambda k: (k.lower(), k))
+        else:
+            orig_keys.sort()
     # Le letture aperte di cio' che si e' digitato, dalla preferita: coppie
     # (testo, digitate), dove digitate dice quante lettere del testo le ha
     # digitate l'utente; le altre le ha messe il completamento, e servono a
