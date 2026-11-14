@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V293 di sabato 14 novembre 2026
+	V294 di sabato 14 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.19 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -20,7 +20,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	formatta_dimensione V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	formatta_durata V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	frequenza_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	gestisci_aggiornamento V1.3.1 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+	gestisci_aggiornamento V1.3.2 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	indirizzo_mailto V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	informazioni_di_sistema V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	key V8.0.2 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
@@ -730,7 +730,7 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
                            solo_se_compilato: bool = True, proponi=None,
                            avanzamento=None, attesa_risposta=120) -> bool:
     """
-    V1.3.1 di lunedì 28 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
+    V1.3.2 di sabato 14 novembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
     Conduce da sola tutta la conversazione dell'aggiornamento: controlla se ce
     n'e' uno, lo riferisce, mostra le novita', chiede se applicarlo, lo scarica
     annunciando a che punto e' e avvia la sostituzione.
@@ -887,7 +887,14 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
             ultimo[0] = blocco
             fatti = f"{preso / 1048576:.1f}".replace(".", ",")
             tutti = f"{totale / 1048576:.1f}".replace(".", ",")
-            dillo(f"{percento}%, {fatti} MB su {tutti}.")
+            # Dalla V1.3.2 la riga passa da traduci come le altre: la parola su
+            # restava in italiano in tutte le lingue. I numeri restano con la
+            # virgola decimale, che e' gia' dentro fatti e tutti.
+            dillo(
+                tr("{percento}%, {fatti} MB su {tutti}.").format(
+                    percento=percento, fatti=fatti, tutti=tutti
+                )
+            )
 
     cortesia(tr("Scarico l'aggiornamento."))
     if avanzamento is None and proponi is None:
