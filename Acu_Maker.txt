@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.13.18)
+Manuale Utente: Acu_Maker (v1.13.19)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -8,7 +8,7 @@ Dal menù principale è possibile:
 - Aprire un'altra collezione (opzione '!'), per esempio quella di un progetto come Terminal_Beast/sounds.json; Invio senza scrivere niente torna a quella condivisa. La si può aprire anche da subito, passandone il percorso: Acu_Maker.py ..\Terminal_Beast\sounds.json. Una collezione che non esiste si crea, con la sua cartella; un file che non è una collezione di preset si rifiuta, e si resta su quella di prima. Un preset è una voce con uno score: dalla 1.13.14 si rifiuta anche un file di impostazioni a sezioni, come projects.json, che prima passava e che la pulizia dei doppioni riscriveva lasciandone una sezione sola.
 - Scegliere la scheda audio su cui suonare (opzione '*').
 - Ascoltare i preset uno dopo l'altro nel player (opzione '\'): vedi il capitolo dedicato.
-Scelto un preset, il menu delle azioni offre, oltre a caricarlo nell'editor e a eliminarlo, di rinominarlo, al suo posto nella collezione, e di cambiarne soltanto la descrizione senza entrare nell'editor. Rinominando un preset che un programma usa, l'app avverte e chiede conferma: i programmi lo chiamano per nome, e vanno cambiati anche loro.
+Scelto un preset, il menu delle azioni offre, oltre a caricarlo nell'editor e a eliminarlo, di rinominarlo, al suo posto nella collezione, e di cambiarne soltanto la descrizione senza entrare nell'editor. Rinominando un preset che un programma usa, l'app avverte e chiede conferma: i programmi lo chiamano per nome, e vanno cambiati anche loro. Dalla 1.13.19, dopo le firme, la rinomina e la descrizione si torna al menu di quel preset, con il nome nuovo se lo si è rinominato, e lo si lascia con Esc o con il punto; dopo l'editor e l'eliminazione si torna all'elenco dei preset.
 
 I preset stanno nel file "Acu_Collection.json". Dalla versione 1.9.0 ogni cambiamento si scrive subito, da solo, quando lo si conferma: un preset salvato, uno eliminato, i doppioni tolti all'avvio e all'uscita. Acu_Maker non riscrive mai la collezione intera, e prima di scrivere rilegge il file com'è in quel momento: ciò che un altro programma, un'altra sessione di lavoro o un git pull vi hanno scritto nel frattempo resta. Prima di ogni giro del menu, e prima di entrare in un preset, guarda se il file è cambiato, e se sì lo rilegge e dice quanti preset sono nuovi, cambiati e tolti. Uscire con Ctrl+C non perde niente di ciò che si è salvato.
 

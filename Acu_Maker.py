@@ -21,7 +21,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.13.18" # Le correzioni dal collaudo di Gabriele del 14 novembre 2026
+VERSION = "1.13.19" # Le correzioni dal collaudo di Gabriele del 14 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "14 novembre 2026"
@@ -628,7 +628,10 @@ def rinomina(coll, nome):
 
 	Dalla 1.11.0: fino alla 1.10.0 la rinomina non c'era, e Salva come con un
 	nome nuovo lasciava anche il vecchio, che all'uscita i doppioni potevano
-	togliere proprio quando era quello che le app chiamavano (issue 59)."""
+	togliere proprio quando era quello che le app chiamavano (issue 59).
+	Restituisce il nome nuovo, o False se il preset non e' stato rinominato:
+	dalla 1.13.19 il menu del preset resta aperto, con il nome nuovo. Fino
+	alla 1.13.18 restituiva True."""
 	app = app_che_usano(coll.dati, nome)
 	if app:
 		print(f"Attenzione: lo usano {', '.join(app)}, che lo chiamano per nome. Dopo la rinomina vanno cambiate anche loro.")
@@ -661,7 +664,7 @@ def rinomina(coll, nome):
 		print(f"Il preset {nome} non c'e' piu': l'ha tolto un altro programma.")
 	else:
 		print(f"Rinominato da {nome} a {nuovo}.")
-	return esito == ["fatto"]
+	return nuovo if esito == ["fatto"] else False
 
 
 def cambia_descrizione(coll, nome):
@@ -2423,38 +2426,58 @@ def sessione(coll):
                 if not scelta:
                     continue
 
-        print(f"\nHai selezionato: '{scelta}'")
-        app = app_che_usano(db, scelta) if scelta in db else []
-        if app:
-            print(f"Lo usano {len(app)} app: {', '.join(app)}.")
-        action_dict = {"c": "Carica (Edit Mode)", "e": "Elimina", "r": "Rinomina", "d": "Cambia la descrizione",
-                       "f": "Le firme, cioe' le app che lo usano"}
-        azione = menu(d=action_dict, p="Azione> ", show=True)
-        # Prima di entrare nel preset, la collezione di adesso.
-        coll.ricarica()
-        if azione is not None and scelta not in coll.dati:
-            print(f"Il preset '{scelta}' non c'e' piu': l'ha tolto un altro programma.")
-            continue
+        menu_del_preset(coll, scelta)
 
-        if azione == "e":
-            app = app_che_usano(coll.dati, scelta)
-            if app:
-                # Dalla 1.13.0 lo si dice prima di chiedere, issue 60.
-                print(f"Attenzione: lo usano {len(app)} app, {', '.join(app)}, che resterebbero mute.")
-            if input(f"Sei sicuro di voler eliminare '{scelta}'? (s/n): ").lower() == 's':
-                # Dal disco si toglie soltanto lui.
-                if coll.elimina(scelta):
-                    print("Preset eliminato.")
-                else:
-                    print("Preset non eliminato.")
-        elif azione == "c":
-            edit_mode(coll, scelta)
-        elif azione == "r":
-            rinomina(coll, scelta)
-        elif azione == "d":
-            cambia_descrizione(coll, scelta)
-        elif azione == "f":
-            gestisci_firme(coll, scelta)
+
+AZIONI_DEL_PRESET = {"c": "Carica (Edit Mode)", "e": "Elimina", "r": "Rinomina", "d": "Cambia la descrizione",
+					 "f": "Le firme, cioe' le app che lo usano", ".": "Torna all'elenco dei preset"}
+
+
+def menu_del_preset(coll, nome):
+	"""Il menu di un preset: caricarlo nell'editor, eliminarlo, rinominarlo,
+	cambiarne la descrizione, vederne le firme.
+
+	Dalla 1.13.19 resta aperto dopo le firme, la rinomina e la descrizione, e
+	lo si lascia con Esc o con il punto; dopo l'editor e l'eliminazione si
+	torna all'elenco dei preset. Fino alla 1.13.18 ogni azione tornava
+	all'elenco, e chi guardava le firme per poi modificare il preset doveva
+	cercarlo di nuovo (collaudo di Gabriele del 14 novembre 2026)."""
+	print(f"Hai selezionato: '{nome}'")
+	while True:
+		app = app_che_usano(coll.dati, nome) if nome in coll.dati else []
+		if app:
+			print(f"Lo usano {len(app)} app: {', '.join(app)}.")
+		azione = menu(d=AZIONI_DEL_PRESET, p="Azione> ", show=True)
+		if azione in (None, "."):
+			return
+		# Prima di ogni azione, la collezione di adesso.
+		coll.ricarica()
+		if nome not in coll.dati:
+			print(f"Il preset '{nome}' non c'e' piu': l'ha tolto un altro programma.")
+			return
+		if azione == "e":
+			app = app_che_usano(coll.dati, nome)
+			if app:
+				# Dalla 1.13.0 lo si dice prima di chiedere, issue 60.
+				print(f"Attenzione: lo usano {len(app)} app, {', '.join(app)}, che resterebbero mute.")
+			if input(f"Sei sicuro di voler eliminare '{nome}'? (s/n): ").lower() == 's':
+				# Dal disco si toglie soltanto lui.
+				if coll.elimina(nome):
+					print("Preset eliminato.")
+				else:
+					print("Preset non eliminato.")
+			return
+		if azione == "c":
+			edit_mode(coll, nome)
+			return
+		if azione == "r":
+			nome = rinomina(coll, nome) or nome
+		elif azione == "d":
+			cambia_descrizione(coll, nome)
+		elif azione == "f":
+			gestisci_firme(coll, nome)
+		print(f"Di nuovo al preset '{nome}'.")
+
 
 if __name__ == "__main__":
     main()

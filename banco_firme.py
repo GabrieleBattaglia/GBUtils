@@ -254,6 +254,35 @@ with tempfile.TemporaryDirectory() as cartella:
 		  "due": {"descrizione": "corta", "usato_da": ["mess"], "score": [["c4", 0.1, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}}
 	zitto(am.togli_doppioni, db)
 	prova("dei doppioni resta quello firmato, con le sue firme", list(db) == ["due"] and db["due"]["usato_da"] == ["mess"])
+	# Dal collaudo di Gabriele del 14 novembre 2026: il menu del preset resta
+	# aperto dopo le firme, la descrizione e la rinomina, e lo si lascia con il
+	# punto. Fino alla 1.13.18 ogni azione tornava all'elenco dei preset.
+	chiesti, copione = [], ["f", ".", "d", "r", "."]
+	def menu_del_copione(*_argomenti, p="", **_chiavi):
+		chiesti.append(p)
+		if len(chiesti) > 8:
+			raise RuntimeError("il menu del preset non si chiude")
+		return copione.pop(0) if copione else None
+	am.menu = menu_del_copione
+	rinominato = f"{senza}_rinominato"
+	righe = ["descrizione dal menu", rinominato]
+	GBUtils.input = lambda prompt="": righe.pop(0) if righe else ""
+	am.input = GBUtils.input
+	menu_del_preset = getattr(am, "menu_del_preset", None)
+	testo, chiuso = "", False
+	if menu_del_preset is not None:
+		try:
+			_, testo = zitto(menu_del_preset, coll, senza)
+			chiuso = True
+		except RuntimeError:
+			pass
+	am.menu = GBUtils.menu
+	dati = leggi(copia)
+	prova("dopo le firme, la descrizione e la rinomina si torna al menu del preset",
+		  chiuso and chiesti == ["Azione> ", "Firme> ", "Azione> ", "Azione> ", "Azione> "], chiesti)
+	prova("e il menu prosegue con il nome nuovo",
+		  dati.get(rinominato, {}).get("descrizione") == "descrizione dal menu" and senza not in dati
+		  and f"Di nuovo al preset '{rinominato}'." in testo, testo[-300:])
 
 am.Acusticator = Acusticator
 prova("la collezione vera non e' stata toccata", impronta(VERA) == PRIMA)
