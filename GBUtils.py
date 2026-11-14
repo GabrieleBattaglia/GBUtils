@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V291 di sabato 14 novembre 2026
+	V292 di sabato 14 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.19 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -27,7 +27,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
-	menu V5.2.6 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
+	menu V5.2.7 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 '''
-VERSION = "291"
+VERSION = "292"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6793,7 +6793,7 @@ def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
 	return True
 
 def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None, intestazione=""):
-    """V5.2.6 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
+    """V5.2.7 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -6894,6 +6894,12 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     dove la lettera non e' un seguito, come blues in Chitabry, o dove il
     seguito lascia piu' voci, come 10 fra 10, 100 e 1000 (scelta di Gabriele
     del 14 novembre 2026, dal collaudo).
+    Dalla V5.2.7 il Backspace che toglie la lettera aggiunta dall'ultimo
+    tasto torna esattamente a prima di quel tasto. Fino alla V5.2.6 le
+    lettere del completamento restavano contate come digitate: con 10, 100 e
+    1000, x, Backspace e Invio sceglievano 10 invece di restituire
+    empty_enter, e dopo m, x e Backspace, fra mamma e mammut, ricopiare non
+    serviva piu'.
     """
     import os
     if d is None: d = {}
@@ -7007,6 +7013,9 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     # Per ogni lettura, quella da cui e' nata all'ultimo tasto: le sorelle
     # della preferita hanno la sua stessa madre.
     madri = [0]
+    # Le letture e le madri di prima di ogni lettera, per il Backspace che la
+    # toglie: dalla V5.2.7 torna esattamente allo stato di prima.
+    storia = []
     # Vero quando l'ultima cosa stampata e' rimasta a meta' riga, cioe' il
     # prompt o il carattere appena digitato. Serve per andare a capo solo
     # quando c'e' davvero una riga da chiudere: prima si andava a capo sempre,
@@ -7072,12 +7081,23 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             a_capo_pendente = False
         elif user_char in ('\x08', 'ctrl-backspace'):
             if user_input:
-                user_input = user_input[:-1]
-                letture = [(user_input, min(digitate, len(user_input)))]
-                madri = [0]
+                if storia and storia[-1][0][0][0] == user_input[:-1]:
+                    # Si toglie la lettera che l'ultimo tasto aveva aggiunto in
+                    # coda: si torna allo stato di prima di quel tasto, con le
+                    # sue letture e le lettere che contava digitate. Fino alla
+                    # V5.2.6 le lettere del completamento restavano contate
+                    # come digitate: con 10, 100 e 1000, x, Backspace e Invio
+                    # sceglievano 10 invece di restituire empty_enter, e dopo
+                    # m, x e Backspace mamma non si poteva piu' ricopiare.
+                    letture, madri = storia.pop()
+                else:
+                    user_input = user_input[:-1]
+                    letture = [(user_input, min(digitate, len(user_input)))]
+                    madri = [0]
+                    storia.clear()
+                    disable_autocomplete_once = True
                 print('\b \b'*len(display_input), end='', flush=True)
                 last_displayed = None
-                disable_autocomplete_once = True
         elif len(user_char) != 1 or not user_char.isprintable():
             # Frecce, tasti funzione, combinazioni con Ctrl e Alt, Tab e la
             # stringa vuota: non sono caratteri da filtro e si lasciano cadere.
@@ -7085,6 +7105,7 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
         elif numbered and not user_char.isdigit():
             pass
         else:
+            storia.append((letture, madri))
             # Ogni lettura legge il tasto in uno o due modi. Una lettera uguale
             # a quella che il completamento aveva messo dove l'utente e'
             # arrivato, maiuscola o minuscola che sia, e' ricopiata: si va

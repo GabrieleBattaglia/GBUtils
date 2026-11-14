@@ -164,7 +164,12 @@ def main():
 	# coincidono per piu' di un tasto. Nella V5.2.2 la seconda si perdeva, e
 	# c i s p u n t a lasciava il filtro vuoto.
 	CASELLE = {"cas_disponibili_spunta": "", "cas_disponibili_tolta": "", "cas_due": ""}
-	b.prova("c, i, s, p, u arrivano a cas_disponibili_spunta", ["c", "i", "s", "p", "u"], "cas_disponibili_spunta", d=CASELLE)
+	b.prova("c, i, s arrivano a cas_disponibili_spunta", ["c", "i", "s"], "cas_disponibili_spunta", d=CASELLE)
+	# Dalla quarta revisione: questa e' la prova che sorveglia la V5.2.3, con
+	# due letture aperte per piu' di un tasto; dalla V5.2.5 la s sceglie gia'
+	# nelle CASELLE di sopra.
+	QUATTRO = {"cas_disponibili_spunta_a": "", "cas_disponibili_spunta_b": "", "cas_disponibili_tolta": "", "cas_due": ""}
+	b.prova("c, i, s, p, u, a arrivano a cas_disponibili_spunta_a", ["c", "i", "s", "p", "u", "a"], "cas_disponibili_spunta_a", d=QUATTRO)
 	b.prova("c, i, t arrivano a cas_disponibili_tolta", ["c", "i", "t"], "cas_disponibili_tolta", d=CASELLE)
 	b.prova("chi ricopia cas_dis, alla s, finisce su cas_disponibili_spunta", ["c", "a", "s", "_", "d", "i", "s"], "cas_disponibili_spunta", d=CASELLE)
 	# V5.2.4, dalla terza revisione: Invio su un prefisso ambiguo non sceglie
@@ -188,6 +193,16 @@ def main():
 	b.prova("e con 10, 100 e 1000 non sceglie 10", [INVIO], "vuoto", d={"10": "", "100": "", "1000": ""}, empty_enter="vuoto", show=False)
 	b.prova("senza empty_enter Invio a vuoto restituisce None", [INVIO], None, d={"fiches_100000": "", "fiches_1000000": ""})
 	b.prova("dopo backspace fino a vuoto, Invio restituisce empty_enter", ["x", BACKSPACE, INVIO], "vuoto", d={"xa": "", "xb": "", "ya": "", "yb": ""}, empty_enter="vuoto")
+	# V5.2.7, dalla quarta revisione: il Backspace che toglie la lettera
+	# aggiunta dall'ultimo tasto torna esattamente a prima di quel tasto.
+	# Fino alla V5.2.6 le lettere del completamento restavano contate come
+	# digitate.
+	b.prova("con un inizio comune, x e Backspace tornano a prima, e Invio restituisce empty_enter", ["x", BACKSPACE, INVIO], "vuoto",
+			d={"10": "", "100": "", "1000": ""}, empty_enter="vuoto", show=False)
+	b.prova("anche con due lettere sbagliate", ["x", "y", BACKSPACE, BACKSPACE, INVIO], "vuoto", d={"10": "", "100": "", "1000": ""}, empty_enter="vuoto", show=False)
+	b.prova("fra le fiches, x, Backspace e Invio non scelgono niente", ["x", BACKSPACE, INVIO], None, d={"fiches_100000": "", "fiches_1000000": ""})
+	b.prova("dopo b, l, x e Backspace, u, e, s si ricopiano ancora", ["b", "l", "x", BACKSPACE, "u", "e", "s", INVIO], "blues", non_contiene=["bluesues"], d=SCALE)
+	b.prova("1, x, Backspace, 0, 0 e Invio danno 100", ["1", "x", BACKSPACE, "0", "0", INVIO], "100", d={"10": "", "100": "", "1000": ""}, show=False)
 	# V5.2.0, issue 62: l'intestazione prima di ogni elenco.
 	RIGA = "Nome, spiegazione, numero DL."
 	b.prova("l'intestazione sta prima dell'elenco", [], None, contiene=[f"{RIGA}\nalfa: Primo\n"], d=TRE, show_only=True, intestazione=RIGA)
