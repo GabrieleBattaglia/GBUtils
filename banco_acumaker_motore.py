@@ -74,20 +74,27 @@ class MotoreFinto:
 		self.cicli.append((score, dissolvenza))
 		return Maniglia()
 
-def tasti(sequenza, scritti=()):
-	"""Sostituisce la tastiera dell'editor e input con un copione."""
+def tasti(sequenza, scritti=(), eco=False):
+	"""Sostituisce la tastiera dell'editor e input con un copione. Con eco,
+	input scrive come la console vera il prompt e la risposta, con il suo a
+	capo: serve alle prove sulle righe vuote."""
 	coda, righe = list(sequenza), list(scritti)
 	am.get_keypress = lambda: coda.pop(0) if coda else "esc"
-	am.input = lambda prompt="": righe.pop(0) if righe else ""
+	def risposta(prompt=""):
+		detta = righe.pop(0) if righe else ""
+		if eco:
+			print(prompt + detta)
+		return detta
+	am.input = risposta
 	GBUtils.input = am.input
 
 ULTIMA_USCITA = [""]
 
-def editor(preset, sequenza, scritti=()):
+def editor(preset, sequenza, scritti=(), eco=False):
 	"""Fa girare il giro dei tasti su un preset, e restituisce lo stato. Cio'
 	che ha stampato resta in ULTIMA_USCITA."""
 	stato = am.EditorState(preset)
-	tasti(sequenza, scritti)
+	tasti(sequenza, scritti, eco)
 	_, ULTIMA_USCITA[0] = zitto(am.modifica, stato)
 	return stato
 
@@ -423,10 +430,17 @@ prompt = ['"Lo sovrascrivo? (s/n): "', '"Lo rinomino lo stesso? (s/n): "', 'f"No
 		  '"Percorso della collezione, Invio per quella condivisa: "']
 mancano = [p for p in prompt if p not in sorgente]
 prova("le richieste di Acu_Maker finiscono con i due punti", mancano == [], mancano)
-# Dopo una richiesta il cursore e' gia' a capo: andarci ancora lasciava una
-# riga vuota prima della riga di stato, con o, p e W.
-stato = editor({"descrizione": "x", "score": [["c4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}, ["o", "esc"], ["80"])
-prova("o non lascia una riga vuota dopo la richiesta", "\n\n" not in ULTIMA_USCITA[0], ULTIMA_USCITA[0][-200:])
+# Dopo una richiesta, o dopo un testo che finisce con un a capo, il cursore e'
+# gia' a inizio riga: andarci ancora lasciava una riga vuota prima della riga
+# di stato. Dalla 1.13.18 con o, p e W; dalla 1.14.2, dopo la quarta
+# revisione, anche con Invio, b, m, l e il punto interrogativo.
+UNO = {"descrizione": "x", "score": [["c4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]}
+am.menu = lambda *argomenti, **chiavi: "2"
+for tasto_provato, scritti in (("o", ["80"]), ("p", ["50"]), ("W", []), ("enter", ["d4"]), ("b", ["5"]),
+							   ("m", ["s"]), ("l", []), ("?", [])):
+	stato = editor(json.loads(json.dumps(UNO)), [tasto_provato, "esc"], scritti, eco=True)
+	prova(f"{tasto_provato} non lascia una riga vuota prima della riga di stato", "\n\n" not in ULTIMA_USCITA[0], ULTIMA_USCITA[0][-200:])
+am.menu = GBUtils_menu
 
 am.Acusticator = Acusticator
 prova("la collezione vera non e' stata toccata", impronta(VERA) == PRIMA)

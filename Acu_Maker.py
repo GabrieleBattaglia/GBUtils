@@ -21,7 +21,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.14.1" # Il doppione torna all'editor, scelta di Gabriele del 14 novembre 2026
+VERSION = "1.14.2" # Le righe vuote dalla quarta revisione del 14 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "14 novembre 2026"
@@ -910,7 +910,10 @@ def player(coll):
 			print()
 			print("Primo preset." if nuovo == 0 else "Ultimo preset.")
 		indice = nuovo
-		print()
+		# Dopo n e / l'Invio della risposta e' gia' andato a capo: andarci
+		# ancora lasciava una riga vuota, fino alla 1.14.1.
+		if tasto not in ("n", "/"):
+			print()
 		suona_nel_player(coll, nomi[indice])
 
 
@@ -1588,8 +1591,8 @@ def edit_mode(coll, preset_name, nuovo=None):
     """L'editor di un preset. nuovo e' il preset appena nato dal tasto piu':
     non sta nella collezione, e ci entra soltanto se lo si salva."""
     state = EditorState(nuovo if nuovo is not None else coll.dati[preset_name])
-    print(f"\nEditor del preset {preset_name}.")
-    handle_print(state, force_newline=True)
+    print(f"Editor del preset {preset_name}.")
+    handle_print(state)
     while True:
         modifica(state)
         print()
@@ -1602,7 +1605,7 @@ def edit_mode(coll, preset_name, nuovo=None):
             return
         state.running = True
         print("Torno all'editor.")
-        handle_print(state, force_newline=True)
+        handle_print(state)
 
 
 def modifica(state):
@@ -1768,7 +1771,7 @@ def modifica(state):
                         state.modified = True
                 except ValueError:
                     print("Valore non valido.")
-            handle_print(state, force_newline=True)
+            handle_print(state)
             
         elif key == '.':
             if state.focus_type == 'score' and state.focus_param in (0, 2, 3):
@@ -1911,7 +1914,7 @@ def modifica(state):
                         state.steps[param_key] = passo
                 except ValueError:
                     print("Valore non valido.")
-            handle_print(state, force_newline=True)
+            handle_print(state)
         elif key == 'n':
             if state.focus_type == 'score':
                 rumore = is_rumore(state.preset.get('kind', 1))
@@ -1940,7 +1943,7 @@ def modifica(state):
                 state.focus_param = 0
                 state.modified = True
                 print("Preset svuotato.")
-            handle_print(state, force_newline=True)
+            handle_print(state)
             continue
             
         elif key in ('w', 'W'):
@@ -2043,7 +2046,7 @@ def modifica(state):
             for i, q in enumerate(state.preset['score']):
                 qui = ", qui" if i == state.focus_idx else ""
                 print(f"{i+1}{qui}. Nota: {q[0]}, Dur: {q[1]}, Pan: {pan_to_user(q[2])}, Vol: {vol_to_user(q[3])}")
-            handle_print(state, force_newline=True)
+            handle_print(state)
             continue
         elif key == '?':
             print("\nI tasti dell'editor:")
@@ -2101,7 +2104,7 @@ def modifica(state):
             print("l: Mostra la lista completa delle quartine")
             print("?: Mostra questa lista di tasti rapidi")
             print("Esc: Esce dall'editor")
-            handle_print(state, force_newline=True)
+            handle_print(state)
             continue
         elif key == 'esc':
             state.running = False
@@ -2182,7 +2185,7 @@ def salva_preset(coll, preset_name, state, nuovo):
 			print("Modifiche ignorate.")
 			return None
 		return "torna"
-	print("\nModifiche rilevate. Scegli un'opzione, Esc torna all'editor:")
+	print("Modifiche rilevate. Scegli un'opzione, Esc torna all'editor:")
 	if nuovo:
 		scelte = {"1": "Salva il preset nuovo", "3": "Esci senza salvare"}
 	else:
