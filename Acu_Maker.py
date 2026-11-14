@@ -21,7 +21,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.13.19" # Le correzioni dal collaudo di Gabriele del 14 novembre 2026
+VERSION = "1.14.0" # Il tasto c del player, dal collaudo di Gabriele del 14 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "14 novembre 2026"
@@ -817,7 +817,7 @@ def in_ordine(nomi):
 
 AIUTO_PLAYER = ("Destra e Sinistra scorrono i preset, Inizio e Fine vanno al primo e all'ultimo, Spazio riascolta, "
 				"n chiede il numero, / il nome, Invio li suona in sequenza finche' non premi un tasto, "
-				"k zittisce, ? ripete i tasti, Esc torna al menu.")
+				"c lo carica nell'editor, k zittisce, ? ripete i tasti, Esc torna al menu.")
 
 
 def player(coll):
@@ -828,7 +828,9 @@ def player(coll):
 	display braille vi resti sopra. I tasti li legge key di GBUtils.
 	Dalla 1.13.17 l'ordine non distingue le maiuscole, come quello di menu:
 	fino alla 1.13.16 Coccodrillino e Laser_destra_sinistra venivano prima
-	della a (collaudo di Gabriele del 14 novembre 2026)."""
+	della a (collaudo di Gabriele del 14 novembre 2026). Dalla 1.14.0 c
+	carica nell'editor il preset su cui si e', e uscendo dall'editor si torna
+	al player sullo stesso preset."""
 	nomi = in_ordine(coll.dati)
 	if not nomi:
 		print("La collezione e' vuota.")
@@ -873,6 +875,29 @@ def player(coll):
 		elif tasto == "\r":
 			print()
 			indice = sequenza(coll, nomi, indice)
+			continue
+		elif tasto == "c":
+			# Dalla 1.14.0 c carica nell'editor il preset su cui si e', come
+			# Carica nel menu del preset, e uscendo dall'editor si torna qui,
+			# sullo stesso preset (collaudo di Gabriele del 14 novembre 2026).
+			Acusticator.stop()
+			print()
+			nome = nomi[indice]
+			coll.ricarica()
+			if nome in coll.dati:
+				edit_mode(coll, nome)
+			else:
+				print(f"Il preset '{nome}' non c'e' piu': l'ha tolto un altro programma.")
+			# L'editor puo' aver salvato un preset nuovo, e un altro programma
+			# puo' averne tolti: l'elenco si rifa', e si resta sullo stesso
+			# nome, o allo stesso posto se non c'e' piu'.
+			coll.ricarica()
+			nomi = in_ordine(coll.dati)
+			if not nomi:
+				print("La collezione e' vuota.")
+				return
+			indice = nomi.index(nome) if nome in nomi else min(indice, len(nomi) - 1)
+			print(f"Di nuovo nel player, {len(nomi)} preset.")
 			continue
 		elif tasto == "\x1b":
 			Acusticator.stop()

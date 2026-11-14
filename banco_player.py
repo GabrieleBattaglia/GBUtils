@@ -127,6 +127,26 @@ with tempfile.TemporaryDirectory() as cartella:
 	prova("l'ordine non distingue le maiuscole",
 		  [p for p, _ in prompt[:4]] == ["\r1 alfa\r", "\r2 beta\r", "\r3 Delta\r", "\r4 Gamma\r"], prompt[:4])
 
+	# 7. c carica nell'editor il preset su cui si e', e uscendo si torna al
+	# player sullo stesso preset, anche se intanto la collezione e' cambiata.
+	# Dalla 1.14.0, dal collaudo di Gabriele del 14 novembre 2026. L'editor
+	# finto salva un preset nuovo, che nell'ordine viene prima di beta.
+	editati = []
+	def editor_finto(collezione, nome, nuovo=None):
+		editati.append(nome)
+		with contextlib.redirect_stdout(io.StringIO()):
+			collezione.salva_nuovo("aaa_nuovo", {"descrizione": "nuovo", "score": [["g4", 0.2, 0, 0.0]], "kind": 1, "adsr": [1, 0, 100, 1]})
+	vero_editor = am.edit_mode
+	am.edit_mode = editor_finto
+	try:
+		suonati, prompt, testo = gioca(coll, ["right", "c", "right", "\x1b"])
+	finally:
+		am.edit_mode = vero_editor
+	prova("c carica nell'editor il preset su cui si e'", editati == ["beta"], editati)
+	prova("e uscendo si torna al player sullo stesso preset",
+		  [p for p, _ in prompt[:4]] == ["\r1 alfa\r", "\r2 beta\r", "\r3 beta\r", "\r4 delta\r"], prompt[:4])
+	prova("l'aiuto dice il tasto c", "c lo carica nell'editor" in testo)
+
 # 5. La ricerca e la durata, da sole.
 prova("cerca_nome trova per inizio di nome", am.cerca_nome(["alfa", "beta", "betulla"], "BET") == 1)
 prova("e per parte del nome", am.cerca_nome(["alfa", "beta", "delta"], "lta") == 2)

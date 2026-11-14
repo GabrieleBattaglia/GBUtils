@@ -1,4 +1,4 @@
-Manuale Utente: Acu_Maker (v1.13.19)
+Manuale Utente: Acu_Maker (v1.14.0)
 
 Acu_Maker è un'utilità da riga di comando per la creazione, gestione e modifica di una libreria di suoni (preset) basati sulla funzione Acusticator.
 Dal menù principale è possibile:
@@ -98,6 +98,7 @@ Dalla versione 1.12.0 l'opzione '\' del menu principale apre un player semplific
 - [n] : chiede il numero del preset a cui andare; Invio lascia quello attuale.
 - [/] : chiede un nome, o una parte, e va alla prima occorrenza: prima fra i nomi che cominciano così, poi fra quelli che lo contengono.
 - [Invio] : suona i preset in sequenza, dall'attuale in avanti, uno dopo l'altro, finché non premi un tasto qualsiasi o la collezione finisce. Ci si ferma sul preset che stava suonando.
+- [c] : carica nell'editor il preset su cui sei, come Carica nel menu del preset. Uscendo dall'editor torni al player, sullo stesso preset. Dalla versione 1.14.0.
 - [k] : zittisce.
 - [?] : ripete i tasti.
 - [Esc] : torna al menu principale.
