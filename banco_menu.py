@@ -151,27 +151,37 @@ def main():
 	b.prova("chi scrive 100 per intero riceve 100", ["1", "0", "0", INVIO], "100", d=NUMERI)
 	b.prova("chi scrive 1000 per intero riceve 1000", ["1", "0", "0", "0"], "1000", d=NUMERI)
 	MAMME = {"mamma": "", "mammut": ""}
-	b.prova("m, a e Invio scelgono mamma", ["m", "a", INVIO], "mamma", d=MAMME)
-	b.prova("chi ricopia mammut ci arriva", ["m", "a", "m", "m", "u"], "mammut", d=MAMME)
+	b.prova("m e a scelgono subito mamma", ["m", "a"], "mamma", d=MAMME)
+	b.prova("m e u scelgono mammut", ["m", "u"], "mammut", d=MAMME)
 	PRESET = {"Laser_destra_sinistra": "", "laser_da_gioco_1": "", "lampo": ""}
-	b.prova("las e poi il seguito suggerito arriva a Laser_destra_sinistra", ["l", "a", "s", "e", "s"], "Laser_destra_sinistra", d=PRESET)
-	b.prova("chi ricopia laser_da arriva a laser_da_gioco_1", ["l", "a", "s", "e", "r", "_", "d", "a"], "laser_da_gioco_1", d=PRESET)
+	b.prova("las ed e scelgono subito Laser_destra_sinistra", ["l", "a", "s", "e"], "Laser_destra_sinistra", d=PRESET)
+	b.prova("las ed a scelgono subito laser_da_gioco_1", ["l", "a", "s", "a"], "laser_da_gioco_1", d=PRESET)
+	b.prova("chi ricopia laser_da, alla e, finisce su Laser_destra_sinistra", ["l", "a", "s", "e", "r", "_", "d", "a"], "Laser_destra_sinistra", d=PRESET)
 	b.prova("chi ricopia laser_de arriva a Laser_destra_sinistra", ["l", "a", "s", "e", "r", "_", "d", "e"], "Laser_destra_sinistra", d=PRESET)
-	b.prova("con aab e aaab, a, a, b danno aab", ["a", "a", "b"], "aab", d={"aab": "", "aaab": ""})
-	b.prova("e a, a, a danno aaab", ["a", "a", "a"], "aaab", d={"aab": "", "aaab": ""})
+	b.prova("con aab e aaab, b sceglie subito aab", ["b"], "aab", d={"aab": "", "aaab": ""})
+	b.prova("e a, che il prompt (A, B)>aa suggerisce, sceglie subito aaab", ["a"], "aaab", d={"aab": "", "aaab": ""})
 	# V5.2.3, dalla seconda revisione: le letture restano aperte anche quando
 	# coincidono per piu' di un tasto. Nella V5.2.2 la seconda si perdeva, e
 	# c i s p u n t a lasciava il filtro vuoto.
 	CASELLE = {"cas_disponibili_spunta": "", "cas_disponibili_tolta": "", "cas_due": ""}
 	b.prova("c, i, s, p, u arrivano a cas_disponibili_spunta", ["c", "i", "s", "p", "u"], "cas_disponibili_spunta", d=CASELLE)
-	b.prova("e chi ricopia arriva lo stesso a cas_disponibili_tolta", ["c", "a", "s", "_", "d", "i", "s", "p", "o", "n", "i", "b", "i", "l", "i", "_", "t"],
-			"cas_disponibili_tolta", d=CASELLE)
+	b.prova("c, i, t arrivano a cas_disponibili_tolta", ["c", "i", "t"], "cas_disponibili_tolta", d=CASELLE)
+	b.prova("chi ricopia cas_dis, alla s, finisce su cas_disponibili_spunta", ["c", "a", "s", "_", "d", "i", "s"], "cas_disponibili_spunta", d=CASELLE)
 	# V5.2.4, dalla terza revisione: Invio su un prefisso ambiguo non sceglie
 	# da una lettura nata tasti prima, che lo schermo non mostra. Nella V5.2.3
 	# a, b, _ e Invio davano ab_b_c. Una lettura sorella, nata all'ultimo
 	# tasto, sceglie ancora la sua unica voce.
 	b.prova("a, b, _ e Invio non scelgono da una lettura nascosta", ["a", "b", "_", INVIO, ESC], None, d={"ab_b": "", "ab_b_c": "", "ab_d": ""})
-	b.prova("l, a, s, e e Invio scelgono ancora Laser_destra_sinistra", ["l", "a", "s", "e", INVIO], "Laser_destra_sinistra", d=PRESET)
+	# V5.2.5, dal collaudo di Gabriele del 14 novembre 2026: la lettera
+	# aggiunta a cio' che il prompt mostra sceglie subito, quando lascia una
+	# voce sola, anche se vale come ricopiata. La ricopiatura resta dove la
+	# lettera non e' un seguito, o dove il seguito lascia piu' voci.
+	b.prova("la e suggerita sceglie senza un altro tasto", ["l", "a", "s", "e"], "Laser_destra_sinistra",
+			contiene=[">laser_d"], d={"Laser_destra_sinistra": "", "laser_da_gioco_1": "", "laser_da_gioco_2": ""})
+	b.prova("il seguito che lascia due voci non sceglie", ["l", "a", "s", "a", INVIO, ESC], None,
+			d={"Laser_destra_sinistra": "", "laser_da_gioco_1": "", "laser_da_gioco_2": ""})
+	b.prova("una lettura nascosta non sceglie subito", ["a", "b", "_", ESC], None, d={"ab_b": "", "ab_b_c": "", "ab_d": ""})
+	b.prova("numerato: la cifra che lascia un numero solo sceglie", ["1", "2"], "v12", d=LUNGO, numbered=True, show=False)
 	# V5.2.2, dalla revisione: Invio a vuoto restituisce empty_enter anche
 	# quando il completamento ha gia' scritto l'inizio comune delle voci.
 	b.prova("Invio a vuoto con un inizio comune restituisce empty_enter", [INVIO], "vuoto", d={"mess_albo_che_scorre": "", "mess_albo_d_oro": ""}, empty_enter="vuoto")

@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V284 di sabato 14 novembre 2026
+	V285 di sabato 14 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.18 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
@@ -27,7 +27,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
-	menu V5.2.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+	menu V5.2.5 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 '''
-VERSION = "284"
+VERSION = "285"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6774,7 +6774,7 @@ def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
 	return True
 
 def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None, intestazione=""):
-    """V5.2.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V5.2.5 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -6859,6 +6859,17 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     digitato niente restituisce sempre empty_enter: fino alla V5.2.0, quando
     tutte le voci avevano un inizio comune, il completamento lo scriveva
     prima del primo tasto, e Invio sceglieva una voce, o non faceva niente.
+    Dalla V5.2.5 una lettera aggiunta a cio' che il prompt mostra, cioe' una
+    di quelle che suggerisce, sceglie subito la voce quando ne lascia una
+    sola, anche se la stessa lettera vale come ricopiata: in Acu_Maker las
+    ed e danno Laser_destra_sinistra, e con mamma e mammut m ed a danno
+    mamma, senza un altro tasto. Nella V5.2.4 restavano aperte le due
+    letture, e il prompt restava uguale. Il prezzo e' che in quei casi chi
+    ricopia per intero l'altra voce arriva a questa: laser_da_gioco si
+    raggiunge con las e poi a, mammut con m e poi u. La ricopiatura resta
+    dove la lettera non e' un seguito, come blues in Chitabry, o dove il
+    seguito lascia piu' voci, come 10 fra 10, 100 e 1000 (scelta di Gabriele
+    del 14 novembre 2026, dal collaudo).
     """
     import os
     if d is None: d = {}
@@ -7079,6 +7090,15 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
             nuove, madri = nuove[:4], madri[:4]
             if not nuove:
                 nuove, madri = gruppi[0][0][:1], [0]
+            # Dalla V5.2.5 la lettera aggiunta in coda a cio' che il prompt
+            # mostra, cioe' una di quelle che suggerisce, sceglie subito la
+            # voce quando ne lascia una sola, anche se la stessa lettera vale
+            # come ricopiata. Nella V5.2.4 vinceva la ricopiatura anche li', e
+            # in Acu_Maker las, poi e, lasciava il prompt uguale in attesa del
+            # tasto dopo (collaudo di Gabriele del 14 novembre 2026).
+            suggerito = gruppi[0][0][-1]
+            if len(filtra(suggerito[0])) == 1:
+                nuove, madri = [suggerito], [0]
             letture = [(testo, quante) for testo, quante, _ in nuove]
             if nuove[0][2]:
                 print(user_char, end='', flush=True)
