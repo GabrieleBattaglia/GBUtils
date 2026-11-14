@@ -21,7 +21,7 @@ from GBUtils import (
     scomponi_nota,
 )
 
-VERSION = "1.14.0" # Il tasto c del player, dal collaudo di Gabriele del 14 novembre 2026
+VERSION = "1.14.1" # Il doppione torna all'editor, scelta di Gabriele del 14 novembre 2026
 APP_NAME = "Acu_Maker"
 APP_AUTHOR = "Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)"
 RELEASE_DATE = "14 novembre 2026"
@@ -2158,12 +2158,15 @@ def salva_preset(coll, preset_name, state, nuovo):
 	con Esc, e dalla 1.13.10 anche quando la scrittura non avviene, per un no
 	alla conferma, un annullamento o una collezione occupata. Fino alla
 	1.13.0 in quei casi l'editor si chiudeva e le modifiche si perdevano.
-	Le modifiche si scartano con Esci senza salvare, e quando il suono che ne
-	esce e' identico a un preset che c'e' gia': allora non si salva, e
-	l'editor si chiude, perche' quel suono e' gia' nella collezione con
-	l'altro nome. Si scartano anche quando Sovrascrivi trova il preset tolto
-	da un altro programma e si sceglie di lasciarlo tolto. Fino alla 1.13.10
-	qui c'era scritto soltanto con Esci senza salvare."""
+	Le modifiche si scartano con Esci senza salvare. Si scartano anche quando
+	Sovrascrivi trova il preset tolto da un altro programma e si sceglie di
+	lasciarlo tolto. Fino alla 1.13.10 qui c'era scritto soltanto con Esci
+	senza salvare.
+	Un suono identico a un preset che c'e' gia' non si salva, perche' e' gia'
+	nella collezione con l'altro nome: dalla 1.14.1 si sceglie allora se
+	tornare all'editor con le modifiche, la voce t o Esc, o uscire senza
+	salvare. Fino alla 1.14.0 l'editor si chiudeva, e le modifiche si
+	perdevano (scelta di Gabriele del 14 novembre 2026)."""
 	if not state.modified:
 		# Un preset nuovo lasciato com'era non entra nella collezione.
 		return
@@ -2174,7 +2177,11 @@ def salva_preset(coll, preset_name, state, nuovo):
 	if gemello:
 		print(f"Questo suono esiste gia' come '{gemello}'.")
 		print("Sarebbe un doppione, quindi non lo salvo.")
-		return
+		scelta = menu({"t": "Torna all'editor con le modifiche", "e": "Esci senza salvare"}, p="Doppione> ", show=True)
+		if scelta == "e":
+			print("Modifiche ignorate.")
+			return None
+		return "torna"
 	print("\nModifiche rilevate. Scegli un'opzione, Esc torna all'editor:")
 	if nuovo:
 		scelte = {"1": "Salva il preset nuovo", "3": "Esci senza salvare"}

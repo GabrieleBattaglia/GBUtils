@@ -259,6 +259,26 @@ with tempfile.TemporaryDirectory() as cartella:
 	am.EditorState = vero_editor_state
 	am.modifica = stato_vero
 	prova("e l'editor riparte davvero, finche' non si sceglie Esci senza salvare", len(giri) == 2, len(giri))
+	# Dalla 1.14.1, scelta di Gabriele del 14 novembre 2026: un suono identico
+	# a un preset che c'e' gia' non si salva, ma si sceglie se tornare
+	# all'editor con le modifiche o uscire. Fino alla 1.14.0 l'editor si
+	# chiudeva, e le modifiche si perdevano.
+	nomi_ora = list(coll.dati)
+	originale, gemello = nomi_ora[10], nomi_ora[11]
+	stato = am.EditorState(coll.dati[originale])
+	for campo in ("score", "kind", "adsr"):
+		if campo in coll.dati[gemello]:
+			stato.preset[campo] = json.loads(json.dumps(coll.dati[gemello][campo]))
+	stato.modified = True
+	prima_del_doppione = impronta(copia)
+	esiti_doppione, chiesti_doppione = [], []
+	for risposta in ("t", None, "e"):
+		am.menu = lambda *_argomenti, p="", _r=risposta, **_chiavi: (chiesti_doppione.append(p), _r)[1]
+		esito, testo = zitto(am.salva_preset, coll, originale, stato, False)
+		esiti_doppione.append(esito)
+	prova("un doppione chiede dove andare, e non salva", chiesti_doppione == ["Doppione> "] * 3 and impronta(copia) == prima_del_doppione
+		  and "doppione" in testo, chiesti_doppione)
+	prova("t ed Esc tornano all'editor con le modifiche, e esce senza salvare", esiti_doppione == ["torna", "torna", None], esiti_doppione)
 	am.menu = GBUtils_menu
 
 	# 3 e 4. Una collezione nuova in una cartella che non c'e', e un JSON che
