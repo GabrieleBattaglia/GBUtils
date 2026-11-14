@@ -1,84 +1,79 @@
 PROVE A MANO, QUELLE CHE L'AI NON PUO' FARE
-Nate il 13 novembre 2026 dalle issue di GBUtils e dalle tre revisioni che
-le hanno seguite, da GBUtils V253 a V283. I banchi le hanno gia' provate senza
-tastiera vera e senza orecchie: qui conta come suonano con NVDA, sul display
-braille e in cuffia. Se una prova va male scrivi cosa hai sentito nella riga
-Esito. Se va bene, cancella la prova. Quando il file resta vuoto si cancella
-anche lui.
-PROVA 1: MENU, LA PAROLA INTERA DOPO IL COMPLETAMENTO
-Cosa fare: in Chitabry, dove si sceglie una scala, scrivi b e l: il
-completamento propone blues. Continua comunque a scrivere u, e, s, per
-intero, e premi Invio. Poi, dove si sceglie un accordo, scrivi M9 e Invio, e
-la volta dopo m9 e Invio.
-Cosa osservare: che arrivi a blues e non a bluesues; che M9 scelga la nona
-maggiore e m9 la nona minore; che il prompt con le lettere suggerite fra
-parentesi si legga bene sul display braille mentre ricopi.
+Nate il 13 novembre 2026 dalle issue di GBUtils e dalle revisioni che le
+hanno seguite, da GBUtils V253 a V283, e riscritte il 14 novembre dopo il
+tuo collaudo, con le correzioni da V284 a V293. I banchi le hanno gia'
+provate senza tastiera vera e senza orecchie: qui conta come suonano con
+NVDA, sul display braille e in cuffia. Se una prova va male scrivi cosa hai
+sentito nella riga Esito. Se va bene, cancella la prova. Quando il file
+resta vuoto si cancella anche lui.
+PROVA 1: CHITABRY, LA PAROLA INTERA DOPO IL COMPLETAMENTO
+Cosa fare: in Chitabry scegli Scale, poi una tonica qualsiasi, poi il
+gruppo 1, le scale comuni. Al tipo di scala scrivi b: il prompt diventa
+(L, E)>b. Scrivi l: il menu completa blues, perche' resta anche blues
+maggiore, e il prompt diventa ( )>blues. Continua comunque a scrivere u, e,
+s, per intero, e premi Invio. Poi torna al menu principale, scegli
+Costruttore Accordi e una tonica, e al tipo di accordo scrivi maj9; la
+volta dopo scrivi m9.
+Cosa osservare: arrivi a blues e non a bluesues. maj9 sceglie la nona
+maggiore e m9 la nona minore, gia' alla cifra e senza Invio, perche' li' la
+voce e' una sola. Il prompt con le lettere fra parentesi si legge bene sul
+display braille mentre ricopi. In Chitabry la nona maggiore si chiama maj9:
+una sigla M9 non c'e', e M9 sceglie m9, perche' il menu non distingue le
+maiuscole quando la voce scritta cosi' non esiste.
 Esito:
-PROVA 2: MENU, SEGUIRE IL PROMPT DOPO IL COMPLETAMENTO
+PROVA 2: MENU, LA LETTERA SUGGERITA SCEGLIE SUBITO
 Cosa fare: in Acu_Maker, al menu principale, scrivi l, a, s. Il prompt
-diventa (E, A)>laser_d. Prosegui con la e che suggerisce, poi con s. Poi
-riparti da capo e scrivi per intero l, a, s, e, r, trattino basso, d, a.
-Cosa osservare: con e e poi s arrivi a Laser_destra_sinistra. Dopo la e il
-prompt resta uguale: e' voluto, menu aspetta il tasto dopo per capire se
-stai ricopiando o proseguendo. Scrivendo per intero arrivi invece a
-laser_da_gioco_, con le cifre suggerite. Dimmi se quel prompt che resta
-uguale dopo la e ti confonde.
+diventa (A, E)>laser_d. Premi e. Poi riparti da capo, scrivi l, a, s e
+premi a.
+Cosa osservare: con la e arrivi subito a Laser_destra_sinistra, senza un
+altro tasto, come avevi chiesto. Con la a il menu completa laser_da_gioco_
+e suggerisce le cifre. Il prezzo della scelta: chi scrive per intero
+laser_da_gioco, alla e di laser, finisce su Laser_destra_sinistra.
 Esito:
-PROVA 3: MENU, INVIO A VUOTO IN UNA RICERCA
-Cosa fare: in Acu_Maker scegli la ricerca, con la barra, e cerca albo. Al
-menu dei risultati premi Invio senza scrivere niente. Poi cerca 100000, e
-al menu dei risultati premi di nuovo Invio senza scrivere niente.
-Cosa osservare: i risultati sono due, e il prompt parte gia' da mess_albo_,
-o da pokermachine_trofeo_fiches_100000. Invio deve annullare e tornare al
-menu principale: fino a ieri non faceva niente, o sceglieva il trofeo da
-centomila.
+PROVA 3: ACU_MAKER, LE RICHIESTE DI UNA RIGA
+Cosa fare: entra in un preset qualsiasi. Premi o: dopo le due righe di
+spiegazione la richiesta dice Volume d'ascolto, seguita dai due punti.
+Scrivi 80 e Invio. Premi p, scrivi 50 e Invio. Esci con Esc e scegli di non
+salvare. Poi apri il player, con la barra rovescia: premi n e scrivi 3, poi
+premi la barra e scrivi cocco.
+Cosa osservare: il cursore resta dopo i due punti, e cio' che scrivi non
+copre piu' la domanda; dopo Invio la riga di stato arriva senza una riga
+vuota prima. Lo stesso nel player, con il numero e con il nome.
 Esito:
-PROVA 4: ACU_MAKER, I TASTI NUOVI DELL'EDITOR
-Cosa fare: entra in un preset qualsiasi. Premi o e scrivi 80, poi o e
-Invio. Premi t, ascolta qualche giro, ripremi t. Premi t di nuovo e poi k.
-Premi W e scegli un'altra onda. Poi, sul campo della nota, premi Invio,
-scrivi 440 e premi c due volte. Esci con Esc e scegli di non salvare.
-Cosa osservare: con o il preset suona piu' forte, e con Invio torna a 50,
-che la riga di stato dice in coda come o50; t suona il preset in ciclo e
-lo ferma sfumando, senza un clic; k zittisce tutto, anche il ciclo; W
-cambia l'onda da un menu; c porta la nota a 450 e 460, senza decimali.
+PROVA 4: ACU_MAKER, IL MENU DEL PRESET RESTA APERTO
+Cosa fare: scegli un preset, poi f, le firme, e al menu delle firme il
+punto. Poi d, e Invio per lasciare la descrizione com'e'. Poi c.
+Cosa osservare: dopo le firme e dopo la descrizione senti Di nuovo al
+preset, con il suo nome, e torna il menu delle azioni; con c entri
+nell'editor di quel preset. Dal menu delle azioni Esc, o il punto, tornano
+all'elenco dei preset.
 Esito:
-PROVA 5: ACU_MAKER, IL SALVATAGGIO CHE NON AVVIENE TORNA ALL'EDITOR
-Cosa fare: entra in un preset che un'app usa: scelto il preset, Acu_Maker
-dice quante e quali app lo usano. Cambia una nota, premi Esc e scegli di
-sovrascrivere. Alla domanda Lo sovrascrivo rispondi n.
-Cosa osservare: senti Preset non sovrascritto, poi Le modifiche restano: si
-scartano con Esci senza salvare, e torni nell'editor con la nota cambiata.
-Fino alla 1.13.0 l'editor si chiudeva e la modifica si perdeva. Per finire
-esci con Esc e scegli la terza voce, cosi' il preset resta com'era.
+PROVA 5: ACU_MAKER, DAL PLAYER ALL'EDITOR
+Cosa fare: apri il player con la barra rovescia, scorri con la freccia a
+destra fino a un preset qualsiasi e premi c. Nell'editor premi Spazio,
+poi Esc.
+Cosa osservare: c ti porta nell'editor del preset su cui eri; uscendo
+senti Di nuovo nel player, e il prompt dice di nuovo il numero e il nome di
+quel preset. L'aiuto del player, con il punto interrogativo, dice il tasto
+c.
 Esito:
-PROVA 6: ACU_MAKER, LE FIRME, LA RICERCA E IL PLAYER
-Cosa fare: scegli un preset che nessuna app usa e, dal menu delle azioni,
-premi f. Scegli di aggiungere un'app e premi Invio senza scriverne il nome.
-Poi fai una ricerca con @mess. Infine apri il player, con la barra
-rovesciata: muoviti con le frecce, premi Spazio, poi n e scrivi un numero
-troppo grande, poi n e scrivi una parola, poi Invio per la sequenza, un
-tasto per fermarla, k ed Esc.
-Cosa osservare: il menu delle firme ha sempre il punto per tornare, e Invio
-senza nome torna indietro invece di chiedere l'app all'infinito; @mess
-trova soltanto i preset firmati da mess, non quelli di messo; nel player
-il numero troppo grande riceve Da 1 a e il numero dei preset, la parola
-riceve Serve un numero, e in tutti e due i casi la domanda si ripete; fra
-un preset e l'altro nessun clic.
+PROVA 6: ACU_MAKER, IL DOPPIONE TORNA ALL'EDITOR
+Cosa fare: al menu principale scegli il piu', un preset nuovo. Sulla nota
+premi Invio e scrivi d4, poi Esc, Salva il preset nuovo, e chiamalo
+prova_doppione. Scegli di nuovo il piu', e anche qui scrivi d4 sulla nota,
+poi Esc. Alla domanda scegli t; nell'editor premi ancora Esc, e alla
+domanda scegli e. Alla fine elimina prova_doppione.
+Cosa osservare: il secondo preset nuovo suona come prova_doppione, e
+Acu_Maker lo dice e non lo salva. Con t torni all'editor, e la nota e'
+ancora d4; con e esci senza salvare. Fino alla 1.14.0 l'editor si
+chiudeva subito, e le modifiche si perdevano.
 Esito:
-PROVA 7: P.PY, L'INTESTAZIONE E I DOWNLOAD
-Cosa fare: lancia p.py come sempre e ascolta il menu delle app.
-Cosa osservare: prima dell'elenco c'e' la riga Nome, spiegazione, numero DL.,
-e in fondo a ogni app, dopo una virgola, il numero dei download delle sue
-release, o un punto interrogativo se GitHub non ha risposto. Il menu deve
-comparire subito, senza aspettare i numeri.
-Esito:
-PROVA 8: IL SUONO DEI PROGRAMMI, DOPO LE CORREZIONI DEL MOTORE
-Cosa fare: usa per qualche minuto i programmi che suonano di piu', per
-esempio MESS, StellaTerm e Showdown, come fai di solito.
-Cosa osservare: niente deve suonare diverso da prima. Il motore ora tiene
-la fase continua anche fra note brevi, e dopo una nota muta la seguente
-riparte da zero: al piu' qualche clic in meno nei trilli e nelle note
-acute. Se senti suoni spezzettati sotto carico, o un suono cambiato,
-dimmelo con il nome del preset.
+PROVA 7: ACU_MAKER, L'ORDINE ALFABETICO
+Cosa fare: apri il player e premi Inizio. Poi premi la barra, scrivi cocco,
+e premi le frecce a sinistra e a destra.
+Cosa osservare: il primo preset e' aggiunta_giocatore, non piu'
+Coccodrillino. Coccodrillino sta fra casella_usciti_tolta e
+colpo_d_impatto_1, e cosi' Digitazione, Laser_destra_sinistra e
+Rapida_salita stanno ciascuno al suo posto fra le minuscole. Nella lista
+del menu principale vale lo stesso ordine.
 Esito:
