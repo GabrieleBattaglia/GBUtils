@@ -3,10 +3,10 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V290 di sabato 14 novembre 2026
+	V291 di sabato 14 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	Acusticator V8.9.18 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Acusticator V8.9.19 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
@@ -42,7 +42,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 '''
-VERSION = "290"
+VERSION = "291"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -5344,7 +5344,7 @@ def _volume_assoluto(scarto, base):
 	return max(0.0, min(1.0, base + float(scarto)))
 
 class _Acusticator:
-    """V8.9.18 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+    """V8.9.19 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 
     Motore audio e libreria dei suoni del parco software.
 
@@ -5881,8 +5881,13 @@ class _Acusticator:
         scadenza c'e' ancora un lucchetto vecchio che non si lascia togliere.
         L'errore nomina il file e dice perche' Windows non lo crea o non lo
         toglie. Fino alla V8.9.16 l'accesso negato rispondeva None, e chi
-        leggeva l'avviso credeva la collezione occupata da un altro programma."""
+        leggeva l'avviso credeva la collezione occupata da un altro programma.
+        Dalla V8.9.19 un lucchetto vecchio in sola lettura si rende scrivibile
+        e si toglie, come uno vecchio qualunque; uno fresco, che e' di un
+        programma vivo, non si tocca mai (scelta di Gabriele del 14 novembre
+        2026)."""
         import os
+        import stat
         import time
         nome = percorso + ".lock"
         scadenza = time.monotonic() + self.LUCCHETTO_ATTESA
@@ -5910,9 +5915,23 @@ class _Acusticator:
                     except FileNotFoundError:
                         continue
                     except OSError as errore:
-                        # Un lucchetto vecchio che non si lascia togliere, per
-                        # esempio in sola lettura, si aspetta come uno vivo, fino
-                        # alla scadenza. Fino alla V8.9.0 qui si ripartiva senza
+                        # In sola lettura, dalla V8.9.19, lo si rende
+                        # scrivibile e lo si toglie: e' un file di GBUtils,
+                        # senza niente dentro che conti, e fino alla V8.9.18
+                        # bloccava la scrittura finche' qualcuno non lo
+                        # cancellava a mano.
+                        try:
+                            os.chmod(nome, stat.S_IREAD | stat.S_IWRITE)
+                            os.remove(nome)
+                            continue
+                        except FileNotFoundError:
+                            continue
+                        except OSError:
+                            pass
+                        # Un lucchetto vecchio che non si lascia togliere
+                        # nemmeno cosi', per esempio per un permesso della
+                        # cartella, si aspetta come uno vivo, fino alla
+                        # scadenza. Fino alla V8.9.0 qui si ripartiva senza
                         # pausa e senza guardare la scadenza, e il ciclo girava a
                         # vuoto per sempre su un core pieno. Fino alla V8.9.9,
                         # alla scadenza, l'avviso diceva la collezione occupata da

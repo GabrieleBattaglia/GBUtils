@@ -358,18 +358,30 @@ with tempfile.TemporaryDirectory() as cartella:
 	def conta_getmtime(percorso):
 		contati[0] += 1
 		return vero_getmtime(percorso)
+	# Dalla V8.9.19 un lucchetto vecchio in sola lettura si rende scrivibile
+	# e si toglie: per averne uno che non si lascia togliere si nega la
+	# cancellazione, come farebbe un permesso della cartella, finche' negata
+	# e' vera.
+	vero_remove, negata = os.remove, [True]
+	def remove_negato(percorso, *argomenti, **chiavi):
+		if negata[0] and os.path.normcase(os.path.abspath(percorso)) == os.path.normcase(os.path.abspath(lucchetto)):
+			raise PermissionError(13, "Accesso negato", percorso)
+		return vero_remove(percorso, *argomenti, **chiavi)
+	os.remove = remove_negato
 	os.path.getmtime = conta_getmtime
 	filo = threading.Thread(target=lambda: esito.append(zitto(paziente.save, "x", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)),
 							daemon=True)
 	filo.start()
 	filo.join(5.0)
 	appeso = filo.is_alive()
-	os.chmod(lucchetto, stat.S_IWRITE)
+	negata[0] = False
 	filo.join(5.0)
 	os.path.getmtime = vero_getmtime
+	os.remove = vero_remove
 	if os.path.exists(lucchetto):
+		os.chmod(lucchetto, stat.S_IWRITE)
 		os.remove(lucchetto)
-	prova("con un lucchetto vecchio in sola lettura save aspetta la scadenza e risponde di no, senza girare a vuoto",
+	prova("con un lucchetto vecchio che non si lascia togliere save aspetta la scadenza e risponde di no, senza girare a vuoto",
 		  not appeso and [e for e, _ in esito] == [False] and contati[0] < 100, (appeso, esito, contati[0]))
 	# Dalla V8.9.11 l'avviso nomina il lucchetto vecchio, invece di dire la
 	# collezione occupata da un altro programma.
@@ -389,6 +401,33 @@ with tempfile.TemporaryDirectory() as cartella:
 	esito, detto = zitto(paziente.firma, firmato, "banco", copia)
 	prova("un lucchetto vecchio che si lascia togliere si toglie, e la firma si scrive",
 		  esito == 1 and "banco" in GBUtils._firme_di(leggi(copia)[firmato]) and not os.path.exists(lucchetto), (esito, detto))
+	# Dalla V8.9.19, una delle proposte della revisione del 13 novembre 2026,
+	# scelta da Gabriele il 14: un lucchetto vecchio in sola lettura si rende
+	# scrivibile e si toglie, e save scrive. Fino alla V8.9.18 save aspettava
+	# la scadenza, e l'avviso chiedeva di cancellarlo a mano.
+	with open(lucchetto, "w") as f:
+		f.write("99999")
+	os.utime(lucchetto, (vecchio, vecchio))
+	os.chmod(lucchetto, stat.S_IREAD)
+	riuscito, detto = zitto(paziente.save, "banco_sola_lettura", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
+	rimasto = os.path.exists(lucchetto)
+	if rimasto:
+		os.chmod(lucchetto, stat.S_IWRITE)
+		os.remove(lucchetto)
+	prova("un lucchetto vecchio in sola lettura si rende scrivibile e si toglie, e save scrive",
+		  riuscito and "banco_sola_lettura" in leggi(copia) and not rimasto and not detto, (riuscito, rimasto, detto))
+	# Uno fresco in sola lettura, invece, e' di un programma vivo: non si
+	# tocca, e si aspetta come ogni lucchetto fresco.
+	with open(lucchetto, "w") as f:
+		f.write("12345")
+	os.chmod(lucchetto, stat.S_IREAD)
+	prima_del_fresco = impronta(copia)
+	riuscito, detto = zitto(paziente.save, "banco_fresco_in_sola_lettura", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
+	ancora_in_sola_lettura = os.path.exists(lucchetto) and not os.access(lucchetto, os.W_OK)
+	os.chmod(lucchetto, stat.S_IWRITE)
+	os.remove(lucchetto)
+	prova("un lucchetto fresco in sola lettura resta com'e', e save dice la collezione occupata",
+		  riuscito is False and "occupata" in detto and ancora_in_sola_lettura and impronta(copia) == prima_del_fresco, (riuscito, detto))
 
 	# 17. Dalla terza revisione: il lucchetto che cambia durante l'attesa.
 	attento = GBUtils._Acusticator()
@@ -405,13 +444,25 @@ with tempfile.TemporaryDirectory() as cartella:
 		filo = threading.Thread(target=corpo, daemon=True)
 		filo.start()
 		return filo
+	# Il lucchetto che non si lascia togliere, dalla V8.9.19, e' quello con la
+	# cancellazione negata della prova 16: la sola lettura ormai si toglie.
 	vecchio_in_sola_lettura()
-	filo = fra(0.2, lambda: os.chmod(lucchetto, stat.S_IWRITE))
-	riuscito, detto = zitto(attento.save, "banco_dopo_la_sola_lettura", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
-	filo.join(5.0)
-	prova("un lucchetto vecchio che torna scrivibile durante l'attesa si toglie, e save scrive",
+	negata[0] = True
+	os.remove = remove_negato
+	def concedi():
+		os.chmod(lucchetto, stat.S_IWRITE)
+		negata[0] = False
+	filo = fra(0.2, concedi)
+	try:
+		riuscito, detto = zitto(attento.save, "banco_dopo_la_sola_lettura", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
+		filo.join(5.0)
+	finally:
+		os.remove = vero_remove
+	prova("un lucchetto vecchio che si lascia togliere durante l'attesa si toglie, e save scrive",
 		  riuscito and "banco_dopo_la_sola_lettura" in leggi(copia) and not os.path.exists(lucchetto), detto)
 	vecchio_in_sola_lettura()
+	negata[0] = True
+	os.remove = remove_negato
 	fresco = lucchetto + ".fresco"
 	def sostituisci():
 		# Prima diventa fresco, poi si sostituisce in un colpo: chi aspetta
@@ -423,8 +474,11 @@ with tempfile.TemporaryDirectory() as cartella:
 		os.replace(fresco, lucchetto)
 	filo = fra(0.2, sostituisci)
 	prima_del_fresco = impronta(copia)
-	riuscito, detto = zitto(attento.save, "banco_col_fresco", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
-	filo.join(5.0)
+	try:
+		riuscito, detto = zitto(attento.save, "banco_col_fresco", ["c4", 0.1, 0, 0.5], descrizione="x", percorso=copia)
+		filo.join(5.0)
+	finally:
+		os.remove = vero_remove
 	if os.path.exists(lucchetto):
 		os.chmod(lucchetto, stat.S_IWRITE)
 		os.remove(lucchetto)
