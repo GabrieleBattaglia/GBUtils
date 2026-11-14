@@ -343,9 +343,85 @@ def main():
 	verifica("perform_update: la frase prima dello script",
 			 eventi == ["scaricato", "frase", "script avviato"], eventi)
 
+	prove_del_controllo_vero()
+
 	print()
 	print(f"Prove {totale}, passate {passate}.")
 	return 0 if passate == totale else 1
+
+class _Risposta:
+	"""La risposta finta di GitHub, con il tag che serve alla prova."""
+
+	def __init__(self, tag):
+		self.tag = tag
+
+	def raise_for_status(self):
+		return None
+
+	def json(self):
+		return {"tag_name": self.tag, "body": NOTE, "assets": []}
+
+
+def prove_del_controllo_vero():
+	"""Le prove 18 e 19 usano update_checker vera, con un requests finto in
+	sys.modules: non si tocca la rete, e il log finisce in una lista invece
+	che accanto al banco. Nate con la V284 e la issue 64."""
+	import types
+	guasti = types.SimpleNamespace(**{nome: type(nome, (Exception,), {})
+									   for nome in ("SSLError", "ConnectionError", "Timeout", "HTTPError")})
+	tag = ["v-illeggibile"]
+	finto = types.ModuleType("requests")
+	finto.exceptions = guasti
+	finto.get = lambda *_argomenti, **_chiavi: _Risposta(tag[0])
+	vero_requests = sys.modules.get("requests")
+	vero_log = GBUtils._write_update_log
+	vera_pulizia = GBUtils.pulisci_residui
+	scritti = []
+	sys.modules["requests"] = finto
+	GBUtils._write_update_log = lambda testo, *_argomenti, **_chiavi: scritti.append(testo)
+	try:
+		# 18. Una versione pubblicata che non si legge non si annuncia come
+		# l'ultima: fino alla V283 update_checker restituiva il tag anche
+		# senza confronto, e da console si sentiva Hai gia' l'ultima versione.
+		illeggibile = GBUtils.update_checker("1.0.0", API)
+		tag[0] = "1.0.0"
+		uguale = GBUtils.update_checker("1.0.0", API)
+		tag[0] = "v-illeggibile"
+		detti = []
+		esito = gestisci_aggiornamento("App", "1.0.0", API, avvisa=detti.append, solo_se_compilato=False)
+		# 19. Un guasto di pulisci_residui non ferma il controllo: fino alla
+		# V283 la chiamata stava fuori da ogni try, e l'eccezione arrivava al
+		# programma senza nemmeno una riga di log.
+		def rotta(**_chiavi):
+			raise UnicodeDecodeError("utf-8", b"\xff", 0, 1, "byte non valido")
+		GBUtils.pulisci_residui = rotta
+		tag[0] = "2.0.0"
+		scritti_prima = len(scritti)
+		try:
+			con_la_pulizia_rotta = GBUtils.update_checker("1.0.0", API)
+		except Exception as errore:  # noqa: BLE001 - la prova vuole vedere qualunque guasto
+			con_la_pulizia_rotta = errore
+	finally:
+		GBUtils.pulisci_residui = vera_pulizia
+		GBUtils._write_update_log = vero_log
+		if vero_requests is None:
+			sys.modules.pop("requests", None)
+		else:
+			sys.modules["requests"] = vero_requests
+	verifica("versione illeggibile: nessun tag", illeggibile == (False, None, None, None), illeggibile)
+	verifica("versione illeggibile: lo scrive nel log",
+			 any("Versione non riconosciuta" in s for s in scritti), scritti)
+	verifica("versione uguale: il tag resta", uguale == (False, "1.0.0", None, None), uguale)
+	verifica("versione illeggibile: risponde di no", esito is False, esito)
+	verifica("versione illeggibile: non dice di essere aggiornato",
+			 not any("ultima versione" in d for d in detti), detti)
+	verifica("versione illeggibile: dice che il controllo non e' riuscito",
+			 "Controllo non riuscito, si prosegue." in detti, detti)
+	verifica("pulizia rotta: il controllo arriva in fondo",
+			 con_la_pulizia_rotta == (True, "2.0.0", None, NOTE), con_la_pulizia_rotta)
+	verifica("pulizia rotta: lo scrive nel log",
+			 any("pulizia" in s.lower() for s in scritti[scritti_prima:]), scritti[scritti_prima:])
+
 
 if __name__ == "__main__":
 	sys.exit(main())

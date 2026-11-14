@@ -268,5 +268,34 @@ def prove(base):
 				 "_internal/manifesto.txt" not in zip_in.namelist())
 	verifica("la cartella dist non viene toccata", albero(dist) == dist_prima)
 
+	# 13. Un manifesto con byte che non sono UTF-8, per esempio di un archivio
+	# rifatto a mano o di un file rovinato. Fino alla V283 l'errore di
+	# decodifica, che e' un ValueError, non era intercettato, e un programma
+	# da console che non proteggeva il controllo si fermava all'avvio (issue
+	# 64). Ora la pulizia rinuncia come con un manifesto illeggibile, e lo
+	# scrive nel log.
+	dove = costruisci(os.path.join(base, "manifesto_non_utf8"))
+	scrivi(os.path.join(dove, "_internal", "residuo.pyd"), "avanzo")
+	with open(os.path.join(dove, "_internal", "manifesto.txt"), "wb") as f:
+		f.write(b"# Elenco dei file\nlibreria.dll\n\xff\xfe\xe8 rovinato\n")
+	prima = albero(dove)
+	try:
+		tolti = pulisci_residui(dove)
+	except ValueError as errore:
+		tolti = errore
+	verifica("manifesto non UTF-8: rinuncia senza eccezioni", tolti == 0, tolti)
+	verifica("manifesto non UTF-8: l'albero e' intatto", albero(dove) == prima)
+	verifica("manifesto non UTF-8: lo scrive nel log", "illeggibile" in log_di(dove), log_di(dove))
+
+	# 14. Il commento che crea_archivio_release scrive nel manifesto dice quando
+	# lo si legge: a ogni controllo degli aggiornamenti, cioe' a ogni avvio dei
+	# programmi che lo fanno. Fino alla V283 diceva al primo avvio dopo un
+	# aggiornamento, e quel commento finisce in ogni pacchetto (issue 64).
+	with zipfile.ZipFile(archivio) as zip_in:
+		commento = zip_in.read("_internal/manifesto.txt").decode("utf-8")
+	verifica("manifesto: il commento dice a ogni controllo",
+			 "a ogni controllo degli aggiornamenti" in commento, commento.splitlines()[:3])
+	verifica("manifesto: il commento non dice piu' al primo avvio", "primo avvio" not in commento)
+
 if __name__ == "__main__":
 	sys.exit(main())

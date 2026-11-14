@@ -3,14 +3,14 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V283 di venerdì 13 novembre 2026
+	V284 di sabato 14 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.18 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
-	crea_archivio_release V1.1.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	crea_archivio_release V1.1.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	CWzator V11.7.0 di giovedì 24 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	dgt V3.0.2 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
@@ -29,20 +29,20 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
 	menu V5.2.4 di venerdì 13 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
-	perform_update V1.7.0 di lunedì 28 settembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
+	perform_update V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	programma_di_posta V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	PUB_GRUPPO e PUB_ISCRIZIONE, costanti di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
-	pulisci_residui V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	pulisci_residui V1.0.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	righe_informazioni V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	rileggi_dispositivi_audio V1.0.0 di giovedì 22 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	scegli_dispositivo_audio V1.1.1 di venerdì 18 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	scomponi_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
-	update_checker V1.7.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+	update_checker V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 '''
-VERSION = "283"
+VERSION = "284"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -230,7 +230,7 @@ _NOME_MANIFESTO = "manifesto.txt"
 
 def pulisci_residui(cartella: str | None = None, app: str | None = None) -> int:
     """
-    V1.0.0 di lunedì 14 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    V1.0.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
     Toglie da _internal quello che la versione precedente si e' lasciata dietro.
     Gli aggiornamenti applicati dalle perform_update fino alla V1.4 copiavano la
     versione nuova sopra la vecchia senza cancellare niente, quindi cio' che
@@ -255,6 +255,9 @@ def pulisci_residui(cartella: str | None = None, app: str | None = None) -> int:
     Restituisce quanti elementi ha tolto, file e cartelle rimaste vuote. Gli
     errori sui singoli file, per esempio uno in uso, non fermano la pulizia: si
     scrivono nel log dell'aggiornamento e si va avanti con gli altri.
+    Un manifesto che non si legge, anche perche' non e' UTF-8, fa rinunciare
+    e finisce nel log: fino alla V1.0.0 l'errore di decodifica arrivava al
+    programma (issue 64).
     """
     import os
     import sys
@@ -273,7 +276,10 @@ def pulisci_residui(cartella: str | None = None, app: str | None = None) -> int:
     try:
         with open(percorso_manifesto, encoding="utf-8") as f:
             righe = f.read().splitlines()
-    except OSError as e:
+    except (OSError, ValueError) as e:
+        # ValueError e' un manifesto che non e' UTF-8, per esempio di un
+        # archivio rifatto a mano: fino alla V1.0.0 non era intercettato, e
+        # arrivava al programma (issue 64).
         _write_update_log(f"Manifesto del pacchetto illeggibile, pulizia dei residui saltata: {e}", cartella, nome_app)
         return 0
     # Le righe di commento servono a chi apre il file per capire che cos'e':
@@ -330,7 +336,7 @@ def pulisci_residui(cartella: str | None = None, app: str | None = None) -> int:
 
 def update_checker(current_version: str, api_url: str, timeout: int = 10, cartella_log: str | None = None) -> tuple[bool, str | None, str | None, str | None]:
     """
-    V1.7.0 di lunedì 14 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
     Controlla l'ultima release di un repository GitHub e la confronta con la versione corrente.
     Prima di ogni altra cosa chiama pulisci_residui, perche' un pacchetto
     svuotato dalla versione precedente farebbe fallire l'importazione di
@@ -344,6 +350,14 @@ def update_checker(current_version: str, api_url: str, timeout: int = 10, cartel
     timeout e' il tempo massimo di attesa in secondi. Chi fa il controllo in linea
     prima di avviarsi, e non in un thread, puo' abbassarlo: quei secondi sono un
     silenzio in cui l'utente non sa se il programma stia lavorando o sia fermo.
+    Restituisce (disponibile, tag, indirizzo, novita'). Il tag c'e' soltanto
+    quando il confronto c'e' stato: se uno dei due numeri di versione non si
+    legge si riceve None, come quando il controllo non riesce, e
+    gestisci_aggiornamento dice Controllo non riuscito invece di Hai gia'
+    l'ultima versione. Fino alla V1.7.0 tornava il tag anche senza confronto.
+    E un guasto di pulisci_residui finisce nel log invece di fermare il
+    programma che chiama: fino alla V1.7.0 la chiamata stava fuori da ogni
+    try (issue 64).
     """
     # Ricavati subito, perche' servono anche se l'import di requests fallisce.
     # cartella_log arriva da chi chiama quando la catena passa per un'altra
@@ -357,8 +371,12 @@ def update_checker(current_version: str, api_url: str, timeout: int = 10, cartel
     # fa ombra a quello vero, e requests e' il primo a inciamparci. La pulizia
     # sta qui e non anche in gestisci_aggiornamento, che passa comunque di qua
     # subito dopo: due volte vorrebbe dire censire _internal due volte a ogni
-    # avvio.
-    pulisci_residui(app=nome_app)
+    # avvio. Un suo guasto non deve fermare il programma: lo si scrive nel
+    # log e il controllo prosegue.
+    try:
+        pulisci_residui(app=nome_app)
+    except Exception as e:  # noqa: BLE001 - la pulizia e' un di piu', il programma deve partire comunque
+        _write_update_log(f"Pulizia dei residui interrotta: {e}", cartella_log, nome_app)
     try:
         # Fuori da questo try, un import rotto (es. una dipendenza di
         # requests compilata male) farebbe cadere tutto il programma a
@@ -394,11 +412,13 @@ def update_checker(current_version: str, api_url: str, timeout: int = 10, cartel
         if current_tuple is None or latest_tuple is None:
             # Senza due numeri da confrontare non si dichiara nessun
             # aggiornamento: dirlo lo stesso significherebbe riproporlo a ogni
-            # avvio, e chi lo riceve non avrebbe modo di farlo smettere.
+            # avvio, e chi lo riceve non avrebbe modo di farlo smettere. E
+            # nemmeno il tag: con il tag gestisci_aggiornamento direbbe che
+            # questa e' l'ultima versione, che senza confronto non si sa.
             _write_update_log(
                 f"Versione non riconosciuta, confronto saltato. Corrente: {current_version!r}, pubblicata: {latest_version!r}.",
                 cartella_log, nome_app)
-            return False, latest_version, None, None
+            return False, None, None, None
 
         if latest_tuple > current_tuple:
             # L'allegato si sceglie per nome e non per posizione: se un giorno
@@ -462,7 +482,9 @@ def contesto_ssl():
     return _CONTESTO_SSL
 
 def _scarica(url: str, destinazione: str, avanzamento=None, timeout: int = 30) -> int:
-    """Scarica un file e restituisce i byte presi, avvisando man mano.
+    """Scarica un file e restituisce i byte presi, avvisando man mano a ogni
+    punto percentuale, quando il server dichiara la dimensione: senza
+    Content-Length la percentuale non si sa, e avanzamento non si chiama.
     Sta fuori da perform_update perche' cosi' si puo' provare senza dover
     aggiornare davvero un programma.
     Legge a blocchi invece di usare urlretrieve, che non accetta un tempo
@@ -579,7 +601,7 @@ start "" /D "{current_dir}" "{current_exe}"
 def perform_update(download_url: str, app_name: str = "App", avanzamento=None, timeout: int = 30,
                    cartella_log: str | None = None, prima_di_sostituire=None) -> bool:
     """
-    V1.7.0 di lunedì 28 settembre 2026 by Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
+    V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
     Scarica l'aggiornamento, lo estrae e avvia lo script che sostituisce
     l'installazione, poi restituisce True perche' il chiamante possa chiudersi.
     Il download avviene con la verifica dei certificati attiva, tramite
@@ -592,9 +614,12 @@ def perform_update(download_url: str, app_name: str = "App", avanzamento=None, t
     di fallimento lo script lo scrive nel log e riavvia la versione precedente,
     che resta integra.
     avanzamento, se indicata, viene chiamata durante lo scaricamento con i byte
-    presi finora e il totale atteso, che vale zero quando il server non lo
-    dichiara. Serve a non lasciare l'utente in silenzio per minuti: chi la passa
-    decide come annunciarlo.
+    presi finora e il totale atteso, a ogni punto percentuale. Serve a non
+    lasciare l'utente in silenzio per minuti: chi la passa decide come
+    annunciarlo. Si chiama soltanto quando il server dichiara la dimensione
+    del file, e GitHub la dichiara per ogni allegato: senza, avanzamento non
+    viene chiamata mai. Fino alla V1.7.0 qui si diceva che riceveva un totale
+    zero (issue 64).
     timeout e' il tempo massimo in secondi di attesa di una risposta durante lo
     scaricamento, non la durata complessiva.
     prima_di_sostituire, se indicata, viene chiamata senza argomenti quando
@@ -885,7 +910,7 @@ def gestisci_aggiornamento(app_name: str, current_version: str, api_url: str,
 
 def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=None, silenzioso=False,
                           manifesto=True):
-    """V1.1.0 di lunedì 14 settembre 2026 by Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
+    """V1.1.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
     Comprime in un solo archivio la cartella prodotta da PyInstaller.
     I file finiscono alla radice dell'archivio, senza cartelle intermedie: e' il
     solo formato che perform_update sa gestire, e che gli strumenti di
@@ -907,9 +932,12 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
         manifesto: se vero, e se il pacchetto ha una cartella _internal, scrive
             dentro l'archivio _internal/manifesto.txt con l'elenco dei file di
             _internal che contiene, se stesso compreso. Lo legge pulisci_residui
-            al primo avvio dopo un aggiornamento, per sapere che cosa e' rimasto
-            li' dalla versione precedente. Il file nasce nell'archivio e non
-            nella cartella dist, che resta come l'ha lasciata PyInstaller.
+            a ogni controllo degli aggiornamenti, cioe' a ogni avvio dei
+            programmi che lo fanno, per sapere che cosa e' rimasto li' dalla
+            versione precedente. Il file nasce nell'archivio e non nella
+            cartella dist, che resta come l'ha lasciata PyInstaller. Fino alla
+            V1.1.0 qui e nel commento del manifesto si diceva al primo avvio
+            dopo un aggiornamento (issue 64).
     Le cartelle dei dati dell'utente, cioe' log, settings, pgn, txt e images, si
     saltano a qualunque profondita', perche' nascono provando l'eseguibile prima
     di comprimere e conterrebbero i dati di chi ha compilato.
@@ -1010,7 +1038,7 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
                 voci = sorted([*nel_manifesto, _NOME_MANIFESTO], key=str.lower)
                 spiegazione = (
                     f"# Elenco dei file di _internal che questo pacchetto contiene, {len(voci)} in tutto.\n"
-                    "# Lo legge pulisci_residui di GBUtils al primo avvio dopo un aggiornamento:\n"
+                    "# Lo legge pulisci_residui di GBUtils a ogni controllo degli aggiornamenti:\n"
                     "# cio' che sta in _internal e non e' elencato qui viene dalla versione\n"
                     "# precedente e si puo' cancellare. Un file per riga, percorso relativo a\n"
                     "# _internal, barra come separatore. Le righe che cominciano con un\n"
