@@ -31795,30 +31795,33 @@
     },
     "casella_solo_nuovi_spuntata": {
         "descrizione": "In una finestra di ricerca si spunta la casella Solo i nuovi arrivati della sessione: sinusoide, uno scintillio di novità, quattro note in fila: un mi 6 di 20 ms, un si 6 di 20 ms, un mi 7 di 20 ms e un sol diesis 7 di 30 ms, al centro; 90 ms. Va bene per una casella spuntata, un'opzione accesa: i nuovi arrivati, le novità della sessione, chi è appena entrato.",
+        "usato_da": [
+            "meteora"
+        ],
         "score": [
             [
                 "e6",
                 0.02,
                 0.0,
-                -0.18
+                -0.05
             ],
             [
                 "b6",
                 0.02,
                 0.0,
-                -0.18
+                -0.05
             ],
             [
                 "e7",
                 0.02,
                 0.0,
-                -0.18
+                -0.05
             ],
             [
                 "g#7",
                 0.03,
                 0.0,
-                -0.18
+                -0.05
             ]
         ],
         "kind": 1,
@@ -31831,30 +31834,33 @@
     },
     "casella_solo_nuovi_tolta": {
         "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Solo i nuovi arrivati della sessione: sinusoide, lo specchio di casella_solo_nuovi_spuntata, con lo stesso timbro, che scende: un sol diesis 7 di 30 ms, un mi 7 di 20 ms, un si 6 di 20 ms e un mi 6 di 20 ms, al centro; 90 ms. Va bene per una casella tolta, un'opzione spenta: i nuovi arrivati, le novità della sessione, chi è appena entrato.",
+        "usato_da": [
+            "meteora"
+        ],
         "score": [
             [
                 "g#7",
                 0.03,
                 0.0,
-                -0.18
+                -0.05
             ],
             [
                 "e7",
                 0.02,
                 0.0,
-                -0.18
+                -0.05
             ],
             [
                 "b6",
                 0.02,
                 0.0,
-                -0.18
+                -0.05
             ],
             [
                 "e6",
                 0.02,
                 0.0,
-                -0.18
+                -0.05
             ]
         ],
         "kind": 1,
@@ -36103,9 +36109,6 @@
     },
     "meteora_registrazione_in_ascolto": {
         "descrizione": "MeTeOra, si mette in ascolto con Alt e R, per registrare la prossima radio o il prossimo indirizzo che parte: triangolo, re 5 due volte piano, poi una domanda che sale da re 5 a sol 5; 290 ms. Scelto da Gabriele all'ascolto alla cieca dell'11 novembre 2026, fra tre stili. Va bene per ogni attesa armata, che aspetta qualcosa per partire.",
-        "usato_da": [
-            "meteora"
-        ],
         "score": [
             [
                 "d5",
@@ -36448,6 +36451,9 @@
     },
     "spia_che_si_spegne": {
         "descrizione": "Seno, una spia che lampeggia due volte su si 5, poi il suono scende da mi 5 a si 4, la spia che si spegne; 270 ms. Va bene per ogni cosa che si ferma, o file che si chiude.",
+        "usato_da": [
+            "meteora"
+        ],
         "score": [
             [
                 "b5",
