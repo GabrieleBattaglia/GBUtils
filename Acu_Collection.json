@@ -37060,20 +37060,20 @@
         ]
     },
     "ciechino_sparo": {
-        "descrizione": "Ciechino, dopo il terzo valore della mira parte il colpo dal cannone: uno sparo secco di rumore bianco, uno schiocco acutissimo di 6 ms fra 4000 e 11000 Hz e il corpo del colpo, con la banda che scende da 700-9000 a 120-1400 Hz e si spegne, al centro, in 176 ms. Va bene per uno sparo, un lancio o una detonazione breve.",
+        "descrizione": "Ciechino, dopo il terzo valore della mira parte il colpo dal cannone: uno sparo pieno di rumore bianco, uno schiocco di 8 ms fra 900 e 6000 Hz e il corpo del colpo, con la banda che scende da 120-2200 a 40-200 Hz e si spegne piano in un rimbombo grave, al centro, in 458 ms. Va bene per uno sparo, un colpo di cannone o una detonazione.",
         "usato_da": [
             "ciechino"
         ],
         "score": [
             [
-                "4000-11000",
-                0.006,
+                "900-6000",
+                0.008,
                 0.0,
-                0.4
+                0.35
             ],
             [
-                "700-9000.120-1400",
-                0.17,
+                "120-2200.40-200",
+                0.45,
                 0.0,
                 0.5
             ]
@@ -37081,83 +37081,137 @@
         "kind": 5,
         "adsr": [
             1.0,
-            35.0,
-            25.0,
+            40.0,
+            45.0,
             50.0
         ]
     },
     "ciechino_colpito": {
-        "descrizione": "Ciechino, il proiettile colpisce un bersaglio: rumore rosa, il tocco metallico dell'impatto, una banda stretta fra 1500 e 1650 Hz che suona quasi come una nota, poi l'esplosione, chiara e larga, con la banda che scende da 250-7000 a 150-2000 Hz; 330 ms, al centro, perché il gioco lo colloca nel punto dell'impatto. Va bene per un bersaglio centrato, un colpo andato a segno o un'esplosione.",
+        "descrizione": "Ciechino, il proiettile colpisce un bersaglio: rumore rosa, il tocco metallico dell'impatto, una banda stretta fra 1450 e 1700 Hz che suona quasi come un sol 6, poi l'esplosione, piena e larga, con la banda che scende da 150-8000 a 80-900 Hz, e un breve jingle di tre note, bande strettissime attorno al mi 6, al sol 6 e a un do 7 più lungo; 820 ms, al centro, perché il gioco lo colloca nel punto dell'impatto. Il jingle del bonus, in ciechino_colpito_bonus, è più acuto, più rapido e di otto note. Va bene per un bersaglio centrato, un colpo andato a segno o un'esplosione con un premio.",
         "usato_da": [
             "ciechino"
         ],
         "score": [
             [
-                "1500-1650",
-                0.05,
+                "1450-1700",
+                0.06,
                 0.0,
-                0.3
+                0.4
             ],
             [
-                "250-7000.150-2000",
-                0.28,
+                "150-8000.80-900",
+                0.4,
                 0.0,
                 0.5
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "1295-1342",
+                0.08,
+                0.0,
+                0.25
+            ],
+            [
+                "1540-1596",
+                0.08,
+                0.0,
+                0.25
+            ],
+            [
+                "2056-2131",
+                0.18,
+                0.0,
+                0.3
             ]
         ],
         "kind": 6,
         "adsr": [
             1.0,
-            40.0,
-            35.0,
+            30.0,
+            55.0,
             45.0
         ]
     },
     "ciechino_colpito_bonus": {
-        "descrizione": "Ciechino, il proiettile colpisce un bersaglio bonus: rumore azzurro, più brillante e più ricco del bersaglio normale, il tocco dell'impatto fra 2000 e 2200 Hz, l'esplosione con la banda che scende da 200-9000 a 300-3000 Hz, e tre scintille che salgono come un arpeggio di do maggiore, bande strettissime attorno al do 7, al mi 7 e al sol 7; 580 ms, al centro, perché il gioco lo colloca nel punto dell'impatto. Va bene per un premio colpito, un bersaglio speciale o un festeggiamento.",
+        "descrizione": "Ciechino, il proiettile colpisce un bersaglio bonus: rumore azzurro, più brillante e più ricco del bersaglio normale, il tocco dell'impatto fra 1900 e 2300 Hz, l'esplosione con la banda che scende da 200-10000 a 250-2500 Hz, e un jingle di otto note, bande strettissime un'ottava sopra quelle di ciechino_colpito: l'arpeggio rapido di do maggiore che sale, do 7, mi 7, sol 7 e do 8, e dopo una breve pausa la scala che risale, sol 7, la 7 e si 7, fino a un do 8 lungo; 1080 ms, al centro, perché il gioco lo colloca nel punto dell'impatto. Va bene per un premio colpito, un bersaglio speciale o un festeggiamento.",
         "usato_da": [
             "ciechino"
         ],
         "score": [
             [
-                "2000-2200",
-                0.04,
+                "1900-2300",
+                0.05,
                 0.0,
-                0.3
+                0.35
             ],
             [
-                "200-9000.300-3000",
-                0.26,
+                "200-10000.250-2500",
+                0.4,
                 0.0,
                 0.5
             ],
             [
-                "2050-2150",
-                0.06,
-                0.0,
-                0.25
-            ],
-            [
                 "p",
                 0.02,
                 0.0,
                 -0.5
             ],
             [
-                "2580-2700",
-                0.06,
+                "2056-2131",
+                0.045,
+                0.0,
+                0.2
+            ],
+            [
+                "2590-2685",
+                0.045,
+                0.0,
+                0.2
+            ],
+            [
+                "3080-3192",
+                0.045,
+                0.0,
+                0.2
+            ],
+            [
+                "4112-4261",
+                0.07,
                 0.0,
                 0.25
             ],
             [
                 "p",
-                0.02,
+                0.03,
                 0.0,
                 -0.5
             ],
             [
-                "3080-3220",
-                0.12,
+                "3080-3192",
+                0.045,
+                0.0,
+                0.2
+            ],
+            [
+                "3458-3583",
+                0.045,
+                0.0,
+                0.2
+            ],
+            [
+                "3881-4022",
+                0.045,
+                0.0,
+                0.2
+            ],
+            [
+                "4112-4261",
+                0.24,
                 0.0,
                 0.3
             ]
@@ -37165,36 +37219,48 @@
         "kind": 8,
         "adsr": [
             1.0,
-            40.0,
-            35.0,
+            30.0,
+            50.0,
             45.0
         ]
     },
     "ciechino_a_terra": {
-        "descrizione": "Ciechino, il proiettile arriva a terra senza colpire niente: un tonfo grave di rumore marrone, con la banda che scende da 50-450 a 40-180 Hz, e un poco di terra che ricade, una breve banda fra 500 e 2200 Hz più piano; 370 ms, al centro, perché il gioco lo colloca nel punto dove cade. Va bene per un tiro a vuoto, un oggetto che cade o un colpo nel terreno.",
+        "descrizione": "Ciechino, il proiettile arriva a terra senza colpire niente: un tonfo grave e lungo di rumore marrone, con la banda che scende da 60-1100 a 42-220 Hz e una coda che si spegne piano, poi un poco di terra che ricade, due brevi fruscii più piano, uno fra 400 e 2400 Hz e uno con la banda che scende da 300-1800 a 180-1000 Hz; 780 ms, al centro, perché il gioco lo colloca nel punto dove cade. Va bene per un tiro a vuoto, un oggetto pesante che cade o un colpo nel terreno.",
         "usato_da": [
             "ciechino"
         ],
         "score": [
             [
-                "50-450.40-180",
-                0.3,
+                "60-1100.42-220",
+                0.52,
                 0.0,
                 0.5
             ],
             [
-                "500-2200",
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "400-2400",
                 0.07,
                 0.0,
-                0.1
+                0.0
+            ],
+            [
+                "300-1800.180-1000",
+                0.16,
+                0.0,
+                -0.12
             ]
         ],
         "kind": 7,
         "adsr": [
-            2.0,
-            40.0,
+            1.0,
             30.0,
-            45.0
+            45.0,
+            60.0
         ]
     },
     "ciechino_livello_su": {
@@ -38779,6 +38845,150 @@
             20.0,
             65.0,
             30.0
+        ]
+    },
+    "ciechino_scheda_non_aperta": {
+        "descrizione": "Ciechino, la scheda audio scelta non c'è o non si apre, e il suono va su quella automatica: il selettore di ciechino_scheda_audio che s'inceppa, dente di sega piano, due scatti brevissimi, re 5 e mi 5, e dopo una breve pausa una scivolata che cade dal do 5 al fa diesis 4 spegnendosi, da sinistra a destra, in 355 ms. Va bene per un collegamento che non riesce, un dispositivo che manca o un'uscita di ripiego.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "d5",
+                0.025,
+                -0.4,
+                -0.2
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.025,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "c5.f#4",
+                0.22,
+                0.4,
+                [
+                    -0.2,
+                    -0.32
+                ]
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            30.0,
+            55.0,
+            30.0
+        ]
+    },
+    "ciechino_scheda_audio": {
+        "descrizione": "Ciechino, si apre la scelta della scheda audio, con Ctrl+Maiusc+X o dal menu Impostazioni: un selettore che gira e si ferma, onda triangolare, quattro scatti brevissimi che salgono per toni interi da sinistra a destra, re 6, mi 6, fa diesis 6 e sol diesis 6, e un si 5 più lungo al centro, dove il selettore si ferma, in 315 ms. Il suo seguito, quando la scheda scelta non si apre, è ciechino_scheda_non_aperta. Va bene per la scelta di un'uscita audio, un collegamento o un selettore.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "d6",
+                0.02,
+                -0.6,
+                -0.12
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.02,
+                -0.2,
+                -0.12
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "f#6",
+                0.02,
+                0.2,
+                -0.12
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#6",
+                0.02,
+                0.6,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.12,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            35.0,
+            35.0,
+            30.0
+        ]
+    },
+    "ciechino_proiettile": {
+        "descrizione": "Ciechino, si apre la scelta della forma del proiettile, dal menu Impostazioni: una parabola in miniatura, seno, una nota che sale dal mi 5 al si 5 partendo da sinistra e ricade al fa diesis 5 arrivando a destra, come un colpo in volo, in 280 ms. Va bene per una traiettoria, un lancio o la scelta di un'arma.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e5.b5",
+                0.12,
+                -0.6,
+                -0.1
+            ],
+            [
+                "b5.f#5",
+                0.16,
+                0.6,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            10.0,
+            80.0,
+            25.0
         ]
     }
 }
