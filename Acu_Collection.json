@@ -37384,7 +37384,7 @@
         ]
     },
     "ciechino_non_ora": {
-        "descrizione": "Ciechino, lo spazio premuto quando non può fare niente, per esempio col proiettile in volo o a partita finita: due tocchi sordi di onda triangolare sul re 4, il secondo più piano, che cede di una terza minore fino al si 3, al centro, in 160 ms. Un garbato non adesso. Va bene per un comando che arriva nel momento sbagliato o un tasto che deve aspettare.",
+        "descrizione": "Ciechino, lo spazio premuto quando non può fare niente, per esempio col proiettile in volo, o Ctrl+P senza una partita: due tocchi sordi di onda triangolare sul re 4, il secondo più piano, che cede di una terza minore fino al si 3, al centro, in 160 ms. Un garbato non adesso. Va bene per un comando che arriva nel momento sbagliato o un tasto che deve aspettare.",
         "usato_da": [
             "ciechino"
         ],
@@ -37687,7 +37687,7 @@
         ]
     },
     "ciechino_impostazioni": {
-        "descrizione": "Ciechino, un'impostazione cambiata dal menu Impostazioni, come la lettura dei resoconti con la sintesi o la lingua: un interruttore che scatta e si assesta, onda triangolare, un tocco di fa 5 a sinistra, la quinta sopra, do 6, a destra, e un sol 5 al centro, in 135 ms. Va bene per un'opzione cambiata, un interruttore o una preferenza.",
+        "descrizione": "Ciechino, la lettura dei resoconti con la sintesi si accende, dal menu Impostazioni: un interruttore che scatta e si assesta, onda triangolare, un tocco di fa 5 a sinistra, la quinta sopra, do 6, a destra, e un sol 5 al centro, in 135 ms. Lo specchio è ciechino_sintesi_spenta. Va bene per un'opzione accesa, un interruttore o una preferenza.",
         "usato_da": [
             "ciechino"
         ],
@@ -37870,7 +37870,7 @@
         ]
     },
     "ciechino_pub": {
-        "descrizione": "Ciechino, Entra al PUB e Chiedi aiuto al PUB, nel menu Aiuto: un brindisi, due bicchieri che si toccano, seno acuto che si spegne subito, do diesis 7 a sinistra e mi 7 a destra, in 290 ms. Va bene per una compagnia, un ritrovo o un saluto fra amici.",
+        "descrizione": "Ciechino, Entra al PUB, nel menu Aiuto: un brindisi, due bicchieri che si toccano, seno acuto che si spegne subito, do diesis 7 a sinistra e mi 7 a destra, in 290 ms. Chiedi aiuto al PUB ha il suo, ciechino_pub_aiuto. Va bene per una compagnia, un ritrovo o un saluto fra amici.",
         "usato_da": [
             "ciechino"
         ],
@@ -37942,6 +37942,843 @@
             0.0,
             100.0,
             40.0
+        ]
+    },
+    "ciechino_riavvio": {
+        "descrizione": "Ciechino, il programma si chiude per riaprirsi subito, per la lingua nuova: il motivo dell'uscita che torna indietro, onda triangolare, mi 6, si 5 e mi 5 dal centro verso sinistra e, dopo una breve pausa, mi 5, si 5 e un mi 6 più lungo che risalgono verso il centro, in 570 ms. Va bene per un riavvio, un arrivederci a subito o un ritorno.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e6",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "b5",
+                0.06,
+                -0.2,
+                -0.08
+            ],
+            [
+                "e5",
+                0.1,
+                -0.4,
+                -0.08
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.05,
+                -0.4,
+                -0.08
+            ],
+            [
+                "b5",
+                0.05,
+                -0.2,
+                -0.08
+            ],
+            [
+                "e6",
+                0.2,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            12.0,
+            75.0,
+            25.0
+        ]
+    },
+    "ciechino_crash_precedente": {
+        "descrizione": "Ciechino, all'avvio, dopo il suono d'apertura: la volta scorsa il programma si è chiuso per un errore grave. Dente di sega grave, due colpi di do 4 come chi bussa per avvertire e una scivolata che cade dal sol 3 al re 3, al centro, in 580 ms. Va bene per un guasto passato, un avvertimento o un ricordo che non è andato bene.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c4",
+                0.08,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "c4",
+                0.08,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "g3.d3",
+                0.3,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            25.0,
+            60.0,
+            30.0
+        ]
+    },
+    "ciechino_dati_rovinati": {
+        "descrizione": "Ciechino, un file dei dati non si leggeva e il programma riparte dalla copia o da zero: un inciampo di seno, la 5, sol diesis 5 e la 5 come un disco che salta, poi un re 5 che scivola giù di un semitono, al centro, in 310 ms. Va bene per dei dati rovinati, un file messo da parte o un ripristino.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "a5",
+                0.03,
+                0.0,
+                -0.15
+            ],
+            [
+                "g#5",
+                0.03,
+                0.0,
+                -0.15
+            ],
+            [
+                "a5",
+                0.03,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5.c#5",
+                0.18,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "ciechino_salvataggio_non_riuscito": {
+        "descrizione": "Ciechino, la classifica, le statistiche o le impostazioni non si sono potute salvare: dente di sega grave, un si 3 e, dopo una breve pausa, un fa 3 più lungo, il tritono che scende, al centro, in 410 ms. Va bene per un salvataggio fallito, un disco che non scrive o un lavoro che non resta.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "b3",
+                0.12,
+                0.0,
+                -0.15
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "f3",
+                0.25,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_sintesi_spenta": {
+        "descrizione": "Ciechino, la lettura dei resoconti con la sintesi si spegne, dal menu Impostazioni: l'interruttore di ciechino_impostazioni al contrario, onda triangolare, un tocco di sol 5 a destra, la quinta sotto, do 5, a sinistra, e un fa 5 al centro, in 135 ms. Va bene per un'opzione spenta, un interruttore o una preferenza tolta.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g5",
+                0.03,
+                0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "c5",
+                0.03,
+                -0.2,
+                -0.05
+            ],
+            [
+                "f5",
+                0.05,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            40.0,
+            40.0,
+            30.0
+        ]
+    },
+    "ciechino_lingua": {
+        "descrizione": "Ciechino, si apre la scelta della lingua, dal menu Impostazioni: due voci che si salutano, seno, sol 5 e do 6 a sinistra e, dopo una breve pausa, la risposta un tono più su, la 5 e re 6, a destra, in 300 ms. Va bene per una lingua, un dialogo fra due o un saluto.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g5",
+                0.05,
+                -0.5,
+                -0.12
+            ],
+            [
+                "c6",
+                0.08,
+                -0.5,
+                -0.12
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "a5",
+                0.05,
+                0.5,
+                -0.12
+            ],
+            [
+                "d6",
+                0.08,
+                0.5,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_lingua_scelta": {
+        "descrizione": "Ciechino, si sceglie una lingua nuova, che vale dal prossimo avvio: onda triangolare, il salto di sesta dal re 5 al si 5 e, dopo una breve pausa, un sol 5 che sale piano al la 5, come una promessa, al centro, in 350 ms. Va bene per una scelta che vale più tardi, un cambio annunciato o un appuntamento.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "d5",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "b5",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5.a5",
+                0.2,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_file_mancante": {
+        "descrizione": "Ciechino, il manuale o il file delle novità non c'è, o non si apre: una pagina vuota, onda triangolare, un mi 5 e, dopo un silenzio, un si 4 che lo ripete e un si 4 che cede al la 4 spegnendosi, al centro, in 440 ms. Va bene per un file che manca, una ricerca a vuoto o un documento introvabile.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e5",
+                0.08,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.1,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4",
+                0.08,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "b4.a4",
+                0.12,
+                0.0,
+                [
+                    -0.15,
+                    -0.3
+                ]
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            30.0,
+            50.0,
+            30.0
+        ]
+    },
+    "ciechino_caffe_paypal": {
+        "descrizione": "Ciechino, Dona con PayPal, nell'invito al caffè: una moneta che tintinna e cade nel salvadanaio, seno acuto, mi 7, si 6 e mi 7, poi un sol diesis 6 che scivola al mi 6, al centro, in 270 ms. Va bene per una donazione, un pagamento o un grazie.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e7",
+                0.03,
+                0.0,
+                -0.15
+            ],
+            [
+                "b6",
+                0.03,
+                0.0,
+                -0.18
+            ],
+            [
+                "e7",
+                0.03,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "g#6.e6",
+                0.15,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1.0,
+            50.0,
+            30.0,
+            30.0
+        ]
+    },
+    "ciechino_pub_aiuto": {
+        "descrizione": "Ciechino, Chiedi aiuto al PUB, nel menu Aiuto: il campanello del banco, suonato due volte da chi chiede, seno acuto che si spegne subito, due la 6, il secondo più lungo, appena a destra, in 480 ms. Entra al PUB ha il suo, ciechino_pub. Va bene per una richiesta d'aiuto, un servizio o un richiamo garbato.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "a6",
+                0.12,
+                0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "a6",
+                0.3,
+                0.2,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1.0,
+            70.0,
+            10.0,
+            29.0
+        ]
+    },
+    "ciechino_domanda": {
+        "descrizione": "Ciechino, una domanda col sì e col no, come l'uscita con una partita in corso: onda triangolare, un sol 4 e una scivolata che sale dal re 5 al sol 5, come la voce che si alza alla fine di una domanda, al centro, in 220 ms. Va bene per una domanda, una conferma da dare o un dubbio.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g4",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5.g5",
+                0.14,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_confermato": {
+        "descrizione": "Ciechino, un dialogo confermato con OK: un sì garbato, seno, do 6 e mi 6, la terza maggiore che sale, al centro, in 130 ms. Il suo rovescio è ciechino_annullato. Va bene per una conferma, un'operazione accettata o un assenso.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c6",
+                0.04,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.09,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            25.0,
+            60.0,
+            30.0
+        ]
+    },
+    "ciechino_annullato": {
+        "descrizione": "Ciechino, un dialogo chiuso con Annulla o con Esc, o il no a una domanda: un no garbato, seno, mi 6 e do diesis 6, la terza minore che scende, al centro, in 140 ms. Il suo rovescio è ciechino_confermato. Va bene per un annullamento, un ripensamento o un rifiuto gentile.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e6",
+                0.04,
+                0.0,
+                -0.15
+            ],
+            [
+                "c#6",
+                0.1,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            25.0,
+            60.0,
+            30.0
+        ]
+    },
+    "ciechino_campo_da_correggere": {
+        "descrizione": "Ciechino, OK in un dialogo con un campo da correggere, come un nome vuoto in classifica: due tocchi ronzanti di dente di sega sul fa diesis 4, piano, al centro, in 130 ms, come un dito che indica il campo. Va bene per un dato da correggere, un campo vuoto o un valore non valido.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "f#4",
+                0.05,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "f#4",
+                0.05,
+                0.0,
+                -0.2
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            30.0,
+            50.0,
+            30.0
+        ]
+    },
+    "ciechino_aggiornamento_disponibile": {
+        "descrizione": "Ciechino, su GitHub c'è una versione nuova, e la proposta si apre: onda triangolare, l'arpeggio di do maggiore che sale da sinistra a destra, do 5, mi 5, sol 5 e do 6, e dopo una breve pausa un mi 6 che sale al sol 6, al centro, in 420 ms. Va bene per una novità che arriva, un pacco in consegna o un'offerta.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c5",
+                0.05,
+                -0.3,
+                -0.1
+            ],
+            [
+                "e5",
+                0.05,
+                -0.1,
+                -0.1
+            ],
+            [
+                "g5",
+                0.05,
+                0.1,
+                -0.1
+            ],
+            [
+                "c6",
+                0.05,
+                0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6.g6",
+                0.18,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_aggiornamento_scelto": {
+        "descrizione": "Ciechino, Aggiorna, nella proposta dell'aggiornamento: lo scaricamento che parte, seno, una scivolata d'ottava dal do 5 al do 6 che si ferma lassù, al centro, in 220 ms. Va bene per un via, uno scaricamento o qualcosa che prende velocità.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c5.c6",
+                0.12,
+                0.0,
+                -0.12
+            ],
+            [
+                "c6",
+                0.1,
+                0.0,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "ciechino_aggiornamento_rimandato": {
+        "descrizione": "Ciechino, Non adesso, nella proposta dell'aggiornamento: un più tardi tranquillo, onda triangolare, un sol 5 e, dopo una breve pausa, un re 5 più lungo e più piano, al centro, in 260 ms. Va bene per un rinvio, una proposta messa da parte o un a dopo.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g5",
+                0.07,
+                0.0,
+                -0.12
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "d5",
+                0.14,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            20.0,
+            65.0,
+            35.0
+        ]
+    },
+    "ciechino_aggiornamento_scaduto": {
+        "descrizione": "Ciechino, la proposta dell'aggiornamento resta senza risposta e si chiude da sola: un orologio, seno, tre tic-tac di mi 6 e si 5 fra sinistra e destra, poi un mi 5 che scivola giù al si 4, al centro, in 500 ms. Va bene per un tempo scaduto, un'attesa finita o un'occasione lasciata passare.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e6",
+                0.02,
+                -0.3,
+                -0.15
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.02,
+                0.3,
+                -0.15
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.02,
+                -0.3,
+                -0.15
+            ],
+            [
+                "p",
+                0.08,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5.b4",
+                0.2,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1.0,
+            40.0,
+            40.0,
+            19.0
+        ]
+    },
+    "ciechino_aggiornamento_pronto": {
+        "descrizione": "Ciechino, l'aggiornamento è scaricato, e il programma si chiude per installarlo e si riapre da solo: onda triangolare, una cadenza che arriva a casa, sol 5, si 5 e re 6, e un do 6 lungo che risolve, al centro, in 480 ms. Il suo cugino sospeso è ciechino_aggiornamento_non_pronto. Va bene per un lavoro finito, un pacco arrivato o una chiusura soddisfatta.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g5",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "b5",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "d6",
+                0.06,
+                0.0,
+                -0.08
+            ],
+            [
+                "c6",
+                0.3,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "ciechino_aggiornamento_non_pronto": {
+        "descrizione": "Ciechino, la versione nuova c'è, ma il suo pacchetto non è ancora pronto: la cadenza di ciechino_aggiornamento_pronto che resta sospesa, onda triangolare, sol 5, si 5, re 6 e, dopo una pausa, un re 6 che cala al do diesis 6 spegnendosi, senza risolvere, al centro, in 430 ms. Va bene per un'attesa, un ancora un po' o una cosa non finita.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g5",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "b5",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "d6",
+                0.06,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "d6.c#6",
+                0.2,
+                0.0,
+                [
+                    -0.1,
+                    -0.25
+                ]
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "ciechino_aggiornamento_non_riuscito": {
+        "descrizione": "Ciechino, l'aggiornamento non si è scaricato, o non si è installato: uno scaricamento che si spezza, dente di sega, una scivolata che sale dal do 5 al sol 5 e, dopo un attimo, una che crolla dal fa diesis 4 al do 4, al centro, in 430 ms. Va bene per un trasferimento fallito, un collegamento caduto o un tentativo andato male.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c5.g5",
+                0.15,
+                0.0,
+                -0.18
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "f#4.c4",
+                0.25,
+                0.0,
+                -0.18
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            20.0,
+            65.0,
+            30.0
         ]
     }
 }
