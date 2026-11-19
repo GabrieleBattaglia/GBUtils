@@ -5649,6 +5649,7 @@
     "donazione": {
         "descrizione": "Alert allegro con frequenze alte e portamento veloce (glissando ascendente) per donazione.",
         "usato_da": [
+            "ciechino",
             "mess",
             "meteora",
             "terminal_beast",
@@ -36792,6 +36793,1155 @@
             0.0,
             100.0,
             0.002
+        ]
+    },
+    "ciechino_nuova_partita": {
+        "descrizione": "Ciechino, comincia una partita nuova: il cannone che si arma, rumore bianco, uno scatto acuto a sinistra fra 2500 e 9000 Hz, l'otturatore che scorre con la banda che sale da 1200-3500 a 2500-6000 Hz e, dopo una breve pausa, il colpo secco della chiusura appena a destra, fra 700 e 4000 Hz; 157 ms. Va bene per un'arma che si carica, un meccanismo che si arma o un inizio pronto all'azione.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "2500-9000",
+                0.012,
+                -0.3,
+                0.35
+            ],
+            [
+                "1200-3500.2500-6000",
+                0.07,
+                -0.1,
+                0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "700-4000",
+                0.035,
+                0.2,
+                0.45
+            ]
+        ],
+        "kind": 5,
+        "adsr": [
+            3.0,
+            30.0,
+            50.0,
+            40.0
+        ]
+    },
+    "ciechino_ultimo_colpo": {
+        "descrizione": "Ciechino, nella riserva resta l'ultimo colpo: un battito di cuore, due colpi gravi di dente di sega che cadono, dal mi 3 al do 3 e, dopo una breve pausa, dal re 3 al la diesis 2, al centro, in 260 ms. Va bene per un'ultima possibilità, una tensione che sale o un avvertimento grave.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e3.c3",
+                0.07,
+                0.0,
+                0.05
+            ],
+            [
+                "p",
+                0.09,
+                0.0,
+                -0.5
+            ],
+            [
+                "d3.a#2",
+                0.1,
+                0.0,
+                -0.02
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            1.0,
+            60.0,
+            20.0,
+            39.0
+        ]
+    },
+    "ciechino_partita_finita": {
+        "descrizione": "Ciechino, la riserva è vuota e la partita finisce: una breve frase di seno che scende, re 6, la 5, fa 5 e re 5, l'arpeggio di re minore da destra verso sinistra, e un la 4 lungo che si posa; 800 ms. È lo specchio di ciechino_livello_su, che sale in maggiore. Va bene per una fine, una sconfitta serena o una chiusura.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "d6",
+                0.09,
+                0.5,
+                -0.05
+            ],
+            [
+                "a5",
+                0.09,
+                0.25,
+                -0.05
+            ],
+            [
+                "f5",
+                0.09,
+                0.0,
+                -0.05
+            ],
+            [
+                "d5",
+                0.11,
+                -0.25,
+                -0.05
+            ],
+            [
+                "a4",
+                0.42,
+                -0.5,
+                -0.02
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_in_classifica": {
+        "descrizione": "Ciechino, a partita finita il punteggio entra nella classifica dei migliori: una fanfara di dente di sega, squillante come un ottone, sol 4, do 5, mi 5 e sol 5, poi la risposta, mi 5 e un sol 5 lungo, al centro, in un secondo; suona prima della finestra del nome. Il suo rovescio è ciechino_fuori_classifica. Va bene per un record, un ingresso fra i migliori o una vittoria.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g4",
+                0.09,
+                -0.3,
+                -0.15
+            ],
+            [
+                "c5",
+                0.09,
+                -0.15,
+                -0.15
+            ],
+            [
+                "e5",
+                0.09,
+                0.0,
+                -0.15
+            ],
+            [
+                "g5",
+                0.2,
+                0.15,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "e5",
+                0.08,
+                0.0,
+                -0.15
+            ],
+            [
+                "g5",
+                0.42,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            5.0,
+            20.0,
+            70.0,
+            25.0
+        ]
+    },
+    "ciechino_fuori_classifica": {
+        "descrizione": "Ciechino, a partita finita il punteggio non entra nella classifica dei migliori: un ottone di dente di sega, piano, che scende per semitoni, sol 4, fa diesis 4 e fa 4, e un mi 4 lungo che cede ancora verso il re diesis 4 spegnendosi, al centro, in 930 ms. Un peccato detto con un sorriso. Il suo rovescio è ciechino_in_classifica. Va bene per un tentativo non riuscito, una consolazione o un risultato che non basta.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g4",
+                0.16,
+                0.0,
+                -0.2
+            ],
+            [
+                "f#4",
+                0.16,
+                0.0,
+                -0.2
+            ],
+            [
+                "f4",
+                0.16,
+                0.0,
+                -0.2
+            ],
+            [
+                "e4.d#4",
+                0.45,
+                0.0,
+                [
+                    -0.2,
+                    -0.32
+                ]
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            8.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "ciechino_mira_avviata": {
+        "descrizione": "Ciechino, lo spazio avvia la mira e il tempo del gioco si ferma: un respiro trattenuto, un soffio breve di rumore marrone che nasce piano e si schiarisce, con la banda che sale da 200-1200 a 400-2000 Hz, al centro, in 70 ms. Suona a ogni tiro, quindi è breve e morbido, e non ha altezza, per non confondersi con i bip e le scivolate della mira. Va bene per un'attenzione che si concentra, una mira o un fiato sospeso.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "200-1200.400-2000",
+                0.07,
+                0.0,
+                0.15
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            55.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "ciechino_valore_preso": {
+        "descrizione": "Ciechino, la mira prende un valore, la direzione, l'alzo o la potenza: uno scatto di fermo, onda triangolare, un tocco brevissimo di la 5 che cade sul mi 5, al centro, in 60 ms. Suona tre volte a ogni tiro, quindi è breve e morbido, e scende, mentre i bip della mira salgono. Va bene per un valore fissato, una scelta presa o un fermo che scatta.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "a5",
+                0.016,
+                0.0,
+                -0.12
+            ],
+            [
+                "e5",
+                0.044,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            45.0,
+            30.0,
+            40.0
+        ]
+    },
+    "ciechino_sparo": {
+        "descrizione": "Ciechino, dopo il terzo valore della mira parte il colpo dal cannone: uno sparo secco di rumore bianco, uno schiocco acutissimo di 6 ms fra 4000 e 11000 Hz e il corpo del colpo, con la banda che scende da 700-9000 a 120-1400 Hz e si spegne, al centro, in 176 ms. Va bene per uno sparo, un lancio o una detonazione breve.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "4000-11000",
+                0.006,
+                0.0,
+                0.4
+            ],
+            [
+                "700-9000.120-1400",
+                0.17,
+                0.0,
+                0.5
+            ]
+        ],
+        "kind": 5,
+        "adsr": [
+            1.0,
+            35.0,
+            25.0,
+            50.0
+        ]
+    },
+    "ciechino_colpito": {
+        "descrizione": "Ciechino, il proiettile colpisce un bersaglio: rumore rosa, il tocco metallico dell'impatto, una banda stretta fra 1500 e 1650 Hz che suona quasi come una nota, poi l'esplosione, chiara e larga, con la banda che scende da 250-7000 a 150-2000 Hz; 330 ms, al centro, perché il gioco lo colloca nel punto dell'impatto. Va bene per un bersaglio centrato, un colpo andato a segno o un'esplosione.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "1500-1650",
+                0.05,
+                0.0,
+                0.3
+            ],
+            [
+                "250-7000.150-2000",
+                0.28,
+                0.0,
+                0.5
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            1.0,
+            40.0,
+            35.0,
+            45.0
+        ]
+    },
+    "ciechino_colpito_bonus": {
+        "descrizione": "Ciechino, il proiettile colpisce un bersaglio bonus: rumore azzurro, più brillante e più ricco del bersaglio normale, il tocco dell'impatto fra 2000 e 2200 Hz, l'esplosione con la banda che scende da 200-9000 a 300-3000 Hz, e tre scintille che salgono come un arpeggio di do maggiore, bande strettissime attorno al do 7, al mi 7 e al sol 7; 580 ms, al centro, perché il gioco lo colloca nel punto dell'impatto. Va bene per un premio colpito, un bersaglio speciale o un festeggiamento.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "2000-2200",
+                0.04,
+                0.0,
+                0.3
+            ],
+            [
+                "200-9000.300-3000",
+                0.26,
+                0.0,
+                0.5
+            ],
+            [
+                "2050-2150",
+                0.06,
+                0.0,
+                0.25
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "2580-2700",
+                0.06,
+                0.0,
+                0.25
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "3080-3220",
+                0.12,
+                0.0,
+                0.3
+            ]
+        ],
+        "kind": 8,
+        "adsr": [
+            1.0,
+            40.0,
+            35.0,
+            45.0
+        ]
+    },
+    "ciechino_a_terra": {
+        "descrizione": "Ciechino, il proiettile arriva a terra senza colpire niente: un tonfo grave di rumore marrone, con la banda che scende da 50-450 a 40-180 Hz, e un poco di terra che ricade, una breve banda fra 500 e 2200 Hz più piano; 370 ms, al centro, perché il gioco lo colloca nel punto dove cade. Va bene per un tiro a vuoto, un oggetto che cade o un colpo nel terreno.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "50-450.40-180",
+                0.3,
+                0.0,
+                0.5
+            ],
+            [
+                "500-2200",
+                0.07,
+                0.0,
+                0.1
+            ]
+        ],
+        "kind": 7,
+        "adsr": [
+            2.0,
+            40.0,
+            30.0,
+            45.0
+        ]
+    },
+    "ciechino_livello_su": {
+        "descrizione": "Ciechino, i centri del livello sono fatti e si sale di livello: una breve frase che sale, onda triangolare, l'arpeggio di re maggiore, la 4, re 5, fa diesis 5 e la 5, da sinistra verso destra, e un re 6 lungo che resta in alto; 580 ms. Lo specchio è ciechino_partita_finita, che scende in minore. Va bene per un livello superato, un traguardo o una promozione.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "a4",
+                0.065,
+                -0.6,
+                -0.05
+            ],
+            [
+                "d5",
+                0.065,
+                -0.3,
+                -0.05
+            ],
+            [
+                "f#5",
+                0.065,
+                0.0,
+                -0.05
+            ],
+            [
+                "a5",
+                0.065,
+                0.3,
+                -0.05
+            ],
+            [
+                "d6",
+                0.32,
+                0.5,
+                0.0
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            15.0,
+            70.0,
+            30.0
+        ]
+    },
+    "ciechino_bonus_appare": {
+        "descrizione": "Ciechino, compare un bersaglio bonus, che attraversa lo spazio dei bersagli e poi esce: uno scintillio di seno, un trillo veloce fra mi 6 e sol diesis 6 che passa da sinistra a destra e si ferma su un si 6, in 250 ms. Il suo seguito, quando il bonus esce senza essere colpito, è ciechino_bonus_uscito. Va bene per un'occasione che si presenta, un oggetto raro o un premio di passaggio.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e6",
+                0.035,
+                -0.5,
+                -0.2
+            ],
+            [
+                "g#6",
+                0.035,
+                -0.25,
+                -0.2
+            ],
+            [
+                "e6",
+                0.035,
+                0.0,
+                -0.2
+            ],
+            [
+                "g#6",
+                0.035,
+                0.25,
+                -0.2
+            ],
+            [
+                "b6",
+                0.11,
+                0.5,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "ciechino_bonus_uscito": {
+        "descrizione": "Ciechino, il bersaglio bonus esce senza essere stato colpito: il trillo di ciechino_bonus_appare, fra sol diesis 6 e mi 6, sempre più piano, che invece di salire scivola giù dal do diesis 6 al sol diesis 5 e svanisce, al centro, in 300 ms. Un'occasione persa. Va bene per un premio che se ne va, un'opportunità sfumata o qualcosa che scompare.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g#6",
+                0.035,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.035,
+                0.0,
+                -0.15
+            ],
+            [
+                "g#6",
+                0.035,
+                0.0,
+                -0.18
+            ],
+            [
+                "e6",
+                0.035,
+                0.0,
+                -0.21
+            ],
+            [
+                "c#6.g#5",
+                0.16,
+                0.0,
+                [
+                    -0.24,
+                    -0.4
+                ]
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            8.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "ciechino_pausa": {
+        "descrizione": "Ciechino, la partita va in pausa: un nastro che rallenta, onda triangolare che scivola dal la 5 al re 5 e cala di volume, al centro, in 220 ms. Il suo specchio è ciechino_ripresa. Va bene per una pausa, un'attesa o qualcosa che si ferma.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "a5.d5",
+                0.22,
+                0.0,
+                [
+                    -0.1,
+                    -0.35
+                ]
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            30.0
+        ]
+    },
+    "ciechino_ripresa": {
+        "descrizione": "Ciechino, la partita riprende dalla pausa: il nastro che riparte, onda triangolare che sale dal re 5 al la 5 crescendo di volume, al centro, in 220 ms. È lo specchio di ciechino_pausa. Va bene per una ripresa, un riavvio o qualcosa che torna in moto.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "d5.a5",
+                0.22,
+                0.0,
+                [
+                    -0.35,
+                    -0.1
+                ]
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            30.0,
+            0.0,
+            100.0,
+            10.0
+        ]
+    },
+    "ciechino_non_ora": {
+        "descrizione": "Ciechino, lo spazio premuto quando non può fare niente, per esempio col proiettile in volo o a partita finita: due tocchi sordi di onda triangolare sul re 4, il secondo più piano, che cede di una terza minore fino al si 3, al centro, in 160 ms. Un garbato non adesso. Va bene per un comando che arriva nel momento sbagliato o un tasto che deve aspettare.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "d4",
+                0.045,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.035,
+                0.0,
+                -0.5
+            ],
+            [
+                "d4.b3",
+                0.08,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            5.0,
+            30.0,
+            50.0,
+            40.0
+        ]
+    },
+    "ciechino_avvio": {
+        "descrizione": "Ciechino, il programma si apre: il motivo di Ciechino, onda triangolare, mi 5, il salto di quinta al si 5, un passo indietro sul la 5 e l'arrivo lungo sul mi 6, come una mira che trova il bersaglio, da sinistra verso il centro, in 550 ms. Lo rovescia ciechino_uscita. Va bene per un benvenuto, un avvio o una presentazione.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e5",
+                0.06,
+                -0.5,
+                -0.1
+            ],
+            [
+                "b5",
+                0.06,
+                -0.3,
+                -0.1
+            ],
+            [
+                "a5",
+                0.08,
+                -0.1,
+                -0.05
+            ],
+            [
+                "e6",
+                0.35,
+                0.0,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            12.0,
+            75.0,
+            25.0
+        ]
+    },
+    "ciechino_uscita": {
+        "descrizione": "Ciechino, l'uscita dal programma: il motivo di ciechino_avvio al contrario, onda triangolare, mi 6, la 5, si 5 e un mi 5 lungo che si posa, dal centro verso sinistra, in 600 ms. Va bene per un congedo, un'uscita o la fine di una sessione.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e6",
+                0.08,
+                0.0,
+                -0.05
+            ],
+            [
+                "a5",
+                0.06,
+                -0.1,
+                -0.05
+            ],
+            [
+                "b5",
+                0.06,
+                -0.3,
+                -0.05
+            ],
+            [
+                "e5",
+                0.4,
+                -0.5,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            12.0,
+            75.0,
+            30.0
+        ]
+    },
+    "ciechino_primo_piano": {
+        "descrizione": "Ciechino, si apre Ciechino mentre è già aperto, e la finestra aperta torna in primo piano: un eccomi di seno, un si 5 breve e la scivolata che sale dal si 5 al mi 6, al centro, in 160 ms. Va bene per una finestra che si ripresenta, un richiamo o un ritorno.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "b5",
+                0.04,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.02,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5.e6",
+                0.1,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "ciechino_errore": {
+        "descrizione": "Ciechino, un errore imprevisto: dente di sega grave che crolla in due tempi, una scivolata dal la 3 al mi 3 e, dopo una pausa, una più lunga dal mi 3 al la 2, al centro, in 600 ms. Va bene per un errore, un guasto o un'operazione che non riesce.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "a3.e3",
+                0.2,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "e3.a2",
+                0.35,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 4,
+        "adsr": [
+            3.0,
+            20.0,
+            70.0,
+            30.0
+        ]
+    },
+    "ciechino_classifica": {
+        "descrizione": "Ciechino, si apre la classifica dei migliori: un podio, onda triangolare, tre note staccate alte come i tre gradini, il mi 5 del secondo a sinistra, il sol 5 del primo al centro e il do 5 del terzo a destra, più piano, in 360 ms. Va bene per una classifica, un podio o un elenco di primati.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e5",
+                0.08,
+                -0.5,
+                -0.05
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.12,
+                0.0,
+                0.0
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "c5",
+                0.1,
+                0.5,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_statistiche": {
+        "descrizione": "Ciechino, si aprono le statistiche: un contatore che scatta, tocchi di seno che salgono, la 5, si 5, do diesis 6 e un mi 6 più lungo, da sinistra a destra, in 220 ms. Va bene per dei conti, dei numeri che si sommano o un resoconto di dati.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "a5",
+                0.025,
+                -0.6,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "b5",
+                0.025,
+                -0.3,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "c#6",
+                0.025,
+                0.0,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "e6",
+                0.07,
+                0.4,
+                -0.05
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            4.0,
+            40.0,
+            30.0,
+            26.0
+        ]
+    },
+    "ciechino_volume": {
+        "descrizione": "Ciechino, il volume cambiato dal menu Impostazioni: una sola nota di seno, la 5 al centro, che cresce dal quasi silenzio al livello pieno, in 220 ms, così si sente il volume scelto. Va bene per provare un volume, un livello o un guadagno.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "a5",
+                0.22,
+                0.0,
+                [
+                    -0.35,
+                    0.05
+                ]
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            0.0,
+            100.0,
+            25.0
+        ]
+    },
+    "ciechino_impostazioni": {
+        "descrizione": "Ciechino, un'impostazione cambiata dal menu Impostazioni, come la lettura dei resoconti con la sintesi o la lingua: un interruttore che scatta e si assesta, onda triangolare, un tocco di fa 5 a sinistra, la quinta sopra, do 6, a destra, e un sol 5 al centro, in 135 ms. Va bene per un'opzione cambiata, un interruttore o una preferenza.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "f5",
+                0.03,
+                -0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.025,
+                0.0,
+                -0.5
+            ],
+            [
+                "c6",
+                0.03,
+                0.2,
+                -0.05
+            ],
+            [
+                "g5",
+                0.05,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            3.0,
+            40.0,
+            40.0,
+            30.0
+        ]
+    },
+    "ciechino_guida": {
+        "descrizione": "Ciechino, F1, la guida ai comandi: una domanda e la sua risposta, seno, una scivolata che sale dal do 5 al sol 5 come una domanda, poi un do 6 e un sol 5 che rispondono sicuri, in 340 ms. Va bene per un aiuto, una guida o un elenco di istruzioni.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c5.g5",
+                0.1,
+                -0.2,
+                -0.1
+            ],
+            [
+                "p",
+                0.04,
+                0.0,
+                -0.5
+            ],
+            [
+                "c6",
+                0.06,
+                0.2,
+                -0.08
+            ],
+            [
+                "g5",
+                0.14,
+                0.0,
+                -0.08
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_manuale": {
+        "descrizione": "Ciechino, Maiusc+F1, il manuale: due fruscii di pagina che si gira, rumore rosa che nasce piano e si schiarisce con la banda da 1500-6000 a 2500-9000 Hz, il primo a sinistra e il secondo, più piano, a destra, in 280 ms. Va bene per un libro, un documento che si apre o una pagina che si volta.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "1500-6000.2500-9000",
+                0.11,
+                -0.4,
+                0.2
+            ],
+            [
+                "p",
+                0.06,
+                0.0,
+                -0.5
+            ],
+            [
+                "1500-6000.2500-9000",
+                0.11,
+                0.4,
+                0.1
+            ]
+        ],
+        "kind": 6,
+        "adsr": [
+            45.0,
+            0.0,
+            100.0,
+            50.0
+        ]
+    },
+    "ciechino_novita": {
+        "descrizione": "Ciechino, F2, le novità della versione: onda triangolare, un salto d'ottava dal mi 5 al mi 6, poi una scivolata che riparte dal si 5 e sale al fa diesis 6, da sinistra a destra, in 260 ms, come qualcosa di nuovo che si affaccia. Va bene per delle novità, un aggiornamento o una scoperta.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e5",
+                0.05,
+                -0.3,
+                -0.05
+            ],
+            [
+                "e6",
+                0.05,
+                0.0,
+                -0.05
+            ],
+            [
+                "b5.f#6",
+                0.16,
+                0.3,
+                -0.05
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            4.0,
+            20.0,
+            65.0,
+            30.0
+        ]
+    },
+    "ciechino_informazioni": {
+        "descrizione": "Ciechino, F3, le informazioni sul programma, con nome, versione e autori: il biglietto da visita, il motivo di ciechino_avvio in miniatura e in seno, mi 5, si 5, la 5 e un mi 6 breve, quasi al centro, in 270 ms. Va bene per dei crediti, una firma o una presentazione.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e5",
+                0.04,
+                -0.2,
+                -0.15
+            ],
+            [
+                "b5",
+                0.04,
+                -0.1,
+                -0.15
+            ],
+            [
+                "a5",
+                0.05,
+                0.0,
+                -0.12
+            ],
+            [
+                "e6",
+                0.14,
+                0.1,
+                -0.12
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            3.0,
+            20.0,
+            60.0,
+            30.0
+        ]
+    },
+    "ciechino_pub": {
+        "descrizione": "Ciechino, Entra al PUB e Chiedi aiuto al PUB, nel menu Aiuto: un brindisi, due bicchieri che si toccano, seno acuto che si spegne subito, do diesis 7 a sinistra e mi 7 a destra, in 290 ms. Va bene per una compagnia, un ritrovo o un saluto fra amici.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c#7",
+                0.1,
+                -0.3,
+                -0.12
+            ],
+            [
+                "p",
+                0.03,
+                0.0,
+                -0.5
+            ],
+            [
+                "e7",
+                0.16,
+                0.3,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            1.0,
+            70.0,
+            10.0,
+            29.0
+        ]
+    },
+    "ciechino_vai_alla_vista": {
+        "descrizione": "Ciechino, F5, il fuoco va nella vista della partita: una scivolata breve e morbida di seno che scende dal do 5 al fa 4, al centro, in 50 ms; grave, come F5 negli altri programmi del parco. Lo specchio è ciechino_vai_alla_barra. Va bene per uno spostamento del fuoco verso l'area principale.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c5.f4",
+                0.05,
+                0.0,
+                -0.15
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            20.0,
+            0.0,
+            100.0,
+            40.0
+        ]
+    },
+    "ciechino_vai_alla_barra": {
+        "descrizione": "Ciechino, F7, il fuoco va nella barra di stato: una scivolata breve e morbida di seno che sale dal fa 5 al do 6, al centro, in 50 ms; acuta, come F7 negli altri programmi del parco. Lo specchio è ciechino_vai_alla_vista. Va bene per uno spostamento del fuoco verso una barra o un'area secondaria.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "f5.c6",
+                0.05,
+                0.0,
+                -0.25
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            20.0,
+            0.0,
+            100.0,
+            40.0
         ]
     }
 }
