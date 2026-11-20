@@ -38990,5 +38990,50 @@
             80.0,
             25.0
         ]
+    },
+    "ciechino_ascolti": {
+        "descrizione": "Ciechino, si aprono gli Ascolti, il tutorial audio, dal menu Impostazioni, dal menu Aiuto o da soli all'avvio: le cuffie che si provano, seno, un do 6 a sinistra e, dopo una breve pausa, lo stesso a destra, poi una scivolata che sale dal sol 5 al do 6, al centro, in 420 ms. Va bene per una prova delle cuffie, un tutorial audio o un ascolto guidato.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "c6",
+                0.07,
+                -0.8,
+                -0.12
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "c6",
+                0.07,
+                0.8,
+                -0.12
+            ],
+            [
+                "p",
+                0.05,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5.c6",
+                0.18,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            5.0,
+            20.0,
+            65.0,
+            30.0
+        ]
     }
 }
