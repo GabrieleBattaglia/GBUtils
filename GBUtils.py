@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V302 di venerdì 20 novembre 2026
+	V303 di sabato 21 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.19 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -16,7 +16,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Donazione V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	elenco_dispositivi_audio V1.1.0 di martedì 15 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	elenco_interfacce_audio V1.0.0 di domenica 13 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
-	enter_escape V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode)
+	enter_escape V2.1.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Opus 5.5, modalità auto)
 	formatta_dimensione V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	formatta_durata V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	frequenza_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
@@ -27,7 +27,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
-	menu V5.2.7 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
+	menu V5.3.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -40,10 +40,11 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	scomponi_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
 	sorgente_dei_tasti V1.0.0 di venerdì 20 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	sorgente_delle_scelte V1.0.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 '''
-VERSION = "302"
+VERSION = "303"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -1074,7 +1075,7 @@ def crea_archivio_release(nome_app, cartella_dist=None, archivio=None, escludi=N
 
 
 def enter_escape(prompt="", guida="", attesa=None):
-    """V2.0.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Fable 5.1, UltraCode)
+    """V2.1.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 Pro & ClaudIA (Claude Opus 5.5, modalità auto)
     Aspetta Invio o Escape e riferisce quale dei due e' arrivato.
     Parametri:
       prompt: testo stampato prima dell'attesa, senza andare a capo, e
@@ -1099,8 +1100,15 @@ def enter_escape(prompt="", guida="", attesa=None):
     Ctrl+C veniva preso per un tasto sbagliato. Il predefinito della guida
     era una frase italiana, che i programmi in altre lingue si prendevano
     senza volerlo.
+    Dalla V2.1.0, se un programma ha registrato una sorgente delle scelte,
+    prima di ogni attesa del tasto la avvisa della domanda, con
+    sorgente("enter_escape", None, prompt, None): una finestra puo' mostrare
+    Si' e No accanto alla domanda. Il tasto lo legge comunque key, come
+    sempre; senza sorgente niente cambia.
     """
     while True:
+        if _SORGENTE_DELLE_SCELTE is not None:
+            _SORGENTE_DELLE_SCELTE("enter_escape", None, prompt, None)
         tasto = key(prompt, attesa=attesa, alla_scadenza=None)
         if tasto is None:
             print()
@@ -3904,6 +3912,37 @@ def sorgente_dei_tasti(sorgente=None):
 		raise TypeError("sorgente_dei_tasti: la sorgente deve essere una funzione o None")
 	precedente = _SORGENTE_DEI_TASTI
 	_SORGENTE_DEI_TASTI = sorgente
+	return precedente
+
+_SORGENTE_DELLE_SCELTE = None
+
+def sorgente_delle_scelte(sorgente=None):
+	"""V1.0.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Registra chi mostra le voci di menu e le domande di enter_escape al posto
+	della console, per i programmi da console che girano dentro una finestra
+	con un albero o una lista delle scelte: la finestra le mostra e menu ne
+	riceve la scelta, senza cambiare niente nel programma. Nata per la
+	plancia di Orologic 9, accanto a sorgente_dei_tasti.
+	Parametri:
+	  sorgente: una funzione chiamata con quattro argomenti, tipo, voci,
+	    prompt e vuoto.
+	    Da menu, sorgente("menu", voci, p, empty_enter): voci e' la lista delle
+	    coppie (chiave, descrizione) nell'ordine in cui menu le mostrerebbe,
+	    p il prompt di menu ed empty_enter cio' che Invio a vuoto
+	    restituirebbe. Restituisce la chiave scelta, che menu restituisce
+	    cosi' com'e', None per Esc, o empty_enter. Se l'utente vuole
+	    interrompere, solleva KeyboardInterrupt.
+	    Da enter_escape, sorgente("enter_escape", None, prompt, None), prima
+	    di ogni attesa del tasto: e' un avviso, il valore restituito non
+	    conta, e il tasto lo legge key come sempre.
+	  None toglie la sorgente, e menu torna a stampare e a leggere i tasti.
+	Restituisce la sorgente registrata prima, o None.
+	La sorgente vale per tutto il processo e per tutti i fili."""
+	global _SORGENTE_DELLE_SCELTE
+	if sorgente is not None and not callable(sorgente):
+		raise TypeError("sorgente_delle_scelte: la sorgente deve essere una funzione o None")
+	precedente = _SORGENTE_DELLE_SCELTE
+	_SORGENTE_DELLE_SCELTE = sorgente
 	return precedente
 
 def key(prompt="", attesa=None, alla_scadenza=""):
@@ -6840,7 +6879,7 @@ def manuale(nf=None, testo=None, nome="", codifica=None, righe_pagina=None):
 	return True
 
 def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, pager=20, show_on_filter=True, numbered=False, ordered=True, empty_enter=None, intestazione=""):
-    """V5.2.7 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, UltraCode)
+    """V5.3.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
     Crea un menu interattivo da un dizionario, con filtraggio e autocompletamento robusto.
     Parametri:
     d: dizionario con coppie chiave:descrizione.
@@ -6947,6 +6986,14 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     1000, x, Backspace e Invio sceglievano 10 invece di restituire
     empty_enter, e dopo m, x e Backspace, fra mamma e mammut, ricopiare non
     serviva piu'.
+    Dalla V5.3.0, se un programma ha registrato una sorgente delle scelte,
+    menu non stampa l'elenco e non legge tasti: consegna le voci alla
+    sorgente, con sorgente("menu", voci, p, empty_enter), dove voci e' la
+    lista delle coppie (chiave, descrizione) nell'ordine in cui le
+    mostrerebbe, e restituisce la chiave che la sorgente sceglie, None per
+    Esc o empty_enter. Restano come prima il dizionario vuoto, la voce sola,
+    che torna subito, e show_only, che stampa l'elenco: e' un elenco da
+    leggere, non una scelta. Senza sorgente niente cambia.
     """
     import os
     if d is None: d = {}
@@ -7053,6 +7100,11 @@ def menu(d=None, p="> ", ntf="", show=True, show_only=False, keyslist=True, page
     if not d: return None
     if len(d) == 1 and not show_only: return next(iter(d))
     if show_only: Mostra(orig_keys, pager, numbered, num_map); return None
+    if _SORGENTE_DELLE_SCELTE is not None:
+        # Le chiavi vere anche con numbered: i numeri servono solo a chi
+        # digita.
+        vere = [num_map.get(k, k) for k in orig_keys]
+        return _SORGENTE_DELLE_SCELTE("menu", [(k, d[k]) for k in vere], p, empty_enter)
     if show:
         Mostra(orig_keys, pager, numbered, num_map)
         last_displayed = orig_keys[:]
