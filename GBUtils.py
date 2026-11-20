@@ -3,7 +3,7 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V301 di venerdì 20 novembre 2026
+	V302 di venerdì 20 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.19 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -23,7 +23,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	gestisci_aggiornamento V1.3.2 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	indirizzo_mailto V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	informazioni_di_sistema V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
-	key V8.0.2 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
+	key V8.1.0 di venerdì 20 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	lingua_di_sistema V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
@@ -39,10 +39,11 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	scegli_dispositivo_audio V1.1.1 di venerdì 18 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	scomponi_nota V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	sonify V8.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella, Gemini 3 Pro & ClaudIA (Claude Fable 5.1, modalità auto)
+	sorgente_dei_tasti V1.0.0 di venerdì 20 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 '''
-VERSION = "301"
+VERSION = "302"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -3878,8 +3879,35 @@ def _key_console_windows():
 	if senza_console:
 		raise EOFError("key: nessuna console da cui leggere")
 
+_SORGENTE_DEI_TASTI = None
+
+def sorgente_dei_tasti(sorgente=None):
+	"""V1.0.0 di venerdì 20 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Registra chi da' i tasti a key al posto della console, per i programmi da
+	console che girano dentro una finestra: la finestra raccoglie i tasti e
+	key, menu ed enter_escape li leggono da lei, senza cambiare niente nel
+	programma. Nata per Orologic 9, il punto 74 di idee.txt.
+	Parametri:
+	  sorgente: una funzione che riceve attesa, come la riceve key, cioe' None
+	    per aspettare senza limite o i secondi da aspettare, zero compreso per
+	    un solo sguardo, e restituisce il nome del tasto con le regole di key,
+	    o None se l'attesa e' scaduta. Se l'utente vuole interrompere, solleva
+	    KeyboardInterrupt come farebbe key con Ctrl+C. None toglie la sorgente,
+	    e key torna a leggere la console.
+	Restituisce la sorgente registrata prima, o None, cosi' chi la cambia per
+	un tratto la puo' rimettere.
+	La sorgente vale per tutto il processo e per tutti i fili. La stampa del
+	prompt resta di key: va a sys.stdout, che il programma puo' aver deviato
+	a sua volta verso la finestra."""
+	global _SORGENTE_DEI_TASTI
+	if sorgente is not None and not callable(sorgente):
+		raise TypeError("sorgente_dei_tasti: la sorgente deve essere una funzione o None")
+	precedente = _SORGENTE_DEI_TASTI
+	_SORGENTE_DEI_TASTI = sorgente
+	return precedente
+
 def key(prompt="", attesa=None, alla_scadenza=""):
-	"""V8.0.2 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5, modalità auto)
+	"""V8.1.0 di venerdì 20 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella/Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
 	Legge un tasto singolo senza aspettare Invio, riconosce i tasti speciali,
 	il tastierino a blocco numerico spento e i modificatori, e riferisce ogni
 	tasto con un nome leggibile, uguale su Windows e su Unix.
@@ -3940,6 +3968,13 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 	Unix invece di confondersi con Tab, e che i tasti da F13 a F24 hanno un
 	nome. Chi confrontava '\t' per riconoscere Shift+Tab su Windows deve ora
 	confrontare anche shift-tab.
+	Dalla V8.1.0, se un programma ha registrato una sorgente con
+	sorgente_dei_tasti, key stampa il prompt come sempre ma il tasto lo chiede
+	a lei invece che alla console: e' la strada dei programmi da console che
+	girano dentro una finestra, dove la console non c'e' e i tasti li raccoglie
+	la finestra. Con lei key restituisce i nomi che la sorgente da', e alla
+	scadenza alla_scadenza; menu ed enter_escape, che leggono con key, la
+	seguono senza saperlo.
 	Dalla V8.0.2 solleva RuntimeError se e' aperta una Tastiera, la tastiera a
 	eventi che nasce con la V160: il buffer della console e' uno solo e chi
 	legge per primo consuma, quindi chiamarle tutte e due vorrebbe dire perdere
@@ -3966,6 +4001,11 @@ def key(prompt="", attesa=None, alla_scadenza=""):
 			attesa = float(attesa)
 		except (TypeError, ValueError) as errore:
 			raise TypeError("key: attesa deve essere None o un numero di secondi") from errore
+	if _SORGENTE_DEI_TASTI is not None:
+		if prompt:
+			print(prompt, end="", flush=True)
+		tasto = _SORGENTE_DEI_TASTI(attesa)
+		return alla_scadenza if tasto is None else tasto
 	if os.name == 'nt':
 		_key_console_windows()
 		if prompt:
