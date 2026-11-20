@@ -5694,6 +5694,7 @@
         "usato_da": [
             "mess",
             "meteora",
+            "orologic",
             "stellaterm",
             "tornello"
         ],
@@ -5723,6 +5724,7 @@
         "descrizione": "Spostamento del fuoco, all'altezza media: due tocchi di seno brevissimi, sol 3 e mi 4, in 60 ms. Il riferimento della famiglia: f5 è un'ottava sotto, f7 un'ottava sopra.",
         "usato_da": [
             "meteora",
+            "orologic",
             "tornello"
         ],
         "score": [
