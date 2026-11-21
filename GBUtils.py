@@ -3,11 +3,12 @@
 	Data concepimento: lunedì 3 febbraio 2020.
 	Raccoglitore di utilità per i miei programmi.
 	Spostamento su github in data 27/6/2024. Da usare come submodule per gli altri progetti.
-	V305 di sabato 21 novembre 2026
+	V306 di sabato 21 novembre 2026
 Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa ognuna, e come si chiama, sta nella sua docstring.
 	accorcia V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Acusticator V8.9.19 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 	apri_mail V1.0.0 di venerdì 23 ottobre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	cestino_disponibile V1.0.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	cartella_applicazione V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	contesto_ssl V1.0.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, modalità auto)
 	crea_archivio_release V1.1.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
@@ -28,6 +29,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	manuale V2.1.0 di venerdì 11 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Fable 5.1, UltraCode)
 	Mazzo V6.1.0 di martedì 8 settembre 2026 - Gabriele Battaglia (IZ4APU), Gemini 2.5 & ClaudIA (Claude Fable 5.1, UltraCode)
 	menu V5.3.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU), Stella Gemini 3.5 Flash & ClaudIA (Claude Opus 5.5, modalità auto)
+	nel_cestino V1.0.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
 	percorso_risorsa V1.0.0 di sabato 12 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, UltraCode)
 	perform_update V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & Stella, poi ClaudIA (Claude Opus 5.5, UltraCode)
 	polipo V6.2.0 di giovedì 5 novembre 2026 - Gabriele Battaglia (IZ4APU) & Gemini, poi ClaudIA (Claude Opus 5.5, UltraCode)
@@ -44,7 +46,7 @@ Indice delle utilità del pacchetto: nome, versione, data, autori. Che cosa fa o
 	Tastiera V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	update_checker V1.7.1 di sabato 14 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, UltraCode)
 '''
-VERSION = "305"
+VERSION = "306"
 # Il contesto SSL condiviso da tutte le connessioni sicure: si costruisce alla
 # prima richiesta, perche' caricare gli archivi dei certificati costa.
 _CONTESTO_SSL = None
@@ -6688,6 +6690,110 @@ def dgt(prompt="", kind="s", imin=-999999999, imax=999999999, fmin=-999999999.9,
 # riscritti in ogni programma. Non stampano niente e non sanno dove finira'
 # cio' che restituiscono: la stringa torna a chi ha chiamato, che decide se
 # metterla in una riga di avanzamento, in un report o in una finestra.
+def cestino_disponibile(percorso):
+	"""V1.0.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Vero se il disco del percorso ha il cestino di Windows. Lo chiede alla
+	Shell con SHQueryRecycleBinW sulla radice del disco, che su una cartella
+	di rete, e dove il cestino non c'e', risponde con un errore. Fuori da
+	Windows risponde vero, e decide send2trash.
+	  percorso: un file, una cartella o un disco; conta solo il disco.
+	Nata in Tornello, utils.py, e portata qui il 21 novembre 2026 per la
+	pulizia di Orologic, perche' la usino tutti i programmi."""
+	import os
+	import sys
+
+	if sys.platform != "win32":
+		return True
+	try:
+		import ctypes
+		from ctypes import wintypes
+
+		class SHQUERYRBINFO(ctypes.Structure):
+			_fields_ = [
+				("cbSize", wintypes.DWORD),
+				("i64Size", ctypes.c_longlong),
+				("i64NumItems", ctypes.c_longlong),
+			]
+
+		radice = os.path.splitdrive(os.path.abspath(percorso))[0] + "\\"
+		informazioni = SHQUERYRBINFO()
+		informazioni.cbSize = ctypes.sizeof(SHQUERYRBINFO)
+		esito = ctypes.windll.shell32.SHQueryRecycleBinW(radice, ctypes.byref(informazioni))
+	except (OSError, AttributeError, ValueError, TypeError):
+		return False
+	return esito == 0
+
+def nel_cestino(percorso, finestra=None):
+	"""V1.0.0 di sabato 21 novembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5.5, modalità auto)
+	Manda nel cestino di Windows un file o una cartella, e risponde vero solo
+	se dal suo posto e' sparito davvero. Non cancella mai per sempre in
+	silenzio: su un disco senza cestino, come una cartella di rete, il file
+	resta dov'e' e la risposta e' falso, senza chiedere niente; se il cestino
+	c'e' ma non puo' prendere il file, per esempio perche' e' piu' grande del
+	cestino, o perche' il cestino di quel disco cancella subito, la Shell
+	chiede prima di cancellare per sempre (FOF_WANTNUKEWARNING). Le altre
+	domande e finestre della Shell non ci sono: la conferma la chiede il
+	programma, prima.
+	  percorso: il file o la cartella.
+	  finestra: l'handle della finestra da cui parte la cancellazione: la
+	    domanda della Shell le appartiene, e prende il fuoco invece di restare
+	    nascosta dietro una finestra modale. None se non c'e'.
+	Fuori da Windows usa send2trash, se e' installato; senza, risponde falso.
+	Nata in Tornello (delete_file_to_trash, utils.py, 10.10.0) e in MeTeOra
+	(questo_pc.nel_cestino); dalla V306 sta qui, per Orologic e per tutti."""
+	import os
+	import sys
+
+	assoluto = os.path.abspath(percorso)
+	if not os.path.exists(assoluto):
+		return False
+	if sys.platform == "win32":
+		if not cestino_disponibile(assoluto):
+			return False
+		try:
+			import ctypes
+			from ctypes import wintypes
+
+			class SHFILEOPSTRUCTW(ctypes.Structure):
+				_fields_ = [
+					("hwnd", wintypes.HWND),
+					("wFunc", wintypes.UINT),
+					("pFrom", wintypes.LPCWSTR),
+					("pTo", wintypes.LPCWSTR),
+					("fFlags", ctypes.c_ushort),
+					("fAnyOperationsAborted", wintypes.BOOL),
+					("hNameMappings", wintypes.LPVOID),
+					("lpszProgressTitle", wintypes.LPCWSTR),
+				]
+
+			FO_DELETE = 3
+			FOF_ALLOWUNDO = 0x0040
+			FOF_NOCONFIRMATION = 0x0010
+			FOF_NOERRORUI = 0x0400
+			FOF_SILENT = 0x0004
+			FOF_WANTNUKEWARNING = 0x4000
+			operazione = SHFILEOPSTRUCTW()
+			operazione.hwnd = finestra
+			operazione.wFunc = FO_DELETE
+			# La Shell vuole l'elenco dei percorsi chiuso da due caratteri nulli.
+			operazione.pFrom = assoluto + "\0\0"
+			operazione.pTo = None
+			operazione.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT | FOF_WANTNUKEWARNING
+			operazione.fAnyOperationsAborted = False
+			operazione.hNameMappings = None
+			operazione.lpszProgressTitle = None
+			esito = ctypes.windll.shell32.SHFileOperationW(ctypes.byref(operazione))
+		except (OSError, AttributeError, ValueError, TypeError):
+			return False
+		return esito == 0 and not operazione.fAnyOperationsAborted and not os.path.exists(assoluto)
+	try:
+		from send2trash import send2trash
+
+		send2trash(assoluto)
+	except (ImportError, OSError):
+		return False
+	return not os.path.exists(assoluto)
+
 def formatta_dimensione(byte, decimali=2, separatore=".", unita=("B", "KB", "MB", "GB", "TB", "PB"), byte_interi=False):
 	"""V1.0.0 di lunedì 14 settembre 2026 - Gabriele Battaglia (IZ4APU) & ClaudIA (Claude Opus 5, modalità auto)
 	Una quantita' di byte con l'unita' adatta alla sua grandezza: 1.40 GB.
