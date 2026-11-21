@@ -31351,6 +31351,9 @@
     },
     "casella_in_vendita_tolta": {
         "descrizione": "In una finestra di ricerca si toglie la spunta alla casella In vendita da altri, solo per i giocatori: dente di sega, lo specchio di casella_in_vendita_spuntata, con lo stesso timbro, che scende: una scivolata dal re 6 al la 5 in 60 ms, una pausa di 10 ms e un re 5 di 30 ms, al centro; 100 ms. Va bene per una casella tolta, un'opzione spenta: chi è in vendita, un'offerta esposta, un listino.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "d6.a5",
@@ -31423,6 +31426,9 @@
     },
     "casella_del_computer_tolta": {
         "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Tesserati del computer: sinusoide, lo specchio di casella_del_computer_spuntata, con lo stesso timbro, che scende: una scivolata dal sol 7 al do 7 in 40 ms, una pausa di 10 ms, un sol 6 di 15 ms, una pausa di 10 ms e un do 7 di 15 ms, al centro; 90 ms. Va bene per una casella tolta, un'opzione spenta: le squadre dell'avversario automatico, un giocatore virtuale.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "g7.c7",
@@ -31975,6 +31981,9 @@
     },
     "casella_senza_prelazione_tolta": {
         "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Escludi chi è in prelazione per altri: dente di sega, lo specchio di casella_senza_prelazione_spuntata, con lo stesso timbro, che scende: una scivolata dal la 6 al re 6 in 50 ms, una pausa di 10 ms, un re 6 di 25 ms, una pausa di 10 ms e un la 5 di 25 ms, al centro; 120 ms. Va bene per una casella tolta, un'opzione spenta: una riserva per altri da lasciare fuori, una precedenza.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "a6.d6",
@@ -32314,6 +32323,9 @@
     },
     "filtro_eta_minima": {
         "descrizione": "In una finestra di ricerca cambia l'età minima, quando ci si ferma: onda triangolare, lo specchio di mess_filtro_eta_allenatori, una scivolata breve che sale di una quarta: una scivolata dal re 6 al sol 6 in 50 ms, al centro; 50 ms. Va bene per ogni limite d'età o di tempo dal basso.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "d6.g6",
@@ -32404,6 +32416,9 @@
     },
     "filtro_stipendio_massimo": {
         "descrizione": "In una finestra di ricerca cambia lo stipendio massimo dei giocatori, quando ci si ferma: dente di sega, la busta paga che si chiude, una terza su e giù e una scivolata che scende: un do 6 di 30 ms, un mi 6 di 30 ms e una scivolata dal do 6 al sol 5 in 50 ms, al centro; 110 ms. Va bene per ogni limite di paga o di costo mensile.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "c6",
@@ -36592,6 +36607,9 @@
     },
     "orecchio_che_cerca": {
         "descrizione": "Rumore azzurro, tre fruscii brevi, a sinistra, a destra e al centro, come un orecchio che cerca; 270 ms. Va bene per ogni ascolto o ricerca.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "4000-9000",
