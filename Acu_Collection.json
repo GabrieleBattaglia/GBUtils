@@ -31261,6 +31261,9 @@
     },
     "casella_liberi_spuntata": {
         "descrizione": "In una finestra di ricerca si spunta la casella Liberi: sinusoide, una porta che si apre, due passi che salgono di una quarta e di una terza e una scivolata: un sol 5 di 30 ms, un do 6 di 30 ms e una scivolata dal mi 6 al sol 6 in 50 ms, al centro; 110 ms. Va bene per una casella spuntata, un'opzione accesa: chi è libero, un posto aperto, una scelta senza vincoli.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "g5",
