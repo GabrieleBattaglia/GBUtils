@@ -5652,6 +5652,7 @@
             "ciechino",
             "mess",
             "meteora",
+            "orologic",
             "terminal_beast",
             "tornello"
         ],
@@ -29289,6 +29290,7 @@
         "usato_da": [
             "mess",
             "meteora",
+            "orologic",
             "tornello"
         ],
         "score": [
@@ -29318,6 +29320,7 @@
         "usato_da": [
             "mess",
             "meteora",
+            "orologic",
             "tornello"
         ],
         "score": [
@@ -38366,7 +38369,8 @@
     "ciechino_caffe_paypal": {
         "descrizione": "Ciechino, Dona con PayPal, nell'invito al caffè: una moneta che tintinna e cade nel salvadanaio, seno acuto, mi 7, si 6 e mi 7, poi un sol diesis 6 che scivola al mi 6, al centro, in 270 ms. Va bene per una donazione, un pagamento o un grazie.",
         "usato_da": [
-            "ciechino"
+            "ciechino",
+            "orologic"
         ],
         "score": [
             [
