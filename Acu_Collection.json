@@ -31537,6 +31537,9 @@
     },
     "casella_ritirati_spuntata": {
         "descrizione": "In una finestra di ricerca si spunta la casella Ritirati, solo per i giocatori: rumore marrone, la panchina dei veterani, un soffio cupo che si alza e un colpetto: una banda che scorre da 150-500 a 300-1000 Hz in 70 ms, una pausa di 15 ms e una banda fra 300 e 1000 Hz di 30 ms, al centro; 115 ms. Va bene per una casella spuntata, un'opzione accesa: chi ha smesso, gli anziani, un archivio di chi c'era.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "150-500.300-1000",
@@ -31567,6 +31570,9 @@
     },
     "casella_ritirati_tolta": {
         "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Ritirati, solo per i giocatori: rumore marrone, lo specchio di casella_ritirati_spuntata, con lo stesso timbro, che scende: una banda fra 300 e 1000 Hz di 30 ms, una pausa di 15 ms e una banda che scorre da 300-1000 a 150-500 Hz in 70 ms, al centro; 115 ms. Va bene per una casella tolta, un'opzione spenta: chi ha smesso, gli anziani, un archivio di chi c'era.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "300-1000",
@@ -32011,6 +32017,9 @@
     },
     "filtro_classe_peggiore": {
         "descrizione": "In una finestra di ricerca cambia la classe peggiore, a ogni freccia: sinusoide, lo specchio di mess_filtro_classe_allenatori, un passo di classe che scende di una terza: un mi 6 di 20 ms, una pausa di 5 ms e un do 6 di 20 ms, al centro; 45 ms. Va bene per ogni soglia o livello più basso, un limite inferiore.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "e6",
@@ -32071,6 +32080,9 @@
     },
     "filtro_provincia": {
         "descrizione": "In una finestra di ricerca cambia la provincia, a ogni freccia: dente di sega, un passo stretto dentro la regione di filtro_regione, una quarta giù e su: un la 6 di 15 ms, una pausa di 5 ms, un mi 6 di 15 ms, una pausa di 5 ms e un la 6 di 20 ms, tutto un poco a destra; 60 ms. Va bene per ogni scelta di un luogo più piccolo dentro uno grande.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "a6",
@@ -32173,6 +32185,9 @@
     },
     "filtro_tratto_indifferente": {
         "descrizione": "In una finestra di ricerca un tratto torna Indifferente, a ogni freccia: onda triangolare, una spalla alzata, una terza su e giù che torna al punto di partenza: un mi 6 di 20 ms, un sol 6 di 20 ms e un mi 6 di 20 ms, al centro; 60 ms. Va bene per ogni scelta neutra, un criterio che non conta più.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "e6",
@@ -32233,6 +32248,9 @@
     },
     "filtro_visus": {
         "descrizione": "In una finestra di ricerca cambia il visus degli allenatori, a ogni freccia: sinusoide, un colpo d'occhio, una quinta acuta su e giù: un si 6 di 15 ms, una pausa di 5 ms, un fa diesis 7 di 15 ms, una pausa di 5 ms e un si 6 di 20 ms, al centro; 60 ms. Va bene per ogni scelta che riguarda la vista, uno sguardo, una categoria di visione.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "b6",
@@ -32275,6 +32293,9 @@
     },
     "filtro_posto_attuale": {
         "descrizione": "In una finestra di ricerca cambia il posto attuale degli allenatori, capo o assistente, a ogni freccia: sinusoide, lo specchio di mess_staff_posto_scelto, un tocco minimo che scivola appena in giù: una scivolata dal la 6 al fa diesis 6 in 35 ms, al centro; 35 ms. Va bene per ogni scelta di un ruolo già occupato, di un incarico.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "a6.f#6",
@@ -32485,6 +32506,9 @@
     },
     "filtro_comune": {
         "descrizione": "In una finestra di ricerca cambia la parte del nome del comune, quando ci si ferma: rumore rosa, un nome scritto sulla mappa, un colpetto e un tratto che scende: una banda fra 2000 e 5000 Hz di 20 ms un poco a sinistra, una pausa di 10 ms e una banda che scorre da 2500-6000 a 1500-4000 Hz in 40 ms un poco a destra; 70 ms. Va bene per ogni ricerca per una parte di un nome di luogo.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "2000-5000",
@@ -36715,6 +36739,9 @@
     },
     "due_ante_che_si_aprono": {
         "descrizione": "Seno, due scivolate da mi 5 a si 5, una a sinistra e una a destra, come due ante, poi mi 6 al centro; 220 ms. Va bene per ogni cartella o finestra che si apre.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "e5.b5",
