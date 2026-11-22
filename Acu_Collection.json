@@ -39152,5 +39152,38 @@
             80.0,
             30.0
         ]
+    },
+    "ciechino_fine_scala": {
+        "descrizione": "Ciechino, nella mira un valore arriva al capo della sua scala, al minimo o al massimo, e si ferma: un doppio colpo sordo, onda triangolare, due tocchi di mi 3, il secondo un po' più lungo e più piano, al centro, in 75 ms, come un cursore che batte sul fermo. È breve e morbido, perché può suonare a ogni mira, e grave, sotto le tacche e i suoni dei valori. Va bene per un fine corsa, un limite raggiunto o una manopola al massimo.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "e3",
+                0.025,
+                0.0,
+                -0.05
+            ],
+            [
+                "p",
+                0.015,
+                0.0,
+                -0.5
+            ],
+            [
+                "e3",
+                0.035,
+                0.0,
+                -0.1
+            ]
+        ],
+        "kind": 3,
+        "adsr": [
+            2.0,
+            50.0,
+            20.0,
+            40.0
+        ]
     }
 }
