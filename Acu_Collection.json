@@ -31474,6 +31474,9 @@
     },
     "casella_tuoi_spuntata": {
         "descrizione": "In una finestra di ricerca si spunta la casella Tuoi tesserati: onda triangolare, la tua casa, l'accordo caldo di do maggiore nel registro medio: un do 5 di 30 ms, un mi 5 di 30 ms, un sol 5 di 30 ms e un do 6 di 40 ms, al centro; 130 ms. Va bene per una casella spuntata, un'opzione accesa: le proprie cose, la propria squadra, ciò che è tuo.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "c5",
@@ -31510,6 +31513,9 @@
     },
     "casella_tuoi_tolta": {
         "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Tuoi tesserati: onda triangolare, lo specchio di casella_tuoi_spuntata, con lo stesso timbro, che scende: un do 6 di 40 ms, un sol 5 di 30 ms, un mi 5 di 30 ms e un do 5 di 30 ms, al centro; 130 ms. Va bene per una casella tolta, un'opzione spenta: le proprie cose, la propria squadra, ciò che è tuo.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "c6",
@@ -31726,6 +31732,9 @@
     },
     "casella_senza_acciacchi_tolta": {
         "descrizione": "In una finestra di ricerca si toglie la spunta alla casella Escludi infortunati e acciaccati: onda triangolare, lo specchio di casella_senza_acciacchi_spuntata, con lo stesso timbro, che scende: un fa 6 di 40 ms, una pausa di 10 ms e una scivolata dal do 6 al fa 5 in 50 ms, al centro; 100 ms. Va bene per una casella tolta, un'opzione spenta: la salute, chi è in forma, un'esclusione dei malati.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "f6",
@@ -32062,6 +32071,9 @@
     },
     "filtro_regione": {
         "descrizione": "In una finestra di ricerca cambia la regione, a ogni freccia: dente di sega, un passo largo sulla carta d'Italia, una quinta che sale da sinistra a destra: un la 5 di 20 ms un poco a sinistra, una pausa di 5 ms e un mi 6 di 25 ms un poco a destra; 50 ms. Va bene per ogni scelta di un luogo grande, una zona, un territorio.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "a5",
@@ -32167,6 +32179,9 @@
     },
     "filtro_tratto_no": {
         "descrizione": "In una finestra di ricerca un tratto passa a No, a ogni freccia: onda triangolare, lo specchio di filtro_tratto_si, un no che scende di una quinta: un si 6 di 20 ms, una pausa di 5 ms e una scivolata dal si 6 al mi 6 in 35 ms, al centro; 60 ms. Va bene per ogni risposta no in una scelta fra sì, no e indifferente.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "b6",
