@@ -37087,9 +37087,6 @@
     },
     "ciechino_valore_preso": {
         "descrizione": "Ciechino, la mira prende un valore, la direzione, l'alzo o la potenza: uno scatto di fermo, onda triangolare, un tocco brevissimo di la 5 che cade sul mi 5, al centro, in 60 ms. Suona tre volte a ogni tiro, quindi è breve e morbido, e scende, mentre i bip della mira salgono. Va bene per un valore fissato, una scelta presa o un fermo che scatta.",
-        "usato_da": [
-            "ciechino"
-        ],
         "score": [
             [
                 "a5",
@@ -39116,9 +39113,6 @@
     },
     "ciechino_proiettile_perduto": {
         "descrizione": "Ciechino, una barra della mira è passata cinque volte senza lo spazio, e il proiettile è perduto: lo sparo che non c'è, rumore bianco, una miccia che sfrigola acuta e cresce, con la banda che scende da 4000-10000 a 2500-8000 Hz, poi, dopo una breve pausa, un soffio sordo che si spegne, da 400-1600 a 150-500 Hz, senza il colpo, al centro, in 600 ms. Va bene per un colpo che fa cilecca, una miccia spenta o un'occasione sprecata.",
-        "usato_da": [
-            "ciechino"
-        ],
         "score": [
             [
                 "4000-10000.2500-8000",
