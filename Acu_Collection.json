@@ -39154,13 +39154,13 @@
         ]
     },
     "ciechino_fine_scala": {
-        "descrizione": "Ciechino, nella mira un valore arriva al capo della sua scala, al minimo o al massimo, e si ferma: un doppio colpo sordo, onda triangolare, due tocchi di mi 3, il secondo un po' più lungo e più piano, al centro, in 75 ms, come un cursore che batte sul fermo. È breve e morbido, perché può suonare a ogni mira, e grave, sotto le tacche e i suoni dei valori. Va bene per un fine corsa, un limite raggiunto o una manopola al massimo.",
+        "descrizione": "Ciechino, nella mira un valore arriva al capo della sua scala, al minimo o al massimo, e si ferma: un doppio colpo sordo, onda triangolare, due tocchi di re 3, il secondo un po' più lungo e più piano, al centro, in 75 ms, come un cursore che batte sul fermo. È breve e morbido, perché può suonare a ogni mira, e grave, sotto le tacche e i suoni dei valori, anche sotto i 150 Hz dell'alzo al minimo. Va bene per un fine corsa, un limite raggiunto o una manopola al massimo.",
         "usato_da": [
             "ciechino"
         ],
         "score": [
             [
-                "e3",
+                "d3",
                 0.025,
                 0.0,
                 -0.05
@@ -39172,7 +39172,7 @@
                 -0.5
             ],
             [
-                "e3",
+                "d3",
                 0.035,
                 0.0,
                 -0.1
@@ -39183,6 +39183,39 @@
             2.0,
             50.0,
             20.0,
+            40.0
+        ]
+    },
+    "ciechino_vai_alla_mira": {
+        "descrizione": "Ciechino, F6, durante la mira il fuoco torna sul controllo Mira: un tocco doppio di seno, due sol 5 brevi e morbidi, al centro, in 55 ms; fermo, fra la discesa di ciechino_vai_alla_vista e la salita di ciechino_vai_alla_barra, perché la Mira sta fra le due aree. Va bene per un fuoco che torna al controllo principale, o per un puntatore che si riaggancia.",
+        "usato_da": [
+            "ciechino"
+        ],
+        "score": [
+            [
+                "g5",
+                0.02,
+                0.0,
+                -0.2
+            ],
+            [
+                "p",
+                0.01,
+                0.0,
+                -0.5
+            ],
+            [
+                "g5",
+                0.025,
+                0.0,
+                -0.22
+            ]
+        ],
+        "kind": 1,
+        "adsr": [
+            15.0,
+            10.0,
+            80.0,
             40.0
         ]
     }
