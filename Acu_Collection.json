@@ -36670,6 +36670,9 @@
     },
     "due_cadute_di_quinta": {
         "descrizione": "Seno, due cadute di una quinta, da re 6 a sol 5 e da sol 5 a do 5; 200 ms. Va bene per ogni cosa che si cancella o si perde.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "d6.g5",
@@ -36814,6 +36817,9 @@
     },
     "banda_che_si_allarga": {
         "descrizione": "Rumore rosa, una banda che si allarga da 200-800 a 200-6000 Hz, qualcosa che si apre; 140 ms. Va bene per ogni apertura.",
+        "usato_da": [
+            "orologic"
+        ],
         "score": [
             [
                 "200-800.200-6000",
